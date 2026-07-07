@@ -220,7 +220,7 @@ export default function Footer() {
       <div style={{ borderTop: '1px solid #ffffff08' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-2">
           <p className="text-[#374151] text-sm">
-            &copy; 2024 Byteflow Information Technology. All rights reserved.
+            &copy; {new Date().getFullYear()} Byteflow Information Technology. All rights reserved.
           </p>
           <p className="text-[#374151] text-sm">
             Trusted by 500+ businesses across Dubai and UAE since 2017.
