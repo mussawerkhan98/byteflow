@@ -3,9 +3,8 @@ import { createClient } from '@libsql/client'
 
 const posts = JSON.parse(readFileSync('./scripts/parsed-posts.json', 'utf8'))
 
-function stripHtml(html) {
-  return html
-    .replace(/<[^>]+>/g, ' ')
+function decodeEntities(text) {
+  return text
     .replace(/&amp;/g, '&')
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
@@ -17,7 +16,27 @@ function stripHtml(html) {
     .replace(/&#8211;/g, '-')
     .replace(/&#8212;/g, '-')
     .replace(/&nbsp;/g, ' ')
+}
+
+// Single-line strip, for titles/excerpts
+function stripHtml(html) {
+  return decodeEntities(html.replace(/<[^>]+>/g, ' '))
     .replace(/\s+/g, ' ')
+    .trim()
+}
+
+// Paragraph-preserving strip, for post body content
+function stripHtmlBlock(html) {
+  return decodeEntities(
+    html
+      .replace(/<\/(p|div|li|h[1-6]|blockquote)>/gi, '\n\n')
+      .replace(/<br\s*\/?>/gi, '\n')
+      .replace(/<[^>]+>/g, '')
+  )
+    .split('\n')
+    .map((line) => line.replace(/[ \t]+/g, ' ').trim())
+    .join('\n')
+    .replace(/\n{3,}/g, '\n\n')
     .trim()
 }
 
@@ -44,11 +63,12 @@ function getCategory(slug, title) {
 }
 
 const converted = posts.map((p) => {
-  const plainContent = stripHtml(p.content)
+  const plainContent = stripHtmlBlock(p.content)
+  const flatContent = plainContent.replace(/\n+/g, ' ')
   const rawExcerpt = p.excerpt ? stripHtml(p.excerpt) : ''
   const excerpt = rawExcerpt.length > 30
     ? rawExcerpt.substring(0, 280).replace(/\s\S*$/, '...')
-    : plainContent.substring(0, 280).replace(/\s\S*$/, '...')
+    : flatContent.substring(0, 280).replace(/\s\S*$/, '...')
 
   return {
     slug: p.slug,

@@ -42,3 +42,30 @@ export async function getPosts(): Promise<Post[]> {
     return []
   }
 }
+
+export async function getPostBySlug(slug: string): Promise<Post | null> {
+  try {
+    const result = await db.execute({
+      sql: 'SELECT * FROM posts WHERE slug = ? AND published = 1 LIMIT 1',
+      args: [slug],
+    })
+    const row = result.rows[0]
+    if (!row) return null
+    return {
+      id: String(row.id),
+      slug: row.slug as string,
+      category: row.category as string,
+      title: row.title as string,
+      excerpt: row.excerpt as string,
+      content: row.content as string,
+      date: row.date as string,
+      read_time: row.read_time as string,
+      published: Boolean(row.published),
+      created_at: row.created_at as string,
+      image_url: (row.image_url as string) ?? null,
+    }
+  } catch (error) {
+    console.error('Turso error:', error instanceof Error ? error.message : error)
+    return null
+  }
+}
