@@ -89,7 +89,7 @@ export default function Blog() {
               Insights
             </div>
             <h2 className="text-4xl sm:text-5xl font-bold leading-tight">
-              <span className="text-white">From Our</span>
+              <span className="text-[var(--text-primary)]">From Our</span>
               <br />
               <span style={{ background: 'linear-gradient(135deg, #2CCDDE, #46A3E1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                 IT Experts
@@ -116,7 +116,7 @@ export default function Blog() {
               href={`/blog/${post.slug}`}
               className="group relative flex flex-col rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_0_50px_rgba(44,205,222,0.13),_0_20px_40px_rgba(0,0,0,0.5)]"
               style={{
-                background: '#050F18',
+                background: 'var(--bg-surface)',
                 border: '1px solid rgba(44,205,222,0.12)',
               }}
             >
@@ -170,25 +170,25 @@ export default function Blog() {
 
                 {/* Meta */}
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] text-[#374151] font-medium">{post.date}</span>
-                  <span className="w-1 h-1 rounded-full bg-[#374151]" />
-                  <span className="text-[10px] text-[#374151] font-medium">{post.readTime}</span>
+                  <span className="text-[10px] text-[var(--text-dim)] font-medium">{post.date}</span>
+                  <span className="w-1 h-1 rounded-full bg-[var(--text-dim)]" />
+                  <span className="text-[10px] text-[var(--text-dim)] font-medium">{post.readTime}</span>
                 </div>
 
                 {/* Title */}
-                <h3 className="text-white text-sm font-bold leading-snug group-hover:text-[#2CCDDE] transition-colors duration-200 flex-1">
+                <h3 className="text-[var(--text-primary)] text-sm font-bold leading-snug group-hover:text-[#2CCDDE] transition-colors duration-200 flex-1">
                   {post.title}
                 </h3>
 
                 {/* Excerpt */}
-                <p className="text-[#5A6272] text-xs leading-relaxed line-clamp-3">
+                <p className="text-[var(--text-muted)] text-xs leading-relaxed line-clamp-3">
                   {post.excerpt}
                 </p>
 
                 {/* Read more */}
                 <div
                   className="flex items-center justify-between pt-4 mt-auto"
-                  style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}
+                  style={{ borderTop: '1px solid var(--overlay-hover)' }}
                 >
                   <span className="text-xs font-bold transition-colors duration-200" style={{ color: '#2CCDDE' }}>
                     Read article

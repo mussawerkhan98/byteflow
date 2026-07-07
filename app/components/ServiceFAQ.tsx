@@ -17,8 +17,8 @@ export default function ServiceFAQ({ faqs }: { faqs: FAQ[] }) {
             className="rounded-2xl overflow-hidden transition-all duration-300"
             style={{
               background: isOpen
-                ? 'linear-gradient(160deg, rgba(44,205,222,0.08) 0%, rgba(70,163,225,0.03) 40%, #050F18 100%)'
-                : 'linear-gradient(160deg, rgba(44,205,222,0.04) 0%, #040D12 100%)',
+                ? 'linear-gradient(160deg, rgba(44,205,222,0.08) 0%, rgba(70,163,225,0.03) 40%, var(--bg-surface) 100%)'
+                : 'linear-gradient(160deg, rgba(44,205,222,0.04) 0%, var(--bg-page) 100%)',
               border: isOpen ? '1px solid rgba(44,205,222,0.3)' : '1px solid rgba(44,205,222,0.1)',
             }}
           >
@@ -28,7 +28,7 @@ export default function ServiceFAQ({ faqs }: { faqs: FAQ[] }) {
             >
               <span
                 className="text-sm font-semibold leading-snug transition-colors duration-200 flex-1 min-w-0"
-                style={{ color: isOpen ? '#ffffff' : '#9CA3AF' }}
+                style={{ color: isOpen ? 'var(--text-primary)' : 'var(--text-nav)' }}
               >
                 {faq.q}
               </span>
@@ -60,7 +60,7 @@ export default function ServiceFAQ({ faqs }: { faqs: FAQ[] }) {
               style={{ maxHeight: isOpen ? '400px' : '0px', opacity: isOpen ? 1 : 0 }}
             >
               <div className="px-6 pb-6" style={{ borderTop: '1px solid rgba(44,205,222,0.08)' }}>
-                <p className="text-[#5A6272] text-sm leading-relaxed pt-5">{faq.a}</p>
+                <p className="text-[var(--text-muted)] text-sm leading-relaxed pt-5">{faq.a}</p>
               </div>
             </div>
           </div>

@@ -15,14 +15,14 @@ export default function AboutPage() {
           <div className="max-w-2xl mb-16">
             <p className="text-[#2CCDDE] text-sm font-semibold uppercase tracking-widest mb-4">Dubai, UAE — Since 2017</p>
             <h1 className="text-5xl sm:text-6xl lg:text-[72px] font-bold leading-[1.04] tracking-tight mb-6">
-              <span className="text-white">The team behind </span>
+              <span className="text-[var(--text-primary)]">The team behind </span>
               <span style={{ background: 'linear-gradient(135deg, #2CCDDE, #46A3E1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                 500+ businesses
               </span>
               <br />
-              <span className="text-white">running smoothly.</span>
+              <span className="text-[var(--text-primary)]">running smoothly.</span>
             </h1>
-            <p className="text-[#5A6272] text-lg leading-relaxed">
+            <p className="text-[var(--text-muted)] text-lg leading-relaxed">
               We are a Dubai-based IT company that handles everything technology-related for businesses across the UAE — so you never have to call three different vendors again.
             </p>
           </div>
@@ -42,7 +42,7 @@ export default function AboutPage() {
                 key={s.label}
                 className="flex flex-col justify-center py-8 px-7"
                 style={{
-                  background: 'linear-gradient(160deg, rgba(44,205,222,0.05) 0%, #050F18 100%)',
+                  background: 'linear-gradient(160deg, rgba(44,205,222,0.05) 0%, var(--bg-surface) 100%)',
                   borderRight: i < arr.length - 1 ? '1px solid rgba(44,205,222,0.08)' : 'none',
                 }}
               >
@@ -52,7 +52,7 @@ export default function AboutPage() {
                 >
                   {s.value}
                 </span>
-                <span className="text-xs text-[#5A6272] leading-snug">{s.label}</span>
+                <span className="text-xs text-[var(--text-muted)] leading-snug">{s.label}</span>
               </div>
             ))}
           </div>
@@ -66,7 +66,7 @@ export default function AboutPage() {
           {/* Full-width card that continues from stats */}
           <div
             className="rounded-b-2xl rounded-t-none overflow-hidden mb-6"
-            style={{ border: '1px solid rgba(44,205,222,0.12)', borderTop: 'none', background: 'linear-gradient(160deg, rgba(44,205,222,0.04) 0%, #050F18 100%)' }}
+            style={{ border: '1px solid rgba(44,205,222,0.12)', borderTop: 'none', background: 'linear-gradient(160deg, rgba(44,205,222,0.04) 0%, var(--bg-surface) 100%)' }}
           >
             <div className="grid grid-cols-1 lg:grid-cols-2">
 
@@ -79,9 +79,9 @@ export default function AboutPage() {
                   className="object-cover object-top"
                 />
                 <div className="absolute inset-0"
-                  style={{ background: 'linear-gradient(to right, transparent 60%, #050F18 100%)' }} />
+                  style={{ background: 'linear-gradient(to right, transparent 60%, var(--bg-surface) 100%)' }} />
                 <div className="absolute inset-0 lg:hidden"
-                  style={{ background: 'linear-gradient(to top, #050F18 20%, transparent 70%)' }} />
+                  style={{ background: 'linear-gradient(to top, var(--bg-surface) 20%, transparent 70%)' }} />
 
                 {/* Floating tag */}
                 <div
@@ -92,7 +92,7 @@ export default function AboutPage() {
                     backdropFilter: 'blur(12px)',
                   }}
                 >
-                  <p className="text-white text-sm font-bold">Founder & CEO</p>
+                  <p className="text-[var(--text-primary)] text-sm font-bold">Founder & CEO</p>
                   <p className="text-[#2CCDDE] text-xs font-medium">Byteflow Information Technology</p>
                 </div>
               </div>
@@ -100,11 +100,11 @@ export default function AboutPage() {
               {/* Content */}
               <div className="flex flex-col justify-center p-10 lg:p-14">
                 <p className="text-[#2CCDDE] text-xs font-bold uppercase tracking-widest mb-4">Meet the founder</p>
-                <h2 className="text-3xl sm:text-4xl font-bold text-white leading-tight mb-6">
+                <h2 className="text-3xl sm:text-4xl font-bold text-[var(--text-primary)] leading-tight mb-6">
                   Started with a laptop and a promise to fix IT in Dubai properly.
                 </h2>
 
-                <div className="flex flex-col gap-4 text-[#5A6272] text-sm leading-relaxed mb-8">
+                <div className="flex flex-col gap-4 text-[var(--text-muted)] text-sm leading-relaxed mb-8">
                   <p>
                     Byteflow was born out of frustration. Too many Dubai businesses were being overcharged, underserved, and left waiting days for a simple fix. We started in 2017 with one goal: build the kind of IT company that actually shows up.
                   </p>
@@ -134,7 +134,7 @@ export default function AboutPage() {
                   </a>
                   <a
                     href="tel:+971543282042"
-                    className="text-[#5A6272] text-sm hover:text-[#2CCDDE] transition-colors duration-200"
+                    className="text-[var(--text-muted)] text-sm hover:text-[#2CCDDE] transition-colors duration-200"
                   >
                     +971 54 328 2042
                   </a>
@@ -156,13 +156,13 @@ export default function AboutPage() {
             {/* Left — heading */}
             <div>
               <p className="text-[#2CCDDE] text-xs font-bold uppercase tracking-widest mb-4">Our story</p>
-              <h2 className="text-4xl font-bold text-white leading-snug mb-6">
+              <h2 className="text-4xl font-bold text-[var(--text-primary)] leading-snug mb-6">
                 Eight years.<br />
                 <span style={{ background: 'linear-gradient(135deg, #2CCDDE, #46A3E1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                   One mission.
                 </span>
               </h2>
-              <p className="text-[#5A6272] text-sm leading-relaxed">
+              <p className="text-[var(--text-muted)] text-sm leading-relaxed">
                 From a small IT support operation to a full-service technology company — here is how Byteflow grew to become one of Dubai's most trusted IT partners.
               </p>
             </div>
@@ -219,8 +219,8 @@ export default function AboutPage() {
                     >
                       {item.year}
                     </p>
-                    <h3 className="text-white text-base font-bold mb-1.5">{item.title}</h3>
-                    <p className="text-[#5A6272] text-sm leading-relaxed">{item.desc}</p>
+                    <h3 className="text-[var(--text-primary)] text-base font-bold mb-1.5">{item.title}</h3>
+                    <p className="text-[var(--text-muted)] text-sm leading-relaxed">{item.desc}</p>
                   </div>
                 </div>
               ))}
@@ -240,11 +240,11 @@ export default function AboutPage() {
             {/* Top bar */}
             <div
               className="px-10 py-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
-              style={{ borderBottom: '1px solid rgba(44,205,222,0.1)', background: 'linear-gradient(160deg, rgba(44,205,222,0.06) 0%, #050F18 100%)' }}
+              style={{ borderBottom: '1px solid rgba(44,205,222,0.1)', background: 'linear-gradient(160deg, rgba(44,205,222,0.06) 0%, var(--bg-surface) 100%)' }}
             >
               <div>
                 <p className="text-[#2CCDDE] text-xs font-bold uppercase tracking-widest mb-1">How we work</p>
-                <h2 className="text-2xl sm:text-3xl font-bold text-white">No jargon. No surprises. Just results.</h2>
+                <h2 className="text-2xl sm:text-3xl font-bold text-[var(--text-primary)]">No jargon. No surprises. Just results.</h2>
               </div>
               <Link
                 href="/contact-us"
@@ -280,7 +280,7 @@ export default function AboutPage() {
                 <div
                   key={p.icon}
                   className="flex flex-col gap-4 p-8"
-                  style={{ background: 'linear-gradient(160deg, rgba(44,205,222,0.03) 0%, #050F18 100%)' }}
+                  style={{ background: 'linear-gradient(160deg, rgba(44,205,222,0.03) 0%, var(--bg-surface) 100%)' }}
                 >
                   <span
                     className="text-4xl font-black"
@@ -288,8 +288,8 @@ export default function AboutPage() {
                   >
                     {p.icon}
                   </span>
-                  <h3 className="text-white text-sm font-bold leading-snug">{p.title}</h3>
-                  <p className="text-[#5A6272] text-xs leading-relaxed">{p.desc}</p>
+                  <h3 className="text-[var(--text-primary)] text-sm font-bold leading-snug">{p.title}</h3>
+                  <p className="text-[var(--text-muted)] text-xs leading-relaxed">{p.desc}</p>
                 </div>
               ))}
             </div>
@@ -303,14 +303,14 @@ export default function AboutPage() {
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-10">
             <div>
               <p className="text-[#2CCDDE] text-xs font-bold uppercase tracking-widest mb-3">What we do</p>
-              <h2 className="text-4xl font-bold text-white leading-snug">
+              <h2 className="text-4xl font-bold text-[var(--text-primary)] leading-snug">
                 Everything your business needs,<br />
                 <span style={{ background: 'linear-gradient(135deg, #2CCDDE, #46A3E1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                   under one roof.
                 </span>
               </h2>
             </div>
-            <Link href="/" className="text-sm font-semibold flex-shrink-0 transition-colors duration-200 hover:text-white" style={{ color: '#2CCDDE' }}>
+            <Link href="/" className="text-sm font-semibold flex-shrink-0 transition-colors duration-200 hover:text-[var(--text-primary)]" style={{ color: '#2CCDDE' }}>
               See all services →
             </Link>
           </div>
@@ -331,12 +331,12 @@ export default function AboutPage() {
                 key={s.num}
                 href={s.href}
                 className="group flex flex-col gap-3 p-7 transition-all duration-300 hover:shadow-[inset_0_0_40px_rgba(44,205,222,0.05)]"
-                style={{ background: 'linear-gradient(160deg, rgba(44,205,222,0.04) 0%, #050F18 100%)' }}
+                style={{ background: 'linear-gradient(160deg, rgba(44,205,222,0.04) 0%, var(--bg-surface) 100%)' }}
               >
                 <span className="text-xs font-bold" style={{ color: '#2CCDDE' }}>{s.num}</span>
-                <h3 className="text-white text-sm font-bold leading-snug group-hover:text-[#2CCDDE] transition-colors duration-200">{s.title}</h3>
-                <p className="text-[#5A6272] text-xs leading-relaxed">{s.desc}</p>
-                <span className="text-xs font-semibold mt-auto pt-2 transition-colors duration-200" style={{ color: '#374151' }}>
+                <h3 className="text-[var(--text-primary)] text-sm font-bold leading-snug group-hover:text-[#2CCDDE] transition-colors duration-200">{s.title}</h3>
+                <p className="text-[var(--text-muted)] text-xs leading-relaxed">{s.desc}</p>
+                <span className="text-xs font-semibold mt-auto pt-2 transition-colors duration-200" style={{ color: 'var(--text-dim)' }}>
                   Learn more →
                 </span>
               </Link>
@@ -362,10 +362,10 @@ export default function AboutPage() {
             >
               <div>
                 <p className="text-[#2CCDDE] text-xs font-bold uppercase tracking-widest mb-4">Free consultation</p>
-                <h2 className="text-3xl font-bold text-white leading-snug mb-4">
+                <h2 className="text-3xl font-bold text-[var(--text-primary)] leading-snug mb-4">
                   Tell us about your setup. We will handle the rest.
                 </h2>
-                <p className="text-[#5A6272] text-sm leading-relaxed mb-8">
+                <p className="text-[var(--text-muted)] text-sm leading-relaxed mb-8">
                   No commitment, no sales pitch. Just a straight conversation about what your business needs and how we can help.
                 </p>
               </div>
@@ -391,10 +391,10 @@ export default function AboutPage() {
                 const inner = (
                   <div
                     className="flex items-center justify-between px-7 py-5 rounded-xl transition-all duration-200 group"
-                    style={{ background: 'linear-gradient(160deg, rgba(44,205,222,0.05) 0%, #050F18 100%)', border: '1px solid rgba(44,205,222,0.1)' }}
+                    style={{ background: 'linear-gradient(160deg, rgba(44,205,222,0.05) 0%, var(--bg-surface) 100%)', border: '1px solid rgba(44,205,222,0.1)' }}
                   >
-                    <span className="text-xs text-[#374151] font-semibold uppercase tracking-wider w-20 flex-shrink-0">{item.label}</span>
-                    <span className="text-white text-sm font-semibold group-hover:text-[#2CCDDE] transition-colors duration-200 flex-1 text-right">{item.value}</span>
+                    <span className="text-xs text-[var(--text-dim)] font-semibold uppercase tracking-wider w-20 flex-shrink-0">{item.label}</span>
+                    <span className="text-[var(--text-primary)] text-sm font-semibold group-hover:text-[#2CCDDE] transition-colors duration-200 flex-1 text-right">{item.value}</span>
                   </div>
                 )
                 return item.href ? (

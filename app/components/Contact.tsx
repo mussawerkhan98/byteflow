@@ -122,11 +122,11 @@ export default function Contact() {
   }
 
   const inputStyle = (name: string) => ({
-    background: focused === name ? 'rgba(44,205,222,0.05)' : 'rgba(255,255,255,0.03)',
-    border: focused === name ? '1px solid rgba(44,205,222,0.5)' : '1px solid rgba(255,255,255,0.08)',
+    background: focused === name ? 'rgba(44,205,222,0.05)' : 'var(--overlay-hover-soft)',
+    border: focused === name ? '1px solid rgba(44,205,222,0.5)' : '1px solid var(--overlay-strong)',
     outline: 'none',
     transition: 'border-color 0.2s, background 0.2s',
-    color: '#fff',
+    color: 'var(--input-text)',
   })
 
   return (
@@ -150,13 +150,13 @@ export default function Contact() {
           </div>
           <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
             <h2 className="text-4xl sm:text-5xl font-bold leading-tight">
-              <span className="text-white">Let's Talk About</span>
+              <span className="text-[var(--text-primary)]">Let's Talk About</span>
               <br />
               <span style={{ background: 'linear-gradient(135deg, #2CCDDE, #46A3E1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                 Your IT Needs
               </span>
             </h2>
-            <p className="text-[#5A6272] text-base leading-relaxed max-w-sm lg:text-right">
+            <p className="text-[var(--text-muted)] text-base leading-relaxed max-w-sm lg:text-right">
               Free consultation, no commitment. We will get back to you within 2 hours on business days.
             </p>
           </div>
@@ -173,7 +173,7 @@ export default function Contact() {
                 <div
                   className="flex items-center gap-4 p-5 rounded-2xl transition-all duration-300 hover:-translate-y-0.5 group"
                   style={{
-                    background: 'linear-gradient(160deg, rgba(44,205,222,0.06) 0%, #050F18 100%)',
+                    background: 'linear-gradient(160deg, rgba(44,205,222,0.06) 0%, var(--bg-surface) 100%)',
                     border: '1px solid rgba(44,205,222,0.12)',
                   }}
                 >
@@ -188,8 +188,8 @@ export default function Contact() {
                     {item.icon}
                   </div>
                   <div>
-                    <p className="text-xs text-[#374151] font-semibold uppercase tracking-wider mb-0.5">{item.label}</p>
-                    <p className="text-white text-sm font-semibold group-hover:text-[#2CCDDE] transition-colors duration-200">{item.value}</p>
+                    <p className="text-xs text-[var(--text-dim)] font-semibold uppercase tracking-wider mb-0.5">{item.label}</p>
+                    <p className="text-[var(--text-primary)] text-sm font-semibold group-hover:text-[#2CCDDE] transition-colors duration-200">{item.value}</p>
                   </div>
                 </div>
               )
@@ -207,11 +207,11 @@ export default function Contact() {
             <div
               className="p-6 rounded-2xl mt-1"
               style={{
-                background: 'linear-gradient(160deg, rgba(44,205,222,0.05) 0%, #050F18 100%)',
+                background: 'linear-gradient(160deg, rgba(44,205,222,0.05) 0%, var(--bg-surface) 100%)',
                 border: '1px solid rgba(44,205,222,0.12)',
               }}
             >
-              <p className="text-xs text-[#374151] font-semibold uppercase tracking-wider mb-5">Follow Us</p>
+              <p className="text-xs text-[var(--text-dim)] font-semibold uppercase tracking-wider mb-5">Follow Us</p>
               <div className="flex items-center gap-3 flex-wrap">
                 {socials.map((s) => (
                   <a
@@ -224,7 +224,7 @@ export default function Contact() {
                     style={{
                       background: 'rgba(44,205,222,0.07)',
                       border: '1px solid rgba(44,205,222,0.18)',
-                      color: '#5A6272',
+                      color: 'var(--text-muted)',
                     }}
                     onMouseEnter={(e) => {
                       const el = e.currentTarget
@@ -236,7 +236,7 @@ export default function Contact() {
                       const el = e.currentTarget
                       el.style.background = 'rgba(44,205,222,0.07)'
                       el.style.border = '1px solid rgba(44,205,222,0.18)'
-                      el.style.color = '#5A6272'
+                      el.style.color = 'var(--text-muted)'
                     }}
                   >
                     {s.icon}
@@ -252,7 +252,7 @@ export default function Contact() {
             <div
               className="relative rounded-2xl overflow-hidden"
               style={{
-                background: 'linear-gradient(160deg, rgba(44,205,222,0.07) 0%, rgba(70,163,225,0.02) 40%, #050F18 100%)',
+                background: 'linear-gradient(160deg, rgba(44,205,222,0.07) 0%, rgba(70,163,225,0.02) 40%, var(--bg-surface) 100%)',
                 border: '1px solid rgba(44,205,222,0.18)',
               }}
             >
@@ -271,8 +271,8 @@ export default function Contact() {
                       </svg>
                     </div>
                     <div>
-                      <p className="text-white text-xl font-bold mb-2">Message Sent!</p>
-                      <p className="text-[#5A6272] text-sm">Our team will get back to you within 2 hours.</p>
+                      <p className="text-[var(--text-primary)] text-xl font-bold mb-2">Message Sent!</p>
+                      <p className="text-[var(--text-muted)] text-sm">Our team will get back to you within 2 hours.</p>
                     </div>
                     <button
                       onClick={() => { setSubmitted(false); setForm({ name: '', company: '', email: '', phone: '', service: '', message: '' }) }}
@@ -287,7 +287,7 @@ export default function Contact() {
                     {/* Name + Company */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                       <div className="flex flex-col gap-2">
-                        <label className="text-xs font-semibold text-[#5A6272] uppercase tracking-wider">Full Name <span style={{ color: '#2CCDDE' }}>*</span></label>
+                        <label className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">Full Name <span style={{ color: '#2CCDDE' }}>*</span></label>
                         <input
                           name="name"
                           type="text"
@@ -297,12 +297,12 @@ export default function Contact() {
                           onChange={handleChange}
                           onFocus={() => setFocused('name')}
                           onBlur={() => setFocused(null)}
-                          className="px-4 py-3 rounded-xl text-sm placeholder-[#374151] w-full"
+                          className="px-4 py-3 rounded-xl text-sm placeholder-[var(--text-dim)] w-full"
                           style={inputStyle('name')}
                         />
                       </div>
                       <div className="flex flex-col gap-2">
-                        <label className="text-xs font-semibold text-[#5A6272] uppercase tracking-wider">Company Name</label>
+                        <label className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">Company Name</label>
                         <input
                           name="company"
                           type="text"
@@ -311,7 +311,7 @@ export default function Contact() {
                           onChange={handleChange}
                           onFocus={() => setFocused('company')}
                           onBlur={() => setFocused(null)}
-                          className="px-4 py-3 rounded-xl text-sm placeholder-[#374151] w-full"
+                          className="px-4 py-3 rounded-xl text-sm placeholder-[var(--text-dim)] w-full"
                           style={inputStyle('company')}
                         />
                       </div>
@@ -320,7 +320,7 @@ export default function Contact() {
                     {/* Email + Phone */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                       <div className="flex flex-col gap-2">
-                        <label className="text-xs font-semibold text-[#5A6272] uppercase tracking-wider">Email Address <span style={{ color: '#2CCDDE' }}>*</span></label>
+                        <label className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">Email Address <span style={{ color: '#2CCDDE' }}>*</span></label>
                         <input
                           name="email"
                           type="email"
@@ -330,12 +330,12 @@ export default function Contact() {
                           onChange={handleChange}
                           onFocus={() => setFocused('email')}
                           onBlur={() => setFocused(null)}
-                          className="px-4 py-3 rounded-xl text-sm placeholder-[#374151] w-full"
+                          className="px-4 py-3 rounded-xl text-sm placeholder-[var(--text-dim)] w-full"
                           style={inputStyle('email')}
                         />
                       </div>
                       <div className="flex flex-col gap-2">
-                        <label className="text-xs font-semibold text-[#5A6272] uppercase tracking-wider">Phone Number</label>
+                        <label className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">Phone Number</label>
                         <input
                           name="phone"
                           type="tel"
@@ -344,7 +344,7 @@ export default function Contact() {
                           onChange={handleChange}
                           onFocus={() => setFocused('phone')}
                           onBlur={() => setFocused(null)}
-                          className="px-4 py-3 rounded-xl text-sm placeholder-[#374151] w-full"
+                          className="px-4 py-3 rounded-xl text-sm placeholder-[var(--text-dim)] w-full"
                           style={inputStyle('phone')}
                         />
                       </div>
@@ -352,7 +352,7 @@ export default function Contact() {
 
                     {/* Service */}
                     <div className="flex flex-col gap-2">
-                      <label className="text-xs font-semibold text-[#5A6272] uppercase tracking-wider">Service Required</label>
+                      <label className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">Service Required</label>
                       <select
                         name="service"
                         value={form.service}
@@ -360,18 +360,18 @@ export default function Contact() {
                         onFocus={() => setFocused('service')}
                         onBlur={() => setFocused(null)}
                         className="px-4 py-3 rounded-xl text-sm w-full appearance-none"
-                        style={{ ...inputStyle('service'), color: form.service ? '#fff' : '#374151' }}
+                        style={{ ...inputStyle('service'), color: form.service ? 'var(--input-text)' : 'var(--text-dim)' }}
                       >
                         <option value="" disabled>Select a service...</option>
                         {services.map((s) => (
-                          <option key={s} value={s} style={{ background: '#0a0a0a', color: '#fff' }}>{s}</option>
+                          <option key={s} value={s} style={{ background: 'var(--option-bg)', color: 'var(--input-text)' }}>{s}</option>
                         ))}
                       </select>
                     </div>
 
                     {/* Message */}
                     <div className="flex flex-col gap-2">
-                      <label className="text-xs font-semibold text-[#5A6272] uppercase tracking-wider">Message <span style={{ color: '#2CCDDE' }}>*</span></label>
+                      <label className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">Message <span style={{ color: '#2CCDDE' }}>*</span></label>
                       <textarea
                         name="message"
                         required
@@ -381,7 +381,7 @@ export default function Contact() {
                         onChange={handleChange}
                         onFocus={() => setFocused('message')}
                         onBlur={() => setFocused(null)}
-                        className="px-4 py-3 rounded-xl text-sm placeholder-[#374151] w-full resize-none"
+                        className="px-4 py-3 rounded-xl text-sm placeholder-[var(--text-dim)] w-full resize-none"
                         style={inputStyle('message')}
                       />
                     </div>
@@ -398,7 +398,7 @@ export default function Contact() {
                       </svg>
                     </button>
 
-                    <p className="text-center text-xs text-[#374151]">
+                    <p className="text-center text-xs text-[var(--text-dim)]">
                       We respond within 2 hours &nbsp;·&nbsp; No spam, ever
                     </p>
 

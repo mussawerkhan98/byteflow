@@ -82,17 +82,17 @@ export default function AboutUs() {
 
           <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8">
             <h2 className="text-5xl sm:text-6xl lg:text-[68px] font-bold leading-[1.05] tracking-tight">
-              <span className="text-white">Your Trusted </span>
+              <span className="text-[var(--text-primary)]">Your Trusted </span>
               <span style={{ background: 'linear-gradient(135deg, #2CCDDE, #46A3E1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                 IT Partner
               </span>
               <br />
-              <span className="text-white">Serving Dubai </span>
+              <span className="text-[var(--text-primary)]">Serving Dubai </span>
               <span style={{ background: 'linear-gradient(135deg, #46A3E1, #2CCDDE)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                 Since 2017
               </span>
             </h2>
-            <p className="text-[#5A6272] text-base leading-relaxed max-w-sm lg:text-right lg:pb-2 flex-shrink-0">
+            <p className="text-[var(--text-muted)] text-base leading-relaxed max-w-sm lg:text-right lg:pb-2 flex-shrink-0">
               We make enterprise-grade IT accessible to every business in the UAE — so you can focus entirely on growth.
             </p>
           </div>
@@ -105,7 +105,7 @@ export default function AboutUs() {
               key={s.label}
               className="flex flex-col items-center justify-center py-10 px-8 rounded-2xl"
               style={{
-                background: 'linear-gradient(160deg, rgba(44,205,222,0.06) 0%, #050F18 100%)',
+                background: 'linear-gradient(160deg, rgba(44,205,222,0.06) 0%, var(--bg-surface) 100%)',
                 border: '1px solid rgba(44,205,222,0.15)',
               }}
             >
@@ -115,7 +115,7 @@ export default function AboutUs() {
               >
                 {s.value}
               </span>
-              <span className="text-sm text-[#5A6272] font-medium text-center">{s.label}</span>
+              <span className="text-sm text-[var(--text-muted)] font-medium text-center">{s.label}</span>
             </div>
           ))}
         </div>
@@ -127,17 +127,17 @@ export default function AboutUs() {
             <div
               key={h.title}
               className="group flex gap-5 p-8 transition-all duration-300"
-              style={{ background: 'linear-gradient(160deg, rgba(44,205,222,0.04) 0%, #040D12 100%)' }}
+              style={{ background: 'linear-gradient(160deg, rgba(44,205,222,0.04) 0%, var(--bg-page) 100%)' }}
             >
               <div
                 className="w-2 flex-shrink-0 rounded-full mt-1 self-stretch max-h-5"
                 style={{ background: 'linear-gradient(180deg, #2CCDDE, #46A3E1)', minHeight: '20px', maxHeight: '20px' }}
               />
               <div>
-                <h3 className="text-white font-bold text-base mb-2 group-hover:text-[#2CCDDE] transition-colors duration-300">
+                <h3 className="text-[var(--text-primary)] font-bold text-base mb-2 group-hover:text-[#2CCDDE] transition-colors duration-300">
                   {h.title}
                 </h3>
-                <p className="text-[#5A6272] text-sm leading-relaxed">{h.desc}</p>
+                <p className="text-[var(--text-muted)] text-sm leading-relaxed">{h.desc}</p>
               </div>
             </div>
           ))}
@@ -145,7 +145,7 @@ export default function AboutUs() {
 
         {/* CTA row */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-6 mb-20">
-          <p className="text-[#5A6272] text-sm max-w-md">
+          <p className="text-[var(--text-muted)] text-sm max-w-md">
             Byteflow handles your entire IT ecosystem — from a single laptop to a full corporate network setup across the UAE.
           </p>
           <Link
@@ -171,7 +171,7 @@ export default function AboutUs() {
                 key={v.title}
                 className="group flex flex-col gap-4 p-6 rounded-2xl transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_40px_rgba(44,205,222,0.1)]"
                 style={{
-                  background: 'linear-gradient(160deg, rgba(44,205,222,0.06) 0%, rgba(70,163,225,0.02) 40%, #050F18 100%)',
+                  background: 'linear-gradient(160deg, rgba(44,205,222,0.06) 0%, rgba(70,163,225,0.02) 40%, var(--bg-surface) 100%)',
                   border: '1px solid rgba(44,205,222,0.15)',
                 }}
               >
@@ -186,10 +186,10 @@ export default function AboutUs() {
                   {v.icon}
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-white mb-1.5 group-hover:text-[#2CCDDE] transition-colors duration-300">
+                  <h3 className="text-sm font-bold text-[var(--text-primary)] mb-1.5 group-hover:text-[#2CCDDE] transition-colors duration-300">
                     {v.title}
                   </h3>
-                  <p className="text-xs text-[#5A6272] leading-relaxed">{v.desc}</p>
+                  <p className="text-xs text-[var(--text-muted)] leading-relaxed">{v.desc}</p>
                 </div>
               </div>
             ))}

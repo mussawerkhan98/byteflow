@@ -99,7 +99,7 @@ export default function Reviews() {
               Client Reviews
             </div>
             <h2 className="text-4xl sm:text-5xl font-bold leading-tight">
-              <span className="text-white">Trusted by Businesses</span>
+              <span className="text-[var(--text-primary)]">Trusted by Businesses</span>
               <br />
               <span style={{ background: 'linear-gradient(135deg, #2CCDDE, #46A3E1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                 Across the UAE
@@ -111,17 +111,17 @@ export default function Reviews() {
           <div
             className="flex items-center gap-4 px-6 py-4 rounded-2xl flex-shrink-0 self-start"
             style={{
-              background: 'linear-gradient(160deg, rgba(44,205,222,0.07) 0%, #050F18 100%)',
+              background: 'linear-gradient(160deg, rgba(44,205,222,0.07) 0%, var(--bg-surface) 100%)',
               border: '1px solid rgba(44,205,222,0.18)',
             }}
           >
             <img src="/google.svg" alt="Google" className="w-9 h-9 object-contain flex-shrink-0" />
             <div>
               <div className="flex items-center gap-2 mb-0.5">
-                <span className="text-2xl font-black text-white leading-none">4.9</span>
+                <span className="text-2xl font-black text-[var(--text-primary)] leading-none">4.9</span>
                 <Stars count={5} />
               </div>
-              <p className="text-[#5A6272] text-xs">50+ Google reviews</p>
+              <p className="text-[var(--text-muted)] text-xs">50+ Google reviews</p>
             </div>
           </div>
         </div>
@@ -130,7 +130,7 @@ export default function Reviews() {
         <div
           className="relative rounded-3xl overflow-hidden"
           style={{
-            background: 'linear-gradient(160deg, rgba(44,205,222,0.07) 0%, rgba(70,163,225,0.02) 40%, #050F18 100%)',
+            background: 'linear-gradient(160deg, rgba(44,205,222,0.07) 0%, rgba(70,163,225,0.02) 40%, var(--bg-surface) 100%)',
             border: '1px solid rgba(44,205,222,0.18)',
           }}
         >
@@ -166,7 +166,7 @@ export default function Reviews() {
                 transition: 'opacity 0.28s ease, transform 0.28s ease',
               }}
             >
-              <p className="text-white text-xl sm:text-2xl font-medium leading-relaxed mb-10" style={{ letterSpacing: '-0.01em' }}>
+              <p className="text-[var(--text-primary)] text-xl sm:text-2xl font-medium leading-relaxed mb-10" style={{ letterSpacing: '-0.01em' }}>
                 {r.text}
               </p>
 
@@ -179,7 +179,7 @@ export default function Reviews() {
                   />
                   <div>
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-white font-bold text-base">{r.name}</span>
+                      <span className="text-[var(--text-primary)] font-bold text-base">{r.name}</span>
                       {/* Verified */}
                       <div
                         className="w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0"
@@ -191,7 +191,7 @@ export default function Reviews() {
                         </svg>
                       </div>
                     </div>
-                    <p className="text-[#5A6272] text-sm">{r.role}</p>
+                    <p className="text-[var(--text-muted)] text-sm">{r.role}</p>
                   </div>
                 </div>
 
@@ -199,7 +199,7 @@ export default function Reviews() {
                   <Stars count={r.rating} />
                   <div className="flex items-center gap-1.5">
                     <img src="/google.svg" alt="Google" className="w-4 h-4 object-contain opacity-50" />
-                    <span className="text-xs text-[#374151] font-medium">Posted on Google</span>
+                    <span className="text-xs text-[var(--text-dim)] font-medium">Posted on Google</span>
                   </div>
                 </div>
               </div>

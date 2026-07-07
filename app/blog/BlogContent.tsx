@@ -14,7 +14,7 @@ function PostCard({ post }: { post: Post }) {
     <Link
       href={`/blog/${post.slug}`}
       className="group relative flex flex-col rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_0_50px_rgba(44,205,222,0.12),0_20px_40px_rgba(0,0,0,0.5)]"
-      style={{ background: '#050F18', border: '1px solid rgba(44,205,222,0.12)' }}
+      style={{ background: 'var(--bg-surface)', border: '1px solid rgba(44,205,222,0.12)' }}
     >
       <div className="relative h-44 flex items-center justify-center overflow-hidden flex-shrink-0" style={{ background: gradient }}>
         {post.image_url ? (
@@ -53,15 +53,15 @@ function PostCard({ post }: { post: Post }) {
 
       <div className="flex flex-col flex-1 p-5 gap-3">
         <div className="flex items-center gap-2">
-          <span className="text-[10px] text-[#374151] font-medium">{post.date}</span>
-          <span className="w-1 h-1 rounded-full bg-[#374151]" />
-          <span className="text-[10px] text-[#374151] font-medium">{post.read_time}</span>
+          <span className="text-[10px] text-[var(--text-dim)] font-medium">{post.date}</span>
+          <span className="w-1 h-1 rounded-full bg-[var(--text-dim)]" />
+          <span className="text-[10px] text-[var(--text-dim)] font-medium">{post.read_time}</span>
         </div>
-        <h3 className="text-white text-sm font-bold leading-snug group-hover:text-[#2CCDDE] transition-colors duration-200 flex-1">
+        <h3 className="text-[var(--text-primary)] text-sm font-bold leading-snug group-hover:text-[#2CCDDE] transition-colors duration-200 flex-1">
           {post.title}
         </h3>
-        <p className="text-[#5A6272] text-xs leading-relaxed line-clamp-3">{post.excerpt}</p>
-        <div className="flex items-center justify-between pt-4 mt-auto" style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+        <p className="text-[var(--text-muted)] text-xs leading-relaxed line-clamp-3">{post.excerpt}</p>
+        <div className="flex items-center justify-between pt-4 mt-auto" style={{ borderTop: '1px solid var(--overlay-hover)' }}>
           <span className="text-xs font-bold" style={{ color: '#2CCDDE' }}>Read article</span>
           <div
             className="w-7 h-7 rounded-full flex items-center justify-center transition-all duration-300 group-hover:shadow-[0_0_16px_rgba(44,205,222,0.5)] group-hover:scale-110"
@@ -83,7 +83,7 @@ function FeaturedPost({ post }: { post: Post }) {
     <Link
       href={`/blog/${post.slug}`}
       className="group grid grid-cols-1 lg:grid-cols-5 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-[0_0_60px_rgba(44,205,222,0.14),0_24px_48px_rgba(0,0,0,0.6)]"
-      style={{ background: '#050F18', border: '1px solid rgba(44,205,222,0.18)' }}
+      style={{ background: 'var(--bg-surface)', border: '1px solid rgba(44,205,222,0.18)' }}
     >
       <div className="lg:col-span-2 h-56 lg:h-auto relative flex items-center justify-center overflow-hidden" style={{ background: gradient }}>
         {post.image_url ? (
@@ -131,14 +131,14 @@ function FeaturedPost({ post }: { post: Post }) {
             >
               {post.category}
             </span>
-            <span className="text-[#374151] text-xs">{post.date}</span>
-            <span className="w-1 h-1 rounded-full bg-[#374151]" />
-            <span className="text-[#374151] text-xs">{post.read_time}</span>
+            <span className="text-[var(--text-dim)] text-xs">{post.date}</span>
+            <span className="w-1 h-1 rounded-full bg-[var(--text-dim)]" />
+            <span className="text-[var(--text-dim)] text-xs">{post.read_time}</span>
           </div>
-          <h2 className="text-white text-xl sm:text-2xl font-bold leading-snug mb-4 group-hover:text-[#2CCDDE] transition-colors duration-200">
+          <h2 className="text-[var(--text-primary)] text-xl sm:text-2xl font-bold leading-snug mb-4 group-hover:text-[#2CCDDE] transition-colors duration-200">
             {post.title}
           </h2>
-          <p className="text-[#5A6272] text-sm leading-relaxed">{post.excerpt}</p>
+          <p className="text-[var(--text-muted)] text-sm leading-relaxed">{post.excerpt}</p>
         </div>
         <div>
           <div
@@ -172,13 +172,13 @@ export default function BlogContent({ posts }: { posts: Post[] }) {
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6">
             <div>
               <h1 className="text-4xl sm:text-5xl font-bold leading-tight">
-                <span className="text-white">IT knowledge,</span>
+                <span className="text-[var(--text-primary)]">IT knowledge,</span>
                 <br />
                 <span style={{ background: 'linear-gradient(135deg, #2CCDDE, #46A3E1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                   no jargon
                 </span>
               </h1>
-              <p className="text-[#5A6272] mt-4 text-base max-w-md leading-relaxed">
+              <p className="text-[var(--text-muted)] mt-4 text-base max-w-md leading-relaxed">
                 Practical guides on IT support, cybersecurity, cloud and digital marketing for businesses in Dubai and the UAE.
               </p>
             </div>
@@ -186,8 +186,8 @@ export default function BlogContent({ posts }: { posts: Post[] }) {
               className="flex items-center gap-2 px-5 py-3 rounded-full flex-shrink-0 self-start"
               style={{ background: 'rgba(44,205,222,0.07)', border: '1px solid rgba(44,205,222,0.18)' }}
             >
-              <span className="text-white font-black text-lg leading-none">{posts.length}</span>
-              <span className="text-[#5A6272] text-xs">articles published</span>
+              <span className="text-[var(--text-primary)] font-black text-lg leading-none">{posts.length}</span>
+              <span className="text-[var(--text-muted)] text-xs">articles published</span>
             </div>
           </div>
         </div>
@@ -204,7 +204,7 @@ export default function BlogContent({ posts }: { posts: Post[] }) {
               style={
                 active === cat
                   ? { background: 'linear-gradient(135deg, #2CCDDE, #46A3E1)', color: '#000' }
-                  : { background: 'rgba(44,205,222,0.06)', border: '1px solid rgba(44,205,222,0.16)', color: '#5A6272' }
+                  : { background: 'rgba(44,205,222,0.06)', border: '1px solid rgba(44,205,222,0.16)', color: 'var(--text-muted)' }
               }
             >
               {cat}
@@ -217,7 +217,7 @@ export default function BlogContent({ posts }: { posts: Post[] }) {
       <section className="px-4 sm:px-6 lg:px-8 pb-28">
         <div className="max-w-7xl mx-auto flex flex-col gap-6">
           {filtered.length === 0 && (
-            <p className="text-center text-[#5A6272] text-sm py-20">No articles in this category yet.</p>
+            <p className="text-center text-[var(--text-muted)] text-sm py-20">No articles in this category yet.</p>
           )}
           {featured && <FeaturedPost post={featured} />}
           {rest.length > 0 && (
@@ -236,14 +236,14 @@ export default function BlogContent({ posts }: { posts: Post[] }) {
           <div
             className="relative overflow-hidden rounded-2xl px-8 py-12 flex flex-col sm:flex-row items-center justify-between gap-8"
             style={{
-              background: 'linear-gradient(135deg, rgba(44,205,222,0.08) 0%, rgba(70,163,225,0.04) 50%, #050F18 100%)',
+              background: 'linear-gradient(135deg, rgba(44,205,222,0.08) 0%, rgba(70,163,225,0.04) 50%, var(--bg-surface) 100%)',
               border: '1px solid rgba(44,205,222,0.18)',
             }}
           >
             <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(44,205,222,0.6), transparent)' }} />
             <div>
-              <p className="text-white text-xl font-bold mb-2">Have an IT problem you need solved?</p>
-              <p className="text-[#5A6272] text-sm max-w-sm">Reading about it is one thing. Getting it fixed is another. Our team responds within 2 hours.</p>
+              <p className="text-[var(--text-primary)] text-xl font-bold mb-2">Have an IT problem you need solved?</p>
+              <p className="text-[var(--text-muted)] text-sm max-w-sm">Reading about it is one thing. Getting it fixed is another. Our team responds within 2 hours.</p>
             </div>
             <a
               href="/contact-us"

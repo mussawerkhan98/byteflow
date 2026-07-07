@@ -72,13 +72,13 @@ export default function HowItWorks() {
             Our Process
           </div>
           <h2 className="text-4xl sm:text-5xl font-bold leading-tight mb-4">
-            <span className="text-white">From First Call to</span>
+            <span className="text-[var(--text-primary)]">From First Call to</span>
             <br />
             <span style={{ background: 'linear-gradient(135deg, #2CCDDE, #46A3E1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
               Full Delivery
             </span>
           </h2>
-          <p className="text-[#5A6272] text-base max-w-lg mx-auto">
+          <p className="text-[var(--text-muted)] text-base max-w-lg mx-auto">
             A simple, transparent process so you always know exactly where things stand.
           </p>
         </div>
@@ -108,7 +108,7 @@ export default function HowItWorks() {
                 <div
                   className="group w-full flex flex-col gap-4 p-6 rounded-2xl transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_40px_rgba(44,205,222,0.1)]"
                   style={{
-                    background: 'linear-gradient(160deg, rgba(44,205,222,0.06) 0%, rgba(70,163,225,0.02) 40%, #050F18 100%)',
+                    background: 'linear-gradient(160deg, rgba(44,205,222,0.06) 0%, rgba(70,163,225,0.02) 40%, var(--bg-surface) 100%)',
                     border: '1px solid rgba(44,205,222,0.13)',
                   }}
                 >
@@ -136,10 +136,10 @@ export default function HowItWorks() {
                     </span>
                   </div>
 
-                  <h3 className="text-white text-sm font-bold leading-snug group-hover:text-[#2CCDDE] transition-colors duration-200">
+                  <h3 className="text-[var(--text-primary)] text-sm font-bold leading-snug group-hover:text-[#2CCDDE] transition-colors duration-200">
                     {step.title}
                   </h3>
-                  <p className="text-[#5A6272] text-xs leading-relaxed">{step.desc}</p>
+                  <p className="text-[var(--text-muted)] text-xs leading-relaxed">{step.desc}</p>
                 </div>
               </div>
             ))}
@@ -171,7 +171,7 @@ export default function HowItWorks() {
               <div
                 className="group flex flex-col gap-3 p-5 rounded-2xl mb-4 flex-1 transition-all duration-300"
                 style={{
-                  background: 'linear-gradient(160deg, rgba(44,205,222,0.06) 0%, #050F18 100%)',
+                  background: 'linear-gradient(160deg, rgba(44,205,222,0.06) 0%, var(--bg-surface) 100%)',
                   border: '1px solid rgba(44,205,222,0.13)',
                 }}
               >
@@ -186,9 +186,9 @@ export default function HowItWorks() {
                   >
                     {step.icon}
                   </div>
-                  <h3 className="text-white text-sm font-bold">{step.title}</h3>
+                  <h3 className="text-[var(--text-primary)] text-sm font-bold">{step.title}</h3>
                 </div>
-                <p className="text-[#5A6272] text-xs leading-relaxed">{step.desc}</p>
+                <p className="text-[var(--text-muted)] text-xs leading-relaxed">{step.desc}</p>
               </div>
             </div>
           ))}

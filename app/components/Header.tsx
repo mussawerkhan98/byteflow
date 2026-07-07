@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import ThemeToggle from './ThemeToggle'
 
 const services = [
   { label: 'IT AMC / IT Support', href: '/it-amc-services-dubai' },
@@ -51,7 +52,7 @@ export default function Header() {
     <header
       className="sticky top-0 z-50 transition-all duration-300"
       style={{
-        background: scrolled ? 'rgba(0,0,0,0.85)' : 'transparent',
+        background: scrolled ? 'var(--header-scrolled-bg)' : 'transparent',
         backdropFilter: scrolled ? 'blur(16px)' : 'none',
         borderBottom: scrolled ? '1px solid rgba(44,205,222,0.12)' : '1px solid transparent',
       }}
@@ -77,7 +78,7 @@ export default function Header() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="text-[#9CA3AF] hover:text-[#2CCDDE] text-sm font-medium transition-colors duration-200 whitespace-nowrap"
+                className="text-[var(--text-nav)] hover:text-[#2CCDDE] text-sm font-medium transition-colors duration-200 whitespace-nowrap"
               >
                 {link.label}
               </Link>
@@ -85,7 +86,7 @@ export default function Header() {
 
             {/* Services dropdown */}
             <div className="relative group">
-              <button className="flex items-center gap-1.5 text-[#9CA3AF] hover:text-[#2CCDDE] text-sm font-medium transition-colors duration-200 whitespace-nowrap">
+              <button className="flex items-center gap-1.5 text-[var(--text-nav)] hover:text-[#2CCDDE] text-sm font-medium transition-colors duration-200 whitespace-nowrap">
                 Services
                 <svg
                   className="w-3.5 h-3.5 transition-transform duration-200 group-hover:rotate-180"
@@ -98,7 +99,7 @@ export default function Header() {
               <div
                 className="absolute top-full left-1/2 -translate-x-1/2 mt-4 w-56 rounded-xl border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 translate-y-1 group-hover:translate-y-0 z-50 overflow-hidden"
                 style={{
-                  background: '#040D12',
+                  background: 'var(--bg-page)',
                   borderColor: '#2CCDDE30',
                   boxShadow: '0 20px 40px rgba(0,0,0,0.8), 0 0 0 1px rgba(44,205,222,0.08)',
                 }}
@@ -108,8 +109,8 @@ export default function Header() {
                   <Link
                     key={s.href}
                     href={s.href}
-                    className="flex items-center gap-3 px-4 py-3 text-sm text-[#6B7280] hover:text-[#2CCDDE] hover:bg-white/[0.03] transition-all duration-150"
-                    style={{ borderBottom: i < services.length - 1 ? '1px solid #ffffff08' : 'none' }}
+                    className="flex items-center gap-3 px-4 py-3 text-sm text-[var(--text-quiet)] hover:text-[#2CCDDE] hover:bg-[var(--overlay-hover-soft)] transition-all duration-150"
+                    style={{ borderBottom: i < services.length - 1 ? '1px solid var(--border-subtle)' : 'none' }}
                   >
                     <span className="w-1 h-1 rounded-full flex-shrink-0" style={{ background: '#2CCDDE' }} />
                     {s.label}
@@ -122,12 +123,14 @@ export default function Header() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="text-[#9CA3AF] hover:text-[#2CCDDE] text-sm font-medium transition-colors duration-200 whitespace-nowrap"
+                className="text-[var(--text-nav)] hover:text-[#2CCDDE] text-sm font-medium transition-colors duration-200 whitespace-nowrap"
               >
                 {link.label}
               </Link>
             ))}
           </nav>
+
+          <ThemeToggle />
 
           {/* Desktop CTA */}
           <Link
@@ -169,7 +172,7 @@ export default function Header() {
       {/* Mobile menu panel */}
       <div
         className={`lg:hidden overflow-hidden transition-all duration-300 ${mobileOpen ? 'max-h-[calc(100vh-76px)]' : 'max-h-0'}`}
-        style={{ background: '#040D12', borderTop: mobileOpen ? '1px solid rgba(44,205,222,0.12)' : 'none' }}
+        style={{ background: 'var(--bg-page)', borderTop: mobileOpen ? '1px solid rgba(44,205,222,0.12)' : 'none' }}
       >
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 py-6 flex flex-col overflow-y-auto" style={{ maxHeight: 'calc(100vh - 76px)' }}>
           {navLinks.map((link) => (
@@ -177,20 +180,20 @@ export default function Header() {
               key={link.href}
               href={link.href}
               onClick={() => setMobileOpen(false)}
-              className="text-[#9CA3AF] hover:text-[#2CCDDE] text-sm font-medium py-3 transition-colors duration-200"
-              style={{ borderBottom: '1px solid #ffffff08' }}
+              className="text-[var(--text-nav)] hover:text-[#2CCDDE] text-sm font-medium py-3 transition-colors duration-200"
+              style={{ borderBottom: '1px solid var(--border-subtle)' }}
             >
               {link.label}
             </Link>
           ))}
 
-          <p className="text-[#374151] text-xs font-bold uppercase tracking-widest pt-5 pb-2">Services</p>
+          <p className="text-[var(--text-dim)] text-xs font-bold uppercase tracking-widest pt-5 pb-2">Services</p>
           {services.map((s) => (
             <Link
               key={s.href}
               href={s.href}
               onClick={() => setMobileOpen(false)}
-              className="flex items-center gap-3 text-[#6B7280] hover:text-[#2CCDDE] text-sm py-2.5 transition-colors duration-200"
+              className="flex items-center gap-3 text-[var(--text-quiet)] hover:text-[#2CCDDE] text-sm py-2.5 transition-colors duration-200"
             >
               <span className="w-1 h-1 rounded-full flex-shrink-0" style={{ background: '#2CCDDE' }} />
               {s.label}

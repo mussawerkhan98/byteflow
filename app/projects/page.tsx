@@ -230,7 +230,7 @@ function ImagePlaceholder({
     <div
       className={`relative w-full overflow-hidden rounded-xl flex flex-col items-center justify-center gap-3 ${className ?? 'h-44'}`}
       style={{
-        background: 'linear-gradient(160deg, rgba(44,205,222,0.04) 0%, #080F18 100%)',
+        background: 'linear-gradient(160deg, rgba(44,205,222,0.04) 0%, var(--bg-surface-alt) 100%)',
         border: '1px dashed rgba(44,205,222,0.18)',
       }}
     >
@@ -274,7 +274,7 @@ function Visual({ type, className }: { type: string; className?: string }) {
     return (
       <div
         className={base}
-        style={{ background: 'linear-gradient(145deg, rgba(44,205,222,0.13) 0%, rgba(44,205,222,0.03) 55%, #040D12 100%)' }}
+        style={{ background: 'linear-gradient(145deg, rgba(44,205,222,0.13) 0%, rgba(44,205,222,0.03) 55%, var(--bg-page) 100%)' }}
       >
         <div
           className="absolute inset-0"
@@ -314,7 +314,7 @@ function Visual({ type, className }: { type: string; className?: string }) {
     return (
       <div
         className={base}
-        style={{ background: 'linear-gradient(145deg, rgba(220,40,70,0.06) 0%, rgba(44,205,222,0.09) 60%, #040D12 100%)' }}
+        style={{ background: 'linear-gradient(145deg, rgba(220,40,70,0.06) 0%, rgba(44,205,222,0.09) 60%, var(--bg-page) 100%)' }}
       >
         <div
           className="absolute inset-0"
@@ -347,7 +347,7 @@ function Visual({ type, className }: { type: string; className?: string }) {
     return (
       <div
         className={base}
-        style={{ background: 'linear-gradient(145deg, rgba(70,163,225,0.13) 0%, rgba(44,205,222,0.04) 60%, #040D12 100%)' }}
+        style={{ background: 'linear-gradient(145deg, rgba(70,163,225,0.13) 0%, rgba(44,205,222,0.04) 60%, var(--bg-page) 100%)' }}
       >
         {([
           [14, 55, 40],
@@ -390,7 +390,7 @@ function Visual({ type, className }: { type: string; className?: string }) {
     return (
       <div
         className={base}
-        style={{ background: 'linear-gradient(145deg, rgba(44,205,222,0.07) 0%, rgba(70,163,225,0.13) 55%, #040D12 100%)' }}
+        style={{ background: 'linear-gradient(145deg, rgba(44,205,222,0.07) 0%, rgba(70,163,225,0.13) 55%, var(--bg-page) 100%)' }}
       >
         <div className="absolute top-1/2 left-[38%] -translate-x-1/2 -translate-y-[60%] opacity-[0.12]">
           <svg width="100" height="68" viewBox="0 0 100 68" fill="none">
@@ -425,7 +425,7 @@ function Visual({ type, className }: { type: string; className?: string }) {
     return (
       <div
         className={base}
-        style={{ background: 'linear-gradient(145deg, rgba(44,205,222,0.09) 0%, rgba(70,163,225,0.09) 55%, #040D12 100%)' }}
+        style={{ background: 'linear-gradient(145deg, rgba(44,205,222,0.09) 0%, rgba(70,163,225,0.09) 55%, var(--bg-page) 100%)' }}
       >
         {([36, 52, 42, 68, 50, 78, 64] as number[]).map((h, i) => (
           <div
@@ -453,7 +453,7 @@ function Visual({ type, className }: { type: string; className?: string }) {
     return (
       <div
         className={base}
-        style={{ background: 'linear-gradient(145deg, rgba(44,205,222,0.09) 0%, rgba(70,163,225,0.07) 55%, #040D12 100%)' }}
+        style={{ background: 'linear-gradient(145deg, rgba(44,205,222,0.09) 0%, rgba(70,163,225,0.07) 55%, var(--bg-page) 100%)' }}
       >
         <svg className="absolute inset-0 w-full h-full" preserveAspectRatio="none">
           {[
@@ -508,7 +508,7 @@ function Visual({ type, className }: { type: string; className?: string }) {
   return (
     <div
       className={base}
-      style={{ background: 'linear-gradient(145deg, rgba(70,163,225,0.11) 0%, rgba(44,205,222,0.07) 55%, #040D12 100%)' }}
+      style={{ background: 'linear-gradient(145deg, rgba(70,163,225,0.11) 0%, rgba(44,205,222,0.07) 55%, var(--bg-page) 100%)' }}
     >
       {([80, 60, 42, 24] as number[]).map((size, i) => (
         <div
@@ -553,7 +553,7 @@ function MetricItem({ value, label }: Metric) {
       >
         {value}
       </span>
-      <span className="text-[#5A6272] text-xs mt-1 leading-tight">{label}</span>
+      <span className="text-[var(--text-muted)] text-xs mt-1 leading-tight">{label}</span>
     </div>
   )
 }
@@ -563,7 +563,7 @@ function FeaturedCard({ project }: { project: Project }) {
     <div
       className="relative rounded-2xl overflow-hidden"
       style={{
-        background: 'linear-gradient(160deg, rgba(44,205,222,0.07) 0%, rgba(70,163,225,0.03) 35%, #050F18 100%)',
+        background: 'linear-gradient(160deg, rgba(44,205,222,0.07) 0%, rgba(70,163,225,0.03) 35%, var(--bg-surface) 100%)',
         border: '1px solid rgba(44,205,222,0.2)',
       }}
     >
@@ -583,18 +583,18 @@ function FeaturedCard({ project }: { project: Project }) {
                 {project.category}
               </span>
               <span className="w-1 h-1 rounded-full bg-[#2CCDDE] opacity-40" />
-              <span className="text-[#5A6272] text-xs">{project.industry}</span>
-              <span className="w-1 h-1 rounded-full bg-[#5A6272] opacity-40" />
-              <span className="text-[#5A6272] text-xs">{project.year}</span>
+              <span className="text-[var(--text-muted)] text-xs">{project.industry}</span>
+              <span className="w-1 h-1 rounded-full bg-[var(--text-muted)] opacity-40" />
+              <span className="text-[var(--text-muted)] text-xs">{project.year}</span>
             </div>
 
-            <h2 className="text-white text-xl sm:text-2xl font-bold leading-snug mb-4">{project.title}</h2>
-            <p className="text-[#5A6272] text-sm leading-relaxed mb-6">{project.story}</p>
+            <h2 className="text-[var(--text-primary)] text-xl sm:text-2xl font-bold leading-snug mb-4">{project.title}</h2>
+            <p className="text-[var(--text-muted)] text-sm leading-relaxed mb-6">{project.story}</p>
 
             {/* Deliverables */}
             <ul className="flex flex-col gap-2">
               {project.deliverables.map((d) => (
-                <li key={d} className="flex items-start gap-2.5 text-sm text-[#5A6272]">
+                <li key={d} className="flex items-start gap-2.5 text-sm text-[var(--text-muted)]">
                   <span
                     className="mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0"
                     style={{ background: '#2CCDDE', opacity: 0.7 }}
@@ -609,7 +609,7 @@ function FeaturedCard({ project }: { project: Project }) {
           <div>
             <div
               className="flex items-start gap-8 py-5 mb-5"
-              style={{ borderTop: '1px solid rgba(255,255,255,0.05)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}
+              style={{ borderTop: '1px solid var(--overlay-hover)', borderBottom: '1px solid var(--overlay-hover)' }}
             >
               {project.metrics.map((m) => (
                 <MetricItem key={m.label} {...m} />
@@ -620,7 +620,7 @@ function FeaturedCard({ project }: { project: Project }) {
                 <span
                   key={t}
                   className="px-3 py-1 rounded-full text-[11px] font-medium"
-                  style={{ background: 'rgba(44,205,222,0.07)', border: '1px solid rgba(44,205,222,0.18)', color: '#5A6272' }}
+                  style={{ background: 'rgba(44,205,222,0.07)', border: '1px solid rgba(44,205,222,0.18)', color: 'var(--text-muted)' }}
                 >
                   {t}
                 </span>
@@ -638,7 +638,7 @@ function ProjectCard({ project }: { project: Project }) {
     <div
       className="group relative flex flex-col rounded-2xl overflow-hidden transition-all duration-300 hover:border-[rgba(44,205,222,0.3)]"
       style={{
-        background: 'linear-gradient(160deg, rgba(44,205,222,0.05) 0%, rgba(70,163,225,0.02) 30%, #050F18 100%)',
+        background: 'linear-gradient(160deg, rgba(44,205,222,0.05) 0%, rgba(70,163,225,0.02) 30%, var(--bg-surface) 100%)',
         border: '1px solid rgba(44,205,222,0.12)',
       }}
     >
@@ -655,22 +655,22 @@ function ProjectCard({ project }: { project: Project }) {
             {project.category}
           </span>
           <div className="flex items-center gap-2">
-            <span className="text-[#5A6272] text-xs">{project.industry}</span>
-            <span className="text-[#5A6272] text-xs opacity-50">/</span>
-            <span className="text-[#5A6272] text-xs">{project.year}</span>
+            <span className="text-[var(--text-muted)] text-xs">{project.industry}</span>
+            <span className="text-[var(--text-muted)] text-xs opacity-50">/</span>
+            <span className="text-[var(--text-muted)] text-xs">{project.year}</span>
           </div>
         </div>
 
         {/* Title */}
-        <h3 className="text-white text-[15px] font-semibold leading-snug">{project.title}</h3>
+        <h3 className="text-[var(--text-primary)] text-[15px] font-semibold leading-snug">{project.title}</h3>
 
         {/* Story */}
-        <p className="text-[#5A6272] text-sm leading-relaxed flex-1">{project.story}</p>
+        <p className="text-[var(--text-muted)] text-sm leading-relaxed flex-1">{project.story}</p>
 
         {/* Metrics */}
         <div
           className="flex items-start justify-between gap-3 py-4"
-          style={{ borderTop: '1px solid rgba(255,255,255,0.05)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}
+          style={{ borderTop: '1px solid var(--overlay-hover)', borderBottom: '1px solid var(--overlay-hover)' }}
         >
           {project.metrics.map((m) => (
             <div key={m.label} className="flex flex-col">
@@ -684,7 +684,7 @@ function ProjectCard({ project }: { project: Project }) {
               >
                 {m.value}
               </span>
-              <span className="text-[#5A6272] text-[10px] mt-1 leading-tight">{m.label}</span>
+              <span className="text-[var(--text-muted)] text-[10px] mt-1 leading-tight">{m.label}</span>
             </div>
           ))}
         </div>
@@ -695,7 +695,7 @@ function ProjectCard({ project }: { project: Project }) {
             <span
               key={t}
               className="px-2.5 py-0.5 rounded-full text-[10px] font-medium"
-              style={{ background: 'rgba(44,205,222,0.06)', border: '1px solid rgba(44,205,222,0.15)', color: '#5A6272' }}
+              style={{ background: 'rgba(44,205,222,0.06)', border: '1px solid rgba(44,205,222,0.15)', color: 'var(--text-muted)' }}
             >
               {t}
             </span>
@@ -723,7 +723,7 @@ export default function ProjectsPage() {
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-8">
             <div>
               <h1 className="text-4xl sm:text-5xl font-bold leading-tight">
-                <span className="text-white">Projects that</span>
+                <span className="text-[var(--text-primary)]">Projects that</span>
                 <br />
                 <span
                   style={{
@@ -735,7 +735,7 @@ export default function ProjectsPage() {
                   moved the needle
                 </span>
               </h1>
-              <p className="text-[#5A6272] mt-4 text-base max-w-md leading-relaxed">
+              <p className="text-[var(--text-muted)] mt-4 text-base max-w-md leading-relaxed">
                 Real work, real clients, real numbers. Every project on this page has a name attached to it.
               </p>
             </div>
@@ -744,7 +744,7 @@ export default function ProjectsPage() {
             <div
               className="flex items-center gap-8 px-7 py-5 rounded-2xl flex-shrink-0 self-start"
               style={{
-                background: 'linear-gradient(160deg, rgba(44,205,222,0.07) 0%, #050F18 100%)',
+                background: 'linear-gradient(160deg, rgba(44,205,222,0.07) 0%, var(--bg-surface) 100%)',
                 border: '1px solid rgba(44,205,222,0.15)',
               }}
             >
@@ -754,8 +754,8 @@ export default function ProjectsPage() {
                 ['24/7', 'Support, always'],
               ].map(([v, l]) => (
                 <div key={l} className="flex flex-col items-center">
-                  <span className="text-xl font-black text-white leading-none">{v}</span>
-                  <span className="text-[#5A6272] text-[10px] mt-1 whitespace-nowrap">{l}</span>
+                  <span className="text-xl font-black text-[var(--text-primary)] leading-none">{v}</span>
+                  <span className="text-[var(--text-muted)] text-[10px] mt-1 whitespace-nowrap">{l}</span>
                 </div>
               ))}
             </div>
@@ -778,7 +778,7 @@ export default function ProjectsPage() {
                     : {
                         background: 'rgba(44,205,222,0.06)',
                         border: '1px solid rgba(44,205,222,0.16)',
-                        color: '#5A6272',
+                        color: 'var(--text-muted)',
                       }
                 }
               >
@@ -811,7 +811,7 @@ export default function ProjectsPage() {
 
           {filtered.length === 0 && (
             <div className="text-center py-24">
-              <p className="text-[#5A6272] text-sm">No projects in this category yet.</p>
+              <p className="text-[var(--text-muted)] text-sm">No projects in this category yet.</p>
             </div>
           )}
 
@@ -824,7 +824,7 @@ export default function ProjectsPage() {
           <div
             className="relative overflow-hidden rounded-2xl px-8 py-12 flex flex-col sm:flex-row items-center justify-between gap-8"
             style={{
-              background: 'linear-gradient(135deg, rgba(44,205,222,0.09) 0%, rgba(70,163,225,0.05) 50%, #050F18 100%)',
+              background: 'linear-gradient(135deg, rgba(44,205,222,0.09) 0%, rgba(70,163,225,0.05) 50%, var(--bg-surface) 100%)',
               border: '1px solid rgba(44,205,222,0.18)',
             }}
           >
@@ -833,8 +833,8 @@ export default function ProjectsPage() {
               style={{ background: 'linear-gradient(90deg, transparent, rgba(44,205,222,0.6), transparent)' }}
             />
             <div>
-              <p className="text-white text-xl font-bold mb-2">Have a project in mind?</p>
-              <p className="text-[#5A6272] text-sm max-w-sm">
+              <p className="text-[var(--text-primary)] text-xl font-bold mb-2">Have a project in mind?</p>
+              <p className="text-[var(--text-muted)] text-sm max-w-sm">
                 Tell us what you are trying to achieve and we will come back to you with a plan, not a sales pitch.
               </p>
             </div>

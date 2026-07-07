@@ -29,7 +29,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${spaceGrotesk.variable} ${cardo.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col text-white" style={{ fontFamily: 'var(--font-space), sans-serif', background: '#040D12' }}>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('theme');if(!t){t=window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark'}document.documentElement.setAttribute('data-theme',t)}catch(e){}})();`,
+          }}
+        />
+      </head>
+      <body className="min-h-full flex flex-col text-[var(--text-primary)]" style={{ fontFamily: 'var(--font-space), sans-serif', background: 'var(--bg-page)' }}>
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />

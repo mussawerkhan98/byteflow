@@ -7,7 +7,7 @@ export default function ServicePageTemplate({ service }: { service: ServiceData 
   const related = services.filter((s) => service.relatedSlugs.includes(s.slug))
 
   return (
-    <main style={{ background: '#040D12' }}>
+    <main style={{ background: 'var(--bg-page)' }}>
 
       {/* ── HERO ─────────────────────────────────────────────── */}
       <section className="relative pt-20 pb-16 px-4 sm:px-6 lg:px-8 overflow-hidden">
@@ -48,7 +48,7 @@ export default function ServicePageTemplate({ service }: { service: ServiceData 
             </h1>
 
             {/* Description */}
-            <p className="text-[#5A6272] text-lg leading-relaxed mb-10 max-w-2xl">
+            <p className="text-[var(--text-muted)] text-lg leading-relaxed mb-10 max-w-2xl">
               {service.description}
             </p>
 
@@ -73,8 +73,8 @@ export default function ServicePageTemplate({ service }: { service: ServiceData 
               <div className="p-[1px] rounded-full self-start sm:self-auto" style={{ background: 'linear-gradient(135deg, #2CCDDE, #46A3E1)' }}>
                 <a
                   href="tel:+971543282042"
-                  className="inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-full text-white font-bold text-sm transition-all duration-300 hover:bg-white/5"
-                  style={{ background: '#040D12' }}
+                  className="inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-full text-[var(--text-primary)] font-bold text-sm transition-all duration-300 hover:bg-[var(--overlay-hover)]"
+                  style={{ background: 'var(--bg-page)' }}
                 >
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
@@ -91,7 +91,7 @@ export default function ServicePageTemplate({ service }: { service: ServiceData 
                   key={stat.label}
                   className="flex flex-col gap-1.5 p-5 rounded-2xl"
                   style={{
-                    background: 'linear-gradient(160deg, rgba(44,205,222,0.06) 0%, #050F18 100%)',
+                    background: 'linear-gradient(160deg, rgba(44,205,222,0.06) 0%, var(--bg-surface) 100%)',
                     border: '1px solid rgba(44,205,222,0.15)',
                   }}
                 >
@@ -105,7 +105,7 @@ export default function ServicePageTemplate({ service }: { service: ServiceData 
                   >
                     {stat.value}
                   </span>
-                  <span className="text-[#5A6272] text-xs leading-snug">{stat.label}</span>
+                  <span className="text-[var(--text-muted)] text-xs leading-snug">{stat.label}</span>
                 </div>
               ))}
             </div>
@@ -120,7 +120,7 @@ export default function ServicePageTemplate({ service }: { service: ServiceData 
             <p className="text-[#2CCDDE] text-xs font-bold uppercase tracking-widest mb-4">
               What&apos;s Included
             </p>
-            <h2 className="text-4xl sm:text-5xl font-bold text-white leading-tight max-w-2xl">
+            <h2 className="text-4xl sm:text-5xl font-bold text-[var(--text-primary)] leading-tight max-w-2xl">
               Everything included in your plan
             </h2>
           </div>
@@ -131,12 +131,12 @@ export default function ServicePageTemplate({ service }: { service: ServiceData 
                 key={feature.title}
                 className="group flex flex-col gap-4 p-7 rounded-2xl transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_40px_rgba(44,205,222,0.1)]"
                 style={{
-                  background: 'linear-gradient(160deg, rgba(44,205,222,0.06) 0%, #050F18 100%)',
+                  background: 'linear-gradient(160deg, rgba(44,205,222,0.06) 0%, var(--bg-surface) 100%)',
                   border: '1px solid rgba(44,205,222,0.15)',
                 }}
               >
                 <div className="flex items-start justify-between gap-4">
-                  <h3 className="text-white font-bold text-base leading-snug group-hover:text-[#2CCDDE] transition-colors duration-200">
+                  <h3 className="text-[var(--text-primary)] font-bold text-base leading-snug group-hover:text-[#2CCDDE] transition-colors duration-200">
                     {feature.title}
                   </h3>
                   <span
@@ -150,7 +150,7 @@ export default function ServicePageTemplate({ service }: { service: ServiceData 
                     {String(i + 1).padStart(2, '0')}
                   </span>
                 </div>
-                <p className="text-[#5A6272] text-sm leading-relaxed">{feature.desc}</p>
+                <p className="text-[var(--text-muted)] text-sm leading-relaxed">{feature.desc}</p>
               </div>
             ))}
           </div>
@@ -167,7 +167,7 @@ export default function ServicePageTemplate({ service }: { service: ServiceData 
               <p className="text-[#2CCDDE] text-xs font-bold uppercase tracking-widest mb-5">
                 Why It Matters
               </p>
-              <h2 className="text-4xl sm:text-5xl font-bold text-white leading-tight mb-6">
+              <h2 className="text-4xl sm:text-5xl font-bold text-[var(--text-primary)] leading-tight mb-6">
                 Real benefits for{' '}
                 <span
                   style={{
@@ -179,7 +179,7 @@ export default function ServicePageTemplate({ service }: { service: ServiceData 
                   your business
                 </span>
               </h2>
-              <p className="text-[#5A6272] text-base leading-relaxed">
+              <p className="text-[var(--text-muted)] text-base leading-relaxed">
                 Every service we offer is designed around one goal: making your business more productive, more secure and less dependent on fragile ad-hoc IT arrangements.
               </p>
             </div>
@@ -191,7 +191,7 @@ export default function ServicePageTemplate({ service }: { service: ServiceData 
                   key={benefit.title}
                   className="flex gap-4 p-6 rounded-2xl transition-all duration-300 hover:shadow-[0_0_30px_rgba(44,205,222,0.08)]"
                   style={{
-                    background: 'linear-gradient(160deg, rgba(44,205,222,0.06) 0%, #050F18 100%)',
+                    background: 'linear-gradient(160deg, rgba(44,205,222,0.06) 0%, var(--bg-surface) 100%)',
                     border: '1px solid rgba(44,205,222,0.15)',
                   }}
                 >
@@ -215,8 +215,8 @@ export default function ServicePageTemplate({ service }: { service: ServiceData 
                     </svg>
                   </div>
                   <div className="flex flex-col gap-1.5">
-                    <h3 className="text-white font-bold text-sm">{benefit.title}</h3>
-                    <p className="text-[#5A6272] text-sm leading-relaxed">{benefit.desc}</p>
+                    <h3 className="text-[var(--text-primary)] font-bold text-sm">{benefit.title}</h3>
+                    <p className="text-[var(--text-muted)] text-sm leading-relaxed">{benefit.desc}</p>
                   </div>
                 </div>
               ))}
@@ -242,7 +242,7 @@ export default function ServicePageTemplate({ service }: { service: ServiceData 
               How It Works
             </p>
             <h2 className="text-4xl sm:text-5xl font-bold leading-tight">
-              <span className="text-white">From first call to</span>
+              <span className="text-[var(--text-primary)]">From first call to</span>
               <br />
               <span
                 style={{
@@ -278,7 +278,7 @@ export default function ServicePageTemplate({ service }: { service: ServiceData 
                   <div
                     className="group w-full flex flex-col gap-4 p-6 rounded-2xl transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_40px_rgba(44,205,222,0.1)]"
                     style={{
-                      background: 'linear-gradient(160deg, rgba(44,205,222,0.06) 0%, rgba(70,163,225,0.02) 40%, #050F18 100%)',
+                      background: 'linear-gradient(160deg, rgba(44,205,222,0.06) 0%, rgba(70,163,225,0.02) 40%, var(--bg-surface) 100%)',
                       border: '1px solid rgba(44,205,222,0.13)',
                     }}
                   >
@@ -294,10 +294,10 @@ export default function ServicePageTemplate({ service }: { service: ServiceData 
                         {step.step}
                       </span>
                     </div>
-                    <h3 className="text-white text-sm font-bold leading-snug group-hover:text-[#2CCDDE] transition-colors duration-200">
+                    <h3 className="text-[var(--text-primary)] text-sm font-bold leading-snug group-hover:text-[#2CCDDE] transition-colors duration-200">
                       {step.title}
                     </h3>
-                    <p className="text-[#5A6272] text-xs leading-relaxed">{step.desc}</p>
+                    <p className="text-[var(--text-muted)] text-xs leading-relaxed">{step.desc}</p>
                   </div>
                 </div>
               ))}
@@ -328,12 +328,12 @@ export default function ServicePageTemplate({ service }: { service: ServiceData 
                 <div
                   className="flex flex-col gap-3 p-5 rounded-2xl mb-4 flex-1 transition-all duration-300"
                   style={{
-                    background: 'linear-gradient(160deg, rgba(44,205,222,0.06) 0%, #050F18 100%)',
+                    background: 'linear-gradient(160deg, rgba(44,205,222,0.06) 0%, var(--bg-surface) 100%)',
                     border: '1px solid rgba(44,205,222,0.13)',
                   }}
                 >
-                  <h3 className="text-white text-sm font-bold">{step.title}</h3>
-                  <p className="text-[#5A6272] text-xs leading-relaxed">{step.desc}</p>
+                  <h3 className="text-[var(--text-primary)] text-sm font-bold">{step.title}</h3>
+                  <p className="text-[var(--text-muted)] text-xs leading-relaxed">{step.desc}</p>
                 </div>
               </div>
             ))}
@@ -349,7 +349,7 @@ export default function ServicePageTemplate({ service }: { service: ServiceData 
               FAQ
             </p>
             <h2 className="text-4xl sm:text-5xl font-bold leading-tight mb-4">
-              <span className="text-white">Questions we get</span>
+              <span className="text-[var(--text-primary)]">Questions we get</span>
               <br />
               <span
                 style={{
@@ -372,7 +372,7 @@ export default function ServicePageTemplate({ service }: { service: ServiceData 
           <div
             className="relative overflow-hidden rounded-3xl p-10 sm:p-14"
             style={{
-              background: 'linear-gradient(160deg, rgba(44,205,222,0.1) 0%, rgba(70,163,225,0.05) 50%, #050F18 100%)',
+              background: 'linear-gradient(160deg, rgba(44,205,222,0.1) 0%, rgba(70,163,225,0.05) 50%, var(--bg-surface) 100%)',
               border: '1px solid rgba(44,205,222,0.25)',
             }}
           >
@@ -390,10 +390,10 @@ export default function ServicePageTemplate({ service }: { service: ServiceData 
                 <p className="text-[#2CCDDE] text-xs font-bold uppercase tracking-widest mb-4">
                   Get Started
                 </p>
-                <h2 className="text-4xl sm:text-5xl font-bold text-white leading-tight mb-4">
+                <h2 className="text-4xl sm:text-5xl font-bold text-[var(--text-primary)] leading-tight mb-4">
                   Ready to get started?
                 </h2>
-                <p className="text-[#5A6272] text-base leading-relaxed">
+                <p className="text-[var(--text-muted)] text-base leading-relaxed">
                   Talk to our team today. We will listen to your requirements, assess your current setup and deliver a clear proposal within 24 hours. No obligation, no jargon.
                 </p>
               </div>
@@ -411,7 +411,7 @@ export default function ServicePageTemplate({ service }: { service: ServiceData 
                 </Link>
                 <a
                   href="tel:+971543282042"
-                  className="inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-full font-bold text-sm transition-all duration-300 hover:text-white"
+                  className="inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-full font-bold text-sm transition-all duration-300 hover:text-[var(--text-primary)]"
                   style={{
                     background: 'rgba(44,205,222,0.07)',
                     border: '1px solid rgba(44,205,222,0.25)',
@@ -437,7 +437,7 @@ export default function ServicePageTemplate({ service }: { service: ServiceData 
               <p className="text-[#2CCDDE] text-xs font-bold uppercase tracking-widest mb-4">
                 Related Services
               </p>
-              <h2 className="text-3xl sm:text-4xl font-bold text-white">
+              <h2 className="text-3xl sm:text-4xl font-bold text-[var(--text-primary)]">
                 You might also need
               </h2>
             </div>
@@ -449,12 +449,12 @@ export default function ServicePageTemplate({ service }: { service: ServiceData 
                   href={`/${rel.slug}`}
                   className="group flex flex-col gap-4 p-7 rounded-2xl transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_40px_rgba(44,205,222,0.15)]"
                   style={{
-                    background: 'linear-gradient(160deg, rgba(44,205,222,0.06) 0%, #050F18 100%)',
+                    background: 'linear-gradient(160deg, rgba(44,205,222,0.06) 0%, var(--bg-surface) 100%)',
                     border: '1px solid rgba(44,205,222,0.15)',
                   }}
                 >
                   <div className="flex items-start justify-between gap-3">
-                    <h3 className="text-white font-bold text-base leading-snug group-hover:text-[#2CCDDE] transition-colors duration-200">
+                    <h3 className="text-[var(--text-primary)] font-bold text-base leading-snug group-hover:text-[#2CCDDE] transition-colors duration-200">
                       {rel.title}
                     </h3>
                     <svg
@@ -468,9 +468,9 @@ export default function ServicePageTemplate({ service }: { service: ServiceData 
                       <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
                     </svg>
                   </div>
-                  <p className="text-[#5A6272] text-sm leading-relaxed">{rel.tagline}</p>
+                  <p className="text-[var(--text-muted)] text-sm leading-relaxed">{rel.tagline}</p>
                   <span
-                    className="text-xs font-bold mt-auto pt-4 transition-colors duration-200 group-hover:text-white"
+                    className="text-xs font-bold mt-auto pt-4 transition-colors duration-200 group-hover:text-[var(--text-primary)]"
                     style={{
                       color: '#2CCDDE',
                       borderTop: '1px solid rgba(44,205,222,0.1)',

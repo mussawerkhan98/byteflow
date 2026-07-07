@@ -113,14 +113,14 @@ export default function Services() {
               What We Do
             </div>
             <h2 className="text-4xl sm:text-5xl font-bold leading-tight">
-              <span className="text-white">Services Built for</span>
+              <span className="text-[var(--text-primary)]">Services Built for</span>
               <br />
               <span style={{ background: 'linear-gradient(135deg, #2CCDDE, #46A3E1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                 Real Business Growth
               </span>
             </h2>
           </div>
-          <p className="text-[#4B5563] text-base leading-relaxed max-w-sm lg:text-right">
+          <p className="text-[var(--text-footer-link)] text-base leading-relaxed max-w-sm lg:text-right">
             End-to-end technology and creative services, all under one roof so you never have to chase multiple vendors again.
           </p>
         </div>
@@ -133,7 +133,7 @@ export default function Services() {
               href={s.href}
               className="group relative flex flex-col rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_50px_rgba(44,205,222,0.2),_0_20px_40px_rgba(0,0,0,0.6)]"
               style={{
-                background: 'linear-gradient(160deg, rgba(44,205,222,0.07) 0%, rgba(70,163,225,0.03) 30%, #050F18 100%)',
+                background: 'linear-gradient(160deg, rgba(44,205,222,0.07) 0%, rgba(70,163,225,0.03) 30%, var(--bg-surface) 100%)',
                 border: '1px solid rgba(44,205,222,0.2)',
               }}
             >
@@ -172,10 +172,10 @@ export default function Services() {
 
                 {/* Text */}
                 <div className="flex flex-col gap-2 flex-1">
-                  <h3 className="text-base font-bold text-white leading-snug transition-colors duration-300 group-hover:text-[#2CCDDE]">
+                  <h3 className="text-base font-bold text-[var(--text-primary)] leading-snug transition-colors duration-300 group-hover:text-[#2CCDDE]">
                     {s.title}
                   </h3>
-                  <p className="text-[#5A6272] text-sm leading-relaxed">
+                  <p className="text-[var(--text-muted)] text-sm leading-relaxed">
                     {s.desc}
                   </p>
                 </div>
@@ -204,9 +204,9 @@ export default function Services() {
         {/* Bottom CTA */}
         <div
           className="flex flex-col sm:flex-row items-center justify-between gap-6 mt-14 pt-10"
-          style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}
+          style={{ borderTop: '1px solid var(--overlay-hover)' }}
         >
-          <p className="text-[#4B5563] text-sm">
+          <p className="text-[var(--text-footer-link)] text-sm">
             Not sure which service you need? Our team will guide you.
           </p>
           <Link

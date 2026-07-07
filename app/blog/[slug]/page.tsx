@@ -58,12 +58,12 @@ export default async function BlogPostPage({
             >
               {post.category}
             </span>
-            <span className="text-[#374151] text-xs">{post.date}</span>
-            <span className="w-1 h-1 rounded-full bg-[#374151]" />
-            <span className="text-[#374151] text-xs">{post.read_time}</span>
+            <span className="text-[var(--text-dim)] text-xs">{post.date}</span>
+            <span className="w-1 h-1 rounded-full bg-[var(--text-dim)]" />
+            <span className="text-[var(--text-dim)] text-xs">{post.read_time}</span>
           </div>
 
-          <h1 className="text-white text-3xl sm:text-4xl font-bold leading-tight mb-8">{post.title}</h1>
+          <h1 className="text-[var(--text-primary)] text-3xl sm:text-4xl font-bold leading-tight mb-8">{post.title}</h1>
 
           <div
             className="relative h-56 sm:h-72 rounded-2xl overflow-hidden flex items-center justify-center mb-10"
@@ -83,7 +83,7 @@ export default async function BlogPostPage({
 
           <div className="flex flex-col gap-5">
             {paragraphs.map((paragraph, i) => (
-              <p key={i} className="text-[#9AA3B2] text-base leading-relaxed">
+              <p key={i} className="text-[var(--text-body)] text-base leading-relaxed">
                 {paragraph}
               </p>
             ))}
@@ -96,14 +96,14 @@ export default async function BlogPostPage({
           <div
             className="relative overflow-hidden rounded-2xl px-8 py-12 flex flex-col sm:flex-row items-center justify-between gap-8"
             style={{
-              background: 'linear-gradient(135deg, rgba(44,205,222,0.08) 0%, rgba(70,163,225,0.04) 50%, #050F18 100%)',
+              background: 'linear-gradient(135deg, rgba(44,205,222,0.08) 0%, rgba(70,163,225,0.04) 50%, var(--bg-surface) 100%)',
               border: '1px solid rgba(44,205,222,0.18)',
             }}
           >
             <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(44,205,222,0.6), transparent)' }} />
             <div>
-              <p className="text-white text-xl font-bold mb-2">Have an IT problem you need solved?</p>
-              <p className="text-[#5A6272] text-sm max-w-sm">Reading about it is one thing. Getting it fixed is another. Our team responds within 2 hours.</p>
+              <p className="text-[var(--text-primary)] text-xl font-bold mb-2">Have an IT problem you need solved?</p>
+              <p className="text-[var(--text-muted)] text-sm max-w-sm">Reading about it is one thing. Getting it fixed is another. Our team responds within 2 hours.</p>
             </div>
             <a
               href="/contact-us"

@@ -79,18 +79,18 @@ export default function Footer() {
                 className="h-10 w-auto object-contain"
               />
             </Link>
-            <p className="text-[#4B5563] text-sm leading-relaxed">
+            <p className="text-[var(--text-footer-link)] text-sm leading-relaxed">
               Leading IT solutions provider trusted by 500+ businesses across Dubai and UAE since 2017.
             </p>
             <ul className="space-y-3.5 text-sm">
               <li>
                 <a
                   href="tel:+971543282042"
-                  className="flex items-center gap-3 text-[#4B5563] hover:text-[#2CCDDE] transition-colors duration-200"
+                  className="flex items-center gap-3 text-[var(--text-footer-link)] hover:text-[#2CCDDE] transition-colors duration-200"
                 >
                   <span
                     className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
-                    style={{ background: '#ffffff08', border: '1px solid #2CCDDE20' }}
+                    style={{ background: 'var(--border-subtle)', border: '1px solid #2CCDDE20' }}
                   >
                     <svg className="w-3.5 h-3.5" style={{ color: '#2CCDDE' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
@@ -102,11 +102,11 @@ export default function Footer() {
               <li>
                 <a
                   href="mailto:info@byteflow.ae"
-                  className="flex items-center gap-3 text-[#4B5563] hover:text-[#2CCDDE] transition-colors duration-200"
+                  className="flex items-center gap-3 text-[var(--text-footer-link)] hover:text-[#2CCDDE] transition-colors duration-200"
                 >
                   <span
                     className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
-                    style={{ background: '#ffffff08', border: '1px solid #2CCDDE20' }}
+                    style={{ background: 'var(--border-subtle)', border: '1px solid #2CCDDE20' }}
                   >
                     <svg className="w-3.5 h-3.5" style={{ color: '#2CCDDE' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -115,10 +115,10 @@ export default function Footer() {
                   info@byteflow.ae
                 </a>
               </li>
-              <li className="flex items-center gap-3 text-[#4B5563]">
+              <li className="flex items-center gap-3 text-[var(--text-footer-link)]">
                 <span
                   className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
-                  style={{ background: '#ffffff08', border: '1px solid #2CCDDE20' }}
+                  style={{ background: 'var(--border-subtle)', border: '1px solid #2CCDDE20' }}
                 >
                   <svg className="w-3.5 h-3.5" style={{ color: '#2CCDDE' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -142,7 +142,7 @@ export default function Footer() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="flex items-center gap-2.5 text-sm text-[#4B5563] hover:text-[#2CCDDE] transition-all duration-200 group"
+                    className="flex items-center gap-2.5 text-sm text-[var(--text-footer-link)] hover:text-[#2CCDDE] transition-all duration-200 group"
                   >
                     <svg className="w-3 h-3 transition-transform duration-200 group-hover:translate-x-0.5" style={{ color: '#2CCDDE' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
@@ -166,7 +166,7 @@ export default function Footer() {
                 <li key={s.href}>
                   <Link
                     href={s.href}
-                    className="flex items-center gap-2.5 text-sm text-[#4B5563] hover:text-[#2CCDDE] transition-all duration-200 group"
+                    className="flex items-center gap-2.5 text-sm text-[var(--text-footer-link)] hover:text-[#2CCDDE] transition-all duration-200 group"
                   >
                     <svg className="w-3 h-3 transition-transform duration-200 group-hover:translate-x-0.5" style={{ color: '#2CCDDE' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
@@ -185,7 +185,7 @@ export default function Footer() {
             >
               Follow Us
             </h3>
-            <p className="text-[#4B5563] text-sm mb-6 leading-relaxed">
+            <p className="text-[var(--text-footer-link)] text-sm mb-6 leading-relaxed">
               Stay updated with our latest news and IT insights.
             </p>
             <div className="flex gap-2.5">
@@ -196,8 +196,8 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={s.label}
-                  className="w-9 h-9 flex items-center justify-center rounded-lg text-[#4B5563] hover:text-black transition-all duration-200 hover:scale-110 hover:shadow-[0_0_16px_rgba(44,205,222,0.4)]"
-                  style={{ background: '#ffffff08', border: '1px solid #2CCDDE20' }}
+                  className="w-9 h-9 flex items-center justify-center rounded-lg text-[var(--text-footer-link)] hover:text-black transition-all duration-200 hover:scale-110 hover:shadow-[0_0_16px_rgba(44,205,222,0.4)]"
+                  style={{ background: 'var(--border-subtle)', border: '1px solid #2CCDDE20' }}
                   onMouseEnter={(e) => {
                     const el = e.currentTarget as HTMLAnchorElement
                     el.style.background = 'linear-gradient(135deg, #2CCDDE, #46A3E1)'
@@ -205,7 +205,7 @@ export default function Footer() {
                   }}
                   onMouseLeave={(e) => {
                     const el = e.currentTarget as HTMLAnchorElement
-                    el.style.background = '#ffffff08'
+                    el.style.background = 'var(--border-subtle)'
                     el.style.border = '1px solid #2CCDDE20'
                   }}
                 >
@@ -217,12 +217,12 @@ export default function Footer() {
         </div>
       </div>
 
-      <div style={{ borderTop: '1px solid #ffffff08' }}>
+      <div style={{ borderTop: '1px solid var(--border-subtle)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <p className="text-[#374151] text-sm">
+          <p className="text-[var(--text-dim)] text-sm">
             &copy; {new Date().getFullYear()} Byteflow Information Technology. All rights reserved.
           </p>
-          <p className="text-[#374151] text-sm">
+          <p className="text-[var(--text-dim)] text-sm">
             Trusted by 500+ businesses across Dubai and UAE since 2017.
           </p>
         </div>

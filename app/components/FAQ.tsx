@@ -82,13 +82,13 @@ export default function FAQ() {
             FAQ
           </div>
           <h2 className="text-4xl sm:text-5xl font-bold leading-tight mb-4">
-            <span className="text-white">Questions We Get</span>
+            <span className="text-[var(--text-primary)]">Questions We Get</span>
             <br />
             <span style={{ background: 'linear-gradient(135deg, #2CCDDE, #46A3E1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
               Asked All the Time
             </span>
           </h2>
-          <p className="text-[#5A6272] text-base max-w-xl mx-auto">
+          <p className="text-[var(--text-muted)] text-base max-w-xl mx-auto">
             Everything you need to know about working with Byteflow. Can not find what you are looking for? Just call us.
           </p>
         </div>
@@ -103,7 +103,7 @@ export default function FAQ() {
               style={
                 activeCategory === cat
                   ? { background: 'linear-gradient(135deg, #2CCDDE, #46A3E1)', color: '#000' }
-                  : { background: 'rgba(44,205,222,0.06)', border: '1px solid rgba(44,205,222,0.18)', color: '#5A6272' }
+                  : { background: 'rgba(44,205,222,0.06)', border: '1px solid rgba(44,205,222,0.18)', color: 'var(--text-muted)' }
               }
             >
               {cat}
@@ -121,8 +121,8 @@ export default function FAQ() {
                 className="rounded-2xl overflow-hidden transition-all duration-300"
                 style={{
                   background: isOpen
-                    ? 'linear-gradient(160deg, rgba(44,205,222,0.08) 0%, rgba(70,163,225,0.03) 40%, #050F18 100%)'
-                    : 'linear-gradient(160deg, rgba(44,205,222,0.04) 0%, #040D12 100%)',
+                    ? 'linear-gradient(160deg, rgba(44,205,222,0.08) 0%, rgba(70,163,225,0.03) 40%, var(--bg-surface) 100%)'
+                    : 'linear-gradient(160deg, rgba(44,205,222,0.04) 0%, var(--bg-page) 100%)',
                   border: isOpen ? '1px solid rgba(44,205,222,0.3)' : '1px solid rgba(44,205,222,0.1)',
                 }}
               >
@@ -130,7 +130,7 @@ export default function FAQ() {
                   className="w-full flex items-center justify-between gap-4 px-6 py-5 text-left"
                   onClick={() => setOpen(isOpen ? null : i)}
                 >
-                  <span className={`text-sm font-semibold leading-snug transition-colors duration-200 flex-1 min-w-0 ${isOpen ? 'text-white' : 'text-[#9CA3AF]'}`}>
+                  <span className={`text-sm font-semibold leading-snug transition-colors duration-200 flex-1 min-w-0 ${isOpen ? 'text-[var(--text-primary)]' : 'text-[var(--text-nav)]'}`}>
                     {faq.q}
                   </span>
                   <div
@@ -155,7 +155,7 @@ export default function FAQ() {
                   style={{ maxHeight: isOpen ? '300px' : '0px', opacity: isOpen ? 1 : 0 }}
                 >
                   <div className="px-6 pb-6" style={{ borderTop: '1px solid rgba(44,205,222,0.08)' }}>
-                    <p className="text-[#5A6272] text-sm leading-relaxed pt-5">{faq.a}</p>
+                    <p className="text-[var(--text-muted)] text-sm leading-relaxed pt-5">{faq.a}</p>
                   </div>
                 </div>
               </div>
@@ -167,12 +167,12 @@ export default function FAQ() {
         <div
           className="mt-14 p-8 rounded-2xl text-center"
           style={{
-            background: 'linear-gradient(160deg, rgba(44,205,222,0.07) 0%, #050F18 100%)',
+            background: 'linear-gradient(160deg, rgba(44,205,222,0.07) 0%, var(--bg-surface) 100%)',
             border: '1px solid rgba(44,205,222,0.15)',
           }}
         >
-          <p className="text-white font-semibold text-base mb-1">Still have questions?</p>
-          <p className="text-[#5A6272] text-sm mb-6">Our team is available 24/7 — reach out and get answers fast.</p>
+          <p className="text-[var(--text-primary)] font-semibold text-base mb-1">Still have questions?</p>
+          <p className="text-[var(--text-muted)] text-sm mb-6">Our team is available 24/7 — reach out and get answers fast.</p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <a
               href="tel:+971543282042"
@@ -188,7 +188,7 @@ export default function FAQ() {
               href="https://wa.me/971543282042"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-[#2CCDDE] font-bold text-sm transition-all duration-300 hover:text-white"
+              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-[#2CCDDE] font-bold text-sm transition-all duration-300 hover:text-[var(--text-primary)]"
               style={{ background: 'rgba(44,205,222,0.07)', border: '1px solid rgba(44,205,222,0.25)' }}
             >
               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">

@@ -3,12 +3,53 @@
 :root {
   --cyan: #2CCDDE;
   --blue: #46A3E1;
+
+  --bg-page: #040D12;
+  --bg-surface: #050F18;
+  --bg-surface-alt: #080F18;
+  --text-primary: #ffffff;
+  --text-muted: #5A6272;
+  --text-dim: #374151;
+  --text-footer-link: #4B5563;
+  --text-nav: #9CA3AF;
+  --text-quiet: #6B7280;
+  --text-body: #9AA3B2;
+  --text-faint: #7A8494;
+  --border-subtle: #ffffff08;
+  --overlay-hover: rgba(255, 255, 255, 0.05);
+  --overlay-hover-soft: rgba(255, 255, 255, 0.03);
+  --overlay-strong: rgba(255, 255, 255, 0.08);
+  --input-text: #ffffff;
+  --option-bg: #0a0a0a;
+  --header-scrolled-bg: rgba(0, 0, 0, 0.85);
+}
+
+:root[data-theme='light'] {
+  --bg-page: #ffffff;
+  --bg-surface: #f8fafc;
+  --bg-surface-alt: #f1f5f9;
+  --text-primary: #0b1220;
+  --text-muted: #64748b;
+  --text-dim: #94a3b8;
+  --text-footer-link: #64748b;
+  --text-nav: #64748b;
+  --text-quiet: #94a3b8;
+  --text-body: #475569;
+  --text-faint: #94a3b8;
+  --border-subtle: #00000014;
+  --overlay-hover: rgba(0, 0, 0, 0.05);
+  --overlay-hover-soft: rgba(0, 0, 0, 0.03);
+  --overlay-strong: rgba(0, 0, 0, 0.08);
+  --input-text: #0b1220;
+  --option-bg: #ffffff;
+  --header-scrolled-bg: rgba(255, 255, 255, 0.85);
 }
 
 body {
-  background: #040D12;
-  color: #ffffff;
+  background: var(--bg-page);
+  color: var(--text-primary);
   font-family: var(--font-space), 'Space Grotesk', sans-serif;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 h1, h2 {

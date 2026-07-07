@@ -101,7 +101,7 @@ export default function AboutReviews() {
               Client Reviews
             </div>
             <h2 className="text-4xl sm:text-5xl font-bold leading-tight">
-              <span className="text-white">What Our Clients</span>
+              <span className="text-[var(--text-primary)]">What Our Clients</span>
               <br />
               <span style={{ background: 'linear-gradient(135deg, #2CCDDE, #46A3E1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                 Say About Us
@@ -113,17 +113,17 @@ export default function AboutReviews() {
           <div
             className="flex items-center gap-4 px-5 py-4 rounded-2xl flex-shrink-0 self-start"
             style={{
-              background: 'linear-gradient(160deg, rgba(44,205,222,0.07) 0%, #050F18 100%)',
+              background: 'linear-gradient(160deg, rgba(44,205,222,0.07) 0%, var(--bg-surface) 100%)',
               border: '1px solid rgba(44,205,222,0.18)',
             }}
           >
             <img src="/google.svg" alt="Google" className="w-8 h-8 object-contain flex-shrink-0" />
             <div>
               <div className="flex items-center gap-2 mb-0.5">
-                <span className="text-2xl font-black text-white leading-none">4.9</span>
+                <span className="text-2xl font-black text-[var(--text-primary)] leading-none">4.9</span>
                 <Stars count={5} />
               </div>
-              <p className="text-[#5A6272] text-xs">50+ Google reviews</p>
+              <p className="text-[var(--text-muted)] text-xs">50+ Google reviews</p>
             </div>
           </div>
         </div>
@@ -143,7 +143,7 @@ export default function AboutReviews() {
               key={r.name}
               className="group relative flex flex-col gap-4 p-6 rounded-2xl"
               style={{
-                background: 'linear-gradient(160deg, rgba(44,205,222,0.06) 0%, rgba(70,163,225,0.02) 30%, #050F18 100%)',
+                background: 'linear-gradient(160deg, rgba(44,205,222,0.06) 0%, rgba(70,163,225,0.02) 30%, var(--bg-surface) 100%)',
                 border: '1px solid rgba(44,205,222,0.15)',
               }}
             >
@@ -157,19 +157,19 @@ export default function AboutReviews() {
               <Stars count={r.rating} />
 
               {/* Text */}
-              <p className="text-[#5A6272] text-sm leading-relaxed flex-1">
+              <p className="text-[var(--text-muted)] text-sm leading-relaxed flex-1">
                 &ldquo;{r.text}&rdquo;
               </p>
 
               {/* Reviewer */}
               <div
                 className="flex items-center justify-between pt-4"
-                style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}
+                style={{ borderTop: '1px solid var(--overlay-hover)' }}
               >
                 <div className="flex items-center gap-2">
                   <div>
                     <div className="flex items-center gap-1.5">
-                      <span className="text-white text-sm font-bold">{r.name}</span>
+                      <span className="text-[var(--text-primary)] text-sm font-bold">{r.name}</span>
                       <div
                         className="w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0"
                         style={{ background: '#1D9BF0' }}
@@ -180,7 +180,7 @@ export default function AboutReviews() {
                         </svg>
                       </div>
                     </div>
-                    <p className="text-[#5A6272] text-xs mt-0.5">{r.role}</p>
+                    <p className="text-[var(--text-muted)] text-xs mt-0.5">{r.role}</p>
                   </div>
                 </div>
                 <img src="/google.svg" alt="Google" className="w-5 h-5 object-contain opacity-50" />
