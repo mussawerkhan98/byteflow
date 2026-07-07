@@ -175,7 +175,7 @@ export default function FAQ() {
           <p className="text-[#5A6272] text-sm mb-6">Our team is available 24/7 — reach out and get answers fast.</p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <a
-              href="tel:+97143388282"
+              href="tel:+971543282042"
               className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-black font-bold text-sm transition-all duration-300 hover:scale-[1.04] hover:shadow-[0_0_28px_rgba(44,205,222,0.45)]"
               style={{ background: 'linear-gradient(135deg, #2CCDDE, #46A3E1)' }}
             >
@@ -185,7 +185,7 @@ export default function FAQ() {
               Call Us Now
             </a>
             <a
-              href="https://wa.me/971501234567"
+              href="https://wa.me/971543282042"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-[#2CCDDE] font-bold text-sm transition-all duration-300 hover:text-white"

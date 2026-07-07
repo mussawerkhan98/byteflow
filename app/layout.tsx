@@ -3,6 +3,7 @@ import { Space_Grotesk, Cardo } from 'next/font/google'
 import './globals.css'
 import Header from './components/Header'
 import Footer from './components/Footer'
+import StickyContactButtons from './components/StickyContactButtons'
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],
@@ -32,6 +33,7 @@ export default function RootLayout({
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />
+        <StickyContactButtons />
       </body>
     </html>
   )

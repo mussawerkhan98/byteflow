@@ -72,7 +72,7 @@ export default function ServicePageTemplate({ service }: { service: ServiceData 
               </Link>
               <div className="p-[1px] rounded-full self-start sm:self-auto" style={{ background: 'linear-gradient(135deg, #2CCDDE, #46A3E1)' }}>
                 <a
-                  href="tel:+97143388282"
+                  href="tel:+971543282042"
                   className="inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-full text-white font-bold text-sm transition-all duration-300 hover:bg-white/5"
                   style={{ background: '#040D12' }}
                 >
@@ -410,7 +410,7 @@ export default function ServicePageTemplate({ service }: { service: ServiceData 
                   </svg>
                 </Link>
                 <a
-                  href="tel:+97143388282"
+                  href="tel:+971543282042"
                   className="inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-full font-bold text-sm transition-all duration-300 hover:text-white"
                   style={{
                     background: 'rgba(44,205,222,0.07)',

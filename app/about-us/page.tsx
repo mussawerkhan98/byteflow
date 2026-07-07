@@ -133,10 +133,10 @@ export default function AboutPage() {
                     LinkedIn
                   </a>
                   <a
-                    href="tel:+97143388282"
+                    href="tel:+971543282042"
                     className="text-[#5A6272] text-sm hover:text-[#2CCDDE] transition-colors duration-200"
                   >
-                    +971 4 338 8282
+                    +971 54 328 2042
                   </a>
                 </div>
               </div>
@@ -383,7 +383,7 @@ export default function AboutPage() {
 
             <div className="flex flex-col gap-4">
               {[
-                { label: 'Phone', value: '+971 4 338 8282', href: 'tel:+97143388282' },
+                { label: 'Phone', value: '+971 54 328 2042', href: 'tel:+971543282042' },
                 { label: 'Email', value: 'info@byteflow.ae', href: 'mailto:info@byteflow.ae' },
                 { label: 'Location', value: 'Dubai, United Arab Emirates', href: null },
                 { label: 'Support', value: '24/7 — always available', href: null },

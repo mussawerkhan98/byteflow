@@ -72,7 +72,7 @@ export default function CTA() {
 
             <div className="p-[1px] rounded-full" style={{ background: 'linear-gradient(135deg, #2CCDDE, #46A3E1)' }}>
               <Link
-                href="tel:+97143388282"
+                href="tel:+971543282042"
                 className="inline-flex items-center gap-2.5 px-9 py-4 rounded-full text-white font-bold text-base transition-all duration-300 hover:bg-white/5"
                 style={{ background: '#040D12' }}
               >
