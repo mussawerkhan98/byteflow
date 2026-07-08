@@ -875,4 +875,112 @@ export const services: ServiceData[] = [
     ],
     relatedSlugs: ['website-development', 'graphics-designing', 'it-amc-services-dubai'],
   },
+
+  {
+    slug: 'landing-page-designing',
+    title: 'Landing Page Designing',
+    tagline: 'A page built to convert, not just to look good.',
+    description:
+      'High-converting landing pages for Google Ads, social media campaigns and product launches. Fast load times, mobile-first design and clear calls to action built around what Dubai audiences actually respond to.',
+    heroStats: [
+      { value: '48 hrs', label: 'Typical design turnaround' },
+      { value: '2 wks', label: 'Design to live page' },
+      { value: '100%', label: 'Mobile responsive' },
+      { value: '100%', label: 'Unlimited revisions until approved' },
+    ],
+    features: [
+      {
+        title: 'Conversion-Focused Design',
+        desc: 'Every section is structured around a single goal: getting the visitor to call, message or fill in your form. No distracting navigation or competing calls to action.',
+      },
+      {
+        title: 'Campaign-Specific Pages',
+        desc: 'A dedicated page for each Google Ads or social campaign so your message matches exactly what the visitor clicked on, improving quality score and conversion rate.',
+      },
+      {
+        title: 'Mobile-First Build',
+        desc: 'Designed for the phone screen first, since most UAE ad traffic arrives on mobile. Buttons, forms and click-to-call links are sized and placed for thumbs, not mice.',
+      },
+      {
+        title: 'Fast Load Times',
+        desc: 'Optimised images and lean code so the page loads in under two seconds. Every extra second of load time costs you conversions on paid traffic.',
+      },
+      {
+        title: 'Lead Capture and Tracking',
+        desc: 'Forms, WhatsApp click-to-chat buttons and click-to-call links wired up with conversion tracking so you know exactly which ads and keywords are producing leads.',
+      },
+      {
+        title: 'A/B Testing Ready',
+        desc: 'Pages are structured to support headline, layout and offer variants so you can test what actually improves conversion rate instead of guessing.',
+      },
+    ],
+    benefits: [
+      {
+        title: 'Higher return on ad spend',
+        desc: 'A page built for one goal converts far better than sending paid traffic to a general homepage, meaning every dirham of ad spend works harder.',
+      },
+      {
+        title: 'Consistent message from ad to page',
+        desc: 'The headline and offer visitors see in your ad is exactly what they see on the page, which reduces bounce rate and improves ad platform quality scores.',
+      },
+      {
+        title: 'Launch campaigns faster',
+        desc: 'A dedicated landing page can be designed and live within days, so you are never waiting weeks to get a new offer or promotion in front of customers.',
+      },
+      {
+        title: 'Clear data on what works',
+        desc: 'Because each campaign has its own page, you get clean data on which offers, headlines and audiences actually convert, not muddied results from a shared page.',
+      },
+    ],
+    process: [
+      {
+        step: '01',
+        title: 'Campaign Brief',
+        desc: 'We learn the offer, audience and goal of the campaign so the page is built around a single, clear conversion action.',
+      },
+      {
+        step: '02',
+        title: 'Design Concept',
+        desc: 'A mobile-first design is presented for your approval, covering headline, layout, imagery and call-to-action placement before development starts.',
+      },
+      {
+        step: '03',
+        title: 'Build and Tracking Setup',
+        desc: 'The page is built, optimised for speed and wired up with form submissions, click-to-call and conversion tracking for your ad platforms.',
+      },
+      {
+        step: '04',
+        title: 'Review and Refinement',
+        desc: 'You review the live staging link and request any changes. We refine copy, layout or offer positioning until it is ready to launch.',
+      },
+      {
+        step: '05',
+        title: 'Launch and Monitor',
+        desc: 'The page goes live and we monitor initial performance, ready to suggest quick adjustments based on real visitor behaviour.',
+      },
+    ],
+    faqs: [
+      {
+        q: 'How is a landing page different from a normal website page?',
+        a: 'A landing page removes navigation, competing links and distractions, focusing the visitor entirely on one action: calling, messaging or submitting a form. It is built specifically to match the offer in a single ad campaign rather than serve as a general information page.',
+      },
+      {
+        q: 'How long does it take to get a landing page live?',
+        a: 'Most landing pages are designed and live within one to two weeks, depending on revisions. If you need something faster for a time-sensitive campaign, we can turn around a simpler page in a few days.',
+      },
+      {
+        q: 'Can you connect the page to our Google Ads or Meta Ads account?',
+        a: 'Yes. We set up conversion tracking so form submissions, WhatsApp clicks and phone calls from the page are reported back to your ad platform, giving you accurate data on cost per lead and return on ad spend.',
+      },
+      {
+        q: 'Do you write the copy for the page as well?',
+        a: 'Yes, copywriting is included. We write headlines and body copy focused on your offer and audience, though you are welcome to provide your own copy or brand guidelines for us to work within.',
+      },
+      {
+        q: 'Can one landing page be used for multiple campaigns?',
+        a: 'It can, but we usually recommend a dedicated page per distinct offer or audience segment, since matching the page message exactly to the ad significantly improves conversion rates and quality scores.',
+      },
+    ],
+    relatedSlugs: ['digital-marketing', 'website-development', 'graphics-designing'],
+  },
 ]

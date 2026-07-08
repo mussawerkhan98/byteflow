@@ -8,6 +8,11 @@ const nextConfig: NextConfig = {
         destination: '/blog',
         permanent: true,
       },
+      {
+        source: '/software-development-company',
+        destination: '/website-development',
+        permanent: true,
+      },
     ]
   },
 }
