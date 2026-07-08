@@ -20,6 +20,9 @@ const cardo = Cardo({
 export const metadata: Metadata = {
   title: 'Byteflow Information Technology',
   description: 'Leading IT solutions provider trusted by 500+ businesses across Dubai and UAE since 2017.',
+  verification: {
+    google: 'tAM-FG-hPH1-sxVzCRVhEVnLM0OhIATbEoeYXTTShc4',
+  },
 }
 
 export default function RootLayout({
