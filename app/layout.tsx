@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Space_Grotesk, Cardo } from 'next/font/google'
+import { GoogleAnalytics } from '@next/third-parties/google'
 import './globals.css'
 import Header from './components/Header'
 import Footer from './components/Footer'
@@ -45,6 +46,7 @@ export default function RootLayout({
         <Footer />
         <StickyContactButtons />
       </body>
+      <GoogleAnalytics gaId="G-0D6S22JEGG" />
     </html>
   )
 }
