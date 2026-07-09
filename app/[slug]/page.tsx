@@ -5,6 +5,8 @@ import { notFound } from 'next/navigation'
 import { getPostBySlug, getPosts } from '@/app/lib/db'
 import { getCategoryStyle } from '../blog/category-style'
 
+export const dynamic = 'force-dynamic'
+
 export async function generateStaticParams() {
   const posts = await getPosts()
   return posts.map((post) => ({ slug: post.slug }))
@@ -19,8 +21,8 @@ export async function generateMetadata({
   const post = await getPostBySlug(slug)
   if (!post) return {}
   return {
-    title: `${post.title} | Byteflow Blog`,
-    description: post.excerpt,
+    title: post.meta_title || `${post.title} | Byteflow Blog`,
+    description: post.meta_description || post.excerpt,
   }
 }
 
@@ -34,7 +36,8 @@ export default async function BlogPostPage({
   if (!post) notFound()
 
   const { gradient, icon } = getCategoryStyle(post.category)
-  const paragraphs = post.content.split('\n\n').filter(Boolean)
+  const isHtmlContent = /<[a-z][\s\S]*>/i.test(post.content)
+  const paragraphs = isHtmlContent ? [] : post.content.split('\n\n').filter(Boolean)
 
   return (
     <article>
@@ -81,13 +84,17 @@ export default async function BlogPostPage({
             )}
           </div>
 
-          <div className="flex flex-col gap-5">
-            {paragraphs.map((paragraph, i) => (
-              <p key={i} className="text-[var(--text-body)] text-base leading-relaxed">
-                {paragraph}
-              </p>
-            ))}
-          </div>
+          {isHtmlContent ? (
+            <div className="blog-content" dangerouslySetInnerHTML={{ __html: post.content }} />
+          ) : (
+            <div className="flex flex-col gap-5">
+              {paragraphs.map((paragraph, i) => (
+                <p key={i} className="text-[var(--text-body)] text-base leading-relaxed">
+                  {paragraph}
+                </p>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

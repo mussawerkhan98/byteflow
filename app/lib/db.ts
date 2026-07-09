@@ -12,6 +12,8 @@ export type Post = {
   published: boolean
   created_at: string
   image_url: string | null
+  meta_title: string | null
+  meta_description: string | null
 }
 
 export const db = createClient({
@@ -36,6 +38,8 @@ export async function getPosts(): Promise<Post[]> {
       published: Boolean(row.published),
       created_at: row.created_at as string,
       image_url: (row.image_url as string) ?? null,
+      meta_title: (row.meta_title as string) ?? null,
+      meta_description: (row.meta_description as string) ?? null,
     }))
   } catch (error) {
     console.error('Turso error:', error instanceof Error ? error.message : error)
@@ -63,6 +67,8 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
       published: Boolean(row.published),
       created_at: row.created_at as string,
       image_url: (row.image_url as string) ?? null,
+      meta_title: (row.meta_title as string) ?? null,
+      meta_description: (row.meta_description as string) ?? null,
     }
   } catch (error) {
     console.error('Turso error:', error instanceof Error ? error.message : error)

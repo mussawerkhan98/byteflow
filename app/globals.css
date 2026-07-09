@@ -74,3 +74,94 @@ h1, h2 {
 .marquee-track:hover {
   animation-play-state: paused;
 }
+
+.blog-content {
+  color: var(--text-body);
+  font-size: 1rem;
+  line-height: 1.75;
+}
+
+.blog-content p {
+  margin: 0 0 1.25rem;
+}
+
+.blog-content h2 {
+  font-family: var(--font-cardo), 'Cardo', serif;
+  color: var(--text-primary);
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 2rem 0 1rem;
+}
+
+.blog-content h3 {
+  font-family: var(--font-cardo), 'Cardo', serif;
+  color: var(--text-primary);
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 1.75rem 0 0.75rem;
+}
+
+.blog-content ul,
+.blog-content ol {
+  margin: 0 0 1.25rem;
+  padding-left: 1.5rem;
+}
+
+.blog-content ul {
+  list-style: disc;
+}
+
+.blog-content ol {
+  list-style: decimal;
+}
+
+.blog-content li {
+  margin-bottom: 0.5rem;
+}
+
+.blog-content a {
+  color: var(--cyan);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.blog-content blockquote {
+  border-left: 3px solid var(--cyan);
+  padding-left: 1.25rem;
+  margin: 0 0 1.25rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.blog-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.75rem;
+  margin: 0.5rem 0 1.5rem;
+}
+
+.blog-content strong {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.blog-content code {
+  background: var(--bg-surface-alt);
+  padding: 0.15em 0.4em;
+  border-radius: 0.25rem;
+  font-size: 0.9em;
+}
+
+.blog-content pre {
+  background: var(--bg-surface-alt);
+  padding: 1rem;
+  border-radius: 0.75rem;
+  overflow-x: auto;
+  margin: 0 0 1.25rem;
+  border: 1px solid var(--border-subtle);
+}
+
+.blog-content pre code {
+  background: none;
+  padding: 0;
+}
