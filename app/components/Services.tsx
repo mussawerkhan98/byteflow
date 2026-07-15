@@ -1,6 +1,8 @@
 import Link from 'next/link'
+import { getServices } from '../lib/db'
 
-const services = [
+// ── Static fallback (shown when DB has no published services) ──────────────
+const staticServices = [
   {
     num: '01',
     title: 'System Integration',
@@ -91,30 +93,80 @@ const services = [
   },
 ]
 
-export default function Services() {
+// ── Shared card shell ──────────────────────────────────────────────────────
+function CardShell({
+  href,
+  num,
+  icon,
+  title,
+  desc,
+}: {
+  href: string
+  num: string
+  icon: React.ReactNode
+  title: string
+  desc: string
+}) {
+  return (
+    <Link
+      href={href}
+      className="group relative flex flex-col rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_50px_rgba(44,205,222,0.2),_0_20px_40px_rgba(0,0,0,0.6)]"
+      style={{
+        background: 'linear-gradient(160deg, rgba(44,205,222,0.07) 0%, rgba(70,163,225,0.03) 30%, var(--bg-surface) 100%)',
+        border: '1px solid rgba(44,205,222,0.2)',
+      }}
+    >
+      <div className="h-[2px] w-full flex-shrink-0 transition-all duration-300 group-hover:h-[3px]"
+        style={{ background: 'linear-gradient(90deg, #2CCDDE, #46A3E1)' }} />
+      <div className="flex flex-col flex-1 p-6 gap-5">
+        <div className="flex items-start justify-between">
+          <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300 group-hover:shadow-[0_0_24px_rgba(44,205,222,0.5)]"
+            style={{ background: 'linear-gradient(135deg, rgba(44,205,222,0.15), rgba(70,163,225,0.1))', border: '1px solid rgba(44,205,222,0.3)', color: '#2CCDDE' }}>
+            {icon}
+          </div>
+          <span className="text-4xl font-black tabular-nums select-none leading-none"
+            style={{ background: 'linear-gradient(135deg, rgba(44,205,222,0.15), rgba(70,163,225,0.08))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+            {num}
+          </span>
+        </div>
+        <div className="flex flex-col gap-2 flex-1">
+          <h3 className="text-base font-bold text-[var(--text-primary)] leading-snug transition-colors duration-300 group-hover:text-[#2CCDDE]">{title}</h3>
+          <p className="text-[var(--text-muted)] text-sm leading-relaxed">{desc}</p>
+        </div>
+        <div className="flex items-center gap-2 text-xs font-bold pt-4 transition-all duration-300"
+          style={{ color: '#2CCDDE', borderTop: '1px solid rgba(44,205,222,0.12)' }}>
+          Learn More
+          <svg className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+          </svg>
+        </div>
+      </div>
+    </Link>
+  )
+}
+
+export default async function Services() {
+  // Try DB first; fall back to static list if empty
+  const dbServices = await getServices()
+  const useDb = dbServices.length > 0
+
   return (
     <section className="relative py-28 px-4 sm:px-6 lg:px-8 overflow-hidden">
-
-      {/* Ambient background glows */}
       <div className="absolute top-20 left-10 w-[500px] h-[500px] rounded-full pointer-events-none"
         style={{ background: 'radial-gradient(circle, rgba(44,205,222,0.07) 0%, transparent 70%)', filter: 'blur(80px)' }} />
       <div className="absolute bottom-20 right-10 w-[500px] h-[500px] rounded-full pointer-events-none"
         style={{ background: 'radial-gradient(circle, rgba(70,163,225,0.07) 0%, transparent 70%)', filter: 'blur(80px)' }} />
 
       <div className="relative max-w-7xl mx-auto">
-
         {/* Header */}
         <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-16">
           <div>
-            <div
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold mb-5 uppercase tracking-widest"
-              style={{ background: 'rgba(44,205,222,0.07)', border: '1px solid rgba(44,205,222,0.25)', color: '#2CCDDE' }}
-            >
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold mb-5 uppercase tracking-widest"
+              style={{ background: 'rgba(44,205,222,0.07)', border: '1px solid rgba(44,205,222,0.25)', color: '#2CCDDE' }}>
               What We Do
             </div>
             <h2 className="text-4xl sm:text-5xl font-bold leading-tight">
-              <span className="text-[var(--text-primary)]">Services Built for</span>
-              <br />
+              <span className="text-[var(--text-primary)]">Services Built for</span><br />
               <span style={{ background: 'linear-gradient(135deg, #2CCDDE, #46A3E1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                 Real Business Growth
               </span>
@@ -127,100 +179,52 @@ export default function Services() {
 
         {/* Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {services.map((s) => (
-            <Link
-              key={s.num}
-              href={s.href}
-              className="group relative flex flex-col rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_50px_rgba(44,205,222,0.2),_0_20px_40px_rgba(0,0,0,0.6)]"
-              style={{
-                background: 'linear-gradient(160deg, rgba(44,205,222,0.07) 0%, rgba(70,163,225,0.03) 30%, var(--bg-surface) 100%)',
-                border: '1px solid rgba(44,205,222,0.2)',
-              }}
-            >
-              {/* Top gradient bar — always visible */}
-              <div
-                className="h-[2px] w-full flex-shrink-0 transition-all duration-300 group-hover:h-[3px]"
-                style={{ background: 'linear-gradient(90deg, #2CCDDE, #46A3E1)' }}
-              />
-
-              {/* Card body */}
-              <div className="flex flex-col flex-1 p-6 gap-5">
-
-                {/* Icon + number */}
-                <div className="flex items-start justify-between">
-                  <div
-                    className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300 group-hover:shadow-[0_0_24px_rgba(44,205,222,0.5)]"
-                    style={{
-                      background: 'linear-gradient(135deg, rgba(44,205,222,0.15), rgba(70,163,225,0.1))',
-                      border: '1px solid rgba(44,205,222,0.3)',
-                      color: '#2CCDDE',
-                    }}
-                  >
-                    {s.icon}
-                  </div>
-                  <span
-                    className="text-4xl font-black tabular-nums select-none leading-none"
-                    style={{
-                      background: 'linear-gradient(135deg, rgba(44,205,222,0.15), rgba(70,163,225,0.08))',
-                      WebkitBackgroundClip: 'text',
-                      WebkitTextFillColor: 'transparent',
-                    }}
-                  >
-                    {s.num}
-                  </span>
-                </div>
-
-                {/* Text */}
-                <div className="flex flex-col gap-2 flex-1">
-                  <h3 className="text-base font-bold text-[var(--text-primary)] leading-snug transition-colors duration-300 group-hover:text-[#2CCDDE]">
-                    {s.title}
-                  </h3>
-                  <p className="text-[var(--text-muted)] text-sm leading-relaxed">
-                    {s.desc}
-                  </p>
-                </div>
-
-                {/* CTA */}
-                <div
-                  className="flex items-center gap-2 text-xs font-bold pt-4 transition-all duration-300"
-                  style={{
-                    color: '#2CCDDE',
-                    borderTop: '1px solid rgba(44,205,222,0.12)',
-                  }}
-                >
-                  Learn More
-                  <svg
-                    className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1"
-                    fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                  </svg>
-                </div>
-              </div>
-            </Link>
-          ))}
+          {useDb
+            ? dbServices.map((s, i) => (
+                <CardShell
+                  key={s.id}
+                  href={`/${s.slug}`}
+                  num={String(i + 1).padStart(2, '0')}
+                  title={s.title}
+                  desc={s.excerpt || s.description}
+                  icon={
+                    s.icon ? (
+                      <span className="text-2xl leading-none">{s.icon}</span>
+                    ) : (
+                      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 16.875h3.375m0 0h3.375m-3.375 0V13.5m0 3.375v3.375M6 10.5h2.25a2.25 2.25 0 002.25-2.25V6a2.25 2.25 0 00-2.25-2.25H6A2.25 2.25 0 003.75 6v2.25A2.25 2.25 0 006 10.5zm0 9.75h2.25A2.25 2.25 0 0010.5 18v-2.25a2.25 2.25 0 00-2.25-2.25H6a2.25 2.25 0 00-2.25 2.25V18A2.25 2.25 0 006 20.25zm9.75-9.75H18a2.25 2.25 0 002.25-2.25V6A2.25 2.25 0 0018 3.75h-2.25A2.25 2.25 0 0013.5 6v2.25a2.25 2.25 0 002.25 2.25z" />
+                      </svg>
+                    )
+                  }
+                />
+              ))
+            : staticServices.map((s) => (
+                <CardShell
+                  key={s.num}
+                  href={s.href}
+                  num={s.num}
+                  title={s.title}
+                  desc={s.desc}
+                  icon={s.icon}
+                />
+              ))}
         </div>
 
         {/* Bottom CTA */}
-        <div
-          className="flex flex-col sm:flex-row items-center justify-between gap-6 mt-14 pt-10"
-          style={{ borderTop: '1px solid var(--overlay-hover)' }}
-        >
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-6 mt-14 pt-10"
+          style={{ borderTop: '1px solid var(--overlay-hover)' }}>
           <p className="text-[var(--text-footer-link)] text-sm">
             Not sure which service you need? Our team will guide you.
           </p>
-          <Link
-            href="/contact-us"
+          <Link href="/contact-us"
             className="group inline-flex items-center gap-2.5 px-7 py-3 rounded-full text-black font-bold text-sm transition-all duration-300 hover:scale-[1.04] hover:shadow-[0_0_36px_rgba(44,205,222,0.5)]"
-            style={{ background: 'linear-gradient(135deg, #2CCDDE, #46A3E1)' }}
-          >
+            style={{ background: 'linear-gradient(135deg, #2CCDDE, #46A3E1)' }}>
             Talk to Our Team
             <svg className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
             </svg>
           </Link>
         </div>
-
       </div>
     </section>
   )
