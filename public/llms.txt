@@ -1,0 +1,29 @@
+# Byteflow Information Technology
+
+> Byteflow is an IT solutions provider based in Dubai, UAE, trusted by 500+ businesses since 2017. We deliver managed IT support, cybersecurity, cloud services, system integration, data backup and recovery, and digital products (websites, apps, and marketing) for companies across Dubai, Sharjah, and Abu Dhabi.
+
+Byteflow operates as a single accountable team across IT infrastructure, security, and growth (web, design, and marketing), so clients get one point of contact instead of juggling multiple vendors. All service pages below include pricing context, process breakdowns, and FAQs written for UAE businesses evaluating a provider.
+
+## Services
+
+- [IT AMC (Annual Maintenance Contract)](https://byteflow.ae/it-amc-services-dubai): Fully managed IT support with unlimited remote assistance, 2-hour on-site response, and 24/7 endpoint monitoring across Dubai, Sharjah, and Abu Dhabi.
+- [Cyber Security](https://byteflow.ae/cyber-security): Layered protection covering next-gen firewalls, endpoint detection and response (EDR), email security, network monitoring, and staff phishing training.
+- [System Integration](https://byteflow.ae/system-integration): Network design, structured cabling, server setup, CCTV/access control, VoIP, and multi-site connectivity for offices across the UAE.
+- [Data Backup and Recovery](https://byteflow.ae/data-backup-recovery): Hourly automated backups, ransomware-proof immutable storage, Microsoft 365 backup, and bare-metal server recovery within hours.
+- [Cloud Services](https://byteflow.ae/cloud-services-dubai): Microsoft 365 migration, Azure server deployment, SharePoint/Teams configuration, and hybrid cloud infrastructure management.
+- [Websites, Apps and Bots](https://byteflow.ae/website-development): Corporate websites, e-commerce stores, custom web applications, mobile apps, and AI chatbots (including WhatsApp bots) built in-house.
+- [UI/UX and Graphics Design](https://byteflow.ae/graphics-designing): Logo and brand identity, UI/UX design, company profiles, presentations, and print/signage design for the UAE market.
+- [Digital Marketing](https://byteflow.ae/digital-marketing): SEO, Google Ads, social media advertising and management, content marketing, and email automation with UAE-specific targeting.
+- [Landing Page Designing](https://byteflow.ae/landing-page-designing): Conversion-focused, mobile-first landing pages for Google Ads and social campaigns, built and live within 1-2 weeks.
+
+## Company
+
+- [About Us](https://byteflow.ae/about-us): Byteflow's background, team, and why UAE businesses choose us.
+- [Projects](https://byteflow.ae/projects): Case studies of completed work across IT support, cybersecurity, cloud migration, web development, and design for real UAE clients.
+- [Blog](https://byteflow.ae/blog): Practical guides on cybersecurity, cloud, IT support, and digital marketing for businesses in Dubai and the UAE.
+- [Careers](https://byteflow.ae/careers): Open roles at Byteflow.
+- [Contact Us](https://byteflow.ae/contact-us): Get in touch — email, phone, WhatsApp, and office location in Dubai.
+
+## Optional
+
+- [Sitemap](https://byteflow.ae/sitemap.xml): Full list of indexed pages, including all blog posts and project case studies.
