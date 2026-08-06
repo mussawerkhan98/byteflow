@@ -21,7 +21,7 @@ export default async function Home() {
       getSection("home", "hero"),
       getPageHero("home"),
       getTestimonials(),
-      getTeam("home"),
+      getTeam(),
       getSiteSettings(),
     ]);
   const hero = {
