@@ -129,7 +129,7 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
 export async function getServices(): Promise<DbService[]> {
   try {
     const result = await db.execute(
-      "SELECT * FROM services WHERE published = 1 ORDER BY sort_order ASC",
+      "SELECT * FROM services WHERE status = 'published' ORDER BY sort_order ASC",
     );
     return result.rows.map((row) => ({
       id: String(row.id),

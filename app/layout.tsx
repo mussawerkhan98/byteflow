@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Space_Grotesk, Cardo } from "next/font/google";
 import { GoogleAnalytics } from "@next/third-parties/google";
+import { connection } from "next/server";
 import "./globals.css";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
@@ -38,6 +39,10 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // The CMS is updated by a separately deployed admin application. Defer
+  // these shared database reads to request time instead of freezing them
+  // into the website's build output.
+  await connection();
   const [settings, headerMenu, footerMenu, services] = await Promise.all([
     getSiteSettings(),
     getMenu("header"),
