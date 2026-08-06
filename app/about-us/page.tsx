@@ -1,15 +1,16 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import AboutReviews from '../components/AboutReviews'
-import { getPageHero, getTestimonials } from '../lib/cms'
+import { getPageHero, getSection, getTestimonials } from '../lib/cms'
 
 export default async function AboutPage() {
-  const [hero, testimonials] = await Promise.all([getPageHero('about-us'), getTestimonials()])
+  const [hero, founder, testimonials] = await Promise.all([getPageHero('about-us'), getSection('about-us', 'founder'), getTestimonials()])
+  const founderStory = String(founder?.story || 'Byteflow was born out of frustration. Too many Dubai businesses were being overcharged, underserved, and left waiting days for a simple fix. We started in 2017 with one goal: build the kind of IT company that actually shows up.\n\nEight years later, we manage IT for over 500 businesses across Dubai, Sharjah and Abu Dhabi. We have grown from a two-person team to a full-service operation covering everything from server rooms to Google Ads campaigns — all under one roof, one monthly fee.\n\nThe philosophy has never changed: respond fast, be honest about pricing, and treat every client like they are your only one.')
   return (
     <main>
 
       {/* ── Hero ─────────────────────────────────────────────── */}
-      <section className="relative pt-20 pb-0 px-4 sm:px-6 lg:px-8 overflow-hidden" style={hero?.hero_background_image ? {backgroundImage:`linear-gradient(rgba(4,13,18,.78),rgba(4,13,18,.94)),url(${hero.hero_background_image})`,backgroundSize:'cover',backgroundPosition:'center'}:undefined}>
+      <section className="relative pt-20 pb-0 px-4 sm:px-6 lg:px-8 overflow-hidden" style={hero?.hero_background_image ? { backgroundImage: `linear-gradient(rgba(4,13,18,.78),rgba(4,13,18,.94)),url(${hero.hero_background_image})`, backgroundSize: 'cover', backgroundPosition: 'center' } : undefined}>
         <div className="absolute top-0 right-0 w-[700px] h-[700px] pointer-events-none"
           style={{ background: 'radial-gradient(circle at 80% 20%, rgba(44,205,222,0.07) 0%, transparent 60%)', filter: 'blur(60px)' }} />
 
@@ -75,8 +76,8 @@ export default async function AboutPage() {
               {/* Photo */}
               <div className="relative h-[480px] lg:h-auto overflow-hidden">
                 <Image
-                  src="/images/owner/owner.png"
-                  alt="Byteflow Founder"
+                  src={String(founder?.image_url || '/images/owner/owner.png')}
+                  alt={String(founder?.image_alt || 'Byteflow Founder')}
                   fill
                   className="object-cover object-top"
                 />
@@ -94,19 +95,20 @@ export default async function AboutPage() {
                     backdropFilter: 'blur(12px)',
                   }}
                 >
-                  <p className="text-[var(--text-primary)] text-sm font-bold">Founder & CEO</p>
-                  <p className="text-[#2CCDDE] text-xs font-medium">Byteflow Information Technology</p>
+                  <p className="text-[var(--text-primary)] text-sm font-bold">{String(founder?.role || 'Founder & CEO')}</p>
+                  <p className="text-[#2CCDDE] text-xs font-medium">{String(founder?.company || 'Byteflow Information Technology')}</p>
                 </div>
               </div>
 
               {/* Content */}
               <div className="flex flex-col justify-center p-10 lg:p-14">
-                <p className="text-[#2CCDDE] text-xs font-bold uppercase tracking-widest mb-4">Meet the founder</p>
+                <p className="text-[#2CCDDE] text-xs font-bold uppercase tracking-widest mb-4">{String(founder?.eyebrow || 'Meet the founder')}</p>
                 <h2 className="text-3xl sm:text-4xl font-bold text-[var(--text-primary)] leading-tight mb-6">
-                  Started with a laptop and a promise to fix IT in Dubai properly.
+                  {String(founder?.heading || 'Started with a laptop and a promise to fix IT in Dubai properly.')}
                 </h2>
 
                 <div className="flex flex-col gap-4 text-[var(--text-muted)] text-sm leading-relaxed mb-8">
+                  {founder?.story ? founderStory.split(/\n\s*\n/).filter(Boolean).map((paragraph) => <p key={paragraph}>{paragraph}</p>) : <>
                   <p>
                     Byteflow was born out of frustration. Too many Dubai businesses were being overcharged, underserved, and left waiting days for a simple fix. We started in 2017 with one goal: build the kind of IT company that actually shows up.
                   </p>
@@ -116,6 +118,7 @@ export default async function AboutPage() {
                   <p>
                     The philosophy has never changed: respond fast, be honest about pricing, and treat every client like they are your only one.
                   </p>
+                  </>}
                 </div>
 
                 <div
@@ -123,7 +126,7 @@ export default async function AboutPage() {
                   style={{ borderTop: '1px solid rgba(44,205,222,0.1)' }}
                 >
                   <a
-                    href="https://ae.linkedin.com/company/byteflow-techcascade"
+                    href={String(founder?.linkedin_url || 'https://ae.linkedin.com/company/byteflow-techcascade')}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 hover:shadow-[0_0_20px_rgba(44,205,222,0.3)]"
@@ -135,10 +138,10 @@ export default async function AboutPage() {
                     LinkedIn
                   </a>
                   <a
-                    href="tel:+971543282042"
+                    href={String(founder?.phone_url || 'tel:+971543282042')}
                     className="text-[var(--text-muted)] text-sm hover:text-[#2CCDDE] transition-colors duration-200"
                   >
-                    +971 54 328 2042
+                    {String(founder?.phone_label || '+971 54 328 2042')}
                   </a>
                 </div>
               </div>
