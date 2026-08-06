@@ -120,23 +120,46 @@ export default function Contact({ settings = {}, hero }: { settings?: ContactSet
   const [submitted, setSubmitted] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState('')
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   const [successMessage, setSuccessMessage] = useState('Our team will get back to you within 2 hours.')
   const [focused, setFocused] = useState<string | null>(null)
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }))
+    setFieldErrors((current) => ({ ...current, [e.target.name]: '' }))
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
+    const errors: Record<string, string> = {}
+    if (form.name.trim().length < 2) errors.name = 'Please enter your full name.'
+    if (!form.email.trim()) errors.email = 'Email address is required.'
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) errors.email = 'Please enter a valid email address.'
+    if (!form.message.trim()) errors.message = 'Message is required.'
+    else if (form.message.trim().length < 5) errors.message = 'Please add a little more detail to your message.'
+    if (Object.keys(errors).length) {
+      setFieldErrors(errors)
+      setSubmitError('Please complete the highlighted fields.')
+      return
+    }
     setSubmitting(true)
     setSubmitError('')
-    const response = await fetch('/api/contact', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ ...form, message: `${form.message}${form.company ? `\n\nCompany: ${form.company}` : ''}${form.service ? `\nService: ${form.service}` : ''}`, sourcePage: window.location.pathname }) })
-    const data = await response.json()
-    setSubmitting(false)
-    if (!response.ok) { setSubmitError(data.error ?? 'Unable to send your message.'); return }
-    setSuccessMessage(data.message ?? successMessage)
-    setSubmitted(true)
+    setFieldErrors({})
+    try {
+      const response = await fetch('/api/contact', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ ...form, message: `${form.message}${form.company ? `\n\nCompany: ${form.company}` : ''}${form.service ? `\nService: ${form.service}` : ''}`, sourcePage: window.location.pathname }) })
+      const data = await response.json()
+      if (!response.ok) {
+        setFieldErrors(data.fieldErrors ?? {})
+        setSubmitError(data.error ?? 'Please check the form and try again.')
+        return
+      }
+      setSuccessMessage(data.message ?? successMessage)
+      setSubmitted(true)
+    } catch {
+      setSubmitError('We could not send your message. Check your connection and try again.')
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   const inputStyle = (name: string) => ({
@@ -300,7 +323,7 @@ export default function Contact({ settings = {}, hero }: { settings?: ContactSet
                     </button>
                   </div>
                 ) : (
-                  <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+                  <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
 
                     {/* Name + Company */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -318,6 +341,7 @@ export default function Contact({ settings = {}, hero }: { settings?: ContactSet
                           className="px-4 py-3 rounded-xl text-sm placeholder-[var(--text-dim)] w-full"
                           style={inputStyle('name')}
                         />
+                        {fieldErrors.name && <p className="text-xs text-red-400">{fieldErrors.name}</p>}
                       </div>
                       <div className="flex flex-col gap-2">
                         <label className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">Company Name</label>
@@ -351,6 +375,7 @@ export default function Contact({ settings = {}, hero }: { settings?: ContactSet
                           className="px-4 py-3 rounded-xl text-sm placeholder-[var(--text-dim)] w-full"
                           style={inputStyle('email')}
                         />
+                        {fieldErrors.email && <p className="text-xs text-red-400">{fieldErrors.email}</p>}
                       </div>
                       <div className="flex flex-col gap-2">
                         <label className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">Phone Number</label>
@@ -365,6 +390,7 @@ export default function Contact({ settings = {}, hero }: { settings?: ContactSet
                           className="px-4 py-3 rounded-xl text-sm placeholder-[var(--text-dim)] w-full"
                           style={inputStyle('phone')}
                         />
+                        {fieldErrors.phone && <p className="text-xs text-red-400">{fieldErrors.phone}</p>}
                       </div>
                     </div>
 
@@ -402,6 +428,7 @@ export default function Contact({ settings = {}, hero }: { settings?: ContactSet
                         className="px-4 py-3 rounded-xl text-sm placeholder-[var(--text-dim)] w-full resize-none"
                         style={inputStyle('message')}
                       />
+                      {fieldErrors.message && <p className="text-xs text-red-400">{fieldErrors.message}</p>}
                     </div>
 
                     {/* Submit */}

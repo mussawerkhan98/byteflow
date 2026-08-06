@@ -8,7 +8,7 @@ import Footer from "./components/Footer";
 import StickyContactButtons from "./components/StickyContactButtons";
 import PageCta from "./components/PageCta";
 import PageFaq from "./components/PageFaq";
-import { getMenu, getPageMetadata, getSiteSettings } from "./lib/cms";
+import { getMenu, getPageMetadata, getSiteSettings, getWebsiteScripts } from "./lib/cms";
 import { getServices } from "./lib/db";
 
 const spaceGrotesk = Space_Grotesk({
@@ -43,12 +43,16 @@ export default async function RootLayout({
   // these shared database reads to request time instead of freezing them
   // into the website's build output.
   await connection();
-  const [settings, headerMenu, footerMenu, services] = await Promise.all([
+  const [settings, headerMenu, footerMenu, services, scripts] = await Promise.all([
     getSiteSettings(),
     getMenu("header"),
     getMenu("footer"),
     getServices(),
+    getWebsiteScripts(),
   ]);
+  const headScripts = scripts.filter((script) => script.placement === "head").map((script) => script.code).join("\n");
+  const footerScripts = scripts.filter((script) => script.placement === "body_end").map((script) => script.code).join("\n");
+  const themeScript = `<script>(function(){try{var t=localStorage.getItem('theme');if(!t){t=window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark'}document.documentElement.setAttribute('data-theme',t)}catch(e){}})();<\/script>`;
   type MenuNode = {
     label: string;
     href: string;
@@ -91,13 +95,7 @@ export default async function RootLayout({
       lang="en"
       className={`${spaceGrotesk.variable} ${cardo.variable} h-full antialiased`}
     >
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('theme');if(!t){t=window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark'}document.documentElement.setAttribute('data-theme',t)}catch(e){}})();`,
-          }}
-        />
-      </head>
+      <head dangerouslySetInnerHTML={{ __html: `${themeScript}\n${headScripts}` }} />
       <body
         className="min-h-full flex flex-col text-[var(--text-primary)]"
         style={{
@@ -118,6 +116,13 @@ export default async function RootLayout({
           settings={(settings ?? {}) as never}
         />
         <StickyContactButtons />
+        {footerScripts && (
+          <div
+            data-cms-scripts="body-end"
+            style={{ display: "contents" }}
+            dangerouslySetInnerHTML={{ __html: footerScripts }}
+          />
+        )}
       </body>
       <GoogleAnalytics gaId="G-0D6S22JEGG" />
     </html>

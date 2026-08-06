@@ -5,7 +5,15 @@ function escapeHtml(value:string){return value.replace(/[&<>"']/g,(char)=>({ '&'
 export async function POST(request:Request){
   const body=await request.json().catch(()=>null) as Record<string,unknown>|null
   const name=String(body?.name??'').trim(), email=String(body?.email??'').trim(), phone=String(body?.phone??'').trim(), message=String(body?.message??'').trim(), source=String(body?.sourcePage??'').trim()
-  if(name.length<2||name.length>120||!validEmail(email)||phone.length>40||message.length<5||message.length>5000)return Response.json({error:'Please provide a valid name, email and message.'},{status:400})
+  const fieldErrors:Record<string,string>={}
+  if(name.length<2)fieldErrors.name='Please enter your full name.'
+  else if(name.length>120)fieldErrors.name='Name must be 120 characters or fewer.'
+  if(!email)fieldErrors.email='Email address is required.'
+  else if(!validEmail(email))fieldErrors.email='Please enter a valid email address.'
+  if(phone.length>40)fieldErrors.phone='Phone number must be 40 characters or fewer.'
+  if(message.length<5)fieldErrors.message='Please add a little more detail to your message.'
+  else if(message.length>5000)fieldErrors.message='Message must be 5,000 characters or fewer.'
+  if(Object.keys(fieldErrors).length)return Response.json({error:'Please complete the highlighted fields.',fieldErrors},{status:400})
   try{
     const enabled=await db.execute({sql:`SELECT enabled,success_message,error_message,recipient_email,reply_to_mode,email_subject FROM contact_form_settings f LEFT JOIN pages p ON p.id=f.page_id WHERE f.enabled=1 AND (f.page_id IS NULL OR p.slug=?) ORDER BY f.page_id DESC LIMIT 1`,args:[source.replace(/^\//,'')||'home']})
     if(enabled.rows.length===0)return Response.json({error:'This contact form is currently unavailable.'},{status:503})
