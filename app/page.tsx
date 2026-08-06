@@ -6,22 +6,19 @@ import HowItWorks from "./components/HowItWorks";
 import Blog from "./components/Blog";
 import CTA from "./components/CTA";
 import Contact from "./components/Contact";
-import Team from "./components/Team";
 import {
   getPageHero,
   getSection,
   getSiteSettings,
-  getTeam,
   getTestimonials,
 } from "./lib/cms";
 
 export default async function Home() {
-  const [sectionHero, pageHero, testimonials, team, settings] =
+  const [sectionHero, pageHero, testimonials, settings] =
     await Promise.all([
       getSection("home", "hero"),
       getPageHero("home"),
       getTestimonials(),
-      getTeam(),
       getSiteSettings(),
     ]);
   const hero = {
@@ -55,7 +52,6 @@ export default async function Home() {
       <HowItWorks />
       <Blog />
       <Reviews items={testimonials} />
-      <Team members={team} />
       <CTA />
       <Contact settings={(settings ?? {}) as never} />
     </>

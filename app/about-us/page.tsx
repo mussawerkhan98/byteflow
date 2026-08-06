@@ -1,10 +1,11 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import AboutReviews from '../components/AboutReviews'
-import { getPageHero, getSection, getTestimonials } from '../lib/cms'
+import Team from '../components/Team'
+import { getPageHero, getSection, getTeam, getTestimonials } from '../lib/cms'
 
 export default async function AboutPage() {
-  const [hero, founder, testimonials] = await Promise.all([getPageHero('about-us'), getSection('about-us', 'founder'), getTestimonials()])
+  const [hero, founder, testimonials, team] = await Promise.all([getPageHero('about-us'), getSection('about-us', 'founder'), getTestimonials(), getTeam()])
   const founderStory = String(founder?.story || 'Byteflow was born out of frustration. Too many Dubai businesses were being overcharged, underserved, and left waiting days for a simple fix. We started in 2017 with one goal: build the kind of IT company that actually shows up.\n\nEight years later, we manage IT for over 500 businesses across Dubai, Sharjah and Abu Dhabi. We have grown from a two-person team to a full-service operation covering everything from server rooms to Google Ads campaigns — all under one roof, one monthly fee.\n\nThe philosophy has never changed: respond fast, be honest about pricing, and treat every client like they are your only one.')
   return (
     <main>
@@ -351,6 +352,7 @@ export default async function AboutPage() {
       </section>
 
       {/* ── Reviews ──────────────────────────────────────────── */}
+      <Team members={team} />
       <AboutReviews items={testimonials} />
 
       {/* ── Final CTA ────────────────────────────────────────── */}

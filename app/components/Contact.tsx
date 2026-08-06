@@ -333,7 +333,7 @@ export default function Contact({ settings = {}, hero }: { settings?: ContactSet
                           name="name"
                           type="text"
                           required
-                          placeholder="Ahmed Al Mansouri"
+                          placeholder="Your name"
                           value={form.name}
                           onChange={handleChange}
                           onFocus={() => setFocused('name')}
