@@ -1,12 +1,10 @@
 import type { Metadata } from 'next'
 import Contact from '../components/Contact'
+import { getPageHero, getPageMetadata, getSiteSettings } from '../lib/cms'
 
-export const metadata: Metadata = {
-  title: 'Contact Us | Byteflow Information Technology',
-  description:
-    'Get in touch with Byteflow IT. Free consultation, on-site and remote support across Dubai, Sharjah and Abu Dhabi. Call, WhatsApp or fill in the form.',
-}
+export async function generateMetadata(): Promise<Metadata> { return await getPageMetadata('contact-us') ?? { title: 'Contact Us | Byteflow Information Technology', description: 'Get in touch with Byteflow IT. Free consultation, on-site and remote support across Dubai, Sharjah and Abu Dhabi.' } }
 
-export default function ContactPage() {
-  return <Contact />
+export default async function ContactPage() {
+  const [settings,hero] = await Promise.all([getSiteSettings(),getPageHero('contact-us')])
+  return <Contact settings={(settings ?? {}) as never} hero={hero} />
 }

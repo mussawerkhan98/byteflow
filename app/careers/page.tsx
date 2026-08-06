@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { getPageHero } from '../lib/cms'
 
 export const metadata: Metadata = {
   title: 'Careers | Byteflow Information Technology',
@@ -24,16 +25,17 @@ const values = [
   },
 ]
 
-export default function CareersPage() {
+export default async function CareersPage() {
+  const hero = await getPageHero('careers')
   return (
     <main>
-      <section className="relative pt-20 pb-16 px-4 sm:px-6 lg:px-8 overflow-hidden">
+      <section className="relative pt-20 pb-16 px-4 sm:px-6 lg:px-8 overflow-hidden" style={hero?.hero_background_image?{backgroundImage:`linear-gradient(rgba(4,13,18,.8),rgba(4,13,18,.95)),url(${hero.hero_background_image})`,backgroundSize:'cover',backgroundPosition:'center'}:undefined}>
         <div
           className="absolute top-0 right-0 w-[700px] h-[700px] pointer-events-none"
           style={{ background: 'radial-gradient(circle at 80% 20%, rgba(44,205,222,0.07) 0%, transparent 60%)', filter: 'blur(80px)' }}
         />
         <div className="relative max-w-3xl mx-auto text-center">
-          <p className="text-[#2CCDDE] text-sm font-semibold uppercase tracking-widest mb-4">Careers</p>
+          <p className="text-[#2CCDDE] text-sm font-semibold uppercase tracking-widest mb-4">{hero?.hero_label || 'Careers'}</p>
           <h1 className="text-5xl sm:text-6xl font-bold leading-[1.04] tracking-tight mb-6">
             <span className="text-[var(--text-primary)]">Help us keep </span>
             <span

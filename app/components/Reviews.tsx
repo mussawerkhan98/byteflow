@@ -53,7 +53,8 @@ function Stars({ count }: { count: number }) {
   )
 }
 
-export default function Reviews() {
+export default function Reviews({ items }: { items?: { customer_name: string; customer_role: string; review_text: string; rating: number }[] }) {
+  const shownReviews = items?.length ? items.map((item) => ({ name: item.customer_name, role: item.customer_role, text: item.review_text, rating: item.rating })) : reviews
   const [active, setActive] = useState(0)
   const [animating, setAnimating] = useState(false)
   const [direction, setDirection] = useState<'left' | 'right'>('right')
@@ -68,15 +69,15 @@ export default function Reviews() {
     }, 280)
   }, [animating])
 
-  const prev = () => go((active - 1 + reviews.length) % reviews.length, 'left')
-  const next = () => go((active + 1) % reviews.length, 'right')
+  const prev = () => go((active - 1 + shownReviews.length) % shownReviews.length, 'left')
+  const next = () => go((active + 1) % shownReviews.length, 'right')
 
   useEffect(() => {
     const id = setInterval(() => next(), 5000)
     return () => clearInterval(id)
   }, [active])
 
-  const r = reviews[active]
+  const r = shownReviews[active]
 
   return (
     <section className="relative py-28 px-4 sm:px-6 lg:px-8 overflow-hidden">
@@ -213,7 +214,7 @@ export default function Reviews() {
 
           {/* Dots */}
           <div className="flex items-center gap-2">
-            {reviews.map((_, i) => (
+            {shownReviews.map((_, i) => (
               <button
                 key={i}
                 onClick={() => go(i, i > active ? 'right' : 'left')}

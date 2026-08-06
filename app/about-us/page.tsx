@@ -1,29 +1,31 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import AboutReviews from '../components/AboutReviews'
+import { getPageHero, getTestimonials } from '../lib/cms'
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const [hero, testimonials] = await Promise.all([getPageHero('about-us'), getTestimonials()])
   return (
     <main>
 
       {/* ── Hero ─────────────────────────────────────────────── */}
-      <section className="relative pt-20 pb-0 px-4 sm:px-6 lg:px-8 overflow-hidden">
+      <section className="relative pt-20 pb-0 px-4 sm:px-6 lg:px-8 overflow-hidden" style={hero?.hero_background_image ? {backgroundImage:`linear-gradient(rgba(4,13,18,.78),rgba(4,13,18,.94)),url(${hero.hero_background_image})`,backgroundSize:'cover',backgroundPosition:'center'}:undefined}>
         <div className="absolute top-0 right-0 w-[700px] h-[700px] pointer-events-none"
           style={{ background: 'radial-gradient(circle at 80% 20%, rgba(44,205,222,0.07) 0%, transparent 60%)', filter: 'blur(60px)' }} />
 
         <div className="relative max-w-7xl mx-auto">
           <div className="max-w-2xl mb-16">
-            <p className="text-[#2CCDDE] text-sm font-semibold uppercase tracking-widest mb-4">Dubai, UAE — Since 2017</p>
-            <h1 className="text-5xl sm:text-6xl lg:text-[72px] font-bold leading-[1.04] tracking-tight mb-6">
+            <p className="text-[#2CCDDE] text-sm font-semibold uppercase tracking-widest mb-4">{hero?.hero_label || 'Dubai, UAE — Since 2017'}</p>
+            {hero?.hero_heading ? <h1 className="text-5xl sm:text-6xl lg:text-[72px] font-bold leading-[1.04] tracking-tight mb-6 text-[var(--text-primary)]">{hero.hero_heading}</h1> : <h1 className="text-5xl sm:text-6xl lg:text-[72px] font-bold leading-[1.04] tracking-tight mb-6">
               <span className="text-[var(--text-primary)]">The team behind </span>
               <span style={{ background: 'linear-gradient(135deg, #2CCDDE, #46A3E1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                 500+ businesses
               </span>
               <br />
               <span className="text-[var(--text-primary)]">running smoothly.</span>
-            </h1>
+            </h1>}
             <p className="text-[var(--text-muted)] text-lg leading-relaxed">
-              We are a Dubai-based IT company that handles everything technology-related for businesses across the UAE — so you never have to call three different vendors again.
+              {hero?.hero_description || 'We are a Dubai-based IT company that handles everything technology-related for businesses across the UAE — so you never have to call three different vendors again.'}
             </p>
           </div>
 
@@ -346,7 +348,7 @@ export default function AboutPage() {
       </section>
 
       {/* ── Reviews ──────────────────────────────────────────── */}
-      <AboutReviews />
+      <AboutReviews items={testimonials} />
 
       {/* ── Final CTA ────────────────────────────────────────── */}
       <section className="py-24 px-4 sm:px-6 lg:px-8">

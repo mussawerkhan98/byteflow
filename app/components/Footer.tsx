@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 
-const usefulLinks = [
+const fallbackUsefulLinks = [
   { label: 'Home', href: '/' },
   { label: 'About Us', href: '/about-us' },
   { label: 'Projects', href: '/projects' },
@@ -58,7 +58,13 @@ const socials = [
   },
 ]
 
-export default function Footer() {
+type FooterSettings = { logo_url?: string; header_phone?: string; primary_email?: string; physical_address?: string; footer_text?: string; copyright_text?: string; facebook_url?: string; instagram_url?: string; linkedin_url?: string; x_url?: string; youtube_url?: string; tiktok_url?: string; github_url?: string }
+export default function Footer({ navigation = fallbackUsefulLinks, settings = {} }: { navigation?: { label: string; href: string; new_tab?: boolean }[]; settings?: FooterSettings }) {
+  const usefulLinks = navigation
+  const dynamicSocials = [
+    { label: 'Facebook', href: settings.facebook_url }, { label: 'Instagram', href: settings.instagram_url }, { label: 'LinkedIn', href: settings.linkedin_url }, { label: 'X', href: settings.x_url }, { label: 'YouTube', href: settings.youtube_url }, { label: 'TikTok', href: settings.tiktok_url }, { label: 'GitHub', href: settings.github_url },
+  ].filter((item): item is { label: string; href: string } => Boolean(item.href)).map((item) => ({ ...item, icon: <span className="text-xs font-bold">{item.label.slice(0, 2)}</span> }))
+  const shownSocials = dynamicSocials.length ? dynamicSocials : socials
   return (
     <footer className="">
       <div
@@ -72,7 +78,7 @@ export default function Footer() {
           <div className="space-y-6">
             <Link href="/">
               <Image
-                src="/images/logo.png"
+                src={settings.logo_url || '/images/logo.png'}
                 alt="Byteflow"
                 width={140}
                 height={40}
@@ -80,7 +86,7 @@ export default function Footer() {
               />
             </Link>
             <p className="text-[var(--text-footer-link)] text-sm leading-relaxed">
-              Leading IT solutions provider trusted by 500+ businesses across Dubai and UAE since 2017.
+              {settings.footer_text || 'Leading IT solutions provider trusted by 500+ businesses across Dubai and UAE since 2017.'}
             </p>
             <ul className="space-y-3.5 text-sm">
               <li>
@@ -96,7 +102,7 @@ export default function Footer() {
                       <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                     </svg>
                   </span>
-                  +971 54 328 2042
+                  {settings.header_phone || '+971 54 328 2042'}
                 </a>
               </li>
               <li>
@@ -112,7 +118,7 @@ export default function Footer() {
                       <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                     </svg>
                   </span>
-                  info@byteflow.ae
+                  {settings.primary_email || 'info@byteflow.ae'}
                 </a>
               </li>
               <li className="flex items-center gap-3 text-[var(--text-footer-link)]">
@@ -125,7 +131,7 @@ export default function Footer() {
                     <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
                 </span>
-                Dubai, United Arab Emirates
+                {settings.physical_address || 'Dubai, United Arab Emirates'}
               </li>
             </ul>
           </div>
@@ -189,7 +195,7 @@ export default function Footer() {
               Stay updated with our latest news and IT insights.
             </p>
             <div className="flex gap-2.5">
-              {socials.map((s) => (
+              {shownSocials.map((s) => (
                 <a
                   key={s.label}
                   href={s.href}
@@ -220,7 +226,7 @@ export default function Footer() {
       <div style={{ borderTop: '1px solid var(--border-subtle)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-2">
           <p className="text-[var(--text-dim)] text-sm">
-            &copy; {new Date().getFullYear()} Byteflow Information Technology. All rights reserved.
+            &copy; {new Date().getFullYear()} {settings.copyright_text || 'Byteflow Information Technology. All rights reserved.'}
           </p>
           <p className="text-[var(--text-dim)] text-sm">
             Trusted by 500+ businesses across Dubai and UAE since 2017.

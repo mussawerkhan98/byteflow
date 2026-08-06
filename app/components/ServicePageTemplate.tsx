@@ -2,15 +2,18 @@ import Link from 'next/link'
 import type { ServiceData } from '../lib/services-data'
 import { services } from '../lib/services-data'
 import ServiceFAQ from './ServiceFAQ'
+import { getCmsService, getPageHero } from '../lib/cms'
 
-export default function ServicePageTemplate({ service }: { service: ServiceData }) {
-  const related = services.filter((s) => service.relatedSlugs.includes(s.slug))
+export default async function ServicePageTemplate({ service }: { service: ServiceData }) {
+  const [cmsService, hero] = await Promise.all([getCmsService(service.slug), getPageHero(service.slug)])
+  const shown = { ...service, title: String(cmsService?.title || service.title), description: String(hero?.hero_description || cmsService?.description || service.description), tagline: String(hero?.hero_heading || service.tagline) }
+  const related = services.filter((s) => shown.relatedSlugs.includes(s.slug))
 
   return (
     <main style={{ background: 'var(--bg-page)' }}>
 
       {/* ── HERO ─────────────────────────────────────────────── */}
-      <section className="relative pt-20 pb-16 px-4 sm:px-6 lg:px-8 overflow-hidden">
+      <section className="relative pt-20 pb-16 px-4 sm:px-6 lg:px-8 overflow-hidden" style={hero?.hero_background_image ? { backgroundImage:`linear-gradient(rgba(4,13,18,.78),rgba(4,13,18,.93)),url(${hero.hero_background_image})`, backgroundSize:'cover', backgroundPosition:'center' } : undefined}>
         {/* Ambient glows */}
         <div
           className="absolute top-0 right-0 w-[700px] h-[700px] pointer-events-none"
@@ -31,7 +34,7 @@ export default function ServicePageTemplate({ service }: { service: ServiceData 
           <div className="max-w-3xl">
             {/* Section label */}
             <p className="text-[#2CCDDE] text-xs font-bold uppercase tracking-widest mb-5">
-              {service.title}
+              {hero?.hero_label || shown.title}
             </p>
 
             {/* H1 */}
@@ -43,23 +46,23 @@ export default function ServicePageTemplate({ service }: { service: ServiceData 
                   WebkitTextFillColor: 'transparent',
                 }}
               >
-                {service.tagline}
+                {shown.tagline}
               </span>
             </h1>
 
             {/* Description */}
             <p className="text-[var(--text-muted)] text-lg leading-relaxed mb-10 max-w-2xl">
-              {service.description}
+              {shown.description}
             </p>
 
             {/* CTA buttons */}
             <div className="flex flex-col sm:flex-row gap-4 mb-16">
               <Link
-                href="/contact-us"
+                href={hero?.hero_primary_link || '/contact-us'}
                 className="inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-full text-black font-bold text-sm transition-all duration-300 hover:scale-[1.04] hover:shadow-[0_0_40px_rgba(44,205,222,0.5)]"
                 style={{ background: 'linear-gradient(135deg, #2CCDDE, #46A3E1)' }}
               >
-                Get a Free Quote
+                {hero?.hero_primary_label || 'Get a Free Quote'}
                 <svg
                   className="w-4 h-4"
                   fill="none"

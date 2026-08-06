@@ -42,8 +42,6 @@ const reviews = [
 ]
 
 const CARDS_PER_PAGE = 3
-const totalPages = Math.ceil(reviews.length / CARDS_PER_PAGE)
-
 function Stars({ count }: { count: number }) {
   return (
     <div className="flex items-center gap-0.5">
@@ -56,7 +54,9 @@ function Stars({ count }: { count: number }) {
   )
 }
 
-export default function AboutReviews() {
+export default function AboutReviews({ items }: { items?: { customer_name:string; customer_role:string; review_text:string; rating:number }[] }) {
+  const shownReviews = items?.length ? items.map(item=>({name:item.customer_name,role:item.customer_role,text:item.review_text,rating:item.rating})) : reviews
+  const totalPages = Math.ceil(shownReviews.length / CARDS_PER_PAGE)
   const [page, setPage] = useState(0)
   const [animating, setAnimating] = useState(false)
   const [direction, setDirection] = useState<'left' | 'right'>('right')
@@ -79,7 +79,7 @@ export default function AboutReviews() {
     return () => clearInterval(id)
   }, [page])
 
-  const visible = reviews.slice(page * CARDS_PER_PAGE, page * CARDS_PER_PAGE + CARDS_PER_PAGE)
+  const visible = shownReviews.slice(page * CARDS_PER_PAGE, page * CARDS_PER_PAGE + CARDS_PER_PAGE)
 
   return (
     <section className="relative py-24 px-4 sm:px-6 lg:px-8 overflow-hidden">

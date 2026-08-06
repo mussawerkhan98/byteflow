@@ -107,17 +107,35 @@ const services = [
   'Other',
 ]
 
-export default function Contact() {
+type ContactSettings = { header_phone?: string; primary_email?: string; physical_address?: string; business_hours?: string; whatsapp_link?: string; facebook_url?: string; linkedin_url?: string; instagram_url?: string; tiktok_url?: string; map_embed_url?: string; map_enabled?: number | boolean }
+type ContactHero = { hero_label?:string; hero_heading?:string; hero_description?:string; hero_background_image?:string }
+function safeMapUrl(value?: string) { try { if (!value) return ''; const url = new URL(value); return url.protocol === 'https:' && /(^|\.)google\.(com|ae)$/.test(url.hostname) && url.pathname.startsWith('/maps/embed') ? url.toString() : '' } catch { return '' } }
+
+export default function Contact({ settings = {}, hero }: { settings?: ContactSettings; hero?: ContactHero | null }) {
+  const shownContactInfo = contactInfo.map((item) => item.label === 'Phone' ? { ...item, value: settings.header_phone || item.value, href: `tel:${(settings.header_phone || item.value).replace(/[^+\d]/g, '')}` } : item.label === 'Email' ? { ...item, value: settings.primary_email || item.value, href: `mailto:${settings.primary_email || item.value}` } : item.label === 'Location' ? { ...item, value: settings.physical_address || item.value } : item.label === 'Support Hours' ? { ...item, value: settings.business_hours || item.value } : item)
+  const socialValues: Record<string, string | undefined> = { Facebook: settings.facebook_url, LinkedIn: settings.linkedin_url, Instagram: settings.instagram_url, TikTok: settings.tiktok_url, WhatsApp: settings.whatsapp_link }
+  const configuredSocials = socials.map((item) => ({ ...item, href: socialValues[item.label] || item.href })).filter((item) => item.href)
+  const mapUrl = safeMapUrl(settings.map_embed_url)
   const [form, setForm] = useState({ name: '', company: '', email: '', phone: '', service: '', message: '' })
   const [submitted, setSubmitted] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState('')
+  const [successMessage, setSuccessMessage] = useState('Our team will get back to you within 2 hours.')
   const [focused, setFocused] = useState<string | null>(null)
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }))
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
+    setSubmitting(true)
+    setSubmitError('')
+    const response = await fetch('/api/contact', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ ...form, message: `${form.message}${form.company ? `\n\nCompany: ${form.company}` : ''}${form.service ? `\nService: ${form.service}` : ''}`, sourcePage: window.location.pathname }) })
+    const data = await response.json()
+    setSubmitting(false)
+    if (!response.ok) { setSubmitError(data.error ?? 'Unable to send your message.'); return }
+    setSuccessMessage(data.message ?? successMessage)
     setSubmitted(true)
   }
 
@@ -130,7 +148,7 @@ export default function Contact() {
   })
 
   return (
-    <section className="relative py-28 px-4 sm:px-6 lg:px-8 overflow-hidden">
+    <section className="relative py-28 px-4 sm:px-6 lg:px-8 overflow-hidden" style={hero?.hero_background_image?{backgroundImage:`linear-gradient(rgba(4,13,18,.82),rgba(4,13,18,.95)),url(${hero.hero_background_image})`,backgroundSize:'cover',backgroundPosition:'top center'}:undefined}>
 
       {/* Ambient glows */}
       <div className="absolute top-0 right-0 w-[600px] h-[600px] pointer-events-none"
@@ -146,18 +164,18 @@ export default function Contact() {
             className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold mb-6 uppercase tracking-widest"
             style={{ background: 'rgba(44,205,222,0.07)', border: '1px solid rgba(44,205,222,0.25)', color: '#2CCDDE' }}
           >
-            Contact Us
+            {hero?.hero_label || 'Contact Us'}
           </div>
           <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
-            <h2 className="text-4xl sm:text-5xl font-bold leading-tight">
+            {hero?.hero_heading ? <h2 className="text-4xl sm:text-5xl font-bold leading-tight text-[var(--text-primary)]">{hero.hero_heading}</h2> : <h2 className="text-4xl sm:text-5xl font-bold leading-tight">
               <span className="text-[var(--text-primary)]">Let's Talk About</span>
               <br />
               <span style={{ background: 'linear-gradient(135deg, #2CCDDE, #46A3E1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                 Your IT Needs
               </span>
-            </h2>
+            </h2>}
             <p className="text-[var(--text-muted)] text-base leading-relaxed max-w-sm lg:text-right">
-              Free consultation, no commitment. We will get back to you within 2 hours on business days.
+              {hero?.hero_description || 'Free consultation, no commitment. We will get back to you within 2 hours on business days.'}
             </p>
           </div>
         </div>
@@ -168,7 +186,7 @@ export default function Contact() {
           <div className="lg:col-span-2 flex flex-col gap-5">
 
             {/* Contact cards */}
-            {contactInfo.map((item) => {
+            {shownContactInfo.map((item) => {
               const inner = (
                 <div
                   className="flex items-center gap-4 p-5 rounded-2xl transition-all duration-300 hover:-translate-y-0.5 group"
@@ -213,7 +231,7 @@ export default function Contact() {
             >
               <p className="text-xs text-[var(--text-dim)] font-semibold uppercase tracking-wider mb-5">Follow Us</p>
               <div className="flex items-center gap-3 flex-wrap">
-                {socials.map((s) => (
+                {configuredSocials.map((s) => (
                   <a
                     key={s.label}
                     href={s.href}
@@ -272,7 +290,7 @@ export default function Contact() {
                     </div>
                     <div>
                       <p className="text-[var(--text-primary)] text-xl font-bold mb-2">Message Sent!</p>
-                      <p className="text-[var(--text-muted)] text-sm">Our team will get back to you within 2 hours.</p>
+                      <p className="text-[var(--text-muted)] text-sm">{successMessage}</p>
                     </div>
                     <button
                       onClick={() => { setSubmitted(false); setForm({ name: '', company: '', email: '', phone: '', service: '', message: '' }) }}
@@ -389,14 +407,17 @@ export default function Contact() {
                     {/* Submit */}
                     <button
                       type="submit"
+                      disabled={submitting}
                       className="group w-full flex items-center justify-center gap-2.5 py-4 rounded-full text-black font-bold text-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_40px_rgba(44,205,222,0.5)] mt-1"
                       style={{ background: 'linear-gradient(135deg, #2CCDDE, #46A3E1)' }}
                     >
-                      Send Message
+                      {submitting ? 'Sending…' : 'Send Message'}
                       <svg className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
                       </svg>
                     </button>
+
+                    {submitError && <p role="alert" className="text-center text-sm text-red-400">{submitError}</p>}
 
                     <p className="text-center text-xs text-[var(--text-dim)]">
                       We respond within 2 hours &nbsp;·&nbsp; No spam, ever
@@ -411,12 +432,12 @@ export default function Contact() {
         </div>
 
         {/* Map */}
-        <div
+        {(settings.map_enabled === undefined || Boolean(settings.map_enabled)) && <div
           className="mt-10 rounded-2xl overflow-hidden"
           style={{ border: '1px solid rgba(44,205,222,0.18)', height: '420px' }}
         >
           <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d230964.06209009685!2d55.13766789915716!3d25.24320683637232!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e5f43a9923d5979%3A0x36f7a80cba19b9eb!2sByteflow%20information%20Technology%20%26%20CO%20LLC!5e0!3m2!1sen!2sae!4v1779350571004!5m2!1sen!2sae"
+            src={mapUrl || "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d230964.06209009685!2d55.13766789915716!3d25.24320683637232!2m3!1f0!2f0!3f0!3m2!1i1024!1i768!4f13.1!3m3!1m2!1s0x3e5f43a9923d5979%3A0x36f7a80cba19b9eb!2sByteflow%20information%20Technology%20%26%20CO%20LLC!5e0!3m2!1sen!2sae!4v1779350571004!5m2!1sen!2sae"}
             width="100%"
             height="100%"
             style={{ border: 0, display: 'block', filter: 'grayscale(20%) invert(5%)' }}
@@ -424,7 +445,7 @@ export default function Contact() {
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
           />
-        </div>
+        </div>}
 
       </div>
     </section>

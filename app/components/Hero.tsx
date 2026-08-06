@@ -21,14 +21,15 @@ const services = [
   'Cybersecurity',
 ]
 
-export default function Hero() {
+type HeroContent = { badge?: string; heading?: string; description?: string; primaryButtonLabel?: string; primaryButtonLink?: string; secondaryButtonLabel?: string; secondaryButtonLink?: string; backgroundImage?: string }
+export default function Hero({ content = {} }: { content?: HeroContent }) {
   return (
     <section className="relative overflow-hidden">
 
       {/* Hero background image */}
       <div className="absolute inset-0">
         <Image
-          src="/images/hero/hero.png"
+          src={content.backgroundImage || '/images/hero/hero.png'}
           alt=""
           fill
           className="object-cover object-center"
@@ -62,11 +63,11 @@ export default function Hero() {
             className="w-1.5 h-1.5 rounded-full flex-shrink-0"
             style={{ background: '#2CCDDE', animation: 'pulse-glow 2s ease-in-out infinite' }}
           />
-          Trusted IT Partner Since 2017
+          {content.badge || 'Trusted IT Partner Since 2017'}
         </div>
 
         {/* Headline */}
-        <h1 className="max-w-5xl text-5xl sm:text-6xl lg:text-[72px] font-bold leading-[1.1] tracking-tight mb-6">
+        {content.heading ? <h1 className="max-w-5xl text-5xl sm:text-6xl lg:text-[72px] font-bold leading-[1.1] tracking-tight mb-6 text-white">{content.heading}</h1> : <h1 className="max-w-5xl text-5xl sm:text-6xl lg:text-[72px] font-bold leading-[1.1] tracking-tight mb-6">
           <span className="text-white">We Handle Your </span>
           <span
             style={{
@@ -88,21 +89,21 @@ export default function Hero() {
           >
             Business.
           </span>
-        </h1>
+        </h1>}
 
         {/* Subtext */}
         <p className="max-w-2xl text-lg text-[#4B5563] leading-relaxed mb-10">
-          From network infrastructure to cloud services and digital marketing, Byteflow delivers complete IT solutions for businesses across Dubai and the UAE. One call, one team, all your IT handled.
+          {content.description || 'From network infrastructure to cloud services and digital marketing, Byteflow delivers complete IT solutions for businesses across Dubai and the UAE. One call, one team, all your IT handled.'}
         </p>
 
         {/* CTA buttons */}
         <div className="flex flex-col sm:flex-row items-center gap-4 mb-20">
           <Link
-            href="/contact-us"
+            href={content.primaryButtonLink || '/contact-us'}
             className="group inline-flex items-center gap-2.5 px-8 py-3.5 rounded-full text-black font-bold text-sm transition-all duration-300 hover:scale-[1.04] hover:shadow-[0_0_40px_rgba(44,205,222,0.55)]"
             style={{ background: 'linear-gradient(135deg, #2CCDDE, #46A3E1)' }}
           >
-            Get Started Today
+            {content.primaryButtonLabel || 'Get Started Today'}
             <svg
               className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1"
               fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}
@@ -116,10 +117,10 @@ export default function Hero() {
             style={{ background: 'linear-gradient(135deg, #2CCDDE40, #46A3E140)' }}
           >
             <Link
-              href="/it-amc-services-dubai"
+              href={content.secondaryButtonLink || '/it-amc-services-dubai'}
               className="group inline-flex items-center gap-2.5 px-8 py-3.5 rounded-full text-[#9CA3AF] font-semibold text-sm transition-all duration-300 hover:text-[#2CCDDE] bg-black"
             >
-              Explore Services
+              {content.secondaryButtonLabel || 'Explore Services'}
               <svg
                 className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1"
                 fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}
