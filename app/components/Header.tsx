@@ -65,7 +65,7 @@ function DesktopItem({ item, depth = 0 }: { item: NavItem; depth?: number }) {
       </button>
       {open && (
         <div
-          className={`absolute z-50 w-72 overflow-visible rounded-xl border py-1 ${depth ? "left-full top-0 ml-1" : "left-0 top-full mt-4"}`}
+          className={`absolute z-50 w-72 overflow-visible rounded-xl border py-1 ${depth ? "left-full top-0" : "left-0 top-full"}`}
           style={{
             background: "var(--bg-page)",
             borderColor: "#2CCDDE30",
