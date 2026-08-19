@@ -145,6 +145,58 @@ h1, h2 {
   font-weight: 700;
 }
 
+.blog-content em,
+.blog-content i {
+  font-style: italic;
+}
+
+.blog-content u {
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.blog-content .table-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  margin: 0.5rem 0 1.75rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: 0.75rem;
+}
+
+.blog-content table {
+  width: 100%;
+  min-width: 36rem;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.blog-content th,
+.blog-content td {
+  border-bottom: 1px solid var(--border-subtle);
+  border-right: 1px solid var(--border-subtle);
+  padding: 0.8rem 1rem;
+  vertical-align: top;
+}
+
+.blog-content th:last-child,
+.blog-content td:last-child {
+  border-right: 0;
+}
+
+.blog-content tr:last-child td {
+  border-bottom: 0;
+}
+
+.blog-content th {
+  background: color-mix(in srgb, var(--cyan) 10%, var(--bg-surface));
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.blog-content tbody tr:nth-child(even) {
+  background: var(--overlay-hover-soft);
+}
+
 .blog-content code {
   background: var(--bg-surface-alt);
   padding: 0.15em 0.4em;

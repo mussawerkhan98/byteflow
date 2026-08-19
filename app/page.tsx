@@ -12,14 +12,18 @@ import {
   getSiteSettings,
   getTestimonials,
 } from "./lib/cms";
+import { getPosts } from "./lib/db";
+
+export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const [sectionHero, pageHero, testimonials, settings] =
+  const [sectionHero, pageHero, testimonials, settings, posts] =
     await Promise.all([
       getSection("home", "hero"),
       getPageHero("home"),
       getTestimonials(),
       getSiteSettings(),
+      getPosts(),
     ]);
   const hero = {
     ...(sectionHero ?? {}),
@@ -50,7 +54,7 @@ export default async function Home() {
       <Services />
       <AboutUs />
       <HowItWorks />
-      <Blog />
+      <Blog posts={posts.slice(0, 4)} />
       <Reviews items={testimonials} />
       <CTA />
       <Contact settings={(settings ?? {}) as never} />

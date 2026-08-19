@@ -60,8 +60,23 @@ export default async function BlogPostPage({
       "a",
       "code",
       "pre",
+      "div",
+      "table",
+      "thead",
+      "tbody",
+      "tfoot",
+      "tr",
+      "th",
+      "td",
+      "caption",
     ],
-    allowedAttributes: { a: ["href", "title", "target", "rel"] },
+    allowedAttributes: {
+      a: ["href", "title", "target", "rel"],
+      div: ["class"],
+      th: ["colspan", "rowspan", "scope"],
+      td: ["colspan", "rowspan"],
+    },
+    allowedClasses: { div: ["table-scroll"] },
     allowedSchemes: ["http", "https", "mailto", "tel"],
     transformTags: {
       a: sanitizeHtml.simpleTransform("a", { rel: "noopener noreferrer" }),
@@ -192,7 +207,7 @@ export default async function BlogPostPage({
                 team responds within 2 hours.
               </p>
             </div>
-            <a
+            <Link
               href="/contact-us"
               className="inline-flex items-center gap-2 px-7 py-3 rounded-full text-black text-sm font-bold flex-shrink-0 transition-all duration-300 hover:scale-[1.04] hover:shadow-[0_0_28px_rgba(44,205,222,0.45)]"
               style={{
@@ -213,7 +228,7 @@ export default async function BlogPostPage({
                   d="M17 8l4 4m0 0l-4 4m4-4H3"
                 />
               </svg>
-            </a>
+            </Link>
           </div>
         </div>
       </section>
