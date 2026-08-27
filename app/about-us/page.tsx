@@ -110,15 +110,15 @@ export default async function AboutPage() {
 
                 <div className="flex flex-col gap-4 text-[var(--text-muted)] text-sm leading-relaxed mb-8">
                   {founder?.story ? founderStory.split(/\n\s*\n/).filter(Boolean).map((paragraph) => <p key={paragraph}>{paragraph}</p>) : <>
-                  <p>
-                    Byteflow was born out of frustration. Too many Dubai businesses were being overcharged, underserved, and left waiting days for a simple fix. We started in 2017 with one goal: build the kind of IT company that actually shows up.
-                  </p>
-                  <p>
-                    Eight years later, we manage IT for over 500 businesses across Dubai, Sharjah and Abu Dhabi. We have grown from a two-person team to a full-service operation covering everything from server rooms to Google Ads campaigns — all under one roof, one monthly fee.
-                  </p>
-                  <p>
-                    The philosophy has never changed: respond fast, be honest about pricing, and treat every client like they are your only one.
-                  </p>
+                    <p>
+                      Byteflow was born out of frustration. Too many Dubai businesses were being overcharged, underserved, and left waiting days for a simple fix. We started in 2017 with one goal: build the kind of IT company that actually shows up.
+                    </p>
+                    <p>
+                      Eight years later, we manage IT for over 500 businesses across Dubai, Sharjah and Abu Dhabi. We have grown from a two-person team to a full-service operation covering everything from server rooms to Google Ads campaigns — all under one roof, one monthly fee.
+                    </p>
+                    <p>
+                      The philosophy has never changed: respond fast, be honest about pricing, and treat every client like they are your only one.
+                    </p>
                   </>}
                 </div>
 

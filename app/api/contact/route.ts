@@ -20,7 +20,8 @@ export async function POST(request:Request){
     await db.execute({sql:'INSERT INTO contact_submissions (name,email,phone,message,source_page) VALUES (?,?,?,?,?)',args:[name,email,phone,message,source]})
     if(process.env.RESEND_API_KEY&&process.env.CONTACT_FROM_EMAIL){
       const setting=enabled.rows[0]
-      await fetch('https://api.resend.com/emails',{method:'POST',headers:{authorization:`Bearer ${process.env.RESEND_API_KEY}`,'content-type':'application/json'},body:JSON.stringify({from:process.env.CONTACT_FROM_EMAIL,to:[String(setting.recipient_email)],reply_to:String(setting.reply_to_mode)==='submitter'?email:undefined,subject:String(setting.email_subject),html:`<h2>New website enquiry</h2><p><strong>Name:</strong> ${escapeHtml(name)}</p><p><strong>Email:</strong> ${escapeHtml(email)}</p><p><strong>Phone:</strong> ${escapeHtml(phone)}</p><p><strong>Source:</strong> ${escapeHtml(source)}</p><p>${escapeHtml(message).replace(/\n/g,'<br>')}</p>`})})
+      const recipients=Array.from(new Set([String(setting.recipient_email),'info@byteflow.ae'].filter(Boolean)))
+      await fetch('https://api.resend.com/emails',{method:'POST',headers:{authorization:`Bearer ${process.env.RESEND_API_KEY}`,'content-type':'application/json'},body:JSON.stringify({from:process.env.CONTACT_FROM_EMAIL,to:recipients,reply_to:String(setting.reply_to_mode)==='submitter'?email:undefined,subject:String(setting.email_subject),html:`<h2>New website enquiry</h2><p><strong>Name:</strong> ${escapeHtml(name)}</p><p><strong>Email:</strong> ${escapeHtml(email)}</p><p><strong>Phone:</strong> ${escapeHtml(phone)}</p><p><strong>Source:</strong> ${escapeHtml(source)}</p><p>${escapeHtml(message).replace(/\n/g,'<br>')}</p>`})})
     }
     return Response.json({message:String(enabled.rows[0].success_message)})
   }catch{return Response.json({error:'Unable to send your message right now. Please call or WhatsApp us.'},{status:500})}

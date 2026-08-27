@@ -61,14 +61,6 @@ export default function AboutUs() {
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] pointer-events-none"
         style={{ background: 'radial-gradient(ellipse, rgba(44,205,222,0.06) 0%, transparent 70%)', filter: 'blur(60px)' }} />
 
-      {/* Watermark year */}
-      <div
-        className="absolute right-0 top-1/2 -translate-y-1/2 text-[220px] font-black select-none pointer-events-none leading-none pr-8 hidden lg:block"
-        style={{ color: 'rgba(44,205,222,0.03)', letterSpacing: '-0.05em' }}
-      >
-        2017
-      </div>
-
       <div className="relative max-w-7xl mx-auto">
 
         {/* Header */}

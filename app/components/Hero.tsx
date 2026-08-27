@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
+import HeroBackground from './HeroBackground'
 
 const stats = [
   { value: '500+', label: 'Businesses Served' },
@@ -26,19 +27,27 @@ export default function Hero({ content = {} }: { content?: HeroContent }) {
   return (
     <section className="relative overflow-hidden">
 
-      {/* Hero background image */}
-      <div className="absolute inset-0">
-        <Image
-          src={content.backgroundImage || '/images/hero/hero.png'}
-          alt=""
-          fill
-          className="object-cover object-center"
-          priority
-        />
-        {/* Dark overlay so text stays readable */}
+      {/* Hero background */}
+      <div className="absolute inset-0" style={{ background: 'var(--bg-page)' }}>
+        {content.backgroundImage ? (
+          <Image
+            src={content.backgroundImage}
+            alt=""
+            fill
+            className="object-cover object-center"
+            priority
+          />
+        ) : (
+          <HeroBackground />
+        )}
+        {/* Theme-aware overlay so text stays readable */}
         <div
           className="absolute inset-0"
-          style={{ background: 'linear-gradient(180deg, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.55) 50%, rgba(0,0,0,0.92) 100%)' }}
+          style={{
+            background: content.backgroundImage
+              ? 'linear-gradient(180deg, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.55) 50%, rgba(0,0,0,0.92) 100%)'
+              : 'linear-gradient(180deg, color-mix(in srgb, var(--bg-page) 40%, transparent) 0%, color-mix(in srgb, var(--bg-page) 10%, transparent) 45%, var(--bg-page) 100%)',
+          }}
         />
         {/* Cyan tint glow on top */}
         <div
@@ -67,8 +76,8 @@ export default function Hero({ content = {} }: { content?: HeroContent }) {
         </div>
 
         {/* Headline */}
-        {content.heading ? <h1 className="max-w-5xl text-5xl sm:text-6xl lg:text-[72px] font-bold leading-[1.1] tracking-tight mb-6 text-white">{content.heading}</h1> : <h1 className="max-w-5xl text-5xl sm:text-6xl lg:text-[72px] font-bold leading-[1.1] tracking-tight mb-6">
-          <span className="text-white">We Handle Your </span>
+        {content.heading ? <h1 className="max-w-5xl text-5xl sm:text-6xl lg:text-[72px] font-bold leading-[1.1] tracking-tight mb-6" style={{ color: 'var(--text-primary)' }}>{content.heading}</h1> : <h1 className="max-w-5xl text-5xl sm:text-6xl lg:text-[72px] font-bold leading-[1.1] tracking-tight mb-6">
+          <span style={{ color: 'var(--text-primary)' }}>We Handle Your </span>
           <span
             style={{
               background: 'linear-gradient(135deg, #2CCDDE 0%, #46A3E1 100%)',
@@ -79,7 +88,7 @@ export default function Hero({ content = {} }: { content?: HeroContent }) {
             IT,
           </span>
           <br />
-          <span className="text-white">You Focus On Your </span>
+          <span style={{ color: 'var(--text-primary)' }}>You Focus On Your </span>
           <span
             style={{
               background: 'linear-gradient(135deg, #46A3E1 0%, #2CCDDE 100%)',
@@ -92,7 +101,7 @@ export default function Hero({ content = {} }: { content?: HeroContent }) {
         </h1>}
 
         {/* Subtext */}
-        <p className="max-w-2xl text-lg text-[#4B5563] leading-relaxed mb-10">
+        <p className="max-w-2xl text-lg leading-relaxed mb-10" style={{ color: 'var(--text-muted)' }}>
           {content.description || 'From network infrastructure to cloud services and digital marketing, Byteflow delivers complete IT solutions for businesses across Dubai and the UAE. One call, one team, all your IT handled.'}
         </p>
 
@@ -118,7 +127,8 @@ export default function Hero({ content = {} }: { content?: HeroContent }) {
           >
             <Link
               href={content.secondaryButtonLink || '/it-amc-services-dubai'}
-              className="group inline-flex items-center gap-2.5 px-8 py-3.5 rounded-full text-[#9CA3AF] font-semibold text-sm transition-all duration-300 hover:text-[#2CCDDE] bg-black"
+              className="group inline-flex items-center gap-2.5 px-8 py-3.5 rounded-full font-semibold text-sm transition-all duration-300 hover:text-[#2CCDDE]"
+              style={{ color: 'var(--text-nav)', background: 'var(--bg-page)' }}
             >
               {content.secondaryButtonLabel || 'Explore Services'}
               <svg
@@ -140,7 +150,7 @@ export default function Hero({ content = {} }: { content?: HeroContent }) {
             <div
               key={stat.label}
               className="flex flex-col items-center py-7 px-4"
-              style={{ background: '#040D12' }}
+              style={{ background: 'var(--bg-surface)' }}
             >
               <span
                 className="text-3xl font-bold mb-1"
@@ -152,7 +162,7 @@ export default function Hero({ content = {} }: { content?: HeroContent }) {
               >
                 {stat.value}
               </span>
-              <span className="text-xs text-[#4B5563] font-medium">{stat.label}</span>
+              <span className="text-xs font-medium" style={{ color: 'var(--text-footer-link)' }}>{stat.label}</span>
             </div>
           ))}
         </div>
@@ -166,11 +176,11 @@ export default function Hero({ content = {} }: { content?: HeroContent }) {
         {/* fade edges */}
         <div
           className="absolute left-0 top-0 bottom-0 w-24 z-10 pointer-events-none"
-          style={{ background: 'linear-gradient(90deg, #040D12 0%, transparent 100%)' }}
+          style={{ background: 'linear-gradient(90deg, var(--bg-page) 0%, transparent 100%)' }}
         />
         <div
           className="absolute right-0 top-0 bottom-0 w-24 z-10 pointer-events-none"
-          style={{ background: 'linear-gradient(270deg, #040D12 0%, transparent 100%)' }}
+          style={{ background: 'linear-gradient(270deg, var(--bg-page) 0%, transparent 100%)' }}
         />
 
         <div className="flex whitespace-nowrap marquee-track">
@@ -178,7 +188,7 @@ export default function Hero({ content = {} }: { content?: HeroContent }) {
             <div
               key={i}
               className="inline-flex items-center gap-2 mx-5 text-sm font-medium flex-shrink-0"
-              style={{ color: '#4B5563' }}
+              style={{ color: 'var(--text-footer-link)' }}
             >
               <span
                 className="w-1 h-1 rounded-full flex-shrink-0"
