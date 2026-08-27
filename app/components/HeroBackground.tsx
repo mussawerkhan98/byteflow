@@ -43,17 +43,11 @@ export default function HeroBackground() {
     window.addEventListener('resize', resize)
 
     // A full-bleed grid of intersection points, warped by a slow flowing
-    // wave field so the rows/columns bend into smooth, continuous wavy
-    // contours — each point rendered as a binary digit riding the wave
-    // instead of a connecting line.
-    const cellsX = 22
-    const cellsY = 22
-    const digits: { char: '0' | '1'; isBlue: boolean }[] = []
-    for (let j = 0; j <= cellsY; j++) {
-      for (let i = 0; i <= cellsX; i++) {
-        digits.push({ char: Math.random() > 0.5 ? '1' : '0', isBlue: Math.random() > 0.72 })
-      }
-    }
+    // wave field so the straight rows/columns bend into smooth, continuous
+    // wavy contours — like a fabric of lines rippling — rather than the
+    // grid ever appearing as straight rulings.
+    const cellsX = 34
+    const cellsY = 34
 
     // sin/cos are naturally periodic, so the warp never resets or jumps —
     // it flows forever without a visible loop point.
@@ -84,25 +78,36 @@ export default function HeroBackground() {
       const isLight = theme === 'light'
       const cyan = isLight ? CYAN_LIGHT : CYAN_DARK
       const blue = isLight ? BLUE_LIGHT : BLUE_DARK
-      const digitAlpha = isLight ? 0.45 : 0.38
+      const lineAlpha = isLight ? 0.4 : 0.32
 
       const t = frame * 0.003
       const cellW = width / cellsX
       const cellH = height / cellsY
-      const fontSize = Math.min(cellW, cellH) * 0.6
 
-      ctx!.textAlign = 'center'
-      ctx!.textBaseline = 'middle'
-      ctx!.font = `600 ${fontSize}px 'Space Mono', 'Courier New', monospace`
+      ctx!.lineWidth = 1
 
-      let k = 0
+      // Horizontal strands.
       for (let j = 0; j <= cellsY; j++) {
+        ctx!.strokeStyle = `rgba(${j % 3 === 0 ? blue : cyan},${lineAlpha})`
+        ctx!.beginPath()
         for (let i = 0; i <= cellsX; i++) {
           const p = pointAt(i, j, t, cellW, cellH)
-          const dgt = digits[k++]
-          ctx!.fillStyle = `rgba(${dgt.isBlue ? blue : cyan},${digitAlpha})`
-          ctx!.fillText(dgt.char, p.x, p.y)
+          if (i === 0) ctx!.moveTo(p.x, p.y)
+          else ctx!.lineTo(p.x, p.y)
         }
+        ctx!.stroke()
+      }
+
+      // Vertical strands.
+      for (let i = 0; i <= cellsX; i++) {
+        ctx!.strokeStyle = `rgba(${i % 3 === 0 ? blue : cyan},${lineAlpha})`
+        ctx!.beginPath()
+        for (let j = 0; j <= cellsY; j++) {
+          const p = pointAt(i, j, t, cellW, cellH)
+          if (j === 0) ctx!.moveTo(p.x, p.y)
+          else ctx!.lineTo(p.x, p.y)
+        }
+        ctx!.stroke()
       }
 
       frame++
