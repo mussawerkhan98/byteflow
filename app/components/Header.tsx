@@ -33,7 +33,7 @@ function DesktopItem({ item, depth = 0 }: { item: NavItem; depth?: number }) {
         href={item.href}
         target={item.new_tab ? "_blank" : undefined}
         rel={item.new_tab ? "noopener noreferrer" : undefined}
-        className={`${depth ? "flex w-full items-center px-4 py-3 text-[13px]" : "text-sm"} whitespace-nowrap font-medium text-[var(--text-nav)] transition-colors hover:text-[#2CCDDE]`}
+        className={`${depth ? "flex w-full items-center px-4 py-3 text-[13px]" : "text-sm uppercase tracking-wide"} whitespace-nowrap font-medium text-[var(--text-nav)] transition-colors hover:text-[#2CCDDE]`}
       >
         {item.label}
       </Link>
@@ -46,7 +46,7 @@ function DesktopItem({ item, depth = 0 }: { item: NavItem; depth?: number }) {
     >
       <button
         type="button"
-        className={`${depth ? "flex w-full px-5 py-3 text-[13px]" : "inline-flex text-sm"} items-center gap-1.5 whitespace-nowrap font-medium text-[var(--text-nav)] transition-colors hover:text-[#2CCDDE]`}
+        className={`${depth ? "flex w-full px-5 py-3 text-[13px]" : "inline-flex text-sm uppercase tracking-wide"} items-center gap-1.5 whitespace-nowrap font-medium text-[var(--text-nav)] transition-colors hover:text-[#2CCDDE]`}
       >
         {item.label}
         <svg

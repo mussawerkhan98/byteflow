@@ -4,9 +4,11 @@ import { useEffect, useRef } from 'react'
 
 const CYAN_DARK = '44,205,222'
 const BLUE_DARK = '70,163,225'
-// Deeper, more saturated tones so the mesh holds contrast against a light/white background.
+// Deeper, more saturated tones so the network holds contrast against a light/white background.
 const CYAN_LIGHT = '8,145,178'
 const BLUE_LIGHT = '29,78,216'
+
+type Node = { x: number; y: number; vx: number; vy: number; r: number; isBlue: boolean }
 
 export default function HeroBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -27,6 +29,23 @@ export default function HeroBackground() {
     let width = 0
     let height = 0
     const dpr = Math.min(window.devicePixelRatio || 1, 2)
+    let nodes: Node[] = []
+
+    function makeNodes() {
+      const count = Math.min(140, Math.max(55, Math.round((width * height) / 9000)))
+      nodes = Array.from({ length: count }, () => {
+        const angle = Math.random() * Math.PI * 2
+        const speed = 0.12 + Math.random() * 0.22
+        return {
+          x: Math.random() * width,
+          y: Math.random() * height,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          r: Math.random() * 1.3 + 0.9,
+          isBlue: Math.random() > 0.72,
+        }
+      })
+    }
 
     function resize() {
       const parent = canvas!.parentElement
@@ -38,79 +57,112 @@ export default function HeroBackground() {
       canvas!.style.width = width + 'px'
       canvas!.style.height = height + 'px'
       ctx!.setTransform(dpr, 0, 0, dpr, 0, 0)
+      makeNodes()
     }
     resize()
     window.addEventListener('resize', resize)
 
-    // A full-bleed grid of intersection points, warped by a slow flowing
-    // wave field so the straight rows/columns bend into smooth, continuous
-    // wavy contours — like a fabric of lines rippling — rather than the
-    // grid ever appearing as straight rulings.
-    const cellsX = 34
-    const cellsY = 34
+    // Cursor tracking — nearby neurons light up and reach toward wherever
+    // the pointer last was, eased so it feels alive rather than mechanical.
+    let targetX = -9999
+    let targetY = -9999
+    let cursorX = -9999
+    let cursorY = -9999
 
-    // sin/cos are naturally periodic, so the warp never resets or jumps —
-    // it flows forever without a visible loop point.
-    function warp(nx: number, ny: number, t: number) {
-      const a1 = nx * 5.2 + ny * 3.1 + t * 0.7
-      const a2 = nx * 3.4 - ny * 4.6 + t * 0.5
-      const dx = (Math.sin(a1) * 0.6 + Math.sin(a2 * 1.6) * 0.4)
-      const dy = (Math.cos(a1 * 0.85) * 0.6 + Math.cos(a2 * 1.3) * 0.4)
-      return { dx, dy }
+    function onPointerMove(e: PointerEvent) {
+      const rect = canvas!.getBoundingClientRect()
+      targetX = e.clientX - rect.left
+      targetY = e.clientY - rect.top
     }
+    function onPointerLeave() {
+      targetX = -9999
+      targetY = -9999
+    }
+    window.addEventListener('pointermove', onPointerMove)
+    window.addEventListener('pointerleave', onPointerLeave)
+
+    const linkDistance = 130
+    const cursorLinkDistance = 190
+    const cursorPull = 0.0022
 
     let raf = 0
-    let frame = 0
-
-    function pointAt(i: number, j: number, t: number, cellW: number, cellH: number) {
-      const nx = i / cellsX
-      const ny = j / cellsY
-      const { dx, dy } = warp(nx, ny, t)
-      return {
-        x: i * cellW + dx * cellW * 0.85,
-        y: j * cellH + dy * cellH * 0.85,
-      }
-    }
 
     function draw() {
       ctx!.clearRect(0, 0, width, height)
 
+      cursorX += (targetX - cursorX) * 0.1
+      cursorY += (targetY - cursorY) * 0.1
+
       const isLight = theme === 'light'
       const cyan = isLight ? CYAN_LIGHT : CYAN_DARK
       const blue = isLight ? BLUE_LIGHT : BLUE_DARK
-      const lineAlpha = isLight ? 0.4 : 0.32
+      const linkAlpha = isLight ? 0.35 : 0.28
+      const nodeAlpha = isLight ? 0.6 : 0.7
 
-      const t = frame * 0.003
-      const cellW = width / cellsX
-      const cellH = height / cellsY
-
-      ctx!.lineWidth = 1
-
-      // Horizontal strands.
-      for (let j = 0; j <= cellsY; j++) {
-        ctx!.strokeStyle = `rgba(${j % 3 === 0 ? blue : cyan},${lineAlpha})`
-        ctx!.beginPath()
-        for (let i = 0; i <= cellsX; i++) {
-          const p = pointAt(i, j, t, cellW, cellH)
-          if (i === 0) ctx!.moveTo(p.x, p.y)
-          else ctx!.lineTo(p.x, p.y)
+      // Drift each neuron slowly and wrap it around the edges so the
+      // network flows forever with no visible reset.
+      for (const n of nodes) {
+        const distX = cursorX - n.x
+        const distY = cursorY - n.y
+        const dist = Math.sqrt(distX * distX + distY * distY)
+        if (dist < cursorLinkDistance) {
+          n.vx += distX * cursorPull * (1 - dist / cursorLinkDistance)
+          n.vy += distY * cursorPull * (1 - dist / cursorLinkDistance)
         }
-        ctx!.stroke()
+        n.vx *= 0.985
+        n.vy *= 0.985
+        n.x += n.vx
+        n.y += n.vy
+        if (n.x < -20) n.x = width + 20
+        if (n.x > width + 20) n.x = -20
+        if (n.y < -20) n.y = height + 20
+        if (n.y > height + 20) n.y = -20
       }
 
-      // Vertical strands.
-      for (let i = 0; i <= cellsX; i++) {
-        ctx!.strokeStyle = `rgba(${i % 3 === 0 ? blue : cyan},${lineAlpha})`
-        ctx!.beginPath()
-        for (let j = 0; j <= cellsY; j++) {
-          const p = pointAt(i, j, t, cellW, cellH)
-          if (j === 0) ctx!.moveTo(p.x, p.y)
-          else ctx!.lineTo(p.x, p.y)
+      // Neuron-style connective web: link any two nodes close enough, fading
+      // out with distance.
+      for (let i = 0; i < nodes.length; i++) {
+        const a = nodes[i]
+        for (let j = i + 1; j < nodes.length; j++) {
+          const b = nodes[j]
+          const dx = a.x - b.x
+          const dy = a.y - b.y
+          const dist = Math.sqrt(dx * dx + dy * dy)
+          if (dist >= linkDistance) continue
+          const alpha = (1 - dist / linkDistance) * linkAlpha
+          ctx!.strokeStyle = `rgba(${a.isBlue || b.isBlue ? blue : cyan},${alpha})`
+          ctx!.beginPath()
+          ctx!.moveTo(a.x, a.y)
+          ctx!.lineTo(b.x, b.y)
+          ctx!.stroke()
         }
-        ctx!.stroke()
+
+        // Reach toward the cursor, like a synapse firing.
+        const distX = cursorX - a.x
+        const distY = cursorY - a.y
+        const dist = Math.sqrt(distX * distX + distY * distY)
+        if (dist < cursorLinkDistance) {
+          const alpha = (1 - dist / cursorLinkDistance) * (linkAlpha + 0.25)
+          ctx!.strokeStyle = `rgba(${a.isBlue ? blue : cyan},${alpha})`
+          ctx!.beginPath()
+          ctx!.moveTo(a.x, a.y)
+          ctx!.lineTo(cursorX, cursorY)
+          ctx!.stroke()
+        }
       }
 
-      frame++
+      // Glowing neuron nodes on top of the web.
+      for (const n of nodes) {
+        const color = n.isBlue ? blue : cyan
+        ctx!.shadowBlur = 4
+        ctx!.shadowColor = `rgba(${color},0.6)`
+        ctx!.beginPath()
+        ctx!.fillStyle = `rgba(${color},${nodeAlpha})`
+        ctx!.arc(n.x, n.y, n.r, 0, Math.PI * 2)
+        ctx!.fill()
+      }
+      ctx!.shadowBlur = 0
+
       if (!reduceMotion) raf = requestAnimationFrame(draw)
     }
 
@@ -118,6 +170,8 @@ export default function HeroBackground() {
 
     return () => {
       window.removeEventListener('resize', resize)
+      window.removeEventListener('pointermove', onPointerMove)
+      window.removeEventListener('pointerleave', onPointerLeave)
       themeObserver.disconnect()
       cancelAnimationFrame(raf)
     }
