@@ -6,6 +6,7 @@ import "./globals.css";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import StickyContactButtons from "./components/StickyContactButtons";
+import LeadPopup from "./components/LeadPopup";
 import PageCta from "./components/PageCta";
 import PageFaq from "./components/PageFaq";
 import { getMenu, getPageMetadata, getSiteSettings, getWebsiteScripts } from "./lib/cms";
@@ -116,6 +117,7 @@ export default async function RootLayout({
           settings={(settings ?? {}) as never}
         />
         <StickyContactButtons />
+        <LeadPopup />
         {footerScripts && (
           <div
             data-cms-scripts="body-end"
