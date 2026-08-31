@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { usePathname } from 'next/navigation'
+import { getRecaptchaToken } from '../lib/recaptcha'
 
 const services = [
   'IT AMC / IT Support',
@@ -79,11 +80,13 @@ export default function LeadPopup() {
     setSubmitError('')
     setFieldErrors({})
     try {
+      const recaptchaToken = await getRecaptchaToken('contact')
       const response = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({
           ...form,
+          recaptchaToken,
           message: `${form.message}${form.service ? `\nService: ${form.service}` : ''}`,
           sourcePage: window.location.pathname,
         }),

@@ -2,9 +2,23 @@ import { db } from '../../lib/db'
 
 function validEmail(value:string){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)}
 function escapeHtml(value:string){return value.replace(/[&<>"']/g,(char)=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' })[char]!)}
+
+const RECAPTCHA_SCORE_THRESHOLD=0.5
+async function verifyRecaptcha(token:string,remoteip?:string):Promise<boolean>{
+  if(!process.env.RECAPTCHA_SECRET_KEY)return true
+  if(!token)return false
+  try{
+    const params=new URLSearchParams({secret:process.env.RECAPTCHA_SECRET_KEY,response:token})
+    if(remoteip)params.set('remoteip',remoteip)
+    const res=await fetch('https://www.google.com/recaptcha/api/siteverify',{method:'POST',headers:{'content-type':'application/x-www-form-urlencoded'},body:params})
+    const data=await res.json().catch(()=>null) as {success?:boolean;score?:number}|null
+    return Boolean(data?.success)&&(typeof data?.score!=='number'||data.score>=RECAPTCHA_SCORE_THRESHOLD)
+  }catch{return false}
+}
+
 export async function POST(request:Request){
   const body=await request.json().catch(()=>null) as Record<string,unknown>|null
-  const name=String(body?.name??'').trim(), email=String(body?.email??'').trim(), phone=String(body?.phone??'').trim(), message=String(body?.message??'').trim(), source=String(body?.sourcePage??'').trim()
+  const name=String(body?.name??'').trim(), email=String(body?.email??'').trim(), phone=String(body?.phone??'').trim(), message=String(body?.message??'').trim(), source=String(body?.sourcePage??'').trim(), recaptchaToken=String(body?.recaptchaToken??'').trim()
   const fieldErrors:Record<string,string>={}
   if(name.length<2)fieldErrors.name='Please enter your full name.'
   else if(name.length>120)fieldErrors.name='Name must be 120 characters or fewer.'
@@ -14,6 +28,8 @@ export async function POST(request:Request){
   if(message.length<5)fieldErrors.message='Please add a little more detail to your message.'
   else if(message.length>5000)fieldErrors.message='Message must be 5,000 characters or fewer.'
   if(Object.keys(fieldErrors).length)return Response.json({error:'Please complete the highlighted fields.',fieldErrors},{status:400})
+  const recaptchaOk=await verifyRecaptcha(recaptchaToken,request.headers.get('x-forwarded-for')?.split(',')[0]?.trim())
+  if(!recaptchaOk)return Response.json({error:'We could not verify you are not a robot. Please refresh and try again.'},{status:400})
   try{
     const enabled=await db.execute({sql:`SELECT enabled,success_message,error_message,recipient_email,reply_to_mode,email_subject FROM contact_form_settings f LEFT JOIN pages p ON p.id=f.page_id WHERE f.enabled=1 AND (f.page_id IS NULL OR p.slug=?) ORDER BY f.page_id DESC LIMIT 1`,args:[source.replace(/^\//,'')||'home']})
     if(enabled.rows.length===0)return Response.json({error:'This contact form is currently unavailable.'},{status:503})

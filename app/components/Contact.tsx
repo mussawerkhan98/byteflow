@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { getRecaptchaToken } from '../lib/recaptcha'
 
 const socials = [
   {
@@ -146,7 +147,8 @@ export default function Contact({ settings = {}, hero }: { settings?: ContactSet
     setSubmitError('')
     setFieldErrors({})
     try {
-      const response = await fetch('/api/contact', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ ...form, message: `${form.message}${form.company ? `\n\nCompany: ${form.company}` : ''}${form.service ? `\nService: ${form.service}` : ''}`, sourcePage: window.location.pathname }) })
+      const recaptchaToken = await getRecaptchaToken('contact')
+      const response = await fetch('/api/contact', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ ...form, recaptchaToken, message: `${form.message}${form.company ? `\n\nCompany: ${form.company}` : ''}${form.service ? `\nService: ${form.service}` : ''}`, sourcePage: window.location.pathname }) })
       const data = await response.json()
       if (!response.ok) {
         setFieldErrors(data.fieldErrors ?? {})
