@@ -15,8 +15,7 @@ const services = [
   'Other',
 ]
 
-const SESSION_KEY = 'byteflow-lead-popup-shown'
-const OPEN_DELAY_MS = 4000
+const OPEN_DELAY_MS = 10000
 
 export default function LeadPopup() {
   const pathname = usePathname()
@@ -28,16 +27,15 @@ export default function LeadPopup() {
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   const [focused, setFocused] = useState<string | null>(null)
 
+  // Runs once per real page load (mount) — not on every in-app navigation —
+  // so refreshing the page re-shows the popup after the delay, while
+  // clicking around the site doesn't re-trigger it.
   useEffect(() => {
     if (pathname === '/contact-us') return
-    try {
-      if (sessionStorage.getItem(SESSION_KEY)) return
-    } catch {
-      // ignore — storage unavailable, fall through to showing the popup
-    }
     const timer = setTimeout(() => setOpen(true), OPEN_DELAY_MS)
     return () => clearTimeout(timer)
-  }, [pathname])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(() => {
     document.body.style.overflow = open ? 'hidden' : ''
@@ -57,11 +55,6 @@ export default function LeadPopup() {
 
   function close() {
     setOpen(false)
-    try {
-      sessionStorage.setItem(SESSION_KEY, '1')
-    } catch {
-      // ignore
-    }
   }
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
@@ -135,9 +128,10 @@ export default function LeadPopup() {
       <div
         className="relative w-full max-w-md sm:max-w-lg rounded-2xl overflow-hidden max-h-[90vh] flex flex-col"
         style={{
-          background: 'linear-gradient(160deg, rgba(44,205,222,0.07) 0%, rgba(70,163,225,0.02) 40%, var(--bg-surface) 100%)',
-          border: '1px solid rgba(44,205,222,0.18)',
-          boxShadow: '0 30px 80px rgba(0,0,0,0.6)',
+          backgroundColor: 'var(--bg-surface)',
+          backgroundImage: 'linear-gradient(160deg, rgba(44,205,222,0.1) 0%, rgba(70,163,225,0.03) 40%, transparent 100%)',
+          border: '1px solid rgba(44,205,222,0.22)',
+          boxShadow: '0 30px 80px rgba(0,0,0,0.35)',
         }}
       >
         <div className="h-[2px] w-full flex-shrink-0" style={{ background: 'linear-gradient(90deg, #2CCDDE, #46A3E1)' }} />
