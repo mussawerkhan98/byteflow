@@ -3,7 +3,7 @@ import { services } from '../lib/services-data'
 
 export const metadata = {
   alternates: { canonical: "/cloud-services-dubai" },
-  title: 'Cloud Services Dubai | Microsoft 365, Azure, Cloud Migration | Byteflow',
+  title: 'Cloud Services Dubai | Microsoft 365 & Azure | Byteflow',
   description:
     'Managed cloud services for Dubai businesses. Microsoft 365 migration, Azure setup, cloud backup and hybrid infrastructure. Zero data loss, full ongoing management.',
 }
