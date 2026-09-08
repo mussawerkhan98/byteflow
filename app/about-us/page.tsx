@@ -4,9 +4,16 @@ import AboutReviews from '../components/AboutReviews'
 import Team from '../components/Team'
 import { getPageHero, getPageMetadata, getSection, getTeam, getTestimonials } from '../lib/cms''
 
-export const metadata = {
-  alternates: { canonical: "/about-us" },
-};
+export async function generateMetadata() {
+  const cms = await getPageMetadata('about-us')
+  return {
+    ...(cms ?? {
+      title: 'About Byteflow | IT Company in Dubai Since 2017',
+      description: 'Meet the team behind 500+ UAE businesses. Byteflow delivers IT support, AMC and software development across Dubai.',
+    }),
+    alternates: { canonical: '/about-us' },
+  }
+}
 
 export default async function AboutPage() {
   const [hero, founder, testimonials, team] = await Promise.all([getPageHero('about-us'), getSection('about-us', 'founder'), getTestimonials(), getTeam()])
