@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { getPosts, getProjects } from "./lib/db";
 
-const BASE_URL = "https://byteflow.ae";
+const BASE_URL = "https://www.byteflow.ae";
 
 export const revalidate = 3600;
 
