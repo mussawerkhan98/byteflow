@@ -1,11 +1,18 @@
 import { getProjects } from "../lib/db";
 import ProjectsClient, { type UiProject, CATEGORIES } from "./ProjectsClient";
-import { getPageHero } from "../lib/cms";
+import { getPageHero, getPageMetadata } from "../lib/cms";
 
 export const dynamic = "force-dynamic";
-export const metadata = {
-  alternates: { canonical: "/projects" },
-};
+export async function generateMetadata() {
+  const cms = await getPageMetadata('projects')
+  return {
+    ...(cms ?? {
+      title: 'Our Projects | IT & Software Case Studies Dubai',
+      description: 'See how Byteflow delivered IT infrastructure, software and support for businesses across Dubai and the UAE.',
+    }),
+    alternates: { canonical: '/projects' },
+  }
+}
 
 function categoryToVisual(category: string): string {
   const map: Record<string, string> = {
