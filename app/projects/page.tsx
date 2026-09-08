@@ -3,6 +3,9 @@ import ProjectsClient, { type UiProject, CATEGORIES } from "./ProjectsClient";
 import { getPageHero } from "../lib/cms";
 
 export const dynamic = "force-dynamic";
+export const metadata = {
+  alternates: { canonical: "/projects" },
+};
 
 function categoryToVisual(category: string): string {
   const map: Record<string, string> = {
