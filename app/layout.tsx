@@ -26,12 +26,15 @@ const cardo = Cardo({
 });
 
 export async function generateMetadata(): Promise<Metadata> {
+  const cms = await getPageMetadata("home");
   return {
-    ...((await getPageMetadata("home")) ?? {
+    metadataBase: new URL("https://www.byteflow.ae"),
+    ...(cms ?? {
       title: "Byteflow Information Technology",
       description:
         "Leading IT solutions provider trusted by 500+ businesses across Dubai and UAE since 2017.",
     }),
+    alternates: { canonical: cms?.alternates?.canonical ?? "/" },
     verification: { google: "tAM-FG-hPH1-sxVzCRVhEVnLM0OhIATbEoeYXTTShc4" },
   };
 }
