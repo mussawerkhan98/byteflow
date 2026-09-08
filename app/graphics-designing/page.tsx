@@ -3,7 +3,7 @@ import { services } from '../lib/services-data'
 
 export const metadata = {
   alternates: { canonical: "/graphics-designing" },
-  title: 'Graphic Design Dubai | Logo, Branding, UI/UX, Social Media | Byteflow',
+  title: 'Graphic Design Dubai | Logo, Branding & UI/UX | Byteflow',
   description:
     'Professional logo design, brand identity, UI/UX design and social media graphics for Dubai businesses. Arabic and English, unlimited revisions, fast turnaround.',
 }
