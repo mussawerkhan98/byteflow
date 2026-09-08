@@ -24,6 +24,7 @@ export async function generateMetadata({
   return {
     title: post.meta_title || `${post.title} | Byteflow Blog`,
     description: post.meta_description || post.excerpt,
+    alternates: { canonical: `/${slug}` },
   };
 }
 
