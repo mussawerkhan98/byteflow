@@ -9,3 +9,8 @@ export async function generateMetadata(): Promise<Metadata> {
     alternates: { canonical: '/contact-us' },
   }
 }
+
+export default async function ContactPage() {
+  const [settings,hero] = await Promise.all([getSiteSettings(),getPageHero('contact-us')])
+  return <Contact settings={(settings ?? {}) as never} hero={hero} />
+}
