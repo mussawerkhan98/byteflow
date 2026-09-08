@@ -2,6 +2,7 @@ import ServicePageTemplate from '../components/ServicePageTemplate'
 import { services } from '../lib/services-data'
 
 export const metadata = {
+  alternates: { canonical: "/landing-page-designing" },
   title: 'Landing Page Designing Dubai | High-Converting Pages | Byteflow',
   description:
     'Conversion-focused landing pages for Google Ads and social campaigns in Dubai and the UAE. Mobile-first design, fast load times, built to turn clicks into leads.',
