@@ -2,7 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import AboutReviews from '../components/AboutReviews'
 import Team from '../components/Team'
-import { getPageHero, getSection, getTeam, getTestimonials } from '../lib/cms'
+import { getPageHero, getPageMetadata, getSection, getTeam, getTestimonials } from '../lib/cms''
 
 export const metadata = {
   alternates: { canonical: "/about-us" },
