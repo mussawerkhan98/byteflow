@@ -34,7 +34,7 @@ export async function generateMetadata(): Promise<Metadata> {
       description:
         "Leading IT solutions provider trusted by 500+ businesses across Dubai and UAE since 2017.",
     }),
-    alternates: { canonical: cms?.alternates?.canonical ?? "/" },
+  
     verification: { google: "tAM-FG-hPH1-sxVzCRVhEVnLM0OhIATbEoeYXTTShc4" },
   };
 }
