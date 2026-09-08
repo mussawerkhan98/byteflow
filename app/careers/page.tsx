@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { getPageHero } from '../lib/cms'
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/careers" },
   title: 'Careers | Byteflow Information Technology',
   description: 'Join the team behind 500+ businesses across Dubai and the UAE. See how we work and how to reach us about opportunities at Byteflow.',
 }
