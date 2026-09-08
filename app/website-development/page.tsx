@@ -3,7 +3,7 @@ import { services } from '../lib/services-data'
 
 export const metadata = {
   alternates: { canonical: "/website-development" },
-  title: 'Website Development Dubai | Apps, E-commerce, WhatsApp Bots | Byteflow',
+  title: 'Cloud Services Dubai | Microsoft 365 & Azure | Byteflow',
   description:
     'Professional website development, mobile apps and AI chatbots for Dubai businesses. WordPress, custom development, UAE payment gateways and Arabic language support.',
 }
