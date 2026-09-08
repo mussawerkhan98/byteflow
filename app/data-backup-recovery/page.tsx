@@ -3,7 +3,7 @@ import { services } from '../lib/services-data'
 
 export const metadata = {
   alternates: { canonical: "/data-backup-recovery" },
-  title: 'Data Backup and Recovery Dubai | Cloud Backup, Ransomware Recovery | Byteflow',
+   title: 'Data Backup & Recovery Dubai | Cloud Backup | Byteflow',
   description:
     'Automated cloud backup and fast disaster recovery for Dubai businesses. Hourly backups, immutable storage, 4-hour server recovery. Never pay a ransom again.',
 }
