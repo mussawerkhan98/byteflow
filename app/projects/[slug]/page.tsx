@@ -20,6 +20,7 @@ export async function generateMetadata({
         .replace(/<[^>]*>/g, " ")
         .replace(/\s+/g, " ")
         .trim(),
+        alternates: { canonical: `/projects/${slug}` },
     };
   }
   return {};
