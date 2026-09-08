@@ -6,6 +6,7 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: '*',
       allow: '/',
     },
-    sitemap: 'https://byteflow.ae/sitemap.xml',
+    sitemap: 'https://www.byteflow.ae/sitemap.xml',
+    host: 'https://www.byteflow.ae',
   }
 }
