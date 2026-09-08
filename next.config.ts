@@ -33,20 +33,35 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  async redirects() {
+   async redirects() {
     return [
-      {
-        source: '/blogs',
-        destination: '/blog',
-        permanent: true,
-      },
-      {
-        source: '/software-development-company',
-        destination: '/website-development',
-        permanent: true,
-      },
+      { source: '/blogs', destination: '/blog', permanent: true },
+      { source: '/software-development-company', destination: '/website-development', permanent: true },
+
+      // Legacy index files
+      { source: '/index.html', destination: '/', permanent: true },
+      { source: '/index.php', destination: '/', permanent: true },
+      { source: '/home', destination: '/', permanent: true },
+
+      // Retired project case studies
+      { source: '/projects/apma-shipping', destination: '/projects', permanent: true },
+      { source: '/projects/npath-software', destination: '/projects', permanent: true },
+      { source: '/projects/carib-electrical', destination: '/projects', permanent: true },
+      { source: '/projects/sabi-construction', destination: '/projects', permanent: true },
+      { source: '/projects/hesabat-and-amwal', destination: '/projects', permanent: true },
+      { source: '/projects/tools-nest', destination: '/projects', permanent: true },
+
+      // WordPress RSS feed URLs
+      { source: '/ai-services-dubai/feed', destination: '/ai-services-dubai', permanent: true },
+      { source: '/it-company-in-dubai/feed', destination: '/it-company-in-dubai', permanent: true },
+      { source: '/ua300-installation-dubai/feed', destination: '/ua300-installation-dubai', permanent: true },
+      { source: '/:slug/feed', destination: '/:slug', permanent: true },
+
+      // Retired service slugs
+      { source: '/cloud-services', destination: '/cloud-services-dubai', permanent: true },
+      { source: '/it-amc-support-dubai', destination: '/it-amc-support', permanent: true },
+      { source: '/software-company-in-dubai', destination: '/software-development-company-in-dubai', permanent: true },
     ]
   },
 }
-
 export default nextConfig
