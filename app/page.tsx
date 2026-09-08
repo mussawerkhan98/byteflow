@@ -15,6 +15,9 @@ import {
 import { getPosts } from "./lib/db";
 
 export const dynamic = "force-dynamic";
+export const metadata = {
+  alternates: { canonical: "/" },
+};
 
 export default async function Home() {
   const [sectionHero, pageHero, testimonials, settings, posts] =
