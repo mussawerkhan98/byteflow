@@ -9,6 +9,7 @@ import Footer from "./components/Footer";
 import StickyContactButtons from "./components/StickyContactButtons";
 import LeadPopup from "./components/LeadPopup";
 import PageCta from "./components/PageCta";
+import PageSections from "./components/PageSections";
 import PageFaq from "./components/PageFaq";
 import { getMenu, getPageMetadata, getSiteSettings, getWebsiteScripts } from "./lib/cms";
 import { getServices } from "./lib/db";
@@ -114,6 +115,7 @@ export default async function RootLayout({
           logoUrl={String(settings?.logo_url || "/images/logo.png")}
         />
         <main className="flex-1">{children}</main>
+        <PageSections />
         <PageFaq />
         <PageCta />
         <Footer

@@ -3,8 +3,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import sanitizeHtml from "sanitize-html";
-import { getPostBySlug, getPosts } from "@/app/lib/db";
+import {
+  getPostBySlug,
+  getPosts,
+  getServiceBySlug,
+  getServices,
+} from "@/app/lib/db";
 import { getCategoryStyle } from "../blog/category-style";
+import CmsServicePage from "../components/CmsServicePage";
 
 export const dynamic = "force-dynamic";
 
@@ -20,12 +26,22 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const post = await getPostBySlug(slug);
-  if (!post) return {};
-  return {
-    title: post.meta_title || `${post.title} | Byteflow Blog`,
-    description: post.meta_description || post.excerpt,
-    alternates: { canonical: `/${slug}` },
-  };
+  if (post) {
+    return {
+      title: post.meta_title || `${post.title} | Byteflow Blog`,
+      description: post.meta_description || post.excerpt,
+      alternates: { canonical: `/${slug}` },
+    };
+  }
+  const service = await getServiceBySlug(slug);
+  if (service) {
+    return {
+      title: `${service.title} | Byteflow Information Technology`,
+      description: service.excerpt || service.description.slice(0, 160),
+      alternates: { canonical: `/${slug}` },
+    };
+  }
+  return {};
 }
 
 export default async function BlogPostPage({
@@ -35,7 +51,19 @@ export default async function BlogPostPage({
 }) {
   const { slug } = await params;
   const post = await getPostBySlug(slug);
-  if (!post) notFound();
+
+  // Services added in the admin panel don't have a hand-written route the way
+  // the original nine do, so they resolve here instead of 404-ing.
+  if (!post) {
+    const service = await getServiceBySlug(slug);
+    if (service) {
+      const related = (await getServices())
+        .filter((item) => item.slug !== service.slug)
+        .slice(0, 3);
+      return <CmsServicePage service={service} related={related} />;
+    }
+    notFound();
+  }
 
   const { gradient, icon } = getCategoryStyle(post.category);
   const isHtmlContent = /<[a-z][\s\S]*>/i.test(post.content);
