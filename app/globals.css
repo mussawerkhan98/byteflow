@@ -59,9 +59,8 @@ body {
  * - Light mode gets an extra boundary ring since --bg-surface (#f8fafc)
  *   sits too close to --bg-page (#ffffff) to read as a card on its own.
  *   Dark mode already has enough separation, so it's untouched here.
- * - An animated brand-gradient border ring is layered on top via ::before,
- *   invisible at rest and faded in on hover/keyboard-focus/press so it
- *   works the same on desktop hover and mobile tap.
+ * - An animated brand-gradient border ring runs on every card, all the
+ *   time, via a masked ::before layer.
  */
 .card-glow {
   position: relative;
@@ -87,17 +86,8 @@ body {
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
-  opacity: 0;
   pointer-events: none;
-  transition: opacity 0.25s ease;
-}
-
-.card-glow:hover::before,
-.card-glow:focus-visible::before,
-.card-glow:active::before,
-.card-glow.is-touch-active::before {
-  opacity: 1;
-  animation: card-glow-flow 2.8s linear infinite;
+  animation: card-glow-flow 3s linear infinite;
 }
 
 @keyframes card-glow-flow {
@@ -105,10 +95,7 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .card-glow:hover::before,
-  .card-glow:focus-visible::before,
-  .card-glow:active::before,
-  .card-glow.is-touch-active::before {
+  .card-glow::before {
     animation: none;
   }
 }
