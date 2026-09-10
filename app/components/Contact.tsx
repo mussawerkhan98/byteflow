@@ -214,7 +214,7 @@ export default function Contact({ settings = {}, hero }: { settings?: ContactSet
             {shownContactInfo.map((item) => {
               const inner = (
                 <div
-                  className="card-glow flex items-center gap-4 p-5 rounded-2xl transition-all duration-300 hover:-translate-y-0.5 group"
+                  className="flex items-center gap-4 p-5 rounded-2xl transition-all duration-300 hover:-translate-y-0.5 group"
                   style={{
                     background: 'linear-gradient(160deg, rgba(44,205,222,0.06) 0%, var(--bg-surface) 100%)',
                     border: '1px solid rgba(44,205,222,0.12)',
@@ -248,7 +248,7 @@ export default function Contact({ settings = {}, hero }: { settings?: ContactSet
 
             {/* Social links */}
             <div
-              className="card-glow p-6 rounded-2xl mt-1"
+              className="p-6 rounded-2xl mt-1"
               style={{
                 background: 'linear-gradient(160deg, rgba(44,205,222,0.05) 0%, var(--bg-surface) 100%)',
                 border: '1px solid rgba(44,205,222,0.12)',
@@ -293,7 +293,7 @@ export default function Contact({ settings = {}, hero }: { settings?: ContactSet
           {/* Right — form */}
           <div className="lg:col-span-3">
             <div
-              className="card-glow relative rounded-2xl overflow-hidden"
+              className="relative rounded-2xl overflow-hidden"
               style={{
                 background: 'linear-gradient(160deg, rgba(44,205,222,0.07) 0%, rgba(70,163,225,0.02) 40%, var(--bg-surface) 100%)',
                 border: '1px solid rgba(44,205,222,0.18)',

@@ -149,7 +149,7 @@ export default function Hero({ content = {} }: { content?: HeroContent }) {
           {stats.map((stat) => (
             <div
               key={stat.label}
-              className="card-glow flex flex-col items-center py-7 px-4"
+              className="flex flex-col items-center py-7 px-4"
               style={{ background: 'var(--bg-surface)' }}
             >
               <span

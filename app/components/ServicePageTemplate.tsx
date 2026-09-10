@@ -92,7 +92,7 @@ export default async function ServicePageTemplate({ service }: { service: Servic
               {service.heroStats.map((stat) => (
                 <div
                   key={stat.label}
-                  className="card-glow flex flex-col gap-1.5 p-5 rounded-2xl"
+                  className="flex flex-col gap-1.5 p-5 rounded-2xl"
                   style={{
                     background: 'linear-gradient(160deg, rgba(44,205,222,0.06) 0%, var(--bg-surface) 100%)',
                     border: '1px solid rgba(44,205,222,0.15)',
@@ -132,7 +132,7 @@ export default async function ServicePageTemplate({ service }: { service: Servic
             {service.features.map((feature, i) => (
               <div
                 key={feature.title}
-                className="card-glow group flex flex-col gap-4 p-7 rounded-2xl transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_40px_rgba(44,205,222,0.1)]"
+                className="group flex flex-col gap-4 p-7 rounded-2xl transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_40px_rgba(44,205,222,0.1)]"
                 style={{
                   background: 'linear-gradient(160deg, rgba(44,205,222,0.06) 0%, var(--bg-surface) 100%)',
                   border: '1px solid rgba(44,205,222,0.15)',
@@ -192,7 +192,7 @@ export default async function ServicePageTemplate({ service }: { service: Servic
               {service.benefits.map((benefit) => (
                 <div
                   key={benefit.title}
-                  className="card-glow flex gap-4 p-6 rounded-2xl transition-all duration-300 hover:shadow-[0_0_30px_rgba(44,205,222,0.08)]"
+                  className="flex gap-4 p-6 rounded-2xl transition-all duration-300 hover:shadow-[0_0_30px_rgba(44,205,222,0.08)]"
                   style={{
                     background: 'linear-gradient(160deg, rgba(44,205,222,0.06) 0%, var(--bg-surface) 100%)',
                     border: '1px solid rgba(44,205,222,0.15)',
@@ -279,7 +279,7 @@ export default async function ServicePageTemplate({ service }: { service: Servic
                     }}
                   />
                   <div
-                    className="card-glow group w-full flex flex-col gap-4 p-6 rounded-2xl transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_40px_rgba(44,205,222,0.1)]"
+                    className="group w-full flex flex-col gap-4 p-6 rounded-2xl transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_40px_rgba(44,205,222,0.1)]"
                     style={{
                       background: 'linear-gradient(160deg, rgba(44,205,222,0.06) 0%, rgba(70,163,225,0.02) 40%, var(--bg-surface) 100%)',
                       border: '1px solid rgba(44,205,222,0.13)',
@@ -329,7 +329,7 @@ export default async function ServicePageTemplate({ service }: { service: Servic
                   )}
                 </div>
                 <div
-                  className="card-glow flex flex-col gap-3 p-5 rounded-2xl mb-4 flex-1 transition-all duration-300"
+                  className="flex flex-col gap-3 p-5 rounded-2xl mb-4 flex-1 transition-all duration-300"
                   style={{
                     background: 'linear-gradient(160deg, rgba(44,205,222,0.06) 0%, var(--bg-surface) 100%)',
                     border: '1px solid rgba(44,205,222,0.13)',
@@ -373,7 +373,7 @@ export default async function ServicePageTemplate({ service }: { service: Servic
       <section className="py-24 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div
-            className="card-glow relative overflow-hidden rounded-3xl p-10 sm:p-14"
+            className="relative overflow-hidden rounded-3xl p-10 sm:p-14"
             style={{
               background: 'linear-gradient(160deg, rgba(44,205,222,0.1) 0%, rgba(70,163,225,0.05) 50%, var(--bg-surface) 100%)',
               border: '1px solid rgba(44,205,222,0.25)',
@@ -450,7 +450,7 @@ export default async function ServicePageTemplate({ service }: { service: Servic
                 <Link
                   key={rel.slug}
                   href={`/${rel.slug}`}
-                  className="card-glow group flex flex-col gap-4 p-7 rounded-2xl transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_40px_rgba(44,205,222,0.15)]"
+                  className="group flex flex-col gap-4 p-7 rounded-2xl transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_40px_rgba(44,205,222,0.15)]"
                   style={{
                     background: 'linear-gradient(160deg, rgba(44,205,222,0.06) 0%, var(--bg-surface) 100%)',
                     border: '1px solid rgba(44,205,222,0.15)',

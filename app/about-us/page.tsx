@@ -55,7 +55,7 @@ export default async function AboutPage() {
             ].map((s, i, arr) => (
               <div
                 key={s.label}
-                className="card-glow flex flex-col justify-center py-8 px-7"
+                className="flex flex-col justify-center py-8 px-7"
                 style={{
                   background: 'linear-gradient(160deg, rgba(44,205,222,0.05) 0%, var(--bg-surface) 100%)',
                   borderRight: i < arr.length - 1 ? '1px solid rgba(44,205,222,0.08)' : 'none',
@@ -80,7 +80,7 @@ export default async function AboutPage() {
 
           {/* Full-width card that continues from stats */}
           <div
-            className="card-glow rounded-b-2xl rounded-t-none overflow-hidden mb-6"
+            className="rounded-b-2xl rounded-t-none overflow-hidden mb-6"
             style={{ border: '1px solid rgba(44,205,222,0.12)', borderTop: 'none', background: 'linear-gradient(160deg, rgba(44,205,222,0.04) 0%, var(--bg-surface) 100%)' }}
           >
             <div className="grid grid-cols-1 lg:grid-cols-2">
@@ -251,7 +251,7 @@ export default async function AboutPage() {
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div
-            className="card-glow rounded-2xl overflow-hidden"
+            className="rounded-2xl overflow-hidden"
             style={{ border: '1px solid rgba(44,205,222,0.12)' }}
           >
             {/* Top bar */}
@@ -347,7 +347,7 @@ export default async function AboutPage() {
               <Link
                 key={s.num}
                 href={s.href}
-                className="card-glow group flex flex-col gap-3 p-7 transition-all duration-300 hover:shadow-[inset_0_0_40px_rgba(44,205,222,0.05)]"
+                className="group flex flex-col gap-3 p-7 transition-all duration-300 hover:shadow-[inset_0_0_40px_rgba(44,205,222,0.05)]"
                 style={{ background: 'linear-gradient(160deg, rgba(44,205,222,0.04) 0%, var(--bg-surface) 100%)' }}
               >
                 <span className="text-xs font-bold" style={{ color: '#2CCDDE' }}>{s.num}</span>
@@ -372,7 +372,7 @@ export default async function AboutPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
             <div
-              className="card-glow flex flex-col justify-between p-10 rounded-2xl"
+              className="flex flex-col justify-between p-10 rounded-2xl"
               style={{
                 background: 'linear-gradient(135deg, rgba(44,205,222,0.1) 0%, rgba(70,163,225,0.05) 100%)',
                 border: '1px solid rgba(44,205,222,0.25)',
@@ -408,7 +408,7 @@ export default async function AboutPage() {
               ].map((item) => {
                 const inner = (
                   <div
-                    className="card-glow flex items-center justify-between px-7 py-5 rounded-xl transition-all duration-200 group"
+                    className="flex items-center justify-between px-7 py-5 rounded-xl transition-all duration-200 group"
                     style={{ background: 'linear-gradient(160deg, rgba(44,205,222,0.05) 0%, var(--bg-surface) 100%)', border: '1px solid rgba(44,205,222,0.1)' }}
                   >
                     <span className="text-xs text-[var(--text-dim)] font-semibold uppercase tracking-wider w-20 flex-shrink-0">{item.label}</span>

@@ -129,7 +129,7 @@ export default function LeadPopup() {
       />
 
       <div
-        className="card-glow relative w-full max-w-md sm:max-w-lg rounded-2xl overflow-hidden max-h-[90vh] flex flex-col"
+        className="relative w-full max-w-md sm:max-w-lg rounded-2xl overflow-hidden max-h-[90vh] flex flex-col"
         style={{
           backgroundColor: 'var(--bg-surface)',
           backgroundImage: 'linear-gradient(160deg, rgba(44,205,222,0.1) 0%, rgba(70,163,225,0.03) 40%, transparent 100%)',

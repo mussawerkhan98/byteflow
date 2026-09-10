@@ -21,7 +21,7 @@ export default function Blog({ posts }: { posts: Post[] }) {
             {posts.map((post) => {
               const { gradient, icon } = getCategoryStyle(post.category);
               return (
-                <Link key={post.id} href={`/${post.slug}`} className="card-glow group relative flex flex-col overflow-hidden rounded-2xl border border-cyan-400/10 bg-[var(--bg-surface)] transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_0_50px_rgba(44,205,222,0.13),_0_20px_40px_rgba(0,0,0,0.5)]">
+                <Link key={post.id} href={`/${post.slug}`} className="group relative flex flex-col overflow-hidden rounded-2xl border border-cyan-400/10 bg-[var(--bg-surface)] transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_0_50px_rgba(44,205,222,0.13),_0_20px_40px_rgba(0,0,0,0.5)]">
                   <div className="relative flex h-44 flex-shrink-0 items-center justify-center overflow-hidden" style={{ background: gradient }}>
                     {post.image_url ? (
                       <Image src={post.image_url} alt={post.title} fill sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw" className="object-cover transition-transform duration-300 group-hover:scale-105" />
@@ -41,7 +41,7 @@ export default function Blog({ posts }: { posts: Post[] }) {
             })}
           </div>
         ) : (
-          <p className="card-glow rounded-2xl border border-white/5 bg-[var(--bg-surface)] p-10 text-center text-sm text-[var(--text-muted)]">No published articles yet.</p>
+          <p className="rounded-2xl border border-white/5 bg-[var(--bg-surface)] p-10 text-center text-sm text-[var(--text-muted)]">No published articles yet.</p>
         )}
       </div>
     </section>

@@ -13,7 +13,7 @@ function PostCard({ post }: { post: Post }) {
   return (
     <Link
       href={`/${post.slug}`}
-      className="card-glow group relative flex flex-col rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_0_50px_rgba(44,205,222,0.12),0_20px_40px_rgba(0,0,0,0.5)]"
+      className="group relative flex flex-col rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_0_50px_rgba(44,205,222,0.12),0_20px_40px_rgba(0,0,0,0.5)]"
       style={{ background: 'var(--bg-surface)', border: '1px solid rgba(44,205,222,0.12)' }}
     >
       <div className="relative h-44 flex items-center justify-center overflow-hidden flex-shrink-0" style={{ background: gradient }}>
@@ -82,7 +82,7 @@ function FeaturedPost({ post }: { post: Post }) {
   return (
     <Link
       href={`/${post.slug}`}
-      className="card-glow group grid grid-cols-1 lg:grid-cols-5 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-[0_0_60px_rgba(44,205,222,0.14),0_24px_48px_rgba(0,0,0,0.6)]"
+      className="group grid grid-cols-1 lg:grid-cols-5 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-[0_0_60px_rgba(44,205,222,0.14),0_24px_48px_rgba(0,0,0,0.6)]"
       style={{ background: 'var(--bg-surface)', border: '1px solid rgba(44,205,222,0.18)' }}
     >
       <div className="lg:col-span-2 h-56 lg:h-auto relative flex items-center justify-center overflow-hidden" style={{ background: gradient }}>
@@ -234,7 +234,7 @@ export default function BlogContent({ posts }: { posts: Post[] }) {
       <section className="px-4 sm:px-6 lg:px-8 pb-24">
         <div className="max-w-7xl mx-auto">
           <div
-            className="card-glow relative overflow-hidden rounded-2xl px-8 py-12 flex flex-col sm:flex-row items-center justify-between gap-8"
+            className="relative overflow-hidden rounded-2xl px-8 py-12 flex flex-col sm:flex-row items-center justify-between gap-8"
             style={{
               background: 'linear-gradient(135deg, rgba(44,205,222,0.08) 0%, rgba(70,163,225,0.04) 50%, var(--bg-surface) 100%)',
               border: '1px solid rgba(44,205,222,0.18)',
