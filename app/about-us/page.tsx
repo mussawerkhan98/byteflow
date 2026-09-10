@@ -18,6 +18,11 @@ export async function generateMetadata() {
 export default async function AboutPage() {
   const [hero, founder, testimonials, team] = await Promise.all([getPageHero('about-us'), getSection('about-us', 'founder'), getTestimonials(), getTeam()])
   const founderStory = String(founder?.story || 'Byteflow was born out of frustration. Too many Dubai businesses were being overcharged, underserved, and left waiting days for a simple fix. We started in 2017 with one goal: build the kind of IT company that actually shows up.\n\nEight years later, we manage IT for over 500 businesses across Dubai, Sharjah and Abu Dhabi. We have grown from a two-person team to a full-service operation covering everything from server rooms to Google Ads campaigns — all under one roof, one monthly fee.\n\nThe philosophy has never changed: respond fast, be honest about pricing, and treat every client like they are your only one.')
+  // When a founder CMS record exists, its image_url is the source of truth —
+  // including when it's deliberately empty (admin removed the photo and
+  // wants none shown). Only fall back to the bundled placeholder photo when
+  // there's no CMS record at all.
+  const founderImageUrl = founder ? String(founder.image_url || '') : '/images/owner/owner.png'
   return (
     <main>
 
@@ -83,41 +88,50 @@ export default async function AboutPage() {
             className="rounded-b-2xl rounded-t-none overflow-hidden mb-6"
             style={{ border: '1px solid rgba(44,205,222,0.12)', borderTop: 'none', background: 'linear-gradient(160deg, rgba(44,205,222,0.04) 0%, var(--bg-surface) 100%)' }}
           >
-            <div className="grid grid-cols-1 lg:grid-cols-2">
+            <div className={`grid grid-cols-1 ${founderImageUrl ? 'lg:grid-cols-2' : ''}`}>
 
-              {/* Photo */}
-              <div className="relative h-[480px] lg:h-auto overflow-hidden">
-                <Image
-                  src={String(founder?.image_url || '/images/owner/owner.png')}
-                  alt={String(founder?.image_alt || 'Byteflow Founder')}
-                  fill
-                  className="object-cover object-top"
-                />
-                <div className="absolute inset-0"
-                  style={{ background: 'linear-gradient(to right, transparent 60%, var(--bg-surface) 100%)' }} />
-                <div className="absolute inset-0 lg:hidden"
-                  style={{ background: 'linear-gradient(to top, var(--bg-surface) 20%, transparent 70%)' }} />
+              {/* Photo — only shown once a photo is actually set. An admin
+                  clearing the founder photo means "no photo", not "fall
+                  back to the old placeholder image". */}
+              {founderImageUrl && (
+                <div className="relative h-[480px] lg:h-auto overflow-hidden">
+                  <Image
+                    src={founderImageUrl}
+                    alt={String(founder?.image_alt || 'Byteflow Founder')}
+                    fill
+                    className="object-cover object-top"
+                  />
+                  <div className="absolute inset-0"
+                    style={{ background: 'linear-gradient(to right, transparent 60%, var(--bg-surface) 100%)' }} />
+                  <div className="absolute inset-0 lg:hidden"
+                    style={{ background: 'linear-gradient(to top, var(--bg-surface) 20%, transparent 70%)' }} />
 
-                {/* Floating tag */}
-                <div
-                  className="absolute bottom-6 left-6 px-4 py-2 rounded-xl"
-                  style={{
-                    background: 'rgba(4,13,18,0.85)',
-                    border: '1px solid rgba(44,205,222,0.25)',
-                    backdropFilter: 'blur(12px)',
-                  }}
-                >
-                  <p className="text-[var(--text-primary)] text-sm font-bold">{String(founder?.role || 'Founder & CEO')}</p>
-                  <p className="text-[#2CCDDE] text-xs font-medium">{String(founder?.company || 'Byteflow Information Technology')}</p>
+                  {/* Floating tag */}
+                  <div
+                    className="absolute bottom-6 left-6 px-4 py-2 rounded-xl"
+                    style={{
+                      background: 'rgba(4,13,18,0.85)',
+                      border: '1px solid rgba(44,205,222,0.25)',
+                      backdropFilter: 'blur(12px)',
+                    }}
+                  >
+                    <p className="text-[var(--text-primary)] text-sm font-bold">{String(founder?.role || 'Founder & CEO')}</p>
+                    <p className="text-[#2CCDDE] text-xs font-medium">{String(founder?.company || 'Byteflow Information Technology')}</p>
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Content */}
               <div className="flex flex-col justify-center p-10 lg:p-14">
                 <p className="text-[#2CCDDE] text-xs font-bold uppercase tracking-widest mb-4">{String(founder?.eyebrow || 'Meet the founder')}</p>
-                <h2 className="text-3xl sm:text-4xl font-bold text-[var(--text-primary)] leading-tight mb-6">
+                <h2 className="text-3xl sm:text-4xl font-bold text-[var(--text-primary)] leading-tight mb-2">
                   {String(founder?.heading || 'Started with a laptop and a promise to fix IT in Dubai properly.')}
                 </h2>
+                {!founderImageUrl && (
+                  <p className="text-[var(--text-muted)] text-sm font-medium mb-6">
+                    {String(founder?.role || 'Founder & CEO')} · {String(founder?.company || 'Byteflow Information Technology')}
+                  </p>
+                )}
 
                 <div className="flex flex-col gap-4 text-[var(--text-muted)] text-sm leading-relaxed mb-8">
                   {founder?.story ? founderStory.split(/\n\s*\n/).filter(Boolean).map((paragraph) => <p key={paragraph}>{paragraph}</p>) : <>
