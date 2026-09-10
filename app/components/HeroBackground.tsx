@@ -18,9 +18,6 @@ export default function HeroBackground() {
     const ctx = canvas?.getContext('2d')
     if (!canvas || !ctx) return
 
-    const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
-    let reduceMotion = motionQuery.matches
-
     let theme: 'dark' | 'light' = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark'
     const themeObserver = new MutationObserver(() => {
       theme = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark'
@@ -67,11 +64,6 @@ export default function HeroBackground() {
       const widthChanged = width !== prevWidth
       prevWidth = width
       if (widthChanged || nodes.length === 0) makeNodes()
-
-      // Setting canvas.width above clears the canvas. Under reduced motion
-      // there is no animation loop to repaint it, so redraw here or the
-      // canvas stays blank for good.
-      if (reduceMotion) draw()
     }
 
     // Cursor tracking — nearby neurons light up and reach toward wherever
@@ -178,24 +170,14 @@ export default function HeroBackground() {
       }
       ctx!.shadowBlur = 0
 
-      if (!reduceMotion) raf = requestAnimationFrame(draw)
+      raf = requestAnimationFrame(draw)
     }
-
-    // Reading the preference once at mount left the canvas frozen until a
-    // full reload after the OS setting changed.
-    function onMotionChange() {
-      reduceMotion = motionQuery.matches
-      cancelAnimationFrame(raf)
-      draw()
-    }
-    motionQuery.addEventListener('change', onMotionChange)
 
     resize()
     window.addEventListener('resize', resize)
-    if (!reduceMotion) draw()
+    draw()
 
     return () => {
-      motionQuery.removeEventListener('change', onMotionChange)
       window.removeEventListener('resize', resize)
       window.removeEventListener('pointermove', onPointerMove)
       window.removeEventListener('pointerleave', onPointerLeave)
