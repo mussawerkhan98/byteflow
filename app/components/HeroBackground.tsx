@@ -66,9 +66,12 @@ export default function HeroBackground() {
       const widthChanged = width !== prevWidth
       prevWidth = width
       if (widthChanged || nodes.length === 0) makeNodes()
+
+      // Setting canvas.width above clears the canvas. Under reduced motion
+      // there is no animation loop to repaint it, so redraw here or the
+      // canvas stays blank for good.
+      if (reduceMotion) draw()
     }
-    resize()
-    window.addEventListener('resize', resize)
 
     // Cursor tracking — nearby neurons light up and reach toward wherever
     // the pointer last was, eased so it feels alive rather than mechanical.
@@ -78,6 +81,9 @@ export default function HeroBackground() {
     let cursorY = -9999
 
     function onPointerMove(e: PointerEvent) {
+      // Touch drags are scrolls, not cursor movement — following them yanks
+      // every nearby node toward the finger and clumps the network.
+      if (e.pointerType === 'touch') return
       const rect = canvas!.getBoundingClientRect()
       targetX = e.clientX - rect.left
       targetY = e.clientY - rect.top
@@ -174,7 +180,9 @@ export default function HeroBackground() {
       if (!reduceMotion) raf = requestAnimationFrame(draw)
     }
 
-    draw()
+    resize()
+    window.addEventListener('resize', resize)
+    if (!reduceMotion) draw()
 
     return () => {
       window.removeEventListener('resize', resize)
