@@ -152,6 +152,37 @@ export async function getServices(): Promise<DbService[]> {
   }
 }
 
+export async function getServiceBySlug(
+  slug: string,
+): Promise<DbService | null> {
+  try {
+    const result = await db.execute({
+      sql: "SELECT * FROM services WHERE slug = ? AND status = 'published' LIMIT 1",
+      args: [slug],
+    });
+    const row = result.rows[0];
+    if (!row) return null;
+    return {
+      id: String(row.id),
+      slug: row.slug as string,
+      title: row.title as string,
+      icon: (row.icon as string) || "",
+      excerpt: (row.excerpt as string) || "",
+      description: (row.description as string) || "",
+      image_url: (row.image_url as string) ?? null,
+      sort_order: Number(row.sort_order),
+      published: Boolean(row.published),
+      created_at: row.created_at as string,
+    };
+  } catch (error) {
+    console.error(
+      "Turso service error:",
+      error instanceof Error ? error.message : error,
+    );
+    return null;
+  }
+}
+
 // ── Projects ───────────────────────────────────────────────────────────────
 
 export async function getProjects(): Promise<DbProject[]> {
