@@ -63,7 +63,7 @@ export default async function CareersPage() {
             {values.map((v) => (
               <div
                 key={v.title}
-                className="flex flex-col gap-3 p-7 rounded-2xl"
+                className="card-glow flex flex-col gap-3 p-7 rounded-2xl"
                 style={{
                   background: 'linear-gradient(160deg, rgba(44,205,222,0.06) 0%, var(--bg-surface) 100%)',
                   border: '1px solid rgba(44,205,222,0.15)',
@@ -80,7 +80,7 @@ export default async function CareersPage() {
       <section className="px-4 sm:px-6 lg:px-8 pb-28">
         <div className="max-w-4xl mx-auto">
           <div
-            className="relative overflow-hidden rounded-2xl px-8 py-14 flex flex-col items-center text-center gap-6"
+            className="card-glow relative overflow-hidden rounded-2xl px-8 py-14 flex flex-col items-center text-center gap-6"
             style={{
               background: 'linear-gradient(135deg, rgba(44,205,222,0.08) 0%, rgba(70,163,225,0.04) 50%, var(--bg-surface) 100%)',
               border: '1px solid rgba(44,205,222,0.18)',

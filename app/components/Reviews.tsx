@@ -110,7 +110,7 @@ export default function Reviews({ items }: { items?: { customer_name: string; cu
 
           {/* Google rating */}
           <div
-            className="flex items-center gap-4 px-6 py-4 rounded-2xl flex-shrink-0 self-start"
+            className="card-glow flex items-center gap-4 px-6 py-4 rounded-2xl flex-shrink-0 self-start"
             style={{
               background: 'linear-gradient(160deg, rgba(44,205,222,0.07) 0%, var(--bg-surface) 100%)',
               border: '1px solid rgba(44,205,222,0.18)',
@@ -129,7 +129,7 @@ export default function Reviews({ items }: { items?: { customer_name: string; cu
 
         {/* Slider card */}
         <div
-          className="relative rounded-3xl overflow-hidden"
+          className="card-glow relative rounded-3xl overflow-hidden"
           style={{
             background: 'linear-gradient(160deg, rgba(44,205,222,0.07) 0%, rgba(70,163,225,0.02) 40%, var(--bg-surface) 100%)',
             border: '1px solid rgba(44,205,222,0.18)',

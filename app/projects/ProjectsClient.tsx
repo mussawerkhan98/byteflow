@@ -123,7 +123,7 @@ function Visual({ type, className }: { type: string; className?: string }) {
 
 function FeaturedCard({ project }: { project: UiProject }) {
   return (
-    <Link href={`/projects/${project.slug}`} className="relative rounded-2xl overflow-hidden block transition-all duration-300 hover:border-[rgba(44,205,222,0.35)]"
+    <Link href={`/projects/${project.slug}`} className="card-glow relative rounded-2xl overflow-hidden block transition-all duration-300 hover:border-[rgba(44,205,222,0.35)]"
       style={{ background:'linear-gradient(160deg, rgba(44,205,222,0.07) 0%, rgba(70,163,225,0.03) 35%, var(--bg-surface) 100%)', border:'1px solid rgba(44,205,222,0.2)' }}>
       <div className="absolute top-0 left-8 right-8 h-px" style={{ background:'linear-gradient(90deg, transparent, rgba(44,205,222,0.5), transparent)' }} />
       <div className="grid grid-cols-1 lg:grid-cols-5">
@@ -176,7 +176,7 @@ function FeaturedCard({ project }: { project: UiProject }) {
 
 function ProjectCard({ project }: { project: UiProject }) {
   return (
-    <Link href={`/projects/${project.slug}`} className="group relative flex flex-col rounded-2xl overflow-hidden transition-all duration-300 hover:border-[rgba(44,205,222,0.3)]"
+    <Link href={`/projects/${project.slug}`} className="card-glow group relative flex flex-col rounded-2xl overflow-hidden transition-all duration-300 hover:border-[rgba(44,205,222,0.3)]"
       style={{ background:'linear-gradient(160deg, rgba(44,205,222,0.05) 0%, rgba(70,163,225,0.02) 30%, var(--bg-surface) 100%)', border:'1px solid rgba(44,205,222,0.12)' }}>
       <div className="p-4 pb-0">
         <ImagePlaceholder src={project.image} alt={project.client || project.title} className="h-44" />
@@ -232,7 +232,7 @@ export default function ProjectsClient({ projects }: { projects: UiProject[] }) 
               </h1>
               <p className="text-[var(--text-muted)] mt-4 text-base max-w-md leading-relaxed">Real work, real clients, real numbers. Every project on this page has a name attached to it.</p>
             </div>
-            <div className="flex items-center gap-8 px-7 py-5 rounded-2xl flex-shrink-0 self-start"
+            <div className="card-glow flex items-center gap-8 px-7 py-5 rounded-2xl flex-shrink-0 self-start"
               style={{ background:'linear-gradient(160deg, rgba(44,205,222,0.07) 0%, var(--bg-surface) 100%)', border:'1px solid rgba(44,205,222,0.15)' }}>
               {[['500+','Clients served'],['8+','Years operating'],['24/7','Support, always']].map(([v,l]) => (
                 <div key={l} className="flex flex-col items-center">
@@ -281,7 +281,7 @@ export default function ProjectsClient({ projects }: { projects: UiProject[] }) 
       {/* Bottom CTA */}
       <section className="px-4 sm:px-6 lg:px-8 pb-24">
         <div className="max-w-7xl mx-auto">
-          <div className="relative overflow-hidden rounded-2xl px-8 py-12 flex flex-col sm:flex-row items-center justify-between gap-8"
+          <div className="card-glow relative overflow-hidden rounded-2xl px-8 py-12 flex flex-col sm:flex-row items-center justify-between gap-8"
             style={{ background:'linear-gradient(135deg, rgba(44,205,222,0.09) 0%, rgba(70,163,225,0.05) 50%, var(--bg-surface) 100%)', border:'1px solid rgba(44,205,222,0.18)' }}>
             <div className="absolute top-0 left-0 right-0 h-px" style={{ background:'linear-gradient(90deg, transparent, rgba(44,205,222,0.6), transparent)' }} />
             <div>

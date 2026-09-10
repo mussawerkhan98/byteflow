@@ -185,7 +185,7 @@ export default async function BlogPostPage({
       <section className="px-4 sm:px-6 lg:px-8 pb-28 pt-10">
         <div className="max-w-3xl mx-auto">
           <div
-            className="relative overflow-hidden rounded-2xl px-8 py-12 flex flex-col sm:flex-row items-center justify-between gap-8"
+            className="card-glow relative overflow-hidden rounded-2xl px-8 py-12 flex flex-col sm:flex-row items-center justify-between gap-8"
             style={{
               background:
                 "linear-gradient(135deg, rgba(44,205,222,0.08) 0%, rgba(70,163,225,0.04) 50%, var(--bg-surface) 100%)",

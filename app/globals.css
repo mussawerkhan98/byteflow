@@ -52,6 +52,67 @@ body {
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
+/*
+ * Shared card treatment, applied via the `card-glow` class to every
+ * card-style element sitewide.
+ *
+ * - Light mode gets an extra boundary ring since --bg-surface (#f8fafc)
+ *   sits too close to --bg-page (#ffffff) to read as a card on its own.
+ *   Dark mode already has enough separation, so it's untouched here.
+ * - An animated brand-gradient border ring is layered on top via ::before,
+ *   invisible at rest and faded in on hover/keyboard-focus/press so it
+ *   works the same on desktop hover and mobile tap.
+ */
+.card-glow {
+  position: relative;
+  isolation: isolate;
+}
+
+:root[data-theme='light'] .card-glow {
+  box-shadow:
+    0 0 0 1px rgba(15, 23, 42, 0.09),
+    0 1px 2px rgba(15, 23, 42, 0.04),
+    0 8px 24px rgba(15, 23, 42, 0.05);
+}
+
+.card-glow::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: linear-gradient(120deg, var(--cyan), var(--blue), var(--cyan));
+  background-size: 200% 200%;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+.card-glow:hover::before,
+.card-glow:focus-visible::before,
+.card-glow:active::before,
+.card-glow.is-touch-active::before {
+  opacity: 1;
+  animation: card-glow-flow 2.8s linear infinite;
+}
+
+@keyframes card-glow-flow {
+  to { background-position: 200% 50%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-glow:hover::before,
+  .card-glow:focus-visible::before,
+  .card-glow:active::before,
+  .card-glow.is-touch-active::before {
+    animation: none;
+  }
+}
+
 h1, h2 {
   font-family: var(--font-cardo), 'Cardo', serif;
   font-weight: 700;

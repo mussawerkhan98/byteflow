@@ -111,7 +111,7 @@ function CardShell({
   return (
     <Link
       href={href}
-      className="group relative flex flex-col rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_50px_rgba(44,205,222,0.2),_0_20px_40px_rgba(0,0,0,0.6)]"
+      className="card-glow group relative flex flex-col rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_50px_rgba(44,205,222,0.2),_0_20px_40px_rgba(0,0,0,0.6)]"
       style={{
         background: 'linear-gradient(160deg, rgba(44,205,222,0.07) 0%, rgba(70,163,225,0.03) 30%, var(--bg-surface) 100%)',
         border: '1px solid rgba(44,205,222,0.2)',

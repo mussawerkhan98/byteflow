@@ -106,7 +106,7 @@ export default function HowItWorks() {
 
                 {/* Card */}
                 <div
-                  className="group w-full flex flex-col gap-4 p-6 rounded-2xl transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_40px_rgba(44,205,222,0.1)]"
+                  className="card-glow group w-full flex flex-col gap-4 p-6 rounded-2xl transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_40px_rgba(44,205,222,0.1)]"
                   style={{
                     background: 'linear-gradient(160deg, rgba(44,205,222,0.06) 0%, rgba(70,163,225,0.02) 40%, var(--bg-surface) 100%)',
                     border: '1px solid rgba(44,205,222,0.13)',
@@ -169,7 +169,7 @@ export default function HowItWorks() {
 
               {/* Content */}
               <div
-                className="group flex flex-col gap-3 p-5 rounded-2xl mb-4 flex-1 transition-all duration-300"
+                className="card-glow group flex flex-col gap-3 p-5 rounded-2xl mb-4 flex-1 transition-all duration-300"
                 style={{
                   background: 'linear-gradient(160deg, rgba(44,205,222,0.06) 0%, var(--bg-surface) 100%)',
                   border: '1px solid rgba(44,205,222,0.13)',

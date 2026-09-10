@@ -8,6 +8,7 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import StickyContactButtons from "./components/StickyContactButtons";
 import LeadPopup from "./components/LeadPopup";
+import CardTouchActivation from "./components/CardTouchActivation";
 import PageCta from "./components/PageCta";
 import PageFaq from "./components/PageFaq";
 import { getMenu, getPageMetadata, getSiteSettings, getWebsiteScripts } from "./lib/cms";
@@ -122,6 +123,7 @@ export default async function RootLayout({
         />
         <StickyContactButtons />
         <LeadPopup />
+        <CardTouchActivation />
         {process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY && (
           <Script
             src={`https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`}

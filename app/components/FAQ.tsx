@@ -163,7 +163,7 @@ export default function FAQ({
             return (
               <div
                 key={faq.q}
-                className="rounded-2xl overflow-hidden transition-all duration-300"
+                className="card-glow rounded-2xl overflow-hidden transition-all duration-300"
                 style={{
                   background: isOpen
                     ? "linear-gradient(160deg, rgba(44,205,222,0.08) 0%, rgba(70,163,225,0.03) 40%, var(--bg-surface) 100%)"
@@ -236,7 +236,7 @@ export default function FAQ({
 
         {/* Bottom CTA */}
         <div
-          className="mt-14 p-8 rounded-2xl text-center"
+          className="card-glow mt-14 p-8 rounded-2xl text-center"
           style={{
             background:
               "linear-gradient(160deg, rgba(44,205,222,0.07) 0%, var(--bg-surface) 100%)",
