@@ -28,6 +28,7 @@ export default function HeroBackground() {
 
     let width = 0
     let height = 0
+    let prevWidth = -1
     const dpr = Math.min(window.devicePixelRatio || 1, 2)
     let nodes: Node[] = []
 
@@ -57,7 +58,14 @@ export default function HeroBackground() {
       canvas!.style.width = width + 'px'
       canvas!.style.height = height + 'px'
       ctx!.setTransform(dpr, 0, 0, dpr, 0, 0)
-      makeNodes()
+
+      // iOS Safari fires 'resize' as its address bar collapses/expands
+      // during scroll, changing viewport height only. Only regenerate the
+      // node field on a real width change (or the first run) so the
+      // animation doesn't visibly reset mid-scroll.
+      const widthChanged = width !== prevWidth
+      prevWidth = width
+      if (widthChanged || nodes.length === 0) makeNodes()
     }
     resize()
     window.addEventListener('resize', resize)
