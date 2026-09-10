@@ -26,7 +26,6 @@ export default function HeroBackground() {
 
     let width = 0
     let height = 0
-    let prevWidth = -1
     const dpr = Math.min(window.devicePixelRatio || 1, 2)
     let nodes: Node[] = []
 
@@ -49,20 +48,28 @@ export default function HeroBackground() {
     function resize() {
       const parent = canvas!.parentElement
       if (!parent) return
-      width = parent.clientWidth
-      height = parent.clientHeight
+      const nextWidth = parent.clientWidth
+      const nextHeight = parent.clientHeight
+
+      // Zero means layout hasn't settled. Unchanged means nothing actually
+      // moved, and reassigning canvas.width blanks the canvas even when the
+      // value is identical. iOS Safari fires resize on every address-bar
+      // shift while throttling rAF mid-scroll, so that blank would persist
+      // for the whole scroll.
+      if (!nextWidth || !nextHeight) return
+      if (nextWidth === width && nextHeight === height) return
+
+      // Only regenerate the node field on a real width change, so a
+      // height-only change doesn't visibly reset the animation.
+      const widthChanged = nextWidth !== width
+      width = nextWidth
+      height = nextHeight
       canvas!.width = width * dpr
       canvas!.height = height * dpr
       canvas!.style.width = width + 'px'
       canvas!.style.height = height + 'px'
       ctx!.setTransform(dpr, 0, 0, dpr, 0, 0)
 
-      // iOS Safari fires 'resize' as its address bar collapses/expands
-      // during scroll, changing viewport height only. Only regenerate the
-      // node field on a real width change (or the first run) so the
-      // animation doesn't visibly reset mid-scroll.
-      const widthChanged = width !== prevWidth
-      prevWidth = width
       if (widthChanged || nodes.length === 0) makeNodes()
     }
 
