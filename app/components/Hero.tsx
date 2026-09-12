@@ -149,9 +149,20 @@ export default function Hero({ content = {} }: { content?: HeroContent }) {
           {stats.map((stat) => (
             <div
               key={stat.label}
-              className="flex flex-col items-center py-7 px-4"
+              className="group relative flex flex-col items-center py-7 px-4 transition-all duration-300 hover:-translate-y-0.5"
               style={{ background: 'var(--bg-surface)' }}
             >
+              <div
+                className="pointer-events-none absolute inset-0 rounded-xl opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                style={{
+                  padding: '1px',
+                  background: 'linear-gradient(135deg, #2CCDDE, #46A3E1)',
+                  WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+                  WebkitMaskComposite: 'xor',
+                  maskComposite: 'exclude',
+                  boxShadow: '0 0 24px rgba(44,205,222,0.25)',
+                }}
+              />
               <span
                 className="text-3xl font-bold mb-1"
                 style={{
