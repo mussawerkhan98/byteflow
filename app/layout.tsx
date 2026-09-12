@@ -58,7 +58,7 @@ export default async function RootLayout({
   ]);
   const headScripts = scripts.filter((script) => script.placement === "head").map((script) => script.code).join("\n");
   const footerScripts = scripts.filter((script) => script.placement === "body_end").map((script) => script.code).join("\n");
-  const themeScript = `<script>(function(){try{var t=localStorage.getItem('theme');if(!t){t=window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark'}document.documentElement.setAttribute('data-theme',t)}catch(e){}})();<\/script>`;
+  const themeScript = `<script>(function(){try{var t=localStorage.getItem('theme');if(!t){t='light'}document.documentElement.setAttribute('data-theme',t)}catch(e){}})();<\/script>`;
   type MenuNode = {
     label: string;
     href: string;
