@@ -43,6 +43,75 @@ async function sendContactEmail(to: string[], replyTo: string | undefined, subje
   }
 }
 
+const ACK_SUBJECT = 'We have received your enquiry - Byteflow'
+const SITE_URL = 'https://www.byteflow.ae'
+const SUPPORT_PHONE = '+971 54 328 2042'
+
+/**
+ * Auto-reply sent to whoever submitted the form. Built with tables and inline
+ * styles because email clients strip <style> blocks and do not lay out flex or
+ * grid. Replies come back to info@byteflow.ae.
+ */
+function acknowledgementHtml(name: string, message: string) {
+  const safeName = escapeHtml(name.split(' ')[0] || name)
+  const safeMessage = escapeHtml(message).replace(/\n/g, '<br>')
+  return `<!doctype html>
+<html>
+  <body style="margin:0;padding:0;background:#f1f5f9;font-family:Helvetica,Arial,sans-serif;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f1f5f9;padding:24px 12px;">
+      <tr>
+        <td align="center">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#ffffff;border-radius:14px;overflow:hidden;border:1px solid #e2e8f0;">
+            <tr>
+              <td style="height:4px;background:#2CCDDE;font-size:0;line-height:0;">&nbsp;</td>
+            </tr>
+            <tr>
+              <td style="padding:32px 32px 8px 32px;">
+                <p style="margin:0 0 6px 0;font-size:11px;font-weight:bold;letter-spacing:1.6px;text-transform:uppercase;color:#2CCDDE;">Byteflow Information Technology</p>
+                <h1 style="margin:0 0 16px 0;font-size:24px;line-height:1.3;color:#0b1220;">Thanks, ${safeName} - we have your enquiry</h1>
+                <p style="margin:0 0 16px 0;font-size:15px;line-height:1.65;color:#475569;">
+                  Our team has received your message and will get back to you within 2 hours on business days.
+                  If it is urgent, call us on <a href="tel:${SUPPORT_PHONE.replace(/[^+\d]/g, '')}" style="color:#2CCDDE;text-decoration:none;font-weight:bold;">${SUPPORT_PHONE}</a>.
+                </p>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:8px 32px 8px 32px;">
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;">
+                  <tr>
+                    <td style="padding:18px 20px;">
+                      <p style="margin:0 0 8px 0;font-size:11px;font-weight:bold;letter-spacing:1.2px;text-transform:uppercase;color:#64748b;">What you sent us</p>
+                      <p style="margin:0;font-size:14px;line-height:1.65;color:#334155;">${safeMessage}</p>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:20px 32px 32px 32px;">
+                <a href="${SITE_URL}" style="display:inline-block;background:#2CCDDE;color:#000000;font-size:14px;font-weight:bold;text-decoration:none;padding:12px 26px;border-radius:999px;">Visit our website</a>
+                <p style="margin:22px 0 0 0;font-size:12px;line-height:1.6;color:#94a3b8;">
+                  You are receiving this because you submitted the contact form on byteflow.ae.
+                  Reply to this email to reach us directly.
+                </p>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:16px 32px;background:#0b1220;">
+                <p style="margin:0;font-size:12px;line-height:1.6;color:#94a3b8;">
+                  Byteflow Information Technology &middot; Dubai, United Arab Emirates<br>
+                  <a href="mailto:${ALWAYS_NOTIFY}" style="color:#2CCDDE;text-decoration:none;">${ALWAYS_NOTIFY}</a>
+                </p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>`
+}
+
 const RECAPTCHA_SCORE_THRESHOLD=0.5
 async function verifyRecaptcha(token:string,remoteip?:string):Promise<boolean>{
   if(!process.env.RECAPTCHA_SECRET_KEY)return true
@@ -82,6 +151,14 @@ export async function POST(request:Request){
         await sendContactEmail(recipients,String(setting.reply_to_mode)==='submitter'?email:undefined,String(setting.email_subject),`<h2>New website enquiry</h2><p><strong>Name:</strong> ${escapeHtml(name)}</p><p><strong>Email:</strong> ${escapeHtml(email)}</p><p><strong>Phone:</strong> ${escapeHtml(phone)}</p><p><strong>Source:</strong> ${escapeHtml(source)}</p><p>${escapeHtml(message).replace(/\n/g,'<br>')}</p>`)
       }catch(err){
         console.error('Brevo contact email failed',err instanceof Error?err.message:err)
+      }
+      // Confirmation to the person who filled in the form. Sent separately so a
+      // failed team notification above does not cost the customer their receipt,
+      // and vice versa.
+      try{
+        await sendContactEmail([email],ALWAYS_NOTIFY,ACK_SUBJECT,acknowledgementHtml(name,message))
+      }catch(err){
+        console.error('Brevo acknowledgement email failed',err instanceof Error?err.message:err)
       }
     }else{
       console.error('Contact email skipped: BREVO_API_KEY or CONTACT_FROM_EMAIL is not set')
