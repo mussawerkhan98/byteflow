@@ -3,6 +3,46 @@ import { db } from '../../lib/db'
 function validEmail(value:string){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)}
 function escapeHtml(value:string){return value.replace(/[&<>"']/g,(char)=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' })[char]!)}
 
+// Every enquiry lands here regardless of what the CMS has configured.
+const ALWAYS_NOTIFY = 'info@byteflow.ae'
+
+// CONTACT_FROM_EMAIL may be either "a@b.com" or "Name <a@b.com>"; Brevo's API
+// wants the two parts separately.
+function parseSender(value: string): { email: string; name?: string } {
+  const match = value.match(/^\s*(.*?)\s*<\s*([^>]+?)\s*>\s*$/)
+  if (match) return { email: match[2], name: match[1] || undefined }
+  return { email: value.trim() }
+}
+
+/**
+ * Sends through Brevo's transactional API rather than its SMTP relay: the
+ * relay is gated by an account-level IP allowlist, and Vercel's egress IPs are
+ * dynamic, so SMTP cannot be allowlisted there.
+ */
+async function sendContactEmail(to: string[], replyTo: string | undefined, subject: string, html: string) {
+  const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+    method: 'POST',
+    headers: {
+      'api-key': process.env.BREVO_API_KEY as string,
+      'content-type': 'application/json',
+      accept: 'application/json',
+    },
+    body: JSON.stringify({
+      sender: parseSender(String(process.env.CONTACT_FROM_EMAIL)),
+      to: to.map((email) => ({ email })),
+      subject,
+      htmlContent: html,
+      ...(replyTo ? { replyTo: { email: replyTo } } : {}),
+    }),
+  })
+  if (!response.ok) {
+    // Surface Brevo's own message — it names the cause (unverified sender,
+    // daily quota, malformed payload) far better than a bare status code.
+    const detail = await response.text().catch(() => '')
+    throw new Error(`Brevo API ${response.status}: ${detail.slice(0, 500)}`)
+  }
+}
+
 const RECAPTCHA_SCORE_THRESHOLD=0.5
 async function verifyRecaptcha(token:string,remoteip?:string):Promise<boolean>{
   if(!process.env.RECAPTCHA_SECRET_KEY)return true
@@ -34,14 +74,17 @@ export async function POST(request:Request){
     const enabled=await db.execute({sql:`SELECT enabled,success_message,error_message,recipient_email,reply_to_mode,email_subject FROM contact_form_settings f LEFT JOIN pages p ON p.id=f.page_id WHERE f.enabled=1 AND (f.page_id IS NULL OR p.slug=?) ORDER BY f.page_id DESC LIMIT 1`,args:[source.replace(/^\//,'')||'home']})
     if(enabled.rows.length===0)return Response.json({error:'This contact form is currently unavailable.'},{status:503})
     await db.execute({sql:'INSERT INTO contact_submissions (name,email,phone,message,source_page) VALUES (?,?,?,?,?)',args:[name,email,phone,message,source]})
-    if(process.env.RESEND_API_KEY&&process.env.CONTACT_FROM_EMAIL){
+    if(process.env.BREVO_API_KEY&&process.env.CONTACT_FROM_EMAIL){
       const setting=enabled.rows[0]
       const configuredRecipient=setting.recipient_email?String(setting.recipient_email).trim():''
-      const recipients=Array.from(new Set([configuredRecipient,'info@byteflow.ae'].filter(Boolean)))
-      const emailRes=await fetch('https://api.resend.com/emails',{method:'POST',headers:{authorization:`Bearer ${process.env.RESEND_API_KEY}`,'content-type':'application/json'},body:JSON.stringify({from:process.env.CONTACT_FROM_EMAIL,to:recipients,reply_to:String(setting.reply_to_mode)==='submitter'?email:undefined,subject:String(setting.email_subject),html:`<h2>New website enquiry</h2><p><strong>Name:</strong> ${escapeHtml(name)}</p><p><strong>Email:</strong> ${escapeHtml(email)}</p><p><strong>Phone:</strong> ${escapeHtml(phone)}</p><p><strong>Source:</strong> ${escapeHtml(source)}</p><p>${escapeHtml(message).replace(/\n/g,'<br>')}</p>`})})
-      if(!emailRes.ok)console.error('Resend contact email failed',emailRes.status,await emailRes.text().catch(()=>''))
+      const recipients=Array.from(new Set([configuredRecipient,ALWAYS_NOTIFY].filter(Boolean)))
+      try{
+        await sendContactEmail(recipients,String(setting.reply_to_mode)==='submitter'?email:undefined,String(setting.email_subject),`<h2>New website enquiry</h2><p><strong>Name:</strong> ${escapeHtml(name)}</p><p><strong>Email:</strong> ${escapeHtml(email)}</p><p><strong>Phone:</strong> ${escapeHtml(phone)}</p><p><strong>Source:</strong> ${escapeHtml(source)}</p><p>${escapeHtml(message).replace(/\n/g,'<br>')}</p>`)
+      }catch(err){
+        console.error('Brevo contact email failed',err instanceof Error?err.message:err)
+      }
     }else{
-      console.error('Contact email skipped: RESEND_API_KEY or CONTACT_FROM_EMAIL is not set')
+      console.error('Contact email skipped: BREVO_API_KEY or CONTACT_FROM_EMAIL is not set')
     }
     return Response.json({message:String(enabled.rows[0].success_message)})
   }catch{return Response.json({error:'Unable to send your message right now. Please call or WhatsApp us.'},{status:500})}
