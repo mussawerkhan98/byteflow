@@ -217,3 +217,97 @@ h1, h2 {
   background: none;
   padding: 0;
 }
+
+/* ---- Hero stats bar hover ---- */
+@property --stat-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes stat-border-spin {
+  to { --stat-angle: 360deg; }
+}
+
+.stat-cell {
+  position: relative;
+  isolation: isolate;
+  background: var(--bg-surface);
+  transition: background-color 0.45s ease, box-shadow 0.45s ease;
+}
+
+/* Gradient border that traces the cell on hover */
+.stat-cell::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: 1rem;
+  background: conic-gradient(
+    from var(--stat-angle),
+    transparent 0deg,
+    var(--cyan) 55deg,
+    var(--blue) 120deg,
+    transparent 190deg,
+    transparent 360deg
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.45s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Soft brand glow behind the content */
+.stat-cell::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 1rem;
+  background: radial-gradient(ellipse 70% 60% at 50% 100%, rgba(44, 205, 222, 0.16) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.45s ease;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.stat-cell:hover {
+  background: color-mix(in srgb, var(--cyan) 5%, var(--bg-surface));
+  box-shadow: inset 0 0 30px rgba(44, 205, 222, 0.08);
+}
+
+.stat-cell:hover::before {
+  opacity: 1;
+  animation: stat-border-spin 3.5s linear infinite;
+}
+
+.stat-cell:hover::after {
+  opacity: 1;
+}
+
+.stat-value {
+  display: inline-block;
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.stat-cell:hover .stat-value {
+  transform: scale(1.08);
+}
+
+.stat-label {
+  transition: color 0.45s ease, letter-spacing 0.45s ease;
+}
+
+.stat-cell:hover .stat-label {
+  color: var(--cyan);
+  letter-spacing: 0.04em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stat-cell:hover::before { animation: none; }
+  .stat-cell:hover .stat-value { transform: none; }
+  .stat-cell:hover .stat-label { letter-spacing: normal; }
+}

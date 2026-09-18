@@ -149,11 +149,10 @@ export default function Hero({ content = {} }: { content?: HeroContent }) {
           {stats.map((stat) => (
             <div
               key={stat.label}
-              className="flex flex-col items-center py-7 px-4"
-              style={{ background: 'var(--bg-surface)' }}
+              className="stat-cell flex flex-col items-center py-7 px-4"
             >
               <span
-                className="text-3xl font-bold mb-1"
+                className="stat-value text-3xl font-bold mb-1"
                 style={{
                   background: 'linear-gradient(135deg, #2CCDDE, #46A3E1)',
                   WebkitBackgroundClip: 'text',
@@ -162,7 +161,7 @@ export default function Hero({ content = {} }: { content?: HeroContent }) {
               >
                 {stat.value}
               </span>
-              <span className="text-xs font-medium" style={{ color: 'var(--text-footer-link)' }}>{stat.label}</span>
+              <span className="stat-label text-xs font-medium" style={{ color: 'var(--text-footer-link)' }}>{stat.label}</span>
             </div>
           ))}
         </div>
