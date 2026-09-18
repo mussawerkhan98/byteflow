@@ -123,7 +123,7 @@ function Visual({ type, className }: { type: string; className?: string }) {
 
 function FeaturedCard({ project }: { project: UiProject }) {
   return (
-    <Link href={`/projects/${project.slug}`} className="relative rounded-2xl overflow-hidden block transition-all duration-300 hover:border-[rgba(44,205,222,0.35)]"
+    <Link href={`/projects/${project.slug}`} className="card-hover relative rounded-2xl overflow-hidden block transition-all duration-300 hover:border-[rgba(44,205,222,0.35)]"
       style={{ background:'linear-gradient(160deg, rgba(44,205,222,0.07) 0%, rgba(70,163,225,0.03) 35%, var(--bg-surface) 100%)', border:'1px solid rgba(44,205,222,0.2)' }}>
       <div className="absolute top-0 left-8 right-8 h-px" style={{ background:'linear-gradient(90deg, transparent, rgba(44,205,222,0.5), transparent)' }} />
       <div className="grid grid-cols-1 lg:grid-cols-5">
@@ -176,7 +176,7 @@ function FeaturedCard({ project }: { project: UiProject }) {
 
 function ProjectCard({ project }: { project: UiProject }) {
   return (
-    <Link href={`/projects/${project.slug}`} className="group relative flex flex-col rounded-2xl overflow-hidden transition-all duration-300 hover:border-[rgba(44,205,222,0.3)]"
+    <Link href={`/projects/${project.slug}`} className="card-hover group relative flex flex-col rounded-2xl overflow-hidden transition-all duration-300 hover:border-[rgba(44,205,222,0.3)]"
       style={{ background:'linear-gradient(160deg, rgba(44,205,222,0.05) 0%, rgba(70,163,225,0.02) 30%, var(--bg-surface) 100%)', border:'1px solid rgba(44,205,222,0.12)' }}>
       <div className="p-4 pb-0">
         <ImagePlaceholder src={project.image} alt={project.client || project.title} className="h-44" />

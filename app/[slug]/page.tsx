@@ -160,7 +160,7 @@ export default async function BlogPostPage({
           </h1>
 
           <div
-            className="relative h-56 sm:h-72 rounded-2xl overflow-hidden flex items-center justify-center mb-10"
+            className="card-hover relative h-56 sm:h-72 rounded-2xl overflow-hidden flex items-center justify-center mb-10"
             style={{
               background: gradient,
               border: "1px solid rgba(44,205,222,0.18)",

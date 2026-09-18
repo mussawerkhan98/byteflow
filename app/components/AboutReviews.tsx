@@ -141,7 +141,7 @@ export default function AboutReviews({ items }: { items?: { customer_name:string
           {visible.map((r) => (
             <div
               key={r.name}
-              className="group relative flex flex-col gap-4 p-6 rounded-2xl"
+              className="card-hover group relative flex flex-col gap-4 p-6 rounded-2xl"
               style={{
                 background: 'linear-gradient(160deg, rgba(44,205,222,0.06) 0%, rgba(70,163,225,0.02) 30%, var(--bg-surface) 100%)',
                 border: '1px solid rgba(44,205,222,0.15)',

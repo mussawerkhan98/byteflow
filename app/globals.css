@@ -232,17 +232,46 @@ h1 {
   padding: 0;
 }
 
+/* ---- Shared card hover ----
+   One elevation treatment for every card on the site. Cards that live inside
+   an overflow-hidden seam grid would have an outer shadow clipped away, so
+   those use .card-hover-inset instead. */
+.card-hover {
+  /* Longhands, so this beats a Tailwind transition-all on the same element
+     while still covering the properties these cards actually animate. */
+  transition-property: box-shadow, transform, border-color, background-color, color;
+  transition-duration: 0.35s;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 24px 48px -16px rgba(0, 0, 0, 0.55),
+    0 0 38px -8px rgba(44, 205, 222, 0.3);
+}
+
+:root[data-theme='light'] .card-hover:hover {
+  box-shadow:
+    0 24px 44px -18px rgba(15, 23, 42, 0.2),
+    0 0 30px -10px rgba(44, 205, 222, 0.38);
+}
+
+.card-hover-inset {
+  transition-property: box-shadow, background-color, color;
+  transition-duration: 0.35s;
+  transition-timing-function: ease;
+}
+
+.card-hover-inset:hover {
+  box-shadow: inset 0 0 44px rgba(44, 205, 222, 0.16);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-hover:hover { transform: none; }
+}
+
 /* ---- Hero stats bar hover ---- */
-@property --stat-angle {
-  syntax: '<angle>';
-  initial-value: 0deg;
-  inherits: false;
-}
-
-@keyframes stat-border-spin {
-  to { --stat-angle: 360deg; }
-}
-
 .stat-cell {
   position: relative;
   isolation: isolate;
@@ -250,37 +279,11 @@ h1 {
   transition: background-color 0.45s ease, box-shadow 0.45s ease;
 }
 
-/* Gradient border that traces the cell on hover */
-.stat-cell::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  padding: 1px;
-  border-radius: 1rem;
-  background: conic-gradient(
-    from var(--stat-angle),
-    transparent 0deg,
-    var(--cyan) 55deg,
-    var(--blue) 120deg,
-    transparent 190deg,
-    transparent 360deg
-  );
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  mask-composite: exclude;
-  opacity: 0;
-  transition: opacity 0.45s ease;
-  pointer-events: none;
-  z-index: 1;
-}
-
-/* Soft brand glow behind the content */
+/* Soft brand glow rising from the bottom edge */
 .stat-cell::after {
   content: '';
   position: absolute;
   inset: 0;
-  border-radius: 1rem;
   background: radial-gradient(ellipse 70% 60% at 50% 100%, rgba(44, 205, 222, 0.16) 0%, transparent 70%);
   opacity: 0;
   transition: opacity 0.45s ease;
@@ -288,14 +291,10 @@ h1 {
   z-index: -1;
 }
 
+/* A translucent wash layered over the cell's own background-color, rather than
+   color-mix() — that compiles to a solid-cyan fallback on older browsers. */
 .stat-cell:hover {
-  background: color-mix(in srgb, var(--cyan) 5%, var(--bg-surface));
-  box-shadow: inset 0 0 30px rgba(44, 205, 222, 0.08);
-}
-
-.stat-cell:hover::before {
-  opacity: 1;
-  animation: stat-border-spin 3.5s linear infinite;
+  background-image: linear-gradient(0deg, rgba(44, 205, 222, 0.07), rgba(44, 205, 222, 0.07));
 }
 
 .stat-cell:hover::after {
@@ -321,10 +320,10 @@ h1 {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .stat-cell:hover::before { animation: none; }
   .stat-cell:hover .stat-value { transform: none; }
   .stat-cell:hover .stat-label { letter-spacing: normal; }
 }
+
 
 /* ---- CTA section background ---- */
 .cta-grid {

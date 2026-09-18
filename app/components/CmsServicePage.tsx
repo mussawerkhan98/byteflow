@@ -196,7 +196,7 @@ export default function CmsServicePage({
                 <Link
                   key={item.slug}
                   href={`/${item.slug}`}
-                  className="group flex flex-col gap-4 p-7 rounded-2xl transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_40px_rgba(44,205,222,0.15)]"
+                  className="card-hover group flex flex-col gap-4 p-7 rounded-2xl transition-all duration-300"
                   style={{
                     background: 'linear-gradient(160deg, rgba(44,205,222,0.06) 0%, var(--bg-surface) 100%)',
                     border: '1px solid rgba(44,205,222,0.15)',

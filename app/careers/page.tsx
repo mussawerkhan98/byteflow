@@ -63,7 +63,7 @@ export default async function CareersPage() {
             {values.map((v) => (
               <div
                 key={v.title}
-                className="flex flex-col gap-3 p-7 rounded-2xl"
+                className="card-hover flex flex-col gap-3 p-7 rounded-2xl"
                 style={{
                   background: 'linear-gradient(160deg, rgba(44,205,222,0.06) 0%, var(--bg-surface) 100%)',
                   border: '1px solid rgba(44,205,222,0.15)',

@@ -52,7 +52,7 @@ export default function PageSections() {
         <section key={section.id} className="px-4 py-12 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-7xl">
             <div
-              className="overflow-hidden rounded-3xl"
+              className="card-hover overflow-hidden rounded-3xl"
               style={{
                 background:
                   "linear-gradient(160deg, rgba(44,205,222,0.06) 0%, var(--bg-surface) 100%)",

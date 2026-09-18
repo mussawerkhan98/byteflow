@@ -386,7 +386,7 @@ export default async function AboutPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
             <div
-              className="flex flex-col justify-between p-10 rounded-2xl"
+              className="card-hover flex flex-col justify-between p-10 rounded-2xl"
               style={{
                 background: 'linear-gradient(135deg, rgba(44,205,222,0.1) 0%, rgba(70,163,225,0.05) 100%)',
                 border: '1px solid rgba(44,205,222,0.25)',
@@ -422,7 +422,7 @@ export default async function AboutPage() {
               ].map((item) => {
                 const inner = (
                   <div
-                    className="flex items-center justify-between px-7 py-5 rounded-xl transition-all duration-200 group"
+                    className="card-hover flex items-center justify-between px-7 py-5 rounded-xl transition-all duration-200 group"
                     style={{ background: 'linear-gradient(160deg, rgba(44,205,222,0.05) 0%, var(--bg-surface) 100%)', border: '1px solid rgba(44,205,222,0.1)' }}
                   >
                     <span className="text-xs text-[var(--text-dim)] font-semibold uppercase tracking-wider w-20 flex-shrink-0">{item.label}</span>

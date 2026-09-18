@@ -149,7 +149,7 @@ export default function Hero({ content = {} }: { content?: HeroContent }) {
           {stats.map((stat) => (
             <div
               key={stat.label}
-              className="stat-cell flex flex-col items-center py-7 px-4"
+              className="stat-cell card-hover-inset flex flex-col items-center py-7 px-4"
             >
               <span
                 className="stat-value text-3xl font-bold mb-1"

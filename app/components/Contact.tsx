@@ -214,7 +214,7 @@ export default function Contact({ settings = {}, hero }: { settings?: ContactSet
             {shownContactInfo.map((item) => {
               const inner = (
                 <div
-                  className="flex items-center gap-4 p-5 rounded-2xl transition-all duration-300 hover:-translate-y-0.5 group"
+                  className="card-hover flex items-center gap-4 p-5 rounded-2xl transition-all duration-300 group"
                   style={{
                     background: 'linear-gradient(160deg, rgba(44,205,222,0.06) 0%, var(--bg-surface) 100%)',
                     border: '1px solid rgba(44,205,222,0.12)',
