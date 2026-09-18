@@ -57,24 +57,25 @@ export default async function ProjectsPage() {
 
   return (
     <>
-      <div
-        className="h-44 bg-cover bg-center"
-        style={
-          hero?.hero_background_image
-            ? {
-                backgroundImage: `linear-gradient(rgba(4,13,18,.55),rgba(4,13,18,.95)),url(${hero.hero_background_image})`,
-              }
-            : undefined
-        }
-      >
-        {hero?.hero_heading && (
-          <div className="mx-auto flex h-full max-w-7xl items-end px-4 pb-8">
-            <h1 className="text-4xl font-bold text-white">
-              {hero.hero_heading}
-            </h1>
-          </div>
-        )}
-      </div>
+      {/* Only render the CMS image band when there is actually an image. With
+          no image it was 176px of empty page above the real hero, and its
+          white heading was invisible against the light theme. */}
+      {hero?.hero_background_image && (
+        <div
+          className="h-44 bg-cover bg-center"
+          style={{
+            backgroundImage: `linear-gradient(rgba(4,13,18,.55),rgba(4,13,18,.95)),url(${hero.hero_background_image})`,
+          }}
+        >
+          {hero.hero_heading && (
+            <div className="mx-auto flex h-full max-w-7xl items-end px-4 pb-8">
+              <p className="text-4xl font-bold text-white">
+                {hero.hero_heading}
+              </p>
+            </div>
+          )}
+        </div>
+      )}
       <ProjectsClient projects={uiProjects} />
     </>
   );

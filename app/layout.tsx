@@ -11,6 +11,7 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import StickyContactButtons from "./components/StickyContactButtons";
 import LeadPopup from "./components/LeadPopup";
+import InquiryDrawer from "./components/InquiryDrawer";
 import PageCta from "./components/PageCta";
 import PageSections from "./components/PageSections";
 import PageFaq from "./components/PageFaq";
@@ -129,6 +130,7 @@ export default async function RootLayout({
         />
         <StickyContactButtons />
         <LeadPopup />
+        <InquiryDrawer />
         {process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY && (
           <Script
             src={`https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`}

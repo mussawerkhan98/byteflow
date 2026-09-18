@@ -355,3 +355,95 @@ h1 {
 @media (prefers-reduced-motion: reduce) {
   .cta-aurora { animation: none; }
 }
+
+/* ---- Side inquiry tab + drawer ---- */
+.inquiry-tab {
+  position: fixed;
+  top: 50%;
+  right: 0;
+  z-index: 60;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.9rem 0.55rem;
+  border: 0;
+  border-radius: 0.75rem 0 0 0.75rem;
+  background: linear-gradient(135deg, #2ccdde, #46a3e1);
+  color: #000;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: -6px 0 22px rgba(44, 205, 222, 0.38);
+  /* Stack icon above label and read bottom-to-top along the edge */
+  writing-mode: vertical-rl;
+  transition: padding-right 0.25s ease, box-shadow 0.25s ease, opacity 0.25s ease;
+}
+
+.inquiry-tab:hover,
+.inquiry-tab:focus-visible {
+  padding-right: 0.9rem;
+  box-shadow: -8px 0 30px rgba(44, 205, 222, 0.55);
+}
+
+.inquiry-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.35s ease, visibility 0.35s ease;
+}
+
+.inquiry-overlay.is-open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.inquiry-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  width: min(440px, 100vw);
+  height: 100dvh;
+  background-color: var(--bg-surface);
+  background-image: linear-gradient(200deg, rgba(44, 205, 222, 0.1) 0%, rgba(70, 163, 225, 0.03) 40%, transparent 100%);
+  border-left: 1px solid rgba(44, 205, 222, 0.22);
+  box-shadow: -24px 0 70px rgba(0, 0, 0, 0.45);
+  transform: translateX(100%);
+  visibility: hidden;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), visibility 0.4s;
+}
+
+.inquiry-drawer.is-open {
+  transform: translateX(0);
+  visibility: visible;
+}
+
+/* The tab would otherwise sit on top of the open drawer */
+.inquiry-tab.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (max-width: 640px) {
+  .inquiry-tab {
+    padding: 0.75rem 0.45rem;
+    font-size: 0.65rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .inquiry-drawer,
+  .inquiry-overlay,
+  .inquiry-tab {
+    transition: none;
+  }
+}
