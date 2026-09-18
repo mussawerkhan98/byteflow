@@ -3,6 +3,9 @@ import Script from "next/script";
 import { Sora, Plus_Jakarta_Sans } from "next/font/google";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { connection } from "next/server";
+// Ship Font Awesome's CSS in the bundle; app/components/Icon.tsx turns off
+// the library's own runtime injection so the two never race.
+import "@fortawesome/fontawesome-svg-core/styles.css";
 import "./globals.css";
 import Header from "./components/Header";
 import Footer from "./components/Footer";

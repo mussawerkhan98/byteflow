@@ -1,8 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import ThemeToggle from "./ThemeToggle";
+import LogoLink from "./LogoLink";
 
 export type NavItem = {
   label: string;
@@ -182,16 +182,14 @@ export default function Header({
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-[76px] items-center justify-between gap-8">
-          <Link href="/" className="shrink-0">
-            <Image
-              src={logoUrl}
-              alt="Byteflow"
-              width={160}
-              height={48}
-              className="h-12 w-auto object-contain"
-              priority
-            />
-          </Link>
+          <LogoLink
+            src={logoUrl}
+            width={160}
+            height={48}
+            className="shrink-0"
+            imageClassName="h-12 w-auto object-contain"
+            priority
+          />
           <nav className="hidden flex-1 items-center justify-center gap-7 lg:flex">
             {menu.map((item) => (
               <DesktopItem key={`${item.label}-${item.href}`} item={item} />
