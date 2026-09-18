@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Script from "next/script";
-import { Space_Grotesk, Cardo } from "next/font/google";
+import { Sora, Plus_Jakarta_Sans } from "next/font/google";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { connection } from "next/server";
 import "./globals.css";
@@ -14,16 +14,18 @@ import PageFaq from "./components/PageFaq";
 import { getMenu, getPageMetadata, getSiteSettings, getWebsiteScripts } from "./lib/cms";
 import { getServices } from "./lib/db";
 
-const spaceGrotesk = Space_Grotesk({
+// Both are variable fonts, so the weight axis is loaded in one file each
+// instead of one request per weight.
+const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  variable: "--font-space",
-  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-body",
+  display: "swap",
 });
 
-const cardo = Cardo({
+const sora = Sora({
   subsets: ["latin"],
-  variable: "--font-cardo",
-  weight: ["400", "700"],
+  variable: "--font-heading",
+  display: "swap",
 });
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -99,13 +101,13 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
-      className={`${spaceGrotesk.variable} ${cardo.variable} h-full antialiased`}
+      className={`${jakarta.variable} ${sora.variable} h-full antialiased`}
     >
       <head dangerouslySetInnerHTML={{ __html: `${themeScript}\n${headScripts}` }} />
       <body
         className="min-h-full flex flex-col text-[var(--text-primary)]"
         style={{
-          fontFamily: "var(--font-space), sans-serif",
+          fontFamily: "var(--font-body), sans-serif",
           background: "var(--bg-page)",
         }}
       >

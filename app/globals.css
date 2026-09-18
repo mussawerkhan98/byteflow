@@ -1,5 +1,12 @@
 @import "tailwindcss";
 
+/* next/font sets --font-body / --font-heading on <html>. Feed them into
+   Tailwind's theme so the font-sans and font-display utilities match. */
+@theme inline {
+  --font-sans: var(--font-body);
+  --font-display: var(--font-heading);
+}
+
 :root {
   --cyan: #2CCDDE;
   --blue: #46A3E1;
@@ -48,13 +55,20 @@
 body {
   background: var(--bg-page);
   color: var(--text-primary);
-  font-family: var(--font-space), 'Space Grotesk', sans-serif;
+  font-family: var(--font-body), 'Plus Jakarta Sans', system-ui, sans-serif;
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-h1, h2 {
-  font-family: var(--font-cardo), 'Cardo', serif;
+h1, h2, h3, h4 {
+  font-family: var(--font-heading), 'Sora', system-ui, sans-serif;
   font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+/* Sora runs wide at display sizes, so pull the tracking in further for h1.
+   Headings that set their own tracking-* utility still win over this. */
+h1 {
+  letter-spacing: -0.035em;
 }
 
 @keyframes marquee {
@@ -86,7 +100,7 @@ h1, h2 {
 }
 
 .blog-content h2 {
-  font-family: var(--font-cardo), 'Cardo', serif;
+  font-family: var(--font-heading), 'Sora', system-ui, sans-serif;
   color: var(--text-primary);
   font-size: 1.5rem;
   font-weight: 700;
@@ -94,7 +108,7 @@ h1, h2 {
 }
 
 .blog-content h3 {
-  font-family: var(--font-cardo), 'Cardo', serif;
+  font-family: var(--font-heading), 'Sora', system-ui, sans-serif;
   color: var(--text-primary);
   font-size: 1.25rem;
   font-weight: 700;
