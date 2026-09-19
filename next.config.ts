@@ -53,14 +53,36 @@ const nextConfig: NextConfig = {
 
       // WordPress RSS feed URLs
       { source: '/ai-services-dubai/feed', destination: '/ai-services-dubai', permanent: true },
-      { source: '/it-company-in-dubai/feed', destination: '/it-company-in-dubai', permanent: true },
+      { source: '/it-company-in-dubai/feed', destination: '/it-amc-services-dubai', permanent: true },
       { source: '/ua300-installation-dubai/feed', destination: '/ua300-installation-dubai', permanent: true },
       { source: '/:slug/feed', destination: '/:slug', permanent: true },
 
       // Retired service slugs
       { source: '/cloud-services', destination: '/cloud-services-dubai', permanent: true },
-      { source: '/it-amc-support-dubai', destination: '/it-amc-support', permanent: true },
+      { source: '/it-amc-support-dubai', destination: '/it-amc-services-dubai', permanent: true },
       { source: '/software-company-in-dubai', destination: '/software-development-company-in-dubai', permanent: true },
+
+      // --- AMC consolidation ---
+      { source: '/it-amc-services-in-dubai', destination: '/it-amc-services-dubai', permanent: true },
+      { source: '/amc-support-in-business-bay-dubai', destination: '/it-amc-services-dubai', permanent: true },
+      { source: '/it-amc-dubai', destination: '/it-amc-services-dubai', permanent: true },
+      { source: '/why-businesses-need-it-support', destination: '/it-amc-services-dubai', permanent: true },
+      { source: '/it-company-in-dubai', destination: '/it-amc-services-dubai', permanent: true },
+      { source: '/amc-support-in-business-al-barsha-dubai', destination: '/it-amc-services-dubai', permanent: true },
+      { source: '/amc-support-in-dubai', destination: '/it-amc-services-dubai', permanent: true },
+      { source: '/remote-it-support-in-al-barsha', destination: '/it-amc-services-dubai', permanent: true },
+      { source: '/it-solutions-company-in-dubai', destination: '/it-amc-services-dubai', permanent: true },
+      { source: '/byteflow-it-services-in-dubai', destination: '/it-amc-services-dubai', permanent: true },
+      { source: '/remote-it-support-in-business-bay-dubai', destination: '/it-amc-services-dubai', permanent: true },
+      { source: '/local-it-support-dubai', destination: '/it-amc-services-dubai', permanent: true },
+      { source: '/it-amc-support', destination: '/it-amc-services-dubai', permanent: true },
+      { source: '/what-is-it-support-do-you-need-it', destination: '/it-amc-services-dubai', permanent: true },
+      { source: '/it-support-dubai', destination: '/it-amc-services-dubai', permanent: true },
+      { source: '/it-services-in-dubai', destination: '/it-amc-services-dubai', permanent: true },
+      { source: '/it-support-services-in-dubai', destination: '/it-amc-services-dubai', permanent: true },
+      { source: '/business-it-support-dubai', destination: '/it-amc-services-dubai', permanent: true },
+      { source: '/three-reasons-your-business-needs-managed-it-services-near-me', destination: '/it-amc-services-dubai', permanent: true },
+      { source: '/simplifying-it-with-microsoft-365', destination: '/cloud-services-dubai', permanent: true },
     ]
   },
 }
