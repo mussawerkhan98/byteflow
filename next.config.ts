@@ -53,7 +53,7 @@ const nextConfig: NextConfig = {
 
       // WordPress RSS feed URLs
       { source: '/ai-services-dubai/feed', destination: '/ai-services-dubai', permanent: true },
-      { source: '/it-company-in-dubai/feed', destination: '/it-company-in-dubai', permanent: true },
+      { source: '/it-company-in-dubai/feed', destination: '/it-amc-services-dubai', permanent: true },
       { source: '/ua300-installation-dubai/feed', destination: '/ua300-installation-dubai', permanent: true },
       { source: '/:slug/feed', destination: '/:slug', permanent: true },
 
