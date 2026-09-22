@@ -2,6 +2,8 @@ import Link from 'next/link'
 import type { ServiceData } from '../lib/services-data'
 import { services } from '../lib/services-data'
 import ServiceFAQ from './ServiceFAQ'
+import PageSections from './PageSections'
+import PageCta from './PageCta'
 import { getCmsService, getPageHero, getFaqsForSlug } from '../lib/cms'
 
 export default async function ServicePageTemplate({ service }: { service: ServiceData }) {
@@ -472,6 +474,13 @@ export default async function ServicePageTemplate({ service }: { service: Servic
           </div>
         </section>
       )}
+
+      {/* ── ADMIN-MANAGED CONTENT (extra blocks + CTA banner) ─── */}
+      {/* Rendered here, before the FAQ, instead of via the global
+          layout (which would otherwise place them after this page's
+          content) so the FAQ stays the last thing before the footer. */}
+      <PageSections embedded />
+      <PageCta embedded />
 
       {/* ── FAQ ──────────────────────────────────────────────── */}
       <section className="py-24 px-4 sm:px-6 lg:px-8">
