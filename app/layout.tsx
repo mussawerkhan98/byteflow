@@ -121,9 +121,10 @@ export default async function RootLayout({
           logoUrl={String(settings?.logo_url || "/images/logo.png")}
         />
         <main className="flex-1">{children}</main>
-        <PageSections />
+        <PageSections placement="before_faq" />
         <PageCta />
         <PageFaq />
+        <PageSections placement="after_faq" />
         <Footer
           navigation={footerNavigation}
           settings={(settings ?? {}) as never}
