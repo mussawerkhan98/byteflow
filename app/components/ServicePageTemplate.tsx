@@ -11,7 +11,13 @@ export default async function ServicePageTemplate({ service }: { service: Servic
   // CMS-added FAQs (from the admin panel) are appended after the built-in
   // ones so this page shows exactly one FAQ section, not a second one from
   // the global PageFaq block (which skips these 9 static service pages).
-  const allFaqs = [...service.faqs, ...cmsFaqs.map((f) => ({ q: f.question, a: f.answer }))]
+  // The page's own hardcoded FAQs don't have a CMS category, so they're
+  // labelled with the page's own title; CMS FAQs keep their admin-assigned
+  // category. ServiceFAQ turns these into "All / <category>" filter tabs.
+  const allFaqs = [
+    ...service.faqs.map((f) => ({ ...f, category: shown.title })),
+    ...cmsFaqs.map((f) => ({ q: f.question, a: f.answer, category: f.category })),
+  ]
 
   return (
     <main style={{ background: 'var(--bg-page)' }}>
