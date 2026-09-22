@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { services } from "../lib/services-data";
 
 type Cta = {
   id: number;
@@ -15,11 +16,24 @@ type Cta = {
   whatsapp_link: string;
 };
 
-export default function PageCta() {
+// The 9 original service pages render this themselves (see
+// ServicePageTemplate), positioned before their own FAQ section instead of
+// after it, so the FAQ stays the last thing before the footer. Skip the
+// copy the global layout renders there to avoid showing it twice.
+const SERVICE_PAGE_PATHS = new Set(services.map((s) => `/${s.slug}`));
+
+/**
+ * `embedded` is set by ServicePageTemplate when it renders this itself for
+ * one of the 9 static service pages; it bypasses the skip below, which
+ * otherwise exists to stop the global layout copy from rendering there too.
+ */
+export default function PageCta({ embedded = false }: { embedded?: boolean } = {}) {
   const pathname = usePathname();
   const [ctas, setCtas] = useState<Cta[]>([]);
+  const skip = !embedded && SERVICE_PAGE_PATHS.has(pathname);
 
   useEffect(() => {
+    if (skip) return;
     let active = true;
     void fetch(`/api/page-cta?path=${encodeURIComponent(pathname)}`, {
       cache: "no-store",
@@ -34,8 +48,9 @@ export default function PageCta() {
     return () => {
       active = false;
     };
-  }, [pathname]);
+  }, [pathname, skip]);
 
+  if (skip) return null;
   if (!ctas.length) return null;
 
   return (

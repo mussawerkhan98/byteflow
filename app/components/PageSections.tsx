@@ -4,6 +4,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { services } from "../lib/services-data";
+
+type Placement = "before_faq" | "after_faq";
 
 type Section = {
   id: number;
@@ -13,18 +16,38 @@ type Section = {
   image_url: string;
   button_label: string;
   button_link: string;
+  placement?: Placement;
 };
+
+// The 9 original service pages render this themselves (see
+// ServicePageTemplate), positioned before their own FAQ section instead of
+// after it, so the FAQ stays the last thing before the footer. Skip the
+// copy the global layout renders there to avoid showing it twice.
+const SERVICE_PAGE_PATHS = new Set(services.map((s) => `/${s.slug}`));
 
 /**
  * Content blocks added to a page from the admin panel. Rendered near the
  * bottom of whichever page they were assigned to. Every part is optional,
  * and anything empty is skipped rather than leaving a gap.
+ *
+ * `embedded` is set by ServicePageTemplate when it renders this itself for
+ * one of the 9 static service pages; it bypasses the skip below, which
+ * otherwise exists to stop the global layout copy from rendering there too.
+ *
+ * `placement` picks which blocks this copy renders. Each page is rendered
+ * with one copy above the FAQ and one below it, and every block chooses
+ * which of the two it belongs to in the admin panel.
  */
-export default function PageSections() {
+export default function PageSections({
+  embedded = false,
+  placement = "before_faq",
+}: { embedded?: boolean; placement?: Placement } = {}) {
   const pathname = usePathname();
   const [sections, setSections] = useState<Section[]>([]);
+  const skip = !embedded && SERVICE_PAGE_PATHS.has(pathname);
 
   useEffect(() => {
+    if (skip) return;
     let active = true;
     void fetch(`/api/page-sections?path=${encodeURIComponent(pathname)}`, {
       cache: "no-store",
@@ -39,10 +62,15 @@ export default function PageSections() {
     return () => {
       active = false;
     };
-  }, [pathname]);
+  }, [pathname, skip]);
+
+  if (skip) return null;
 
   const shown = sections.filter(
-    (section) => section.heading || section.text || section.image_url,
+    (section) =>
+      (section.placement === "after_faq" ? "after_faq" : "before_faq") ===
+        placement &&
+      (section.heading || section.text || section.image_url),
   );
   if (!shown.length) return null;
 
