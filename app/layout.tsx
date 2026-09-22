@@ -122,8 +122,8 @@ export default async function RootLayout({
         />
         <main className="flex-1">{children}</main>
         <PageSections />
-        <PageFaq />
         <PageCta />
+        <PageFaq />
         <Footer
           navigation={footerNavigation}
           settings={(settings ?? {}) as never}
