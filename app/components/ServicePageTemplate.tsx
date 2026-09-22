@@ -2,6 +2,8 @@ import Link from 'next/link'
 import type { ServiceData } from '../lib/services-data'
 import { services } from '../lib/services-data'
 import ServiceFAQ from './ServiceFAQ'
+import PageSections from './PageSections'
+import PageCta from './PageCta'
 import { getCmsService, getPageHero, getFaqsForSlug } from '../lib/cms'
 
 export default async function ServicePageTemplate({ service }: { service: ServiceData }) {
@@ -473,6 +475,14 @@ export default async function ServicePageTemplate({ service }: { service: Servic
         </section>
       )}
 
+      {/* ── ADMIN-MANAGED CONTENT (extra blocks + CTA banner) ─── */}
+      {/* Rendered here rather than via the global layout, which would
+          otherwise place all of it after this page's content. Blocks set
+          to "above the FAQs" in the admin panel render here; the ones set
+          to "below the FAQs" render after the FAQ section further down. */}
+      <PageSections embedded placement="before_faq" />
+      <PageCta embedded />
+
       {/* ── FAQ ──────────────────────────────────────────────── */}
       <section className="py-24 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
@@ -497,6 +507,9 @@ export default async function ServicePageTemplate({ service }: { service: Servic
           <ServiceFAQ faqs={allFaqs} />
         </div>
       </section>
+
+      {/* Blocks the admin panel set to "below the FAQs". */}
+      <PageSections embedded placement="after_faq" />
 
     </main>
   )
