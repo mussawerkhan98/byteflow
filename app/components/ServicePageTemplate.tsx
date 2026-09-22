@@ -2,12 +2,16 @@ import Link from 'next/link'
 import type { ServiceData } from '../lib/services-data'
 import { services } from '../lib/services-data'
 import ServiceFAQ from './ServiceFAQ'
-import { getCmsService, getPageHero } from '../lib/cms'
+import { getCmsService, getPageHero, getFaqsForSlug } from '../lib/cms'
 
 export default async function ServicePageTemplate({ service }: { service: ServiceData }) {
-  const [cmsService, hero] = await Promise.all([getCmsService(service.slug), getPageHero(service.slug)])
+  const [cmsService, hero, cmsFaqs] = await Promise.all([getCmsService(service.slug), getPageHero(service.slug), getFaqsForSlug(service.slug)])
   const shown = { ...service, title: String(cmsService?.title || service.title), description: String(hero?.hero_description || cmsService?.description || service.description), tagline: String(hero?.hero_heading || service.tagline) }
   const related = services.filter((s) => shown.relatedSlugs.includes(s.slug))
+  // CMS-added FAQs (from the admin panel) are appended after the built-in
+  // ones so this page shows exactly one FAQ section, not a second one from
+  // the global PageFaq block (which skips these 9 static service pages).
+  const allFaqs = [...service.faqs, ...cmsFaqs.map((f) => ({ q: f.question, a: f.answer }))]
 
   return (
     <main style={{ background: 'var(--bg-page)' }}>
@@ -365,7 +369,7 @@ export default async function ServicePageTemplate({ service }: { service: Servic
               </span>
             </h2>
           </div>
-          <ServiceFAQ faqs={service.faqs} />
+          <ServiceFAQ faqs={allFaqs} />
         </div>
       </section>
 
