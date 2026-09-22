@@ -36,6 +36,10 @@ export async function GET(request: Request) {
         image_url: String(content.image_url ?? ""),
         button_label: String(content.button_label ?? ""),
         button_link: String(content.button_link ?? ""),
+        // Chosen per block in the admin panel. Blocks saved before this
+        // option existed have no value stored and have always rendered
+        // above the FAQ, so that stays the default.
+        placement: content.placement === "after_faq" ? "after_faq" : "before_faq",
       };
     });
     return Response.json({ sections });
