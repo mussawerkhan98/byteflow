@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 
-type FAQ = { q: string; a: string; category?: string }
+type FAQ = { q: string; a: string }
 
 export default function ServiceFAQ({ faqs }: { faqs: FAQ[] }) {
   const [open, setOpen] = useState<number | null>(0)
@@ -26,25 +26,11 @@ export default function ServiceFAQ({ faqs }: { faqs: FAQ[] }) {
               className="w-full flex items-center justify-between gap-4 px-6 py-5 text-left"
               onClick={() => setOpen(isOpen ? null : i)}
             >
-              <span className="flex-1 min-w-0 flex flex-col gap-1.5 items-start">
-                {faq.category && (
-                  <span
-                    className="text-[10px] font-bold uppercase tracking-widest px-2.5 py-0.5 rounded-full"
-                    style={{
-                      background: 'rgba(44,205,222,0.08)',
-                      border: '1px solid rgba(44,205,222,0.25)',
-                      color: '#2CCDDE',
-                    }}
-                  >
-                    {faq.category}
-                  </span>
-                )}
-                <span
-                  className="text-sm font-semibold leading-snug transition-colors duration-200"
-                  style={{ color: isOpen ? 'var(--text-primary)' : 'var(--text-nav)' }}
-                >
-                  {faq.q}
-                </span>
+              <span
+                className="text-sm font-semibold leading-snug transition-colors duration-200 flex-1 min-w-0"
+                style={{ color: isOpen ? 'var(--text-primary)' : 'var(--text-nav)' }}
+              >
+                {faq.q}
               </span>
               <div
                 className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300"
