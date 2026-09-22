@@ -354,31 +354,6 @@ export default async function ServicePageTemplate({ service }: { service: Servic
         </div>
       </section>
 
-      {/* ── FAQ ──────────────────────────────────────────────── */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-14">
-            <p className="text-[#2CCDDE] text-xs font-bold uppercase tracking-widest mb-5">
-              FAQ
-            </p>
-            <h2 className="text-4xl sm:text-5xl font-bold leading-tight mb-4">
-              <span className="text-[var(--text-primary)]">Questions we get</span>
-              <br />
-              <span
-                style={{
-                  background: 'linear-gradient(135deg, #2CCDDE, #46A3E1)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                }}
-              >
-                asked all the time
-              </span>
-            </h2>
-          </div>
-          <ServiceFAQ faqs={allFaqs} />
-        </div>
-      </section>
-
       {/* ── CTA BAND ─────────────────────────────────────────── */}
       <section className="py-24 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
@@ -497,6 +472,31 @@ export default async function ServicePageTemplate({ service }: { service: Servic
           </div>
         </section>
       )}
+
+      {/* ── FAQ ──────────────────────────────────────────────── */}
+      <section className="py-24 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-14">
+            <p className="text-[#2CCDDE] text-xs font-bold uppercase tracking-widest mb-5">
+              FAQ
+            </p>
+            <h2 className="text-4xl sm:text-5xl font-bold leading-tight mb-4">
+              <span className="text-[var(--text-primary)]">Questions we get</span>
+              <br />
+              <span
+                style={{
+                  background: 'linear-gradient(135deg, #2CCDDE, #46A3E1)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                }}
+              >
+                asked all the time
+              </span>
+            </h2>
+          </div>
+          <ServiceFAQ faqs={allFaqs} />
+        </div>
+      </section>
 
     </main>
   )
