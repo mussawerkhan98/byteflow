@@ -49,6 +49,10 @@ export const services: ServiceData[] = [
         title: 'IT Asset Inventory',
         desc: 'A live register of every device, licence and warranty expiry date in your office so you always know what you own and when it needs replacing.',
       },
+      {
+        title: 'Website Management & SEO Monitoring',
+        desc: 'Your website stays online, secure and visible. We handle domain renewal, hosting and SSL certificates, and run monthly SEO health monitoring — bundled into every AMC plan at no extra cost.',
+      },
     ],
     benefits: [
       {
@@ -115,6 +119,14 @@ export const services: ServiceData[] = [
       {
         q: 'What is the minimum contract length?',
         a: 'We offer monthly rolling plans as well as annual contracts. Annual plans come with better pricing and priority SLA guarantees. Most clients choose annual contracts because the savings are significant, but we never force you into a long-term commitment.',
+      },
+      {
+        q: 'How much does an IT AMC cost in Dubai?',
+        a: 'Our AMC is priced per user, per month, starting at AED 30 for core remote support and monitoring, up to AED 90 for full coverage including on-site visits and bundled website and SEO management. Most Dubai providers quote privately and scope vaguely — we publish our pricing so you know the real cost before you call.',
+      },
+      {
+        q: 'What is the difference between AMC and break-fix support?',
+        a: 'Break-fix means paying per incident, with no guarantee of response time and no proactive monitoring — problems get expensive because you only find them after something breaks. An AMC (Annual Maintenance Contract) is a fixed monthly fee that covers unlimited support, 24/7 monitoring and preventative maintenance, so most issues are caught before they cause downtime, and your IT cost is predictable every month.',
       },
     ],
     relatedSlugs: ['cyber-security', 'cloud-services-dubai', 'data-backup-recovery'],
