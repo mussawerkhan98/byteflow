@@ -1,50 +1,36 @@
 "use client";
 
-import Image from "next/image";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { services } from "../lib/services-data";
+import PageSectionCards, {
+  hasContent,
+  placementOf,
+  type PageSection,
+  type Placement,
+} from "./PageSectionCards";
 
-type Placement = "before_faq" | "after_faq";
-
-type Section = {
-  id: number;
-  name: string;
-  heading: string;
-  text: string;
-  image_url: string;
-  button_label: string;
-  button_link: string;
-  placement?: Placement;
-};
-
-// The 9 original service pages render this themselves (see
-// ServicePageTemplate), positioned before their own FAQ section instead of
-// after it, so the FAQ stays the last thing before the footer. Skip the
-// copy the global layout renders there to avoid showing it twice.
+// The 9 original service pages fetch their own blocks on the server and
+// render them inside ServicePageTemplate, so the content is in the HTML
+// rather than appearing only after this component has run in the browser.
+// Skipping here is what stops those pages showing every block twice.
 const SERVICE_PAGE_PATHS = new Set(services.map((s) => `/${s.slug}`));
 
 /**
- * Content blocks added to a page from the admin panel. Rendered near the
- * bottom of whichever page they were assigned to. Every part is optional,
- * and anything empty is skipped rather than leaving a gap.
- *
- * `embedded` is set by ServicePageTemplate when it renders this itself for
- * one of the 9 static service pages; it bypasses the skip below, which
- * otherwise exists to stop the global layout copy from rendering there too.
+ * Content blocks added to a page from the admin panel, for every page that
+ * isn't one of the 9 static service pages. Rendered near the bottom of
+ * whichever page they were assigned to.
  *
  * `placement` picks which blocks this copy renders. Each page is rendered
  * with one copy above the FAQ and one below it, and every block chooses
  * which of the two it belongs to in the admin panel.
  */
 export default function PageSections({
-  embedded = false,
   placement = "before_faq",
-}: { embedded?: boolean; placement?: Placement } = {}) {
+}: { placement?: Placement } = {}) {
   const pathname = usePathname();
-  const [sections, setSections] = useState<Section[]>([]);
-  const skip = !embedded && SERVICE_PAGE_PATHS.has(pathname);
+  const [sections, setSections] = useState<PageSection[]>([]);
+  const skip = SERVICE_PAGE_PATHS.has(pathname);
 
   useEffect(() => {
     if (skip) return;
@@ -66,93 +52,11 @@ export default function PageSections({
 
   if (skip) return null;
 
-  const shown = sections.filter(
-    (section) =>
-      (section.placement === "after_faq" ? "after_faq" : "before_faq") ===
-        placement &&
-      (section.heading || section.text || section.image_url),
-  );
-  if (!shown.length) return null;
-
   return (
-    <div>
-      {shown.map((section) => (
-        <section key={section.id} className="px-4 py-12 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-7xl">
-            <div
-              className="card-hover overflow-hidden rounded-3xl"
-              style={{
-                background:
-                  "linear-gradient(160deg, rgba(44,205,222,0.06) 0%, var(--bg-surface) 100%)",
-                border: "1px solid rgba(44,205,222,0.15)",
-              }}
-            >
-              <div
-                className={`grid grid-cols-1 ${section.image_url ? "lg:grid-cols-2" : ""}`}
-              >
-                {section.image_url && (
-                  <div className="relative h-64 lg:h-auto lg:min-h-[320px]">
-                    <Image
-                      src={section.image_url}
-                      alt={section.heading || section.name}
-                      fill
-                      sizes="(min-width: 1024px) 50vw, 100vw"
-                      className="object-cover"
-                    />
-                  </div>
-                )}
-                <div className="flex flex-col justify-center gap-5 p-8 sm:p-12">
-                  {section.heading && (
-                    <h2 className="text-3xl font-bold leading-tight text-[var(--text-primary)] sm:text-4xl">
-                      {section.heading}
-                    </h2>
-                  )}
-                  {section.text && (
-                    <div className="flex flex-col gap-4">
-                      {section.text
-                        .split(/\n\s*\n/)
-                        .map((paragraph) => paragraph.trim())
-                        .filter(Boolean)
-                        .map((paragraph) => (
-                          <p
-                            key={paragraph}
-                            className="text-base leading-relaxed text-[var(--text-body)]"
-                          >
-                            {paragraph}
-                          </p>
-                        ))}
-                    </div>
-                  )}
-                  {section.button_label && section.button_link && (
-                    <Link
-                      href={section.button_link}
-                      className="inline-flex w-fit items-center gap-2.5 rounded-full px-7 py-3.5 text-sm font-bold text-black transition-all duration-300 hover:scale-[1.04] hover:shadow-[0_0_36px_rgba(44,205,222,0.5)]"
-                      style={{
-                        background: "linear-gradient(135deg, #2CCDDE, #46A3E1)",
-                      }}
-                    >
-                      {section.button_label}
-                      <svg
-                        className="h-4 w-4"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth={2.5}
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M17 8l4 4m0 0l-4 4m4-4H3"
-                        />
-                      </svg>
-                    </Link>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-      ))}
-    </div>
+    <PageSectionCards
+      sections={sections.filter(
+        (section) => placementOf(section) === placement && hasContent(section),
+      )}
+    />
   );
 }

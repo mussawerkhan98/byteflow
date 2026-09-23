@@ -2,12 +2,18 @@ import Link from 'next/link'
 import type { ServiceData } from '../lib/services-data'
 import { services } from '../lib/services-data'
 import ServiceFAQ from './ServiceFAQ'
-import PageSections from './PageSections'
+import PageSectionCards, { placementOf } from './PageSectionCards'
 import PageCta from './PageCta'
-import { getCmsService, getPageHero, getFaqsForSlug } from '../lib/cms'
+import { getCmsService, getPageHero, getFaqsForSlug, getCustomSections } from '../lib/cms'
 
 export default async function ServicePageTemplate({ service }: { service: ServiceData }) {
-  const [cmsService, hero, cmsFaqs] = await Promise.all([getCmsService(service.slug), getPageHero(service.slug), getFaqsForSlug(service.slug)])
+  const [cmsService, hero, cmsFaqs, customSections] = await Promise.all([getCmsService(service.slug), getPageHero(service.slug), getFaqsForSlug(service.slug), getCustomSections(service.slug)])
+  // Fetched here rather than by the client-side PageSections component so
+  // the blocks an editor added — pricing, exclusions and the like — are in
+  // the HTML the page is served with instead of appearing only once
+  // JavaScript has run. PageSections skips these 9 paths for that reason.
+  const sectionsAboveFaq = customSections.filter((section) => placementOf(section) === 'before_faq')
+  const sectionsBelowFaq = customSections.filter((section) => placementOf(section) === 'after_faq')
   const shown = { ...service, title: String(cmsService?.title || service.title), description: String(hero?.hero_description || cmsService?.description || service.description), tagline: String(hero?.hero_heading || service.tagline) }
   const related = services.filter((s) => shown.relatedSlugs.includes(s.slug))
   // CMS-added FAQs (from the admin panel) are appended after the built-in
@@ -480,7 +486,7 @@ export default async function ServicePageTemplate({ service }: { service: Servic
           otherwise place all of it after this page's content. Blocks set
           to "above the FAQs" in the admin panel render here; the ones set
           to "below the FAQs" render after the FAQ section further down. */}
-      <PageSections embedded placement="before_faq" />
+      <PageSectionCards sections={sectionsAboveFaq} />
       <PageCta embedded />
 
       {/* ── FAQ ──────────────────────────────────────────────── */}
@@ -509,7 +515,7 @@ export default async function ServicePageTemplate({ service }: { service: Servic
       </section>
 
       {/* Blocks the admin panel set to "below the FAQs". */}
-      <PageSections embedded placement="after_faq" />
+      <PageSectionCards sections={sectionsBelowFaq} />
 
     </main>
   )
