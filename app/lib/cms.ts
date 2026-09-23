@@ -1,6 +1,7 @@
 import 'server-only'
 import type { Metadata } from 'next'
 import { db } from './db'
+import { hasContent, type PageSection } from '../components/PageSectionCards'
 
 export type SiteSettings = Record<string, string | number>
 export type MenuItem = { id: number; area: string; label: string; href: string; parent_id: number | null; sort_order: number; new_tab: boolean; visible: boolean }
@@ -18,6 +19,40 @@ export async function getFaqs(pageSlug = 'home'): Promise<CmsFaq[]> { try { cons
 // page (no page_id-is-null fallback), used by ServicePageTemplate to merge
 // CMS-added questions into the single FAQ section the 9 static services render.
 export async function getFaqsForSlug(pageSlug: string): Promise<CmsFaq[]> { try { const result = await db.execute({ sql: `SELECT f.id,f.category,f.question,f.answer,f.sort_order FROM faqs f JOIN pages p ON p.id=f.page_id WHERE f.active=1 AND p.slug=? ORDER BY f.sort_order,f.id`, args:[pageSlug] }); return result.rows.map((row) => ({ id:Number(row.id), category:String(row.category), question:String(row.question), answer:String(row.answer), sort_order:Number(row.sort_order) })) } catch { return [] } }
+// The custom content blocks an editor assigned to one page in the admin
+// panel. Same rows, filters and ordering as /api/page-sections — that route
+// serves every other page from the browser, this serves the 9 static service
+// pages on the server so their blocks are in the HTML a crawler receives.
+// The variable fields live in a JSON `content` column; the keys below are
+// the ones the admin panel's block editor writes.
+export async function getCustomSections(pageSlug: string): Promise<PageSection[]> {
+  try {
+    const result = await db.execute({
+      sql: `SELECT s.id, s.name, s.content
+            FROM page_sections s JOIN pages p ON p.id = s.page_id
+            WHERE p.slug = ? AND s.section_type = 'custom'
+              AND s.visible = 1 AND s.status = 'published'
+            ORDER BY s.sort_order, s.id`,
+      args: [pageSlug],
+    })
+    return result.rows
+      .map((row) => {
+        let content: Record<string, string> = {}
+        try { content = JSON.parse(String(row.content ?? '{}')) } catch { content = {} }
+        return {
+          id: Number(row.id),
+          name: String(row.name ?? ''),
+          heading: String(content.heading ?? ''),
+          text: String(content.text ?? ''),
+          image_url: String(content.image_url ?? ''),
+          button_label: String(content.button_label ?? ''),
+          button_link: String(content.button_link ?? ''),
+          placement: content.placement === 'after_faq' ? 'after_faq' as const : 'before_faq' as const,
+        }
+      })
+      .filter(hasContent)
+  } catch { return [] }
+}
 export async function getTestimonials(): Promise<CmsReview[]> { try { const result=await db.execute("SELECT * FROM testimonials WHERE status='published' ORDER BY sort_order"); return result.rows.map((row)=>({ id:Number(row.id), customer_name:String(row.customer_name), customer_role:String(row.customer_role), review_text:String(row.review_text), rating:Number(row.rating), image_url:String(row.image_url||''), source:String(row.source||'') })) } catch { return [] } }
 export async function getTeam(): Promise<CmsTeamMember[]> { try { const result=await db.execute(`SELECT * FROM team_members WHERE status='published' ORDER BY sort_order`); return result.rows.map((row)=>({id:Number(row.id),name:String(row.name),job_title:String(row.job_title),biography:String(row.biography),image_url:String(row.image_url||''),image_alt:String(row.image_alt||''),email:String(row.email||''),phone:String(row.phone||''),linkedin_url:String(row.linkedin_url||''),x_url:String(row.x_url||''),github_url:String(row.github_url||'')})) } catch { return [] } }
 export async function getSection(pageSlug:string, type:string) { try { const result=await db.execute({sql:`SELECT s.content FROM page_sections s JOIN pages p ON p.id=s.page_id WHERE p.slug=? AND s.section_type=? AND s.visible=1 AND s.status='published' ORDER BY s.sort_order LIMIT 1`,args:[pageSlug,type]}); const value=result.rows[0]?.content; return typeof value==='string' ? JSON.parse(value) as Record<string,unknown> : null } catch { return null } }
