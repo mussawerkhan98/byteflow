@@ -22,26 +22,20 @@ test('only plausible addresses are accepted', () => {
   assert.ok(!isSignupEmail('two words@example.com'))
 })
 
-test('ticking the box opts a new contact in', () => {
-  assert.equal(nextOptOut(true), 0)
+test('a new enquirer receives offers', () => {
+  assert.equal(nextOptOut(), 0)
+  assert.equal(nextOptOut(null), 0)
+  assert.equal(nextOptOut(undefined), 0)
 })
 
-test('a new contact who did not tick is added but switched off', () => {
-  assert.equal(nextOptOut(false), 1)
+test('an existing subscriber stays subscribed', () => {
+  assert.equal(nextOptOut(0), 0)
 })
 
-test('not ticking never removes someone who already opted in', () => {
-  // The important one: writing in a second time without ticking is not a
-  // request to be taken off the list.
-  assert.equal(nextOptOut(false, 0), 0)
-})
-
-test('someone already opted out stays opted out', () => {
-  assert.equal(nextOptOut(false, 1), 1)
-})
-
-test('ticking the box re-subscribes someone who had opted out', () => {
-  assert.equal(nextOptOut(true, 1), 0)
+test('filling the form again does NOT undo an unsubscribe', () => {
+  // The one that matters: if this ever returns 0, the unsubscribe link in
+  // every promotion stops meaning anything.
+  assert.equal(nextOptOut(1), 1)
 })
 
 test('the enquiry group is added without duplicating it', () => {
