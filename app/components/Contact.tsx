@@ -118,6 +118,7 @@ export default function Contact({ settings = {}, hero }: { settings?: ContactSet
   const configuredSocials = socials.map((item) => ({ ...item, href: socialValues[item.label] || item.href })).filter((item) => item.href)
   const mapUrl = safeMapUrl(settings.map_embed_url)
   const [form, setForm] = useState({ name: '', company: '', email: '', phone: '', service: '', message: '' })
+  const [consent, setConsent] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState('')
@@ -148,7 +149,7 @@ export default function Contact({ settings = {}, hero }: { settings?: ContactSet
     setFieldErrors({})
     try {
       const recaptchaToken = await getRecaptchaToken('contact')
-      const response = await fetch('/api/contact', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ ...form, recaptchaToken, message: `${form.message}${form.company ? `\n\nCompany: ${form.company}` : ''}${form.service ? `\nService: ${form.service}` : ''}`, sourcePage: window.location.pathname }) })
+      const response = await fetch('/api/contact', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ ...form, consent, recaptchaToken, message: `${form.message}${form.company ? `\n\nCompany: ${form.company}` : ''}${form.service ? `\nService: ${form.service}` : ''}`, sourcePage: window.location.pathname }) })
       const data = await response.json()
       if (!response.ok) {
         setFieldErrors(data.fieldErrors ?? {})
@@ -445,6 +446,21 @@ export default function Contact({ settings = {}, hero }: { settings?: ContactSet
                         <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
                       </svg>
                     </button>
+
+                    {/* Opt-in. Unticked by default: a tick has to be a choice. */}
+                    <label className="flex items-start gap-3 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        name="consent"
+                        checked={consent}
+                        onChange={(event) => setConsent(event.target.checked)}
+                        className="mt-0.5 h-4 w-4 shrink-0 accent-[#2CCDDE] cursor-pointer"
+                      />
+                      <span className="text-xs leading-relaxed text-[var(--text-muted)]">
+                        Email me occasional offers and IT tips from Byteflow. You can
+                        unsubscribe from any of them in one click.
+                      </span>
+                    </label>
 
                     {submitError && <p role="alert" className="text-center text-sm text-red-400">{submitError}</p>}
 
