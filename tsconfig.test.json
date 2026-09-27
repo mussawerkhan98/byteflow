@@ -1,0 +1,15 @@
+{
+  "//": "Compiles the dependency-free signup rules plus their tests to CommonJS so Node's built-in test runner can execute them. Nothing here affects the Next.js build, which still uses tsconfig.json.",
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "incremental": false,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "outDir": ".test-build",
+    "rootDir": ".",
+    "types": ["node"]
+  },
+  "include": ["app/lib/marketing-signup-rules.ts", "tests/**/*.ts"],
+  "exclude": ["node_modules", ".next"]
+}
