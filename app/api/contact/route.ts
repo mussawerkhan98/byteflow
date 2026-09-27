@@ -128,7 +128,7 @@ async function verifyRecaptcha(token:string,remoteip?:string):Promise<boolean>{
 
 export async function POST(request:Request){
   const body=await request.json().catch(()=>null) as Record<string,unknown>|null
-  const name=String(body?.name??'').trim(), email=String(body?.email??'').trim(), phone=String(body?.phone??'').trim(), message=String(body?.message??'').trim(), source=String(body?.sourcePage??'').trim(), recaptchaToken=String(body?.recaptchaToken??'').trim(), consent=body?.consent===true
+  const name=String(body?.name??'').trim(), email=String(body?.email??'').trim(), phone=String(body?.phone??'').trim(), message=String(body?.message??'').trim(), source=String(body?.sourcePage??'').trim(), recaptchaToken=String(body?.recaptchaToken??'').trim()
   const fieldErrors:Record<string,string>={}
   if(name.length<2)fieldErrors.name='Please enter your full name.'
   else if(name.length>120)fieldErrors.name='Name must be 120 characters or fewer.'
@@ -146,7 +146,7 @@ export async function POST(request:Request){
     await db.execute({sql:'INSERT INTO contact_submissions (name,email,phone,message,source_page) VALUES (?,?,?,?,?)',args:[name,email,phone,message,source]})
     // The enquiry is already saved, so this can only add to the outcome.
     // It never throws; a marketing list problem must not cost us the enquiry.
-    await addEnquirerToMarketing({email,name,phone,consent})
+    await addEnquirerToMarketing({email,name,phone})
     if(process.env.BREVO_API_KEY&&process.env.CONTACT_FROM_EMAIL){
       const setting=enabled.rows[0]
       const configuredRecipient=setting.recipient_email?String(setting.recipient_email).trim():''

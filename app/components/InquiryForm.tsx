@@ -38,7 +38,6 @@ export default function InquiryForm({
   layout = 'grid',
 }: InquiryFormProps) {
   const [form, setForm] = useState({ name: '', email: '', phone: '', service: '', message: '' })
-  const [consent, setConsent] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [submitError, setSubmitError] = useState('')
@@ -75,7 +74,6 @@ export default function InquiryForm({
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({
           ...form,
-          consent,
           recaptchaToken,
           message: `${form.message}${form.service ? `\nService: ${form.service}` : ''}`,
           sourcePage: window.location.pathname,
@@ -239,21 +237,6 @@ export default function InquiryForm({
           {fieldErrors.message && <p className="text-xs text-red-400">{fieldErrors.message}</p>}
         </div>
 
-        {/* Opt-in. Unticked by default: a tick has to be a choice. */}
-        <label className="flex items-start gap-3 cursor-pointer">
-          <input
-            type="checkbox"
-            name="consent"
-            checked={consent}
-            onChange={(event) => setConsent(event.target.checked)}
-            className="mt-0.5 h-4 w-4 shrink-0 accent-[#2CCDDE] cursor-pointer"
-          />
-          <span className="text-xs leading-relaxed text-[var(--text-muted)]">
-            Email me occasional offers and IT tips from Byteflow. You can
-            unsubscribe from any of them in one click.
-          </span>
-        </label>
-
         <button
           type="submit"
           disabled={submitting}
@@ -271,6 +254,11 @@ export default function InquiryForm({
             {submitError}
           </p>
         )}
+
+        <p className="text-center text-xs leading-relaxed text-[var(--text-dim)]">
+          By sending this you agree we may email you occasional offers and IT
+          tips. Every one has a one-click unsubscribe.
+        </p>
       </form>
     </>
   )

@@ -30,13 +30,15 @@ export function mergeGroups(existing: string, extra: string): string {
 /**
  * Whether the contact ends up receiving offers.
  *
- * Ticking the box always opts in. Leaving it unticked is not a request to be
- * removed, so someone who opted in earlier — or who was switched on by an
- * admin — stays on the list when they write in again. Only an unsubscribe or
- * the admin panel turns it back off.
+ * Anyone who writes in is added to the list and receives offers: enquiring
+ * about the services is taken as interest in hearing about them, and the
+ * form says so.
+ *
+ * The one exception is someone who has unsubscribed. Filling in the form
+ * again does not put them back on the list — an unsubscribe has to mean
+ * something, or the link in every email is a lie. Only they, through the
+ * resubscribe button, or an admin, can turn offers back on.
  */
-export function nextOptOut(consent: boolean, existingOptOut?: number | null): 0 | 1 {
-  if (consent) return 0
-  if (existingOptOut === undefined || existingOptOut === null) return 1
+export function nextOptOut(existingOptOut?: number | null): 0 | 1 {
   return Number(existingOptOut) === 1 ? 1 : 0
 }
