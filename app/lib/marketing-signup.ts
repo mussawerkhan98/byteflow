@@ -12,11 +12,12 @@ import {
 /**
  * Putting someone who used the contact form onto the marketing list.
  *
- * Everyone who writes in becomes a contact, so the admin has one list of
- * people rather than two. Whether they *receive* promotions is decided only
- * by the tick box on the form: no tick means the contact exists with offers
- * switched off, and nothing is ever sent to them until someone turns it on
- * by hand in the admin panel.
+ * Everyone who writes in becomes a contact and receives offers, so the admin
+ * has one list of people rather than two. The form says this will happen, and
+ * every promotion carries a one-click unsubscribe.
+ *
+ * Someone who has unsubscribed is the exception: writing in again leaves them
+ * off the list. Nothing here can undo an unsubscribe.
  */
 
 /** Matches the key the admin panel generates, so unsubscribe links work. */
@@ -26,7 +27,6 @@ export type SignupInput = {
   email: string
   name?: string
   phone?: string
-  consent: boolean
 }
 
 /**
@@ -54,15 +54,13 @@ export async function addEnquirerToMarketing(input: SignupInput): Promise<void> 
         // 'manual' rather than a truer value because the column's CHECK
         // constraint allows only manual/import, and widening it would mean
         // rebuilding a table that holds data. The group carries the origin.
-        args: [email, name, phone, SIGNUP_GROUP, nextOptOut(input.consent), newUnsubKey()],
+        args: [email, name, phone, SIGNUP_GROUP, nextOptOut(), newUnsubKey()],
       })
       return
     }
 
-    // Someone who opted in earlier stays opted in: not ticking the box on a
-    // later enquiry is not the same as asking to be taken off the list. Only
-    // an actual unsubscribe, or the admin, turns offers back off.
-    const optOut = nextOptOut(input.consent, Number(row.opt_out))
+    // Respects an existing unsubscribe; see nextOptOut.
+    const optOut = nextOptOut(Number(row.opt_out))
 
     await db.execute({
       sql: `UPDATE marketing_contacts
