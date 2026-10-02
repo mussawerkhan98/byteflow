@@ -17,7 +17,7 @@ export const services: ServiceData[] = [
     title: 'IT AMC',
     tagline: 'Predictable IT costs. Zero surprises.',
     description:
-      'A fully managed Annual Maintenance Contract that covers every device, server and network in your office. One fixed monthly fee replaces unpredictable repair bills and slow response times across Dubai, Sharjah and Abu Dhabi.',
+      'IT AMC support that covers every device, server and network in your office under one fixed monthly fee. No per-incident charges and no surprise repair bills, with a two-hour on-site response anywhere in Dubai \u2014 Business Bay, JLT and World Trade Centre included \u2014 as well as Sharjah and Abu Dhabi.',
     heroStats: [
       { value: '2 hrs', label: 'On-site response guarantee' },
       { value: '500+', label: 'Businesses on AMC contracts' },
@@ -115,6 +115,10 @@ export const services: ServiceData[] = [
       {
         q: 'Can we add services to the AMC later?',
         a: 'Absolutely. Many clients start with basic IT support and later add cloud management, cyber security monitoring or Microsoft 365 administration. Your AMC can be expanded at any time without signing a new long-term contract.',
+      },
+      {
+        q: 'Do you cover Business Bay, JLT and World Trade Centre?',
+        a: 'Yes, and at the same service level as everywhere else. The two-hour on-site response applies across Dubai, so Business Bay, JLT, World Trade Centre, DIFC, Downtown, Deira, Al Barsha and TECOM are all covered on the same SLA \u2014 there is no premium zone and no area we charge extra to reach. Engineers are dispatched from whichever team is closest on the day. Sharjah and Abu Dhabi are covered under the same AMC.',
       },
       {
         q: 'What is the minimum contract length?',
