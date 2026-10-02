@@ -36,6 +36,19 @@ const nextConfig: NextConfig = {
    async redirects() {
     return [
       { source: '/blogs', destination: '/blog', permanent: true },
+
+      // WordPress served posts under /blog/<slug>; this site serves them at
+      // the root. Sending the whole prefix across means a retired post picks
+      // up its own redirect further down this list instead of 404ing, which
+      // is what /blog/remote-it-support-in-business-bay-dubai was doing — the
+      // root-level rule for that slug existed, the /blog/ form just never
+      // reached it. A slug that is neither a live post nor retired still
+      // 404s, which is correct.
+      //
+      // The blog's own feed goes first: without it the rule below would read
+      // "feed" as a post slug and send it to /feed, which is nothing.
+      { source: '/blog/feed', destination: '/blog', permanent: true },
+      { source: '/blog/:slug', destination: '/:slug', permanent: true },
       { source: '/software-development-company', destination: '/website-development', permanent: true },
 
       // Legacy index files
