@@ -11,6 +11,7 @@ import {
 } from "@/app/lib/db";
 import { getCategoryStyle } from "../blog/category-style";
 import CmsServicePage from "../components/CmsServicePage";
+import PostServiceLinks from "../components/PostServiceLinks";
 import JsonLd from "../components/JsonLd";
 import {
   blogPostingSchema,
@@ -259,6 +260,8 @@ export default async function BlogPostPage({
           )}
         </div>
       </section>
+
+      <PostServiceLinks title={post.title} category={post.category} />
 
       <section className="px-4 sm:px-6 lg:px-8 pb-28 pt-10">
         <div className="max-w-3xl mx-auto">
