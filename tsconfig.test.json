@@ -10,6 +10,6 @@
     "rootDir": ".",
     "types": ["node"]
   },
-  "include": ["app/lib/marketing-signup-rules.ts", "tests/**/*.ts"],
+  "include": ["app/lib/marketing-signup-rules.ts", "app/lib/structured-data.ts", "tests/**/*.ts"],
   "exclude": ["node_modules", ".next"]
 }
