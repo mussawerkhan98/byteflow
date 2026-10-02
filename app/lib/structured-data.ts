@@ -13,9 +13,21 @@
 
 export const SITE_URL = 'https://www.byteflow.ae'
 
-/** Stable @id values, so the graph refers to one organization, not many. */
+/**
+ * The organization's @id.
+ *
+ * The organization itself is NOT published from here. It is injected by a
+ * script named "Address" in the admin panel under Tracking codes, which
+ * predates this file and carries a fuller address than Contact details
+ * holds. The nodes below reference it by this id instead of describing it
+ * again — two entities sharing one @id with different contents is worse
+ * than either alone.
+ *
+ * So this string has to keep matching the @id in that script. If the script
+ * is ever removed, the organization needs publishing from here instead, or
+ * every `provider` and `publisher` below points at nothing.
+ */
 export const ORG_ID = `${SITE_URL}/#organization`
-export const WEBSITE_ID = `${SITE_URL}/#website`
 
 export type JsonLd = Record<string, unknown>
 
@@ -45,75 +57,6 @@ export function plainText(value: unknown, limit = 5000): string {
     .replace(/\s+/g, ' ')
     .trim()
     .slice(0, limit)
-}
-
-/** Only real http(s) links reach the markup; anything else is dropped. */
-const linkList = (...values: unknown[]) =>
-  values
-    .map((value) => String(value ?? '').trim())
-    .filter((value) => /^https?:\/\//i.test(value))
-
-type Settings = Record<string, string | number> | null | undefined
-
-/**
- * The business itself. ProfessionalService is a LocalBusiness subtype, which
- * is what earns the address, phone and hours a place in local results.
- */
-export function organizationSchema(settings: Settings): JsonLd {
-  const get = (key: string) => String(settings?.[key] ?? '').trim()
-  const name = get('business_name') || 'Byteflow Information Technology'
-  const logo = get('logo_url')
-  const phone = get('header_phone') || get('whatsapp_number')
-  const email = get('primary_email')
-  const address = get('physical_address')
-  const hours = get('business_hours')
-  const socials = linkList(
-    get('facebook_url'),
-    get('instagram_url'),
-    get('linkedin_url'),
-    get('tiktok_url'),
-  )
-
-  const schema: JsonLd = {
-    '@type': ['Organization', 'ProfessionalService'],
-    '@id': ORG_ID,
-    name,
-    url: SITE_URL,
-    ...(logo ? { logo: absoluteUrl(logo), image: absoluteUrl(logo) } : {}),
-    ...(phone ? { telephone: phone } : {}),
-    ...(email ? { email } : {}),
-    ...(socials.length ? { sameAs: socials } : {}),
-    // The service area, which is what "near me" searches are matched against.
-    areaServed: [
-      { '@type': 'City', name: 'Dubai' },
-      { '@type': 'Country', name: 'United Arab Emirates' },
-    ],
-  }
-
-  if (address) {
-    schema.address = {
-      '@type': 'PostalAddress',
-      streetAddress: address,
-      addressLocality: 'Dubai',
-      addressCountry: 'AE',
-    }
-  }
-  // Free text in the admin ("Monday–Saturday, 9:00 AM–6:00 PM") cannot be
-  // turned into openingHoursSpecification reliably, so it is published as
-  // the human-readable property schema.org provides for exactly that.
-  if (hours) schema.openingHours = hours
-
-  return schema
-}
-
-export function websiteSchema(name: string): JsonLd {
-  return {
-    '@type': 'WebSite',
-    '@id': WEBSITE_ID,
-    url: SITE_URL,
-    name: name || 'Byteflow Information Technology',
-    publisher: { '@id': ORG_ID },
-  }
 }
 
 export function serviceSchema(input: {
