@@ -9,10 +9,13 @@ import Contact from "./components/Contact";
 import {
   getPageHero,
   getSection,
+  getFaqsForSlug,
   getSiteSettings,
   getTestimonials,
 } from "./lib/cms";
 import { getPosts } from "./lib/db";
+import JsonLd from "./components/JsonLd";
+import { faqPageSchema, graph } from "./lib/structured-data";
 
 export const revalidate = 3600;
 export const metadata = {
@@ -20,13 +23,18 @@ export const metadata = {
 };
 
 export default async function Home() {
-  const [sectionHero, pageHero, testimonials, settings, posts] =
+  const [sectionHero, pageHero, testimonials, settings, posts, faqs] =
     await Promise.all([
       getSection("home", "hero"),
       getPageHero("home"),
       getTestimonials(),
       getSiteSettings(),
       getPosts(),
+      // The FAQ block itself is rendered in the browser by PageFaq. This
+      // reads the same rows on the server purely so the questions are in the
+      // HTML a crawler receives — the markup still only describes what a
+      // visitor sees on the page.
+      getFaqsForSlug("home"),
     ]);
   const hero = {
     ...(sectionHero ?? {}),
@@ -53,6 +61,7 @@ export default async function Home() {
   };
   return (
     <>
+      <JsonLd data={graph(faqPageSchema(faqs))} />
       <Hero content={(hero ?? {}) as never} />
       <Services />
       <AboutUs />
