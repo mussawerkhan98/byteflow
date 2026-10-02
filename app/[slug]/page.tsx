@@ -11,6 +11,13 @@ import {
 } from "@/app/lib/db";
 import { getCategoryStyle } from "../blog/category-style";
 import CmsServicePage from "../components/CmsServicePage";
+import JsonLd from "../components/JsonLd";
+import {
+  blogPostingSchema,
+  breadcrumbSchema,
+  graph,
+  serviceSchema,
+} from "../lib/structured-data";
 
 export const revalidate = 3600;
 
@@ -69,7 +76,25 @@ export default async function BlogPostPage({
       const related = (await getServices())
         .filter((item) => item.slug !== service.slug)
         .slice(0, 3);
-      return <CmsServicePage service={service} related={related} />;
+      return (
+        <>
+          <JsonLd
+            data={graph(
+              serviceSchema({
+                name: service.title,
+                description: service.description,
+                path: `/${service.slug}`,
+                image: service.image_url || "",
+              }),
+              breadcrumbSchema([
+                { name: "Home", path: "/" },
+                { name: service.title, path: `/${service.slug}` },
+              ]),
+            )}
+          />
+          <CmsServicePage service={service} related={related} />
+        </>
+      );
     }
     notFound();
   }
@@ -121,8 +146,24 @@ export default async function BlogPostPage({
     },
   });
 
+  const schema = graph(
+    blogPostingSchema({
+      title: post.title,
+      description: post.meta_description || post.excerpt,
+      path: `/${post.slug}`,
+      image: post.image_url || "",
+      published: post.created_at,
+    }),
+    breadcrumbSchema([
+      { name: "Home", path: "/" },
+      { name: "Blog", path: "/blog" },
+      { name: post.title, path: `/${post.slug}` },
+    ]),
+  );
+
   return (
     <article>
+      <JsonLd data={schema} />
       <section className="pt-20 pb-10 px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto">
           <Link
