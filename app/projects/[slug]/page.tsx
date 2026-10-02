@@ -1,10 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getProjectBySlug } from "@/app/lib/db";
+import { getProjectBySlug, getProjects } from "@/app/lib/db";
 import sanitizeHtml from "sanitize-html";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
+
+/** Prerenders the published case studies; new ones are rendered once, then cached. */
+export async function generateStaticParams() {
+  const projects = await getProjects();
+  return projects.filter((project) => project.slug).map((project) => ({ slug: project.slug }));
+}
 
 export async function generateMetadata({
   params,
