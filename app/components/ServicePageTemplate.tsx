@@ -5,6 +5,8 @@ import ServiceFAQ from './ServiceFAQ'
 import PageSectionCards, { placementOf } from './PageSectionCards'
 import PageCta from './PageCta'
 import { getCmsService, getPageHero, getFaqsForSlug, getCustomSections } from '../lib/cms'
+import JsonLd from './JsonLd'
+import { breadcrumbSchema, faqPageSchema, graph, serviceSchema } from '../lib/structured-data'
 
 export default async function ServicePageTemplate({ service }: { service: ServiceData }) {
   const [cmsService, hero, cmsFaqs, customSections] = await Promise.all([getCmsService(service.slug), getPageHero(service.slug), getFaqsForSlug(service.slug), getCustomSections(service.slug)])
@@ -27,8 +29,26 @@ export default async function ServicePageTemplate({ service }: { service: Servic
     ...cmsFaqs.map((f) => ({ q: f.question, a: f.answer, category: f.category })),
   ]
 
+  // Built from the same `shown` and `allFaqs` the page renders below, so the
+  // markup can never describe something a visitor would not see — which is
+  // the condition Google applies before showing FAQ rich results.
+  const schema = graph(
+    serviceSchema({
+      name: shown.title,
+      description: shown.description,
+      path: `/${service.slug}`,
+      image: hero?.hero_background_image || '',
+    }),
+    faqPageSchema(allFaqs),
+    breadcrumbSchema([
+      { name: 'Home', path: '/' },
+      { name: shown.title, path: `/${service.slug}` },
+    ]),
+  )
+
   return (
     <main style={{ background: 'var(--bg-page)' }}>
+      <JsonLd data={schema} />
 
       {/* ── HERO ─────────────────────────────────────────────── */}
       <section className="relative pt-20 pb-16 px-4 sm:px-6 lg:px-8 overflow-hidden" style={hero?.hero_background_image ? { backgroundImage:`linear-gradient(rgba(4,13,18,.78),rgba(4,13,18,.93)),url(${hero.hero_background_image})`, backgroundSize:'cover', backgroundPosition:'center' } : undefined}>
