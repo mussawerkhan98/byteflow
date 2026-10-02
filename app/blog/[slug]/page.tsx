@@ -1,7 +1,7 @@
 import { permanentRedirect, notFound } from 'next/navigation'
 import { getPostBySlug, getPosts } from '@/app/lib/db'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 3600
 
 export async function generateStaticParams() {
   const posts = await getPosts()

@@ -2,7 +2,7 @@ import { getProjects } from "../lib/db";
 import ProjectsClient, { type UiProject, CATEGORIES } from "./ProjectsClient";
 import { getPageHero, getPageMetadata } from "../lib/cms";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
 export async function generateMetadata() {
   const cms = await getPageMetadata('projects')
   return {

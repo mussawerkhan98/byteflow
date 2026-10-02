@@ -35,9 +35,11 @@ export default function PageSections({
   useEffect(() => {
     if (skip) return;
     let active = true;
-    void fetch(`/api/page-sections?path=${encodeURIComponent(pathname)}`, {
-      cache: "no-store",
-    })
+    // No `cache: "no-store"`: that made the browser revalidate on every
+    // view and defeated the CDN cache in front of the route, so each page
+    // view cost a function invocation. The route's own Cache-Control is
+    // what decides freshness now.
+    void fetch(`/api/page-sections?path=${encodeURIComponent(pathname)}`)
       .then((response) => response.json())
       .then((data) => {
         if (active) setSections(data.sections ?? []);

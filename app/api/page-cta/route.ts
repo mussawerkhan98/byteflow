@@ -1,6 +1,19 @@
 import { db } from "@/app/lib/db";
 
-export const dynamic = "force-dynamic";
+/**
+ * Cached at the edge for an hour, with a day of stale-while-revalidate.
+ *
+ * `revalidate` alone cannot cache this: reading the `path` search parameter
+ * off the request makes the handler dynamic, so Next renders it per request
+ * and only the CDN can spare the function invocation. The header below is
+ * what actually does that on Vercel; `revalidate` applies if the handler
+ * ever stops reading the request.
+ */
+export const revalidate = 3600;
+
+const CACHE_HEADERS = {
+  "cache-control": "public, s-maxage=3600, stale-while-revalidate=86400",
+} as const;
 
 export async function GET(request: Request) {
   const pathname = new URL(request.url).searchParams.get("path") || "/";
@@ -14,8 +27,8 @@ export async function GET(request: Request) {
             WHERE c.visible=1 AND p.slug=? ORDER BY c.sort_order,c.id`,
       args: [slug],
     });
-    return Response.json({ ctas: result.rows });
+    return Response.json({ ctas: result.rows }, { headers: CACHE_HEADERS });
   } catch {
-    return Response.json({ ctas: [] });
+    return Response.json({ ctas: [] }, { headers: CACHE_HEADERS });
   }
 }

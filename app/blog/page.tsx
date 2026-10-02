@@ -3,7 +3,7 @@ import { getPosts } from '@/app/lib/db'
 import BlogContent from './BlogContent'
 import { getPageHero } from '../lib/cms'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 3600
 
 export const metadata: Metadata = {
   alternates: { canonical: "/blog" },

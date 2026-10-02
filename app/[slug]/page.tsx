@@ -12,11 +12,20 @@ import {
 import { getCategoryStyle } from "../blog/category-style";
 import CmsServicePage from "../components/CmsServicePage";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
 
+/**
+ * This route serves both CMS services and blog posts, so both have to be
+ * listed here or the service pages fall back to rendering on every request.
+ * Slugs added in the admin panel after a build are still served: they miss
+ * the prerender and are rendered once, then cached like the rest.
+ */
 export async function generateStaticParams() {
-  const posts = await getPosts();
-  return posts.map((post) => ({ slug: post.slug }));
+  const [posts, services] = await Promise.all([getPosts(), getServices()]);
+  const slugs = new Set<string>();
+  for (const post of posts) if (post.slug) slugs.add(post.slug);
+  for (const service of services) if (service.slug) slugs.add(service.slug);
+  return [...slugs].map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({
