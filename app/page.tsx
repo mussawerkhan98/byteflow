@@ -14,7 +14,7 @@ import {
 } from "./lib/cms";
 import { getPosts } from "./lib/db";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
 export const metadata = {
   alternates: { canonical: "/" },
 };
