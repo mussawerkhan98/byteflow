@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { getRecaptchaToken } from '../lib/recaptcha'
+import { LEAD_EVENT, trackEvent } from '../lib/analytics'
 
 const services = [
   'IT AMC / IT Support',
@@ -85,6 +86,7 @@ export default function InquiryForm({
         setSubmitError(data.error ?? 'Please check the form and try again.')
         return
       }
+      trackEvent(LEAD_EVENT, { form_name: 'inquiry', service: form.service || 'unspecified' })
       setSubmitted(true)
     } catch {
       setSubmitError('We could not send your message. Check your connection and try again.')

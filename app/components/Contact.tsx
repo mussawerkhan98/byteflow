@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { getRecaptchaToken } from '../lib/recaptcha'
+import { LEAD_EVENT, trackEvent } from '../lib/analytics'
 
 const socials = [
   {
@@ -156,6 +157,10 @@ export default function Contact({ settings = {}, hero }: { settings?: ContactSet
         return
       }
       setSuccessMessage(data.message ?? successMessage)
+      // Only after the server accepted it: a validation failure above
+      // returns early, so this counts real enquiries rather than attempts.
+      // No name, email or phone is sent — GA must not hold personal data.
+      trackEvent(LEAD_EVENT, { form_name: 'contact', service: form.service || 'unspecified' })
       setSubmitted(true)
     } catch {
       setSubmitError('We could not send your message. Check your connection and try again.')
