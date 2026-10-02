@@ -15,8 +15,6 @@ import PageCta from "./components/PageCta";
 import PageSections from "./components/PageSections";
 import PageFaq from "./components/PageFaq";
 import { getMenu, getPageMetadata, getSiteSettings, getWebsiteScripts } from "./lib/cms";
-import JsonLd from "./components/JsonLd";
-import { graph, organizationSchema, websiteSchema } from "./lib/structured-data";
 import { getServices } from "./lib/db";
 
 // Both are variable fonts, so the weight axis is loaded in one file each
@@ -121,14 +119,6 @@ export default async function RootLayout({
           background: "var(--bg-page)",
         }}
       >
-        {/* Who this business is. Rendered once, sitewide: every page's own
-            schema refers back to it by @id instead of repeating it. */}
-        <JsonLd
-          data={graph(
-            organizationSchema(settings),
-            websiteSchema(String(settings?.business_name ?? "")),
-          )}
-        />
         <Header
           navigation={headerNavigation}
           serviceLinks={serviceLinks}
