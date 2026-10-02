@@ -10,6 +10,7 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import StickyContactButtons from "./components/StickyContactButtons";
 import LeadPopup from "./components/LeadPopup";
+import LeadTracking from "./components/LeadTracking";
 import InquiryDrawer from "./components/InquiryDrawer";
 import PageCta from "./components/PageCta";
 import PageSections from "./components/PageSections";
@@ -149,6 +150,7 @@ export default async function RootLayout({
             dangerouslySetInnerHTML={{ __html: footerScripts }}
           />
         )}
+        <LeadTracking />
       </body>
       <GoogleAnalytics gaId="G-0D6S22JEGG" />
     </html>
