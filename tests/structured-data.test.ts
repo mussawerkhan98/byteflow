@@ -8,23 +8,9 @@ import {
   breadcrumbSchema,
   faqPageSchema,
   graph,
-  organizationSchema,
   plainText,
   serviceSchema,
 } from '../app/lib/structured-data'
-
-const settings = {
-  business_name: 'Byteflow Information Technology',
-  logo_url: '/uploads/logo.png',
-  header_phone: '+971 54 328 2042',
-  primary_email: 'info@byteflow.ae',
-  physical_address: 'Dubai, United Arab Emirates',
-  business_hours: 'Monday–Saturday, 9:00 AM–6:00 PM',
-  facebook_url: 'https://m.facebook.com/byteflow.ae/',
-  instagram_url: 'https://www.instagram.com/byteflow.ae/',
-  linkedin_url: '',
-  tiktok_url: 'not a url',
-}
 
 test('every absolute URL is on the canonical www host', () => {
   assert.equal(SITE_URL, 'https://www.byteflow.ae')
@@ -33,29 +19,6 @@ test('every absolute URL is on the canonical www host', () => {
   assert.equal(absoluteUrl(''), 'https://www.byteflow.ae')
   // An already-absolute CMS image URL is left alone.
   assert.equal(absoluteUrl('https://cdn.example.com/a.png'), 'https://cdn.example.com/a.png')
-})
-
-test('the organization carries address, phone and real social links only', () => {
-  const org = organizationSchema(settings) as Record<string, unknown>
-  assert.deepEqual(org['@type'], ['Organization', 'ProfessionalService'])
-  assert.equal(org['@id'], ORG_ID)
-  assert.equal(org.telephone, '+971 54 328 2042')
-  assert.equal(org.logo, 'https://www.byteflow.ae/uploads/logo.png')
-  // Empty and malformed entries are dropped rather than published.
-  assert.deepEqual(org.sameAs, [
-    'https://m.facebook.com/byteflow.ae/',
-    'https://www.instagram.com/byteflow.ae/',
-  ])
-  const address = org.address as Record<string, unknown>
-  assert.equal(address.addressCountry, 'AE')
-})
-
-test('missing settings produce a usable organization, not a broken one', () => {
-  const org = organizationSchema(null) as Record<string, unknown>
-  assert.equal(org.name, 'Byteflow Information Technology')
-  assert.ok(!('telephone' in org))
-  assert.ok(!('address' in org))
-  assert.ok(!('sameAs' in org))
 })
 
 test('HTML answers become plain text with entities decoded', () => {
@@ -85,6 +48,13 @@ test('FAQ markup drops incomplete and duplicate questions', () => {
 test('no FAQs means no FAQ markup at all', () => {
   assert.equal(faqPageSchema([]), null)
   assert.equal(faqPageSchema([{ q: 'Only a question', a: '' }]), null)
+})
+
+test('the organization id matches the one the admin script publishes', () => {
+  // The organization itself comes from the "Address" script in Tracking
+  // codes. If this string stops matching its @id, every provider and
+  // publisher reference below points at an entity that does not exist.
+  assert.equal(ORG_ID, 'https://www.byteflow.ae/#organization')
 })
 
 test('a service points back at the one organization', () => {
