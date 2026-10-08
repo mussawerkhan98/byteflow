@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import { Sora, Plus_Jakarta_Sans } from "next/font/google";
 import { GoogleAnalytics } from "@next/third-parties/google";
+import { connection } from "next/server";
 // Ship Font Awesome's CSS in the bundle; app/components/Icon.tsx turns off
 // the library's own runtime injection so the two never race.
 import "@fortawesome/fontawesome-svg-core/styles.css";
@@ -32,14 +33,6 @@ const sora = Sora({
   display: "swap",
 });
 
-/**
- * The CMS is updated by a separately deployed admin application, so these
- * shared reads cannot be frozen at build time. They are refreshed hourly
- * instead of on every request: `connection()` used to sit in the body of
- * this layout, which opted every page in the site out of static rendering
- * and made each visit a function invocation.
- */
-export const revalidate = 3600;
 
 export async function generateMetadata(): Promise<Metadata> {
   const cms = await getPageMetadata("home");
@@ -60,6 +53,10 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Reverted to request-time rendering: edits made in the admin panel
+  // have to appear on the site straight away, which a cached page
+  // cannot do. This opts every page out of static rendering.
+  await connection();
   const [settings, headerMenu, footerMenu, services, scripts] = await Promise.all([
     getSiteSettings(),
     getMenu("header"),
