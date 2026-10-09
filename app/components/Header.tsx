@@ -180,7 +180,7 @@ export default function Header({
           : "1px solid transparent",
       }}
     >
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-page px-4 sm:px-6 lg:px-8">
         <div className="flex h-[76px] items-center justify-between gap-8">
           <LogoLink
             src={logoUrl}
@@ -214,7 +214,7 @@ export default function Header({
       <div
         className={`overflow-hidden bg-[var(--bg-page)] transition-all duration-300 lg:hidden ${mobileOpen ? "max-h-[calc(100vh-76px)] border-t border-cyan-400/10" : "max-h-0"}`}
       >
-        <nav className="mx-auto max-h-[calc(100vh-76px)] max-w-7xl overflow-y-auto px-4 py-5">
+        <nav className="mx-auto max-h-[calc(100vh-76px)] max-w-page overflow-y-auto px-4 py-5">
           {menu.map((item) => (
             <MobileItem
               key={`${item.label}-${item.href}`}

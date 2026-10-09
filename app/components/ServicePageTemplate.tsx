@@ -68,7 +68,7 @@ export default async function ServicePageTemplate({ service }: { service: Servic
           }}
         />
 
-        <div className="relative max-w-7xl mx-auto">
+        <div className="relative max-w-page mx-auto">
           <div className="max-w-3xl">
             {/* Section label */}
             <p className="text-[#2CCDDE] text-xs font-bold uppercase tracking-widest mb-5">
@@ -156,7 +156,7 @@ export default async function ServicePageTemplate({ service }: { service: Servic
 
       {/* ── WHAT'S INCLUDED ──────────────────────────────────── */}
       <section className="py-24 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-page mx-auto">
           <div className="mb-14">
             <p className="text-[#2CCDDE] text-xs font-bold uppercase tracking-widest mb-4">
               What&apos;s Included
@@ -200,7 +200,7 @@ export default async function ServicePageTemplate({ service }: { service: Servic
 
       {/* ── BENEFITS ─────────────────────────────────────────── */}
       <section className="py-24 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-page mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
 
             {/* Left */}
@@ -277,7 +277,7 @@ export default async function ServicePageTemplate({ service }: { service: Servic
           }}
         />
 
-        <div className="relative max-w-7xl mx-auto">
+        <div className="relative max-w-page mx-auto">
           <div className="text-center mb-20">
             <p className="text-[#2CCDDE] text-xs font-bold uppercase tracking-widest mb-5">
               How It Works
@@ -384,7 +384,7 @@ export default async function ServicePageTemplate({ service }: { service: Servic
 
       {/* ── CTA BAND ─────────────────────────────────────────── */}
       <section className="py-24 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-page mx-auto">
           <div
             className="relative overflow-hidden rounded-3xl p-10 sm:p-14"
             style={{
@@ -448,7 +448,7 @@ export default async function ServicePageTemplate({ service }: { service: Servic
       {/* ── RELATED SERVICES ─────────────────────────────────── */}
       {related.length > 0 && (
         <section className="py-24 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-7xl mx-auto">
+          <div className="max-w-page mx-auto">
             <div className="mb-12">
               <p className="text-[#2CCDDE] text-xs font-bold uppercase tracking-widest mb-4">
                 Related Services

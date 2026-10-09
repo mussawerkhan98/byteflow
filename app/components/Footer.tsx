@@ -72,7 +72,7 @@ export default function Footer({ navigation = fallbackUsefulLinks, settings = {}
         style={{ background: 'linear-gradient(90deg, #2CCDDE, #46A3E1)' }}
       />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div className="max-w-page mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
 
           <div className="space-y-6">
@@ -218,7 +218,7 @@ export default function Footer({ navigation = fallbackUsefulLinks, settings = {}
       </div>
 
       <div style={{ borderTop: '1px solid var(--border-subtle)' }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-2">
+        <div className="max-w-page mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-2">
           <p className="text-[var(--text-dim)] text-sm">
             &copy; {new Date().getFullYear()} {settings.copyright_text || 'Byteflow Information Technology. All rights reserved.'}
           </p>

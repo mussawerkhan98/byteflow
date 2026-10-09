@@ -186,7 +186,7 @@ export default function Contact({ settings = {}, hero }: { settings?: ContactSet
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] pointer-events-none"
         style={{ background: 'radial-gradient(circle, rgba(70,163,225,0.05) 0%, transparent 65%)', filter: 'blur(80px)' }} />
 
-      <div className="relative max-w-7xl mx-auto">
+      <div className="relative max-w-page mx-auto">
 
         {/* Header */}
         <div className="mb-16">

@@ -158,7 +158,7 @@ export default async function Services() {
       <div className="absolute bottom-20 right-10 w-[500px] h-[500px] rounded-full pointer-events-none"
         style={{ background: 'radial-gradient(circle, rgba(70,163,225,0.07) 0%, transparent 70%)', filter: 'blur(80px)' }} />
 
-      <div className="relative max-w-7xl mx-auto">
+      <div className="relative max-w-page mx-auto">
         {/* Header */}
         <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-16">
           <div>
