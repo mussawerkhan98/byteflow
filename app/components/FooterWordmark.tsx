@@ -24,6 +24,16 @@ const DAMPING = 0.78
 /** Below this, the letter is close enough to home to stop animating. */
 const AT_REST = 0.08
 
+/**
+ * How much of the letter's speed turns into squash and stretch, and the
+ * ceiling on it. Kept small on purpose: the letter should read as slightly
+ * soft, not as rubber.
+ */
+const JELLY = 0.009
+const JELLY_MAX = 0.075
+/** A little give under the finger, so picking a letter up feels like pressing. */
+const PRESS = 0.022
+
 type Letter = {
   el: HTMLSpanElement
   x: number
@@ -39,6 +49,30 @@ type Letter = {
 }
 
 type Loop = { current: number | null }
+
+/**
+ * Write a letter's position, with a squash along the way it is travelling.
+ *
+ * The letter stretches in the direction of motion and narrows across it, by
+ * an amount taken from its own speed, which is what reads as jelly: it is
+ * only soft while something is happening to it. The spring already overshoots
+ * and comes back, so the wobble on release falls out of this for free rather
+ * than needing an animation of its own.
+ */
+function paint(l: Letter) {
+  const speed = Math.hypot(l.vx, l.vy)
+  const squish = Math.min(speed * JELLY, JELLY_MAX) + (l.dragging ? PRESS : 0)
+  const at = `translate3d(${l.x.toFixed(2)}px, ${l.y.toFixed(2)}px, 0)`
+  if (squish < 0.001) {
+    l.el.style.transform = at
+    return
+  }
+  // Rotate the stretch onto the line of travel, then take it back off, so a
+  // letter thrown sideways squashes sideways and never ends up tilted.
+  const deg = (Math.atan2(l.vy, l.vx) * 180) / Math.PI
+  l.el.style.transform =
+    `${at} rotate(${deg.toFixed(1)}deg) scale(${(1 + squish).toFixed(3)}, ${(1 - squish).toFixed(3)}) rotate(${(-deg).toFixed(1)}deg)`
+}
 
 /**
  * One tick of the spring, for every letter that is not already home.
@@ -69,7 +103,7 @@ function step(letters: Letter[], frame: Loop) {
     } else {
       continue
     }
-    l.el.style.transform = `translate3d(${l.x.toFixed(2)}px, ${l.y.toFixed(2)}px, 0)`
+    paint(l)
   }
   frame.current = moving ? requestAnimationFrame(() => step(letters, frame)) : null
 }
@@ -108,7 +142,7 @@ function createDragController(wake: () => void): DragController {
     l.vy = ny - l.y
     l.x = nx
     l.y = ny
-    l.el.style.transform = `translate3d(${nx.toFixed(2)}px, ${ny.toFixed(2)}px, 0)`
+    paint(l)
   }
 
   // A declaration, not a const, so it can be named by `releaseAll` below
@@ -120,7 +154,13 @@ function createDragController(wake: () => void): DragController {
   }
 
   const releaseAll = () => {
-    if (active) active.letter.dragging = false
+    if (active) {
+      active.letter.dragging = false
+      // Take the press squash straight off. A letter tapped without being
+      // moved is already home, so the spring has nothing to do and would
+      // never repaint it, leaving it squashed until the next drag.
+      paint(active.letter)
+    }
     active = null
     window.removeEventListener('pointermove', onMove)
     window.removeEventListener('pointerup', onRelease)
@@ -140,6 +180,7 @@ function createDragController(wake: () => void): DragController {
     letter.originY = letter.y
     letter.vx = 0
     letter.vy = 0
+    paint(letter)
     window.addEventListener('pointermove', onMove)
     window.addEventListener('pointerup', onRelease)
     window.addEventListener('pointercancel', onRelease)
@@ -218,7 +259,11 @@ export default function FooterWordmark() {
             data-letter
             onPointerDown={onPointerDown(i)}
             className="footer-wordmark-letter"
-            style={{ transitionDelay: `${i * 55}ms` }}
+            // The stagger travels as a custom property, NOT as transitionDelay.
+            // transition-property defaults to `all`, so a delay set here applies
+            // to the transform the drag writes too: every frame of a drag was
+            // held back by up to 385ms, and the letter lagged behind the pointer.
+            style={{ '--stagger': `${i * 55}ms` } as React.CSSProperties}
           >
             <span className={i >= ACCENT_FROM ? 'footer-wordmark-accent' : undefined}>{char}</span>
           </span>
