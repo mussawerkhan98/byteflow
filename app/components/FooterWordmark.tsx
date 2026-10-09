@@ -74,71 +74,32 @@ function step(letters: Letter[], frame: Loop) {
   frame.current = moving ? requestAnimationFrame(() => step(letters, frame)) : null
 }
 
-export default function FooterWordmark() {
-  const host = useRef<HTMLDivElement>(null)
-  const letters = useRef<Letter[]>([])
-  const frame = useRef<number | null>(null)
-  const reduced = useRef(false)
+type DragController = {
+  start: (letter: Letter, event: React.PointerEvent) => void
+  releaseAll: () => void
+}
 
-  const wake = () => {
-    if (frame.current === null) {
-      frame.current = requestAnimationFrame(() => step(letters.current, frame))
-    }
-  }
+/**
+ * Owns the one letter that is in the air, and the listeners that move it.
+ *
+ * Move and release are listened for on the window, not on the letter itself.
+ * Relying on the letter to receive them is what stranded a letter in mid-air:
+ * when the browser ends a gesture its own way — a right-click, an OS swipe, a
+ * touch torn away — the release never arrives at the element, `dragging` is
+ * never cleared, and a letter that is still "being dragged" is never sprung
+ * home. `lostpointercapture` is no cure either; Chromium does not fire it
+ * when capture is dropped while the pointer is still down. A release seen on
+ * the window always ends the drag, whatever the browser did with the gesture.
+ *
+ * Built once per mount rather than per render, so the listeners it adds are
+ * the same function objects it later removes.
+ */
+function createDragController(wake: () => void): DragController {
+  let active: { letter: Letter; pointerId: number } | null = null
 
-  useEffect(() => {
-    reduced.current = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    const root = host.current
-    if (!root) return
-    letters.current = Array.from(root.querySelectorAll<HTMLSpanElement>('[data-letter]')).map((el) => ({
-      el, x: 0, y: 0, vx: 0, vy: 0, dragging: false, grabX: 0, grabY: 0, originX: 0, originY: 0,
-    }))
-
-    // Letters rise into place the first time the footer is reached. Done with
-    // a class rather than inline styles so the transition can be turned off
-    // wholesale by the reduced-motion rules in globals.css.
-    if (!reduced.current && 'IntersectionObserver' in window) {
-      const io = new IntersectionObserver(
-        (entries) => {
-          for (const entry of entries) {
-            if (!entry.isIntersecting) continue
-            root.classList.add('wordmark-in')
-            io.disconnect()
-          }
-        },
-        { threshold: 0.25 },
-      )
-      io.observe(root)
-      return () => io.disconnect()
-    }
-    root.classList.add('wordmark-in')
-  }, [])
-
-  useEffect(() => () => {
-    if (frame.current !== null) cancelAnimationFrame(frame.current)
-  }, [])
-
-  const onPointerDown = (index: number) => (event: React.PointerEvent<HTMLSpanElement>) => {
-    if (reduced.current) return
-    const l = letters.current[index]
-    if (!l) return
-    // Keep the letter under the finger that grabbed it even if the pointer
-    // leaves the element, and stop the gesture turning into a text selection.
-    event.currentTarget.setPointerCapture(event.pointerId)
-    event.preventDefault()
-    l.dragging = true
-    l.grabX = event.clientX
-    l.grabY = event.clientY
-    l.originX = l.x
-    l.originY = l.y
-    l.vx = 0
-    l.vy = 0
-    wake()
-  }
-
-  const onPointerMove = (index: number) => (event: React.PointerEvent<HTMLSpanElement>) => {
-    const l = letters.current[index]
-    if (!l?.dragging) return
+  const onMove = (event: PointerEvent) => {
+    if (!active || event.pointerId !== active.pointerId) return
+    const l = active.letter
     const nx = l.originX + (event.clientX - l.grabX)
     const ny = l.originY + (event.clientY - l.grabY)
     // Velocity for the throw comes from the movement of this frame, so a
@@ -150,11 +111,98 @@ export default function FooterWordmark() {
     l.el.style.transform = `translate3d(${nx.toFixed(2)}px, ${ny.toFixed(2)}px, 0)`
   }
 
-  const onPointerUp = (index: number) => () => {
-    const l = letters.current[index]
-    if (!l) return
-    l.dragging = false
+  // A declaration, not a const, so it can be named by `releaseAll` below
+  // while still calling back into it.
+  function onRelease(event: PointerEvent) {
+    if (active && event.pointerId !== active.pointerId) return
+    releaseAll()
     wake()
+  }
+
+  const releaseAll = () => {
+    if (active) active.letter.dragging = false
+    active = null
+    window.removeEventListener('pointermove', onMove)
+    window.removeEventListener('pointerup', onRelease)
+    window.removeEventListener('pointercancel', onRelease)
+  }
+
+  const start = (letter: Letter, event: React.PointerEvent) => {
+    // Only one letter travels at a time: a second finger takes over rather
+    // than leaving the first one behind, still marked as dragging.
+    releaseAll()
+    event.preventDefault()
+    active = { letter, pointerId: event.pointerId }
+    letter.dragging = true
+    letter.grabX = event.clientX
+    letter.grabY = event.clientY
+    letter.originX = letter.x
+    letter.originY = letter.y
+    letter.vx = 0
+    letter.vy = 0
+    window.addEventListener('pointermove', onMove)
+    window.addEventListener('pointerup', onRelease)
+    window.addEventListener('pointercancel', onRelease)
+    wake()
+  }
+
+  return { start, releaseAll }
+}
+
+export default function FooterWordmark() {
+  const host = useRef<HTMLDivElement>(null)
+  const letters = useRef<Letter[]>([])
+  const frame = useRef<number | null>(null)
+  const drag = useRef<DragController | null>(null)
+  const reduced = useRef(false)
+
+  useEffect(() => {
+    const root = host.current
+    if (!root) return
+    reduced.current = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    letters.current = Array.from(root.querySelectorAll<HTMLSpanElement>('[data-letter]')).map((el) => ({
+      el, x: 0, y: 0, vx: 0, vy: 0, dragging: false, grabX: 0, grabY: 0, originX: 0, originY: 0,
+    }))
+
+    const controller = createDragController(() => {
+      if (frame.current === null) {
+        frame.current = requestAnimationFrame(() => step(letters.current, frame))
+      }
+    })
+    drag.current = controller
+
+    // Letters rise into place the first time the footer is reached. Done with
+    // a class rather than inline styles so the transition can be turned off
+    // wholesale by the reduced-motion rules in globals.css.
+    let io: IntersectionObserver | null = null
+    if (!reduced.current && 'IntersectionObserver' in window) {
+      io = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (!entry.isIntersecting) continue
+            root.classList.add('wordmark-in')
+            io?.disconnect()
+          }
+        },
+        { threshold: 0.25 },
+      )
+      io.observe(root)
+    } else {
+      root.classList.add('wordmark-in')
+    }
+
+    return () => {
+      io?.disconnect()
+      controller.releaseAll()
+      if (frame.current !== null) cancelAnimationFrame(frame.current)
+      frame.current = null
+    }
+  }, [])
+
+  const onPointerDown = (index: number) => (event: React.PointerEvent<HTMLSpanElement>) => {
+    if (reduced.current) return
+    const letter = letters.current[index]
+    if (letter) drag.current?.start(letter, event)
   }
 
   return (
@@ -169,9 +217,6 @@ export default function FooterWordmark() {
             key={`${char}-${i}`}
             data-letter
             onPointerDown={onPointerDown(i)}
-            onPointerMove={onPointerMove(i)}
-            onPointerUp={onPointerUp(i)}
-            onPointerCancel={onPointerUp(i)}
             className="footer-wordmark-letter"
             style={{ transitionDelay: `${i * 55}ms` }}
           >
