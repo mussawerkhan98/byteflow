@@ -381,6 +381,98 @@ export default async function AboutPage() {
       <AboutReviews items={testimonials} />
 
       {/* ── Final CTA ────────────────────────────────────────── */}
+      {/* ── Company information ──────────────────────────────
+          The registered details a reader (or a search engine assessing
+          experience, expertise, authoritativeness and trust) needs to confirm
+          this is a real, locatable business. Every value here matches the
+          Organization markup injected by the "Address" script in the admin
+          panel — if one changes, the other has to change with it, or the
+          mismatch counts against the site rather than for it. */}
+      <section id="company-information" className="py-24 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-page mx-auto">
+
+          <div className="mb-14 max-w-3xl">
+            <p className="text-[#2CCDDE] text-xs font-bold uppercase tracking-widest mb-4">Company information</p>
+            <h2 className="text-3xl sm:text-4xl font-bold text-[var(--text-primary)] leading-snug mb-5">
+              Who you are actually dealing with
+            </h2>
+            <p className="text-[var(--text-muted)] text-base leading-relaxed">
+              Plenty of IT providers in Dubai are a phone number and a logo. These are our
+              registered details, so you can check us before you sign anything — and reach a
+              named company, at a fixed address, if something goes wrong.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+
+            {/* Registered details */}
+            <div
+              className="lg:col-span-3 p-8 sm:p-10 rounded-2xl"
+              style={{ background: 'linear-gradient(160deg, rgba(44,205,222,0.05) 0%, var(--bg-surface) 100%)', border: '1px solid rgba(44,205,222,0.14)' }}
+            >
+              <h3 className="text-[var(--text-primary)] text-lg font-bold mb-7">Registered business details</h3>
+              <dl className="flex flex-col">
+                {[
+                  { term: 'Registered name', detail: 'Byteflow Information Technology Co. L.L.C.' },
+                  { term: 'Trading as', detail: 'Byteflow' },
+                  { term: 'Established', detail: '2017 — operating in Dubai for eight years' },
+                  { term: 'Registered office', detail: 'Emaar Park 4, Greens, TECOM, Dubai, United Arab Emirates' },
+                  { term: 'Telephone', detail: '+971 54 328 2042', href: 'tel:+971543282042' },
+                  { term: 'Email', detail: 'info@byteflow.ae', href: 'mailto:info@byteflow.ae' },
+                  { term: 'Opening hours', detail: 'Monday to Saturday, 9:00am to 6:00pm (GST)' },
+                  { term: 'Areas served', detail: 'Dubai, Sharjah and Abu Dhabi' },
+                ].map((row) => (
+                  <div
+                    key={row.term}
+                    className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-6 py-3.5 border-b last:border-b-0"
+                    style={{ borderColor: 'rgba(44,205,222,0.1)' }}
+                  >
+                    <dt className="text-xs text-[var(--text-dim)] font-semibold uppercase tracking-wider sm:w-44 flex-shrink-0">
+                      {row.term}
+                    </dt>
+                    <dd className="text-[var(--text-primary)] text-sm font-medium leading-relaxed">
+                      {row.href ? (
+                        <a href={row.href} className="transition-colors duration-200 hover:text-[#2CCDDE]">{row.detail}</a>
+                      ) : (
+                        row.detail
+                      )}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+
+            {/* What stands behind the work */}
+            <div className="lg:col-span-2 flex flex-col gap-4">
+              {[
+                {
+                  title: 'Eight years, one city',
+                  body: 'Byteflow has supported businesses in Dubai since 2017, from our first ten clients in Deira and Bur Dubai to more than 500 across the UAE today.',
+                },
+                {
+                  title: 'Our own engineers',
+                  body: 'Support is delivered by people we employ, remotely and on site. Work is not passed to a subcontractor you never meet and cannot hold to anything.',
+                },
+                {
+                  title: 'Accountable in writing',
+                  body: 'Response times, what is covered and what is charged separately are set out in the contract before it starts, not decided after a problem happens.',
+                },
+              ].map((item) => (
+                <div
+                  key={item.title}
+                  className="card-hover p-7 rounded-xl flex-1"
+                  style={{ background: 'linear-gradient(160deg, rgba(44,205,222,0.05) 0%, var(--bg-surface) 100%)', border: '1px solid rgba(44,205,222,0.1)' }}
+                >
+                  <h3 className="text-[var(--text-primary)] text-base font-bold mb-2.5">{item.title}</h3>
+                  <p className="text-[var(--text-muted)] text-sm leading-relaxed">{item.body}</p>
+                </div>
+              ))}
+            </div>
+
+          </div>
+        </div>
+      </section>
+
       <section className="py-24 px-4 sm:px-6 lg:px-8">
         <div className="max-w-page mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
