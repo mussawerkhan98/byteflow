@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Script from "next/script";
-import { Sora, Plus_Jakarta_Sans } from "next/font/google";
+import { Sora, Plus_Jakarta_Sans, Outfit } from "next/font/google";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { connection } from "next/server";
 // Ship Font Awesome's CSS in the bundle; app/components/Icon.tsx turns off
@@ -30,6 +30,15 @@ const jakarta = Plus_Jakarta_Sans({
 const sora = Sora({
   subsets: ["latin"],
   variable: "--font-heading",
+  display: "swap",
+});
+
+// Only the footer wordmark uses this, so just the weight it is set in is
+// pulled down rather than the whole axis.
+const outfit = Outfit({
+  subsets: ["latin"],
+  weight: "800",
+  variable: "--font-wordmark",
   display: "swap",
 });
 
@@ -107,7 +116,7 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
-      className={`${jakarta.variable} ${sora.variable} h-full antialiased`}
+      className={`${jakarta.variable} ${sora.variable} ${outfit.variable} h-full antialiased`}
     >
       <head dangerouslySetInnerHTML={{ __html: `${themeScript}\n${headScripts}` }} />
       <body
