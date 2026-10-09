@@ -14,6 +14,7 @@ import {
 import { faChevronRight, faEnvelope, faLocationDot, faPhone } from '@fortawesome/free-solid-svg-icons'
 import { Icon } from './Icon'
 import LogoLink from './LogoLink'
+import FooterWordmark from './FooterWordmark'
 
 const fallbackUsefulLinks = [
   { label: 'Home', href: '/' },
@@ -216,6 +217,8 @@ export default function Footer({ navigation = fallbackUsefulLinks, settings = {}
           </div>
         </div>
       </div>
+
+      <FooterWordmark />
 
       <div style={{ borderTop: '1px solid var(--border-subtle)' }}>
         <div className="max-w-page mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-2">
