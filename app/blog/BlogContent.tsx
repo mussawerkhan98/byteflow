@@ -167,7 +167,7 @@ export default function BlogContent({ posts }: { posts: Post[] }) {
     <div>
       {/* Header */}
       <section className="pt-20 pb-10 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-page mx-auto">
           <p className="text-[#2CCDDE] text-xs font-bold uppercase tracking-widest mb-5">Insights</p>
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6">
             <div>
@@ -195,7 +195,7 @@ export default function BlogContent({ posts }: { posts: Post[] }) {
 
       {/* Filter */}
       <div className="px-4 sm:px-6 lg:px-8 mb-10">
-        <div className="max-w-7xl mx-auto flex items-center gap-2 flex-wrap">
+        <div className="max-w-page mx-auto flex items-center gap-2 flex-wrap">
           {CATEGORIES.map((cat) => (
             <button
               key={cat}
@@ -215,7 +215,7 @@ export default function BlogContent({ posts }: { posts: Post[] }) {
 
       {/* Posts */}
       <section className="px-4 sm:px-6 lg:px-8 pb-28">
-        <div className="max-w-7xl mx-auto flex flex-col gap-6">
+        <div className="max-w-page mx-auto flex flex-col gap-6">
           {filtered.length === 0 && (
             <p className="text-center text-[var(--text-muted)] text-sm py-20">No articles in this category yet.</p>
           )}
@@ -232,7 +232,7 @@ export default function BlogContent({ posts }: { posts: Post[] }) {
 
       {/* Bottom CTA */}
       <section className="px-4 sm:px-6 lg:px-8 pb-24">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-page mx-auto">
           <div
             className="relative overflow-hidden rounded-2xl px-8 py-12 flex flex-col sm:flex-row items-center justify-between gap-8"
             style={{
