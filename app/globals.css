@@ -453,3 +453,75 @@ h1 {
     transition: none;
   }
 }
+
+/* ── Footer wordmark ──────────────────────────────────────────────────
+   The oversized BYTEFLOW that closes the footer. Letters can be picked up
+   and thrown; the spring that brings them home lives in
+   app/components/FooterWordmark.tsx. Everything here is presentation, so
+   the component works (static) even if this block is missing. */
+
+.footer-wordmark {
+  /* Scales with the viewport so the word fills the width at any size
+     without ever forcing a horizontal scrollbar. */
+  font-family: var(--font-heading), 'Sora', system-ui, sans-serif;
+  font-size: clamp(2.75rem, 15.5vw, 15rem);
+  font-weight: 800;
+  letter-spacing: -0.045em;
+}
+
+.footer-wordmark-letter {
+  display: inline-block;
+  /* The letters are grabbable, so say so, and keep a drag from turning
+     into a text selection or a browser page-pan on touch. */
+  cursor: grab;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  will-change: transform;
+  color: var(--text-primary);
+  opacity: 0.09;
+  transform: translate3d(0, 0, 0);
+}
+
+.footer-wordmark-letter:active {
+  cursor: grabbing;
+}
+
+.footer-wordmark-letter > span {
+  display: inline-block;
+  /* The entrance animation rides on this inner span so it never fights
+     the transform the drag writes onto the letter itself. */
+  transform: translate3d(0, 0.18em, 0);
+  opacity: 0;
+  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.7s ease;
+  transition-delay: inherit;
+}
+
+.footer-wordmark.wordmark-in .footer-wordmark-letter > span {
+  transform: translate3d(0, 0, 0);
+  opacity: 1;
+}
+
+.footer-wordmark-accent {
+  background: linear-gradient(135deg, #2CCDDE, #46A3E1);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* The accent letter carries the brand colour, so it needs to stay visible
+   while the rest of the word sits back as a watermark. */
+.footer-wordmark-letter:has(.footer-wordmark-accent) {
+  opacity: 0.55;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .footer-wordmark-letter {
+    cursor: default;
+  }
+  .footer-wordmark-letter > span {
+    transform: none;
+    opacity: 1;
+    transition: none;
+  }
+}
