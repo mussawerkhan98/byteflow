@@ -222,7 +222,7 @@ export default function ProjectsClient({ projects }: { projects: UiProject[] }) 
     <div>
       {/* Header */}
       <section className="pt-20 pb-10 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-page mx-auto">
           <p className="text-[#2CCDDE] text-xs font-bold uppercase tracking-widest mb-5">Our Work</p>
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-8">
             <div>
@@ -247,7 +247,7 @@ export default function ProjectsClient({ projects }: { projects: UiProject[] }) 
 
       {/* Filter tabs */}
       <div className="px-4 sm:px-6 lg:px-8 mb-10">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-page mx-auto">
           <div className="flex items-center gap-2 flex-wrap">
             {CATEGORIES.map((cat) => (
               <button key={cat} onClick={() => setActive(cat)} className="px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-200"
@@ -263,7 +263,7 @@ export default function ProjectsClient({ projects }: { projects: UiProject[] }) 
 
       {/* Projects */}
       <section className="px-4 sm:px-6 lg:px-8 pb-28">
-        <div className="max-w-7xl mx-auto flex flex-col gap-6">
+        <div className="max-w-page mx-auto flex flex-col gap-6">
           {featured && <div className="relative"><FeaturedCard project={featured} /></div>}
           {rest.length > 0 && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -280,7 +280,7 @@ export default function ProjectsClient({ projects }: { projects: UiProject[] }) 
 
       {/* Bottom CTA */}
       <section className="px-4 sm:px-6 lg:px-8 pb-24">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-page mx-auto">
           <div className="relative overflow-hidden rounded-2xl px-8 py-12 flex flex-col sm:flex-row items-center justify-between gap-8"
             style={{ background:'linear-gradient(135deg, rgba(44,205,222,0.09) 0%, rgba(70,163,225,0.05) 50%, var(--bg-surface) 100%)', border:'1px solid rgba(44,205,222,0.18)' }}>
             <div className="absolute top-0 left-0 right-0 h-px" style={{ background:'linear-gradient(90deg, transparent, rgba(44,205,222,0.6), transparent)' }} />

@@ -61,7 +61,7 @@ export default function HowItWorks() {
         style={{ background: 'radial-gradient(ellipse, rgba(44,205,222,0.06) 0%, transparent 65%)', filter: 'blur(80px)' }}
       />
 
-      <div className="relative max-w-7xl mx-auto">
+      <div className="relative max-w-page mx-auto">
 
         {/* Header */}
         <div className="text-center mb-20">

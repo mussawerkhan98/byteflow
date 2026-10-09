@@ -31,7 +31,7 @@ export default async function AboutPage() {
         <div className="absolute top-0 right-0 w-[700px] h-[700px] pointer-events-none"
           style={{ background: 'radial-gradient(circle at 80% 20%, rgba(44,205,222,0.07) 0%, transparent 60%)', filter: 'blur(60px)' }} />
 
-        <div className="relative max-w-7xl mx-auto">
+        <div className="relative max-w-page mx-auto">
           <div className="max-w-2xl mb-16">
             <p className="text-[#2CCDDE] text-sm font-semibold uppercase tracking-widest mb-4">{hero?.hero_label || 'Dubai, UAE — Since 2017'}</p>
             {hero?.hero_heading ? <h1 className="text-5xl sm:text-6xl lg:text-[72px] font-bold leading-[1.04] tracking-tight mb-6 text-[var(--text-primary)]">{hero.hero_heading}</h1> : <h1 className="text-5xl sm:text-6xl lg:text-[72px] font-bold leading-[1.04] tracking-tight mb-6">
@@ -81,7 +81,7 @@ export default async function AboutPage() {
 
       {/* ── Founder ──────────────────────────────────────────── */}
       <section className="relative py-0 px-4 sm:px-6 lg:px-8 overflow-hidden">
-        <div className="relative max-w-7xl mx-auto">
+        <div className="relative max-w-page mx-auto">
 
           {/* Full-width card that continues from stats */}
           <div
@@ -180,7 +180,7 @@ export default async function AboutPage() {
 
       {/* ── Story timeline ───────────────────────────────────── */}
       <section className="py-24 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-page mx-auto">
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-16">
 
@@ -263,7 +263,7 @@ export default async function AboutPage() {
 
       {/* ── How we work ──────────────────────────────────────── */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-page mx-auto">
           <div
             className="rounded-2xl overflow-hidden"
             style={{ border: '1px solid rgba(44,205,222,0.12)' }}
@@ -330,7 +330,7 @@ export default async function AboutPage() {
 
       {/* ── Services ─────────────────────────────────────────── */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-page mx-auto">
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-10">
             <div>
               <p className="text-[#2CCDDE] text-xs font-bold uppercase tracking-widest mb-3">What we do</p>
@@ -382,7 +382,7 @@ export default async function AboutPage() {
 
       {/* ── Final CTA ────────────────────────────────────────── */}
       <section className="py-24 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-page mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
             <div

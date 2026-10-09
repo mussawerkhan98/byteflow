@@ -5,6 +5,12 @@
 @theme inline {
   --font-sans: var(--font-body);
   --font-display: var(--font-heading);
+  /* The width every page's content is held to. It used to be Tailwind's
+     max-w-7xl (1280px), which left roughly 320px of empty margin either side
+     on a 1920px monitor and twice that on a 2560px one -- the page looked
+     like it was not using the screen. Named rather than inlined so the whole
+     site stays on one measurement. */
+  --container-page: 100rem;
 }
 
 :root {

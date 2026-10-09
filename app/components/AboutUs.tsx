@@ -61,7 +61,7 @@ export default function AboutUs() {
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] pointer-events-none"
         style={{ background: 'radial-gradient(ellipse, rgba(44,205,222,0.06) 0%, transparent 70%)', filter: 'blur(60px)' }} />
 
-      <div className="relative max-w-7xl mx-auto">
+      <div className="relative max-w-page mx-auto">
 
         {/* Header */}
         <div className="mb-16">

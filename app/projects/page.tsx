@@ -68,7 +68,7 @@ export default async function ProjectsPage() {
           }}
         >
           {hero.hero_heading && (
-            <div className="mx-auto flex h-full max-w-7xl items-end px-4 pb-8">
+            <div className="mx-auto flex h-full max-w-page items-end px-4 pb-8">
               <p className="text-4xl font-bold text-white">
                 {hero.hero_heading}
               </p>

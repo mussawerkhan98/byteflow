@@ -35,7 +35,7 @@ export default function CmsServicePage({
           }}
         />
 
-        <div className="relative max-w-7xl mx-auto">
+        <div className="relative max-w-page mx-auto">
           <div className="max-w-3xl">
             <p className="text-[#2CCDDE] text-xs font-bold uppercase tracking-widest mb-5">
               Our Services
@@ -108,7 +108,7 @@ export default function CmsServicePage({
       {/* ── IMAGE ────────────────────────────────────────────── */}
       {service.image_url && (
         <section className="px-4 sm:px-6 lg:px-8 pb-4">
-          <div className="max-w-7xl mx-auto">
+          <div className="max-w-page mx-auto">
             <div
               className="relative h-[280px] sm:h-[420px] rounded-3xl overflow-hidden"
               style={{ border: '1px solid rgba(44,205,222,0.15)' }}
@@ -128,7 +128,7 @@ export default function CmsServicePage({
       {/* ── DESCRIPTION ──────────────────────────────────────── */}
       {paragraphs.length > 0 && (
         <section className="py-20 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-7xl mx-auto">
+          <div className="max-w-page mx-auto">
             <div className="max-w-3xl">
               <p className="text-[#2CCDDE] text-xs font-bold uppercase tracking-widest mb-5">
                 What&apos;s Included
@@ -147,7 +147,7 @@ export default function CmsServicePage({
 
       {/* ── CTA BAND ─────────────────────────────────────────── */}
       <section className="py-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-page mx-auto">
           <div
             className="relative overflow-hidden rounded-3xl p-10 sm:p-14"
             style={{
@@ -182,7 +182,7 @@ export default function CmsServicePage({
       {/* ── RELATED ──────────────────────────────────────────── */}
       {related.length > 0 && (
         <section className="pb-24 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-7xl mx-auto">
+          <div className="max-w-page mx-auto">
             <div className="mb-10">
               <p className="text-[#2CCDDE] text-xs font-bold uppercase tracking-widest mb-4">
                 Related Services
