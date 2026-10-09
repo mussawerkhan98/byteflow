@@ -478,8 +478,10 @@ h1 {
   -webkit-user-select: none;
   user-select: none;
   will-change: transform;
+  /* Solid, not a watermark: the word is the footer's closing mark, and at
+     9% it read as a smudge rather than as type. Takes the page's own ink,
+     so it is black on the light theme and white on the dark one. */
   color: var(--text-primary);
-  opacity: 0.09;
   transform: translate3d(0, 0, 0);
 }
 
@@ -507,12 +509,6 @@ h1 {
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-}
-
-/* The accent letter carries the brand colour, so it needs to stay visible
-   while the rest of the word sits back as a watermark. */
-.footer-wordmark-letter:has(.footer-wordmark-accent) {
-  opacity: 0.55;
 }
 
 @media (prefers-reduced-motion: reduce) {
