@@ -5,9 +5,9 @@ import { getCategoryStyle } from "../blog/category-style";
 
 export default function Blog({ posts }: { posts: Post[] }) {
   return (
-    <section className="relative overflow-hidden px-4 py-28 sm:px-6 lg:px-8">
+    <section className="relative overflow-hidden py-28">
       <div className="pointer-events-none absolute left-1/2 top-1/2 h-[600px] w-[900px] -translate-x-1/2 -translate-y-1/2" style={{ background: "radial-gradient(ellipse, rgba(44,205,222,0.05) 0%, transparent 70%)", filter: "blur(80px)" }} />
-      <div className="relative mx-auto max-w-page">
+      <div className="relative mx-auto max-w-page px-4 sm:px-6 lg:px-8">
         <div className="mb-16 flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-cyan-400/25 bg-cyan-400/[.07] px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-[#2CCDDE]">Insights</div>

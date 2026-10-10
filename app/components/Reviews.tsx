@@ -80,7 +80,7 @@ export default function Reviews({ items }: { items?: { customer_name: string; cu
   const r = shownReviews[active]
 
   return (
-    <section className="relative py-28 px-4 sm:px-6 lg:px-8 overflow-hidden">
+    <section className="relative py-28 overflow-hidden">
 
       {/* Ambient glow */}
       <div
@@ -88,7 +88,7 @@ export default function Reviews({ items }: { items?: { customer_name: string; cu
         style={{ background: 'radial-gradient(ellipse, rgba(44,205,222,0.07) 0%, transparent 65%)', filter: 'blur(80px)' }}
       />
 
-      <div className="relative max-w-5xl mx-auto">
+      <div className="relative max-w-page mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 mb-16">
@@ -167,7 +167,7 @@ export default function Reviews({ items }: { items?: { customer_name: string; cu
                 transition: 'opacity 0.28s ease, transform 0.28s ease',
               }}
             >
-              <p className="text-[var(--text-primary)] text-xl sm:text-2xl font-medium leading-relaxed mb-10" style={{ letterSpacing: '-0.01em' }}>
+              <p className="max-w-[62ch] text-[var(--text-primary)] text-xl sm:text-2xl font-medium leading-relaxed mb-10" style={{ letterSpacing: '-0.01em' }}>
                 {r.text}
               </p>
 

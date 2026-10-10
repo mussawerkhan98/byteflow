@@ -53,7 +53,7 @@ const steps = [
 
 export default function HowItWorks() {
   return (
-    <section className="relative py-28 px-4 sm:px-6 lg:px-8 overflow-hidden">
+    <section className="relative py-28 overflow-hidden">
 
       {/* Ambient glow */}
       <div
@@ -61,7 +61,7 @@ export default function HowItWorks() {
         style={{ background: 'radial-gradient(ellipse, rgba(44,205,222,0.06) 0%, transparent 65%)', filter: 'blur(80px)' }}
       />
 
-      <div className="relative max-w-page mx-auto">
+      <div className="relative max-w-page mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Header */}
         <div className="text-center mb-20">

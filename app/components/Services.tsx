@@ -152,13 +152,13 @@ export default async function Services() {
   const useDb = dbServices.length > 0
 
   return (
-    <section className="relative py-28 px-4 sm:px-6 lg:px-8 overflow-hidden">
+    <section className="relative py-28 overflow-hidden">
       <div className="absolute top-20 left-10 w-[500px] h-[500px] rounded-full pointer-events-none"
         style={{ background: 'radial-gradient(circle, rgba(44,205,222,0.07) 0%, transparent 70%)', filter: 'blur(80px)' }} />
       <div className="absolute bottom-20 right-10 w-[500px] h-[500px] rounded-full pointer-events-none"
         style={{ background: 'radial-gradient(circle, rgba(70,163,225,0.07) 0%, transparent 70%)', filter: 'blur(80px)' }} />
 
-      <div className="relative max-w-page mx-auto">
+      <div className="relative max-w-page mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-16">
           <div>
