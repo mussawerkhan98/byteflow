@@ -178,7 +178,7 @@ export default function Contact({ settings = {}, hero }: { settings?: ContactSet
   })
 
   return (
-    <section className="relative py-28 px-4 sm:px-6 lg:px-8 overflow-hidden" style={hero?.hero_background_image?{backgroundImage:`linear-gradient(rgba(4,13,18,.82),rgba(4,13,18,.95)),url(${hero.hero_background_image})`,backgroundSize:'cover',backgroundPosition:'top center'}:undefined}>
+    <section className="relative py-28 overflow-hidden" style={hero?.hero_background_image?{backgroundImage:`linear-gradient(rgba(4,13,18,.82),rgba(4,13,18,.95)),url(${hero.hero_background_image})`,backgroundSize:'cover',backgroundPosition:'top center'}:undefined}>
 
       {/* Ambient glows */}
       <div className="absolute top-0 right-0 w-[600px] h-[600px] pointer-events-none"
@@ -186,7 +186,7 @@ export default function Contact({ settings = {}, hero }: { settings?: ContactSet
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] pointer-events-none"
         style={{ background: 'radial-gradient(circle, rgba(70,163,225,0.05) 0%, transparent 65%)', filter: 'blur(80px)' }} />
 
-      <div className="relative max-w-page mx-auto">
+      <div className="relative max-w-page mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Header */}
         <div className="mb-16">

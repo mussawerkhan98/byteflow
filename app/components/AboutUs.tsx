@@ -55,13 +55,13 @@ const values = [
 
 export default function AboutUs() {
   return (
-    <section className="relative py-28 px-4 sm:px-6 lg:px-8 overflow-hidden">
+    <section className="relative py-28 overflow-hidden">
 
       {/* Ambient glows */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] pointer-events-none"
         style={{ background: 'radial-gradient(ellipse, rgba(44,205,222,0.06) 0%, transparent 70%)', filter: 'blur(60px)' }} />
 
-      <div className="relative max-w-page mx-auto">
+      <div className="relative max-w-page mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Header */}
         <div className="mb-16">
