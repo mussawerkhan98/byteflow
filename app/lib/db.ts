@@ -52,6 +52,8 @@ export const db = createClient({
   authToken: process.env.TURSO_AUTH_TOKEN!,
 });
 
+import { postDisplay } from "./post-display";
+
 function safeJsonParse<T>(value: unknown, fallback: T): T {
   if (typeof value !== "string") return fallback;
   try {
@@ -61,28 +63,44 @@ function safeJsonParse<T>(value: unknown, fallback: T): T {
   }
 }
 
-// ── Posts ──────────────────────────────────────────────────────────────────
+// ── Posts ──────────────────────────────────────────────────────────
+
+/**
+ * One row to one post. `date`, `read_time` and `excerpt` can be saved empty in
+ * the admin panel, so postDisplay fills those three from the post's own
+ * content and creation time; anything typed by hand is kept as typed.
+ */
+function toPost(row: Record<string, unknown>): Post {
+  const shown = postDisplay({
+    date: row.date as string | null,
+    read_time: row.read_time as string | null,
+    excerpt: row.excerpt as string | null,
+    content: row.content as string | null,
+    created_at: row.created_at as string | null,
+  });
+  return {
+    id: String(row.id),
+    slug: row.slug as string,
+    category: row.category as string,
+    title: row.title as string,
+    excerpt: shown.excerpt,
+    content: row.content as string,
+    date: shown.date,
+    read_time: shown.read_time,
+    published: Boolean(row.published),
+    created_at: row.created_at as string,
+    image_url: (row.image_url as string) ?? null,
+    meta_title: (row.meta_title as string) ?? null,
+    meta_description: (row.meta_description as string) ?? null,
+  };
+}
 
 export async function getPosts(): Promise<Post[]> {
   try {
     const result = await db.execute(
       "SELECT * FROM posts WHERE published = 1 ORDER BY created_at DESC",
     );
-    return result.rows.map((row) => ({
-      id: String(row.id),
-      slug: row.slug as string,
-      category: row.category as string,
-      title: row.title as string,
-      excerpt: row.excerpt as string,
-      content: row.content as string,
-      date: row.date as string,
-      read_time: row.read_time as string,
-      published: Boolean(row.published),
-      created_at: row.created_at as string,
-      image_url: (row.image_url as string) ?? null,
-      meta_title: (row.meta_title as string) ?? null,
-      meta_description: (row.meta_description as string) ?? null,
-    }));
+    return result.rows.map(toPost);
   } catch (error) {
     console.error(
       "Turso error:",
@@ -100,21 +118,7 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
     });
     const row = result.rows[0];
     if (!row) return null;
-    return {
-      id: String(row.id),
-      slug: row.slug as string,
-      category: row.category as string,
-      title: row.title as string,
-      excerpt: row.excerpt as string,
-      content: row.content as string,
-      date: row.date as string,
-      read_time: row.read_time as string,
-      published: Boolean(row.published),
-      created_at: row.created_at as string,
-      image_url: (row.image_url as string) ?? null,
-      meta_title: (row.meta_title as string) ?? null,
-      meta_description: (row.meta_description as string) ?? null,
-    };
+    return toPost(row);
   } catch (error) {
     console.error(
       "Turso error:",
