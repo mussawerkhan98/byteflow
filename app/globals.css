@@ -11,6 +11,9 @@
      like it was not using the screen. Named rather than inlined so the whole
      site stays on one measurement. */
   --container-page: 100rem;
+  /* Outfit, the face the footer wordmark is set in. The header wordmark uses
+     it too so the brand name reads the same at both ends of the page. */
+  --font-brand: var(--font-wordmark);
 }
 
 :root {
@@ -35,6 +38,15 @@
   --input-text: #ffffff;
   --option-bg: #0a0a0a;
   --header-scrolled-bg: rgba(0, 0, 0, 0.85);
+
+  /* Hairlines and surfaces for the header and home hero. --border-subtle is
+     too faint to draw a line you can actually see on the dark theme. */
+  --border-default: rgba(255, 255, 255, 0.09);
+  --border-strong: rgba(255, 255, 255, 0.18);
+  /* Second line of a two-tone headline. */
+  --ink-soft: #6b7686;
+  --shadow-pop: 0 24px 48px -12px rgba(0, 0, 0, 0.7);
+  --shadow-card: inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
 :root[data-theme='light'] {
@@ -56,6 +68,12 @@
   --input-text: #0b1220;
   --option-bg: #ffffff;
   --header-scrolled-bg: rgba(255, 255, 255, 0.85);
+
+  --border-default: rgba(11, 18, 32, 0.09);
+  --border-strong: rgba(11, 18, 32, 0.2);
+  --ink-soft: #8592a3;
+  --shadow-pop: 0 24px 48px -16px rgba(15, 23, 42, 0.2), 0 2px 6px rgba(15, 23, 42, 0.05);
+  --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.04), 0 18px 40px -22px rgba(15, 23, 42, 0.22);
 }
 
 body {
@@ -77,22 +95,83 @@ h1 {
   letter-spacing: -0.035em;
 }
 
-@keyframes marquee {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
+/* ---- Header and home hero ---- */
+.brand-accent {
+  background: linear-gradient(135deg, #2CCDDE, #46A3E1);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
-@keyframes pulse-glow {
-  0%, 100% { opacity: 0.6; }
-  50% { opacity: 1; }
+.site-header :focus-visible,
+.site-menu :focus-visible,
+.home-hero :focus-visible,
+.home-services :focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 2px;
 }
 
-.marquee-track {
-  animation: marquee 28s linear infinite;
+/* Desktop nav items run the full height of the bar, so pull the ring in
+   rather than drawing it past the header's edge. */
+.site-header .nav-item:focus-visible {
+  outline-offset: -14px;
+  border-radius: 12px;
 }
 
-.marquee-track:hover {
-  animation-play-state: paused;
+/* ---- Home service cards (app/components/ServiceCard.tsx) ---- */
+
+/* Icon tile: a faint brand tint, so the icons read as one set. */
+.service-card-icon {
+  color: #0e7490;
+  background: rgba(44, 205, 222, 0.1);
+  border-color: rgba(44, 205, 222, 0.28);
+}
+
+:root:not([data-theme='light']) .service-card-icon,
+.service-card-featured .service-card-icon {
+  color: #2ccdde;
+  background: rgba(44, 205, 222, 0.08);
+  border-color: rgba(44, 205, 222, 0.24);
+}
+
+/* The large bento card is ink in both themes, so it carries its own palette. */
+.service-card-featured {
+  --bg-surface: #0b1220;
+  --text-primary: #ffffff;
+  --text-body: #bcc6d2;
+  --text-nav: #8f9bab;
+  --border-default: rgba(255, 255, 255, 0.12);
+}
+
+:root:not([data-theme='light']) .service-card-featured {
+  --bg-surface: #0c1923;
+}
+
+/* Texture for the featured card: the receding grid from the Byteflow mark,
+   fading out towards the text. */
+.service-card-grid {
+  background-image:
+    linear-gradient(to right, rgba(44, 205, 222, 0.14) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(44, 205, 222, 0.14) 1px, transparent 1px);
+  background-size: 36px 36px;
+  background-position: right top;
+  -webkit-mask-image: radial-gradient(ellipse 80% 70% at 100% 0%, #000 0%, transparent 70%);
+  mask-image: radial-gradient(ellipse 80% 70% at 100% 0%, #000 0%, transparent 70%);
+}
+
+/* An editor can give the home hero a photo. Whatever the site theme, the
+   text then sits on a darkened photo, so it takes the dark palette. */
+.hero-on-image {
+  --text-primary: #ffffff;
+  --text-body: #c5cdd8;
+  --text-nav: #aeb7c4;
+  --text-dim: rgba(255, 255, 255, 0.32);
+  --ink-soft: rgba(255, 255, 255, 0.62);
+  --border-default: rgba(255, 255, 255, 0.16);
+  --border-strong: rgba(255, 255, 255, 0.3);
+  --overlay-hover: rgba(255, 255, 255, 0.08);
+  --bg-surface: rgba(4, 13, 18, 0.72);
+  --shadow-card: none;
 }
 
 .blog-content {
@@ -276,60 +355,6 @@ h1 {
 @media (prefers-reduced-motion: reduce) {
   .card-hover:hover { transform: none; }
 }
-
-/* ---- Hero stats bar hover ---- */
-.stat-cell {
-  position: relative;
-  isolation: isolate;
-  background: var(--bg-surface);
-  transition: background-color 0.45s ease, box-shadow 0.45s ease;
-}
-
-/* Soft brand glow rising from the bottom edge */
-.stat-cell::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse 70% 60% at 50% 100%, rgba(44, 205, 222, 0.16) 0%, transparent 70%);
-  opacity: 0;
-  transition: opacity 0.45s ease;
-  pointer-events: none;
-  z-index: -1;
-}
-
-/* A translucent wash layered over the cell's own background-color, rather than
-   color-mix() — that compiles to a solid-cyan fallback on older browsers. */
-.stat-cell:hover {
-  background-image: linear-gradient(0deg, rgba(44, 205, 222, 0.07), rgba(44, 205, 222, 0.07));
-}
-
-.stat-cell:hover::after {
-  opacity: 1;
-}
-
-.stat-value {
-  display: inline-block;
-  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.stat-cell:hover .stat-value {
-  transform: scale(1.08);
-}
-
-.stat-label {
-  transition: color 0.45s ease, letter-spacing 0.45s ease;
-}
-
-.stat-cell:hover .stat-label {
-  color: var(--cyan);
-  letter-spacing: 0.04em;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .stat-cell:hover .stat-value { transform: none; }
-  .stat-cell:hover .stat-label { letter-spacing: normal; }
-}
-
 
 /* ---- CTA section background ---- */
 .cta-grid {

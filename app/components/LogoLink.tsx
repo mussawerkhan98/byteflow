@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import type { MouseEvent } from "react";
+import type { MouseEvent, ReactNode } from "react";
 
 type LogoLinkProps = {
   src: string;
@@ -11,7 +11,9 @@ type LogoLinkProps = {
   height: number;
   className?: string;
   imageClassName?: string;
-  priority?: boolean;
+  preload?: boolean;
+  /** Rendered after the mark, inside the link — the header's wordmark. */
+  children?: ReactNode;
 };
 
 /**
@@ -25,7 +27,8 @@ export default function LogoLink({
   height,
   className,
   imageClassName,
-  priority,
+  preload,
+  children,
 }: LogoLinkProps) {
   const pathname = usePathname();
 
@@ -47,8 +50,9 @@ export default function LogoLink({
         width={width}
         height={height}
         className={imageClassName}
-        priority={priority}
+        preload={preload}
       />
+      {children}
     </Link>
   );
 }

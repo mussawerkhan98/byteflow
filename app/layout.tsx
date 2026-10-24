@@ -10,7 +10,6 @@ import "./globals.css";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import StickyContactButtons from "./components/StickyContactButtons";
-import LeadPopup from "./components/LeadPopup";
 import LeadTracking from "./components/LeadTracking";
 import InquiryDrawer from "./components/InquiryDrawer";
 import PageCta from "./components/PageCta";
@@ -130,6 +129,8 @@ export default async function RootLayout({
           navigation={headerNavigation}
           serviceLinks={serviceLinks}
           logoUrl={String(settings?.logo_url || "/images/logo.png")}
+          phone={String(settings?.header_phone || "") || undefined}
+          whatsappUrl={String(settings?.whatsapp_link || "") || undefined}
         />
         <main className="flex-1">{children}</main>
         <PageSections placement="before_faq" />
@@ -141,7 +142,6 @@ export default async function RootLayout({
           settings={(settings ?? {}) as never}
         />
         <StickyContactButtons />
-        <LeadPopup />
         <InquiryDrawer />
         {process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY && (
           <Script

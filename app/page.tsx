@@ -62,7 +62,11 @@ export default async function Home() {
   return (
     <>
       <JsonLd data={graph(faqPageSchema(faqs))} />
-      <Hero content={(hero ?? {}) as never} />
+      <Hero
+        content={(hero ?? {}) as never}
+        phone={String(settings?.header_phone || "") || undefined}
+        whatsappUrl={String(settings?.whatsapp_link || "") || undefined}
+      />
       <Services />
       <AboutUs />
       <HowItWorks />
