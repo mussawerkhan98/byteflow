@@ -17,7 +17,7 @@ const facts = [
   { label: 'Clients', value: '500+', note: 'Businesses across the UAE' },
   { label: 'Google rating', value: '4.9', note: 'From 50+ reviews', stars: true },
   { label: 'Established', value: '2017', note: 'Based in Dubai' },
-  { label: 'Plans for', value: '5–500+', note: 'Users, on one fixed monthly fee' },
+  { label: 'Plans for', value: '500+', note: 'Users, on one fixed monthly fee' },
 ]
 
 // Two columns on small screens, four from lg. The outer cells sit flush with
