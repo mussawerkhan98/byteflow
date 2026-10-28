@@ -11,6 +11,8 @@ export type Post = {
   read_time: string;
   published: boolean;
   created_at: string;
+  /** Set by the admin panel on save, where the column exists. */
+  updated_at: string | null;
   image_url: string | null;
   meta_title: string | null;
   meta_description: string | null;
@@ -89,6 +91,7 @@ function toPost(row: Record<string, unknown>): Post {
     read_time: shown.read_time,
     published: Boolean(row.published),
     created_at: row.created_at as string,
+    updated_at: (row.updated_at as string) ?? null,
     image_url: (row.image_url as string) ?? null,
     meta_title: (row.meta_title as string) ?? null,
     meta_description: (row.meta_description as string) ?? null,
