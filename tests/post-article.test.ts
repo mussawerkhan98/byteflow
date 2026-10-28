@@ -126,3 +126,16 @@ test('created_at supplies the time when it is the same day, and updated_at the m
   assert.equal(published?.toISOString(), '2026-10-04T09:30:29.000Z')
   assert.equal(modified?.toISOString(), '2026-10-05T11:00:00.000Z')
 })
+
+test('a question-shaped call to action after bold FAQ questions is not taken as the FAQ', () => {
+  const article = prepareArticle(
+    '<h2>Frequently asked questions</h2>' +
+      '<p><strong>What does it mean?</strong></p><p>It means this.</p>' +
+      '<p><strong>Why does it matter?</strong></p><p>Because of that.</p>' +
+      '<h3>Need help organizing your website?</h3><p>Talk to us.</p>',
+  )
+  assert.ok(article.faq)
+  assert.deepEqual(article.faq.items.map((i) => i.question), ['What does it mean?', 'Why does it matter?'])
+  // The call to action stays in the article body, words intact.
+  assert.match(article.html, /<h3 id="need-help-organizing-your-website">Need help organizing your website\?<\/h3><p>Talk to us\.<\/p>/)
+})
