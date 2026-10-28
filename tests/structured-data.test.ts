@@ -120,3 +120,26 @@ test('markup cannot be used to break out of the script tag', () => {
   assert.ok(!name.includes('<script'))
   assert.ok(!name.includes('</script'))
 })
+
+test('a post with an organization names it, with its logo, as author and publisher', () => {
+  const post = blogPostingSchema({
+    title: 'New office IT setup',
+    path: '/new-office-it-setup-dubai',
+    image: 'data:image/webp;base64,AAAA',
+    published: '2026-10-04T09:30:29.000Z',
+    modified: '2026-10-05T11:00:00.000Z',
+    wordCount: 1935,
+    section: 'IT Support',
+    organization: { name: 'Byteflow Information Technology', logo: '/images/logo.png', url: SITE_URL },
+  }) as Record<string, unknown>
+  const org = post.publisher as Record<string, unknown>
+  assert.equal(org['@id'], ORG_ID)
+  assert.equal(org.name, 'Byteflow Information Technology')
+  assert.deepEqual(org.logo, { '@type': 'ImageObject', url: 'https://www.byteflow.ae/images/logo.png' })
+  assert.deepEqual(post.author, org)
+  assert.equal(post.wordCount, 1935)
+  assert.equal(post.articleSection, 'IT Support')
+  assert.equal(post.dateModified, '2026-10-05T11:00:00.000Z')
+  // An inline image cannot be fetched by Google, so it is left out.
+  assert.ok(!('image' in post))
+})

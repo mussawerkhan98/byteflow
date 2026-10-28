@@ -16,16 +16,19 @@ import { servicesForPost } from '../lib/post-services'
 export default function PostServiceLinks({
   title,
   category,
+  embedded = false,
 }: {
   title: string
   category?: string
+  /** Rendered inside the article column, which already sets the width. */
+  embedded?: boolean
 }) {
   const links = servicesForPost(title, category)
   if (!links.length) return null
 
   return (
-    <section className="px-4 sm:px-6 lg:px-8 pt-10">
-      <div className="max-w-3xl mx-auto">
+    <section className={embedded ? 'pt-10' : 'px-4 sm:px-6 lg:px-8 pt-10'}>
+      <div className={embedded ? '' : 'max-w-3xl mx-auto'}>
         <h2 className="text-xs font-bold uppercase tracking-widest mb-5" style={{ color: '#2CCDDE' }}>
           How we can help with this
         </h2>

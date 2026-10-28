@@ -132,6 +132,17 @@ export function blogPostingSchema(input: {
   published?: string
   modified?: string
   author?: string
+  /** Words in the article body. */
+  wordCount?: number
+  /** The post's category, e.g. "IT Support". */
+  section?: string
+  /**
+   * The organization that publishes the post. When given, author and
+   * publisher carry its name and logo -- what Google's Article markup asks
+   * for -- under the same ORG_ID as the organization node, so they merge
+   * into one entity instead of describing a second company.
+   */
+  organization?: { name: string; logo?: string; url?: string }
 }): JsonLd | null {
   const headline = plainText(input.title, 110)
   if (!headline) return null
@@ -143,6 +154,20 @@ export function blogPostingSchema(input: {
   }
   const published = date(input.published)
   const modified = date(input.modified) || published
+  const orgName = plainText(input.organization?.name, 120)
+  const organization: JsonLd = orgName
+    ? {
+        '@type': 'Organization',
+        '@id': ORG_ID,
+        name: orgName,
+        url: absoluteUrl(input.organization?.url || '/'),
+        ...(input.organization?.logo && !/^data:/i.test(input.organization.logo)
+          ? { logo: { '@type': 'ImageObject', url: absoluteUrl(input.organization.logo) } }
+          : {}),
+      }
+    : { '@id': ORG_ID }
+  const section = plainText(input.section, 80)
+  const words = Number(input.wordCount)
 
   return {
     '@type': 'BlogPosting',
@@ -150,13 +175,16 @@ export function blogPostingSchema(input: {
     ...(description ? { description } : {}),
     url,
     mainEntityOfPage: { '@type': 'WebPage', '@id': url },
-    ...(input.image ? { image: absoluteUrl(input.image) } : {}),
+    ...(input.image && !/^data:/i.test(input.image) ? { image: absoluteUrl(input.image) } : {}),
     ...(published ? { datePublished: published } : {}),
     ...(modified ? { dateModified: modified } : {}),
+    ...(section ? { articleSection: section } : {}),
+    ...(Number.isFinite(words) && words > 0 ? { wordCount: Math.round(words) } : {}),
+    inLanguage: 'en',
     author: input.author
       ? { '@type': 'Person', name: plainText(input.author, 120) }
-      : { '@id': ORG_ID },
-    publisher: { '@id': ORG_ID },
+      : organization,
+    publisher: organization,
   }
 }
 
