@@ -19,6 +19,7 @@
     "app/lib/post-services.ts",
     "app/lib/media-data-url.ts",
     "app/lib/post-display.ts",
+    "app/lib/post-article.ts",
     "tests/**/*.ts"
   ],
   "exclude": [
