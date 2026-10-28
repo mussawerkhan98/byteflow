@@ -16,6 +16,14 @@ export type Post = {
   image_url: string | null;
   meta_title: string | null;
   meta_description: string | null;
+  /** Cover image description; empty means the title is used. */
+  image_alt: string;
+  /** "Written by"; empty means the Byteflow team. */
+  author_name: string;
+  /** Page options set per post in the admin. On unless switched off. */
+  show_toc: boolean;
+  show_share: boolean;
+  show_related: boolean;
 };
 
 export type DbService = {
@@ -95,7 +103,23 @@ function toPost(row: Record<string, unknown>): Post {
     image_url: (row.image_url as string) ?? null,
     meta_title: (row.meta_title as string) ?? null,
     meta_description: (row.meta_description as string) ?? null,
+    image_alt: String(row.image_alt ?? "").trim(),
+    author_name: String(row.author_name ?? "").trim(),
+    show_toc: isOn(row.show_toc),
+    show_share: isOn(row.show_share),
+    show_related: isOn(row.show_related),
   };
+}
+
+/**
+ * A page option from the admin. The columns are added by the admin on first
+ * use, so a database that has not been migrated yet returns nothing at all,
+ * and that means "on" -- the page as it was before the options existed.
+ */
+function isOn(value: unknown): boolean {
+  if (value === null || value === undefined || value === "") return true;
+  // libSQL returns INTEGER columns as numbers (or bigints in some modes).
+  return !(value === false || value === "0" || Number(value) === 0);
 }
 
 export async function getPosts(): Promise<Post[]> {

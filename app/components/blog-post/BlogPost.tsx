@@ -119,6 +119,9 @@ export default async function BlogPost({ post }: { post: Post }) {
   const path = `/${post.slug}`;
   const url = absoluteUrl(path);
   const excerpt = textOf(post.excerpt ?? "");
+  const author = post.author_name || `${BRAND} team`;
+  const coverAlt = post.image_alt || post.title;
+  const toc = post.show_toc ? article.toc : [];
 
   const schema = graph(
     blogPostingSchema({
@@ -130,6 +133,8 @@ export default async function BlogPost({ post }: { post: Post }) {
       modified: modified?.toISOString(),
       wordCount: article.wordCount,
       section: post.category,
+      // A named author is a person; otherwise the organization wrote it.
+      author: post.author_name || undefined,
       organization: { name: ORG_NAME, logo, url: SITE_URL },
     }),
     breadcrumbSchema([
@@ -195,7 +200,7 @@ export default async function BlogPost({ post }: { post: Post }) {
                 <span>
                   Written by{" "}
                   <Link href="/about-us" className="font-semibold text-[var(--text-primary)]">
-                    {BRAND} team
+                    {author}
                   </Link>
                 </span>
               </span>
@@ -243,7 +248,7 @@ export default async function BlogPost({ post }: { post: Post }) {
             {post.image_url ? (
               <Image
                 src={post.image_url}
-                alt={post.title}
+                alt={coverAlt}
                 width={COVER_WIDTH}
                 height={COVER_HEIGHT}
                 sizes="(min-width: 1152px) 1152px, 100vw"
@@ -264,7 +269,7 @@ export default async function BlogPost({ post }: { post: Post }) {
       <div className="px-4 sm:px-6 lg:px-8 pb-16">
         <div className="max-w-6xl mx-auto grid gap-12 lg:grid-cols-[minmax(0,1fr)_300px] xl:gap-16">
           <div className="min-w-0 max-w-3xl">
-            <MobileToc items={article.toc} />
+            <MobileToc items={toc} />
 
             <div
               id={BODY_ID}
@@ -272,9 +277,11 @@ export default async function BlogPost({ post }: { post: Post }) {
               dangerouslySetInnerHTML={{ __html: article.html }}
             />
 
-            <div className="post-divider mt-12 pt-8">
-              <ShareButtons url={url} title={post.title} />
-            </div>
+            {post.show_share && (
+              <div className="post-divider mt-12 pt-8">
+                <ShareButtons url={url} title={post.title} />
+              </div>
+            )}
 
             <PostServiceLinks title={post.title} category={post.category} embedded />
 
@@ -290,10 +297,12 @@ export default async function BlogPost({ post }: { post: Post }) {
                     {ORG_NAME}
                   </h2>
                   <p className="text-[var(--text-body)] text-sm leading-relaxed mb-4">
-                    This guide was written by the {BRAND} team, an IT solutions
-                    provider serving 500+ businesses across Dubai and the UAE
-                    since 2017 with IT AMC support, cyber security, cloud
-                    services and system integration.
+                    {post.author_name
+                      ? `Written by ${post.author_name} and published by ${BRAND}`
+                      : `This guide was written by the ${BRAND} team`}
+                    , an IT solutions provider serving 500+ businesses across
+                    Dubai and the UAE since 2017 with IT AMC support, cyber
+                    security, cloud services and system integration.
                   </p>
                   <div className="flex flex-wrap gap-x-5 gap-y-2 text-sm font-semibold">
                     <Link href="/about-us" className="post-text-link">
@@ -311,7 +320,7 @@ export default async function BlogPost({ post }: { post: Post }) {
           <aside className="hidden lg:block" aria-label="Article tools">
             <div className="sticky top-24 flex max-h-[calc(100vh-7rem)] flex-col gap-6">
               <div className="min-h-0 overflow-y-auto overscroll-contain pr-1">
-                <DesktopToc items={article.toc} />
+                <DesktopToc items={toc} />
               </div>
               <ContactCard phone={phone} phoneHref={phoneHref} whatsapp={whatsapp} />
             </div>
@@ -346,7 +355,7 @@ export default async function BlogPost({ post }: { post: Post }) {
       </section>
 
       {/* ── Related posts ──────────────────────────────────────── */}
-      {related.length > 0 && (
+      {post.show_related && related.length > 0 && (
         <section className="px-4 sm:px-6 lg:px-8 pb-16" aria-labelledby="related-heading">
           <div className="max-w-6xl mx-auto">
             <div className="flex items-end justify-between gap-4 mb-6">
