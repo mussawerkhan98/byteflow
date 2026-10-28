@@ -146,43 +146,50 @@ function parseFaqItems(
   region: string,
   nextId: (text: string) => string,
 ): { introHtml: string; items: ArticleFaq[]; rest: string } {
-  const items: ArticleFaq[] = []
+  const byHeading = parseHeadingQuestions(region, nextId)
+  const byBold = parseBoldQuestions(region, nextId)
+  // Whichever shape the section is actually written in finds more questions.
+  // A lone H3 question after bold-question paragraphs is a call to action.
+  return byBold.items.length > byHeading.items.length ? byBold : byHeading
+}
 
-  // Shape 1: H3 questions. The FAQ ends at the first H3 that is not a question.
+/** Shape 1: H3 questions. The FAQ ends at the first H3 that is not a question. */
+function parseHeadingQuestions(region: string, nextId: (text: string) => string) {
+  const items: ArticleFaq[] = []
   const h3 = /<h3\b[^>]*>([\s\S]*?)<\/h3>/gi
   const marks: { start: number; end: number; question: string }[] = []
   for (let m = h3.exec(region); m; m = h3.exec(region)) {
     marks.push({ start: m.index, end: m.index + m[0].length, question: textOf(m[1]) })
   }
-  if (marks.length && isQuestion(marks[0].question)) {
-    const stop = marks.findIndex((mark) => !isQuestion(mark.question))
-    const questions = stop > 0 ? marks.slice(0, stop) : marks
-    const regionEnd = stop > 0 ? marks[stop].start : region.length
-    questions.forEach((mark, i) => {
-      const answerHtml = region.slice(mark.end, questions[i + 1]?.start ?? regionEnd).trim()
-      if (mark.question && textOf(answerHtml)) {
-        items.push({ id: nextId(mark.question), question: mark.question, answerHtml: asBlock(answerHtml) })
-      }
-    })
-    if (items.length) {
-      return {
-        introHtml: region.slice(0, marks[0].start).trim(),
-        items,
-        rest: region.slice(regionEnd),
-      }
+  if (!marks.length || !isQuestion(marks[0].question)) return { introHtml: '', items, rest: region }
+  const stop = marks.findIndex((mark) => !isQuestion(mark.question))
+  const questions = stop > 0 ? marks.slice(0, stop) : marks
+  const regionEnd = stop > 0 ? marks[stop].start : region.length
+  questions.forEach((mark, i) => {
+    const answerHtml = region.slice(mark.end, questions[i + 1]?.start ?? regionEnd).trim()
+    if (mark.question && textOf(answerHtml)) {
+      items.push({ id: nextId(mark.question), question: mark.question, answerHtml: asBlock(answerHtml) })
     }
-  }
+  })
+  if (!items.length) return { introHtml: '', items, rest: region }
+  return { introHtml: region.slice(0, marks[0].start).trim(), items, rest: region.slice(regionEnd) }
+}
 
-  // Shape 2: a bold question opening a paragraph, the answer after it either
-  // in the same paragraph (after a <br>) or in the paragraphs that follow.
-  const blocks = region.match(/<(p|ul|ol|blockquote|table|pre)\b[\s\S]*?<\/\1>/gi) ?? []
-  if (textOf(blocks.join('')).length < textOf(region).length * 0.5) {
-    return { introHtml: '', items: [], rest: region }
-  }
+/**
+ * Shape 2: a bold question opening a paragraph, the answer after it either in
+ * the same paragraph (after a <br>) or in the blocks that follow. The FAQ ends
+ * at the first heading after an answer; that heading and everything after it
+ * go back to the body.
+ */
+function parseBoldQuestions(region: string, nextId: (text: string) => string) {
+  const items: ArticleFaq[] = []
+  const block = /<(p|ul|ol|blockquote|table|pre|h[3-6])\b[\s\S]*?<\/\1>/gi
   const boldQuestion =
     /^<p\b[^>]*>\s*<(strong|b)>([\s\S]*?)<\/\1>\s*(?:<br\s*\/?>)?([\s\S]*?)<\/p>$/i
   let intro = ''
   let current: { question: string; parts: string[] } | null = null
+  let last = 0
+  let rest = ''
   const flush = () => {
     if (!current) return
     const answerHtml = current.parts.join('').trim()
@@ -191,21 +198,38 @@ function parseFaqItems(
     }
     current = null
   }
-  for (const block of blocks) {
-    const m = boldQuestion.exec(block)
-    const question = m ? textOf(m[2]) : ''
-    if (m && isQuestion(question)) {
+  for (let m = block.exec(region); m; m = block.exec(region)) {
+    // Words outside any block would be dropped, so this shape does not apply.
+    if (textOf(region.slice(last, m.index))) return { introHtml: '', items: [], rest: region }
+    last = m.index + m[0].length
+    const html = m[0]
+    if (/^<h/i.test(html)) {
+      if (current || items.length) {
+        flush()
+        rest = region.slice(m.index)
+        break
+      }
+      intro += html
+      continue
+    }
+    const q = boldQuestion.exec(html)
+    const question = q ? textOf(q[2]) : ''
+    if (q && isQuestion(question)) {
       flush()
-      const rest = m[3].trim()
-      current = { question, parts: rest ? [`<p>${rest}</p>`] : [] }
+      const after = q[3].trim()
+      current = { question, parts: after ? [`<p>${after}</p>`] : [] }
     } else if (current) {
-      current.parts.push(block)
+      current.parts.push(html)
     } else {
-      intro += block
+      intro += html
     }
   }
-  flush()
-  return { introHtml: intro.trim(), items, rest: '' }
+  if (!rest) {
+    if (textOf(region.slice(last))) return { introHtml: '', items: [], rest: region }
+    flush()
+  }
+  if (!items.length) return { introHtml: '', items, rest: region }
+  return { introHtml: intro.trim(), items, rest }
 }
 
 /** Everything the article page needs from a post's sanitized HTML. */
