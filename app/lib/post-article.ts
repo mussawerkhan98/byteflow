@@ -237,9 +237,17 @@ export function prepareArticle(sanitizedHtml: string): PreparedArticle {
   const nextId = uniqueIds()
   const headings: TocItem[] = []
 
+  // Wrapper divs carry no words, and pasted content is full of them (the old
+  // FAQ plugin's, the editor's table wrappers). They come off first, all of
+  // them: lifting the FAQ out from between a wrapper's opening and closing
+  // tag would otherwise leave one without the other, and an unclosed div in
+  // the article closes the page's own container in the browser, which makes
+  // React's hydration fail. Table scroll wrappers are added back below.
+  const unwrapped = demoteH1(sanitizedHtml).replace(/<\/?div\b[^>]*>/gi, '')
+
   // Ids on every H2/H3. Any id the content carried is replaced: ids are only
   // trusted when they come from here.
-  let html = demoteH1(sanitizedHtml).replace(
+  let html = unwrapped.replace(
     /<(h[23])(\s[^>]*)?>([\s\S]*?)<\/\1>/gi,
     (_m, tag: string, attrs = '', inner: string) => {
       const clean = attrs.replace(/\s+id\s*=\s*("[^"]*"|'[^']*'|\S+)/i, '')
@@ -264,9 +272,7 @@ export function prepareArticle(sanitizedHtml: string): PreparedArticle {
     const after = html.slice(regionStart)
     const nextH2 = after.search(/<h2\b/i)
     const raw = nextH2 >= 0 ? after.slice(0, nextH2) : after
-    // Wrapper divs (the old FAQ plugin's, the table scroller's) carry no
-    // words, and answers are cut from between them, so they come off first.
-    const region = raw.replace(/<\/?div\b[^>]*>/gi, '')
+    const region = raw
     const parsed = parseFaqItems(region, nextId)
     if (!parsed.items.length) continue
 
