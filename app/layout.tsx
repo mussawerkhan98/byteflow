@@ -74,7 +74,7 @@ export default async function RootLayout({
   ]);
   const headScripts = scripts.filter((script) => script.placement === "head").map((script) => script.code).join("\n");
   const footerScripts = scripts.filter((script) => script.placement === "body_end").map((script) => script.code).join("\n");
-  const themeScript = `<script>(function(){try{var t=localStorage.getItem('theme');if(!t){t='light'}document.documentElement.setAttribute('data-theme',t)}catch(e){}})();<\/script>`;
+  const themeScript = `(function(){try{var t=localStorage.getItem('theme');if(!t){t='light'}document.documentElement.setAttribute('data-theme',t)}catch(e){}})();`;
   type MenuNode = {
     label: string;
     href: string;
@@ -113,11 +113,19 @@ export default async function RootLayout({
         }))
       : undefined;
   return (
+    // The theme script sets data-theme before React hydrates, so the server
+    // HTML never carries it; that one difference is expected.
     <html
       lang="en"
       className={`${jakarta.variable} ${sora.variable} ${outfit.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
-      <head dangerouslySetInnerHTML={{ __html: `${themeScript}\n${headScripts}` }} />
+      {/* React and Next add stylesheets and metadata to <head>, so it must stay
+          a normal element. Setting its innerHTML wiped those tags, and React
+          then crashed removing them ("reading 'removeChild'"). */}
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body
         className="min-h-full flex flex-col text-[var(--text-primary)]"
         style={{
@@ -125,6 +133,15 @@ export default async function RootLayout({
           background: "var(--bg-page)",
         }}
       >
+        {/* Admin "head" scripts run first thing in the body, the same way
+            the body-end ones are placed below. */}
+        {headScripts && (
+          <div
+            data-cms-scripts="head"
+            style={{ display: "contents" }}
+            dangerouslySetInnerHTML={{ __html: headScripts }}
+          />
+        )}
         <Header
           navigation={headerNavigation}
           serviceLinks={serviceLinks}

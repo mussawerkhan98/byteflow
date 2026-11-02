@@ -1,22 +1,38 @@
+import Image from 'next/image'
 import Link from 'next/link'
+import { getSection } from '../lib/cms'
+import { ArrowIcon } from './InlineIcons'
 
-const stats = [
-  { value: '500+', label: 'Businesses Served' },
-  { value: '8+', label: 'Years Experience' },
-  { value: '6+', label: 'IT Services' },
-  { value: '24/7', label: 'Support Available' },
-]
+const FOUNDED = 2017
+// Counted from the founding year, so the figure doesn't go stale.
+const YEARS = new Date().getFullYear() - FOUNDED
 
+// Each reason links to the page that backs it up.
 const highlights = [
-  { title: 'Full IT Under One Roof', desc: 'Infrastructure, cloud, security, design and marketing — all managed by one expert team with full accountability.' },
-  { title: 'Zero Hidden Costs', desc: 'Fixed monthly or annual packages so you always know what you pay. No surprises, no extra invoices.' },
-  { title: 'Rapid On-Site Response', desc: 'Certified engineers on-site or remote within 2 hours across Dubai, Sharjah and Abu Dhabi.' },
-  { title: 'Microsoft & Cloud Ready', desc: 'Official Microsoft 365 setup, cloud migrations and ongoing management for UAE businesses of every size.' },
+  { title: 'Full IT under one roof', href: '/about-us', desc: 'Infrastructure, cloud, security, design and marketing, all managed by one expert team with full accountability.' },
+  { title: 'Zero hidden costs', href: '/it-amc-services-dubai', desc: 'Fixed monthly or annual packages so you always know what you pay. No surprises, no extra invoices.' },
+  { title: 'Rapid on-site response', href: '/contact-us', desc: 'Certified engineers on-site or remote within 2 hours across Dubai, Sharjah and Abu Dhabi.' },
+  { title: 'Microsoft & cloud ready', href: '/cloud-services-dubai', desc: 'Official Microsoft 365 setup, cloud migrations and ongoing management for UAE businesses of every size.' },
 ]
+
+/** Round button whose arrow points up and right, and swaps for a fresh one on hover. */
+function ArrowButton() {
+  return (
+    <span
+      aria-hidden="true"
+      className="relative grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-full border border-[var(--border-strong)] text-[var(--text-primary)] transition-colors duration-300 group-hover:border-[#2CCDDE] group-hover:bg-[#2CCDDE] group-hover:text-[#04121A] sm:h-14 sm:w-14"
+    >
+      <ArrowIcon className="h-4 w-4 -rotate-45 transition-transform duration-300 ease-out group-hover:translate-x-7 group-hover:-translate-y-7 motion-reduce:transition-none" />
+      <ArrowIcon className="absolute h-4 w-4 -translate-x-7 translate-y-7 -rotate-45 transition-transform duration-300 ease-out group-hover:translate-x-0 group-hover:translate-y-0 motion-reduce:transition-none" />
+    </span>
+  )
+}
 
 const values = [
   {
-    title: 'Fast Response',
+    title: 'Fast response',
+    value: '2',
+    unit: 'hrs',
     desc: 'On-site or remote support within 2 hours. We never leave you waiting when your business is down.',
     icon: (
       <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -25,7 +41,9 @@ const values = [
     ),
   },
   {
-    title: 'Expert Team',
+    title: 'Expert team',
+    value: '100%',
+    unit: 'certified engineers',
     desc: 'Certified IT professionals with deep expertise across infrastructure, cloud, security and design.',
     icon: (
       <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -34,7 +52,9 @@ const values = [
     ),
   },
   {
-    title: 'Fixed Pricing',
+    title: 'Fixed pricing',
+    value: '0',
+    unit: 'surprise bills',
     desc: 'Transparent monthly or annual packages with no surprise bills. Budget with complete confidence.',
     icon: (
       <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -43,7 +63,9 @@ const values = [
     ),
   },
   {
-    title: 'One Team, All IT',
+    title: 'One team, all IT',
+    value: '1',
+    unit: 'vendor to call',
     desc: 'From IT support to web development and digital marketing — one vendor, zero hassle, full accountability.',
     icon: (
       <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -53,140 +75,195 @@ const values = [
   },
 ]
 
-export default function AboutUs() {
+// One column on phones, two on tablets, four on desktop. Hairlines between
+// cells are borders, so none runs along the panel's outer edge.
+const commitmentCellClass = [
+  '',
+  'border-t sm:border-l sm:border-t-0',
+  'border-t lg:border-l lg:border-t-0',
+  'border-t sm:border-l lg:border-t-0',
+]
+
+export default async function AboutUs() {
+  // The front frame shows the founder photo from the About page. As there, an
+  // existing record with no photo means none; no record means the bundled one.
+  const founder = await getSection('about-us', 'founder')
+  const founderImage = founder ? String(founder.image_url || '') : '/images/owner/owner.png'
+  const founderAlt = String(founder?.image_alt || 'Byteflow founder')
+
   return (
-    <section className="relative py-28 overflow-hidden">
+    <section className="home-about border-t border-[var(--border-default)] py-20 sm:py-24 lg:py-32">
+      {/* Same container as the header, so the section's edges sit under the
+          logo and the Contact button. */}
+      <div className="mx-auto max-w-page px-4 sm:px-6 lg:px-8">
+        <div className="grid gap-14 lg:grid-cols-12 lg:gap-10">
+          <div className="lg:col-span-6">
+            <p className="mb-6 flex items-center gap-3 text-[13px] font-medium text-[var(--text-body)]">
+              <span aria-hidden="true" className="h-px w-10 bg-[#2CCDDE]" />
+              About Byteflow
+            </p>
+            {/* Always two lines: each line holds together, and the size scales
+                with the viewport so the longer one still fits its column. */}
+            <h2 className="text-[clamp(1.5rem,5.4vw,3.25rem)] font-semibold leading-[1.08] tracking-[-0.04em] text-[var(--text-primary)] lg:text-[clamp(1.75rem,3.1vw,3.25rem)]">
+              <span className="block whitespace-nowrap">Your trusted IT partner,</span>
+              <span className="block whitespace-nowrap text-[var(--ink-soft)]">serving Dubai since {FOUNDED}.</span>
+            </h2>
+            <p className="mt-6 max-w-lg text-[17px] leading-relaxed text-[var(--text-body)]">
+              We make enterprise-grade IT accessible to every business in the UAE, so you can focus entirely on growth.
+            </p>
 
-      {/* Ambient glows */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] pointer-events-none"
-        style={{ background: 'radial-gradient(ellipse, rgba(44,205,222,0.06) 0%, transparent 70%)', filter: 'blur(60px)' }} />
+            {/* Two frames: the technology behind, the people in front. */}
+            <div className="relative mt-12 pb-24 pr-12 sm:pr-28 lg:mt-14">
+              <div className="relative aspect-[4/3] overflow-hidden rounded-3xl border border-[var(--border-default)] bg-[#040D12]">
+                <Image
+                  src="/images/hero/hero.png"
+                  alt=""
+                  fill
+                  sizes="(min-width: 1024px) 40vw, 90vw"
+                  // Mirrored so the cube lands on the left, clear of the portrait.
+                  className="-scale-x-100 object-cover object-[100%_55%]"
+                />
+                <span className="absolute left-4 top-4 inline-flex items-center gap-2 rounded-full border border-white/15 bg-[rgba(4,13,18,0.7)] px-3.5 py-1.5 text-[12.5px] font-medium text-white backdrop-blur-md sm:left-5 sm:top-5">
+                  <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-[#2CCDDE]" />
+                  Based in Dubai since {FOUNDED}
+                </span>
+              </div>
 
-      <div className="relative max-w-page mx-auto px-4 sm:px-6 lg:px-8">
+              {founderImage && (
+                <div className="absolute bottom-0 right-0 w-[46%] overflow-hidden rounded-3xl border-[6px] border-[var(--bg-page)] bg-[var(--bg-surface)] shadow-(--shadow-pop)">
+                  <div className="relative aspect-[4/5]">
+                    <Image
+                      src={founderImage}
+                      alt={founderAlt}
+                      fill
+                      sizes="(min-width: 1024px) 20vw, 45vw"
+                      className="object-cover object-top"
+                    />
+                  </div>
+                </div>
+              )}
 
-        {/* Header */}
-        <div className="mb-16">
-          <div
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold mb-7 uppercase tracking-widest"
-            style={{ background: 'rgba(44,205,222,0.07)', border: '1px solid rgba(44,205,222,0.25)', color: '#2CCDDE' }}
-          >
-            About Byteflow
+              {/* Sits in the space the offset frame leaves under the first one. */}
+              <p className="absolute bottom-0 left-0 flex items-baseline gap-3">
+                <span className="font-display text-[3rem] font-semibold leading-none tracking-[-0.05em] tabular-nums text-[var(--text-primary)] sm:text-[3.5rem]">
+                  {YEARS}+
+                </span>
+                <span className="text-[14px] leading-snug text-[var(--text-body)]">
+                  years keeping UAE
+                  <br />
+                  businesses running
+                </span>
+              </p>
+            </div>
           </div>
 
-          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8">
-            <h2 className="text-5xl sm:text-6xl lg:text-[68px] font-bold leading-[1.05] tracking-tight">
-              <span className="text-[var(--text-primary)]">Your Trusted </span>
-              <span style={{ background: 'linear-gradient(135deg, #2CCDDE, #46A3E1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-                IT Partner
-              </span>
-              <br />
-              <span className="text-[var(--text-primary)]">Serving Dubai </span>
-              <span style={{ background: 'linear-gradient(135deg, #46A3E1, #2CCDDE)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-                Since 2017
-              </span>
-            </h2>
-            <p className="text-[var(--text-muted)] text-base leading-relaxed max-w-sm lg:text-right lg:pb-2 flex-shrink-0">
-              We make enterprise-grade IT accessible to every business in the UAE — so you can focus entirely on growth.
+          <div className="flex flex-col lg:col-span-5 lg:col-start-8 lg:pt-12">
+            <ul className="border-t border-[var(--border-default)]">
+              {highlights.map((h) => (
+                <li key={h.title}>
+                  <Link
+                    href={h.href}
+                    className="group grid grid-cols-[auto_1fr] items-start gap-5 border-b border-[var(--border-default)] py-7 sm:gap-7 lg:py-8"
+                  >
+                    <ArrowButton />
+                    <div>
+                      <h3 className="font-display text-[1.375rem] font-semibold leading-snug tracking-[-0.025em] text-[var(--text-primary)] sm:text-[1.5rem]">
+                        {h.title}
+                      </h3>
+                      <p className="mt-2 text-[15px] leading-relaxed text-[var(--text-body)]">{h.desc}</p>
+                    </div>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+
+            <div className="mt-10 grid gap-3 sm:flex sm:flex-wrap sm:items-center">
+              <Link
+                href="/contact-us"
+                className="group inline-flex h-12 items-center justify-center gap-2 rounded-full bg-[#2CCDDE] pl-6 pr-5 text-[15px] font-semibold text-[#04121A] transition-colors duration-200 hover:bg-[#5BDCE9]"
+              >
+                Get in touch
+                <ArrowIcon className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
+              </Link>
+              <Link
+                href="/about-us"
+                className="inline-flex h-12 items-center justify-center rounded-full border border-[var(--border-strong)] px-6 text-[15px] font-semibold text-[var(--text-primary)] transition-colors duration-200 hover:border-[var(--text-primary)]"
+              >
+                More about Byteflow
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* Why choose us: one panel of commitments, each led by the figure behind it. */}
+        <section
+          aria-labelledby="about-commitments-title"
+          className="mt-20 overflow-hidden rounded-3xl lg:mt-28 border border-[var(--border-default)] bg-[var(--bg-surface)] shadow-(--shadow-card)"
+        >
+          <div className="grid gap-5 border-b border-[var(--border-default)] px-6 py-9 sm:px-8 lg:grid-cols-12 lg:items-end lg:gap-10 lg:px-10 lg:py-12">
+            <div className="lg:col-span-7">
+              <p className="flex items-center gap-3 text-[13px] font-medium text-[var(--text-body)]">
+                <span aria-hidden="true" className="h-px w-10 bg-[#2CCDDE]" />
+                Why businesses choose us
+              </p>
+              <h3
+                id="about-commitments-title"
+                className="mt-4 font-display text-[1.75rem] font-semibold leading-[1.1] tracking-[-0.035em] text-[var(--text-primary)] sm:text-[2.25rem] lg:text-[2.5rem]"
+              >
+                What you can count on,{' '}
+                <span className="text-[var(--ink-soft)]">every time.</span>
+              </h3>
+            </div>
+            <p className="max-w-md text-[15px] leading-relaxed text-[var(--text-body)] lg:col-span-5 lg:justify-self-end lg:text-right">
+              The standards every Byteflow client gets, from a single laptop to a full office.
             </p>
           </div>
-        </div>
 
-        {/* Stats strip */}
-        <div className="grid grid-cols-2 gap-4 mb-16">
-          {stats.map((s) => (
-            <div
-              key={s.label}
-              className="card-hover flex flex-col items-center justify-center py-10 px-8 rounded-2xl"
-              style={{
-                background: 'linear-gradient(160deg, rgba(44,205,222,0.06) 0%, var(--bg-surface) 100%)',
-                border: '1px solid rgba(44,205,222,0.15)',
-              }}
-            >
-              <span
-                className="text-5xl font-black mb-2"
-                style={{ background: 'linear-gradient(135deg, #2CCDDE, #46A3E1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}
-              >
-                {s.value}
-              </span>
-              <span className="text-sm text-[var(--text-muted)] font-medium text-center">{s.label}</span>
-            </div>
-          ))}
-        </div>
-
-        {/* Highlights grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-px mb-16 rounded-2xl overflow-hidden"
-          style={{ background: 'rgba(44,205,222,0.08)' }}>
-          {highlights.map((h) => (
-            <div
-              key={h.title}
-              className="card-hover-inset group flex gap-5 p-8 transition-all duration-300"
-              style={{ background: 'linear-gradient(160deg, rgba(44,205,222,0.04) 0%, var(--bg-page) 100%)' }}
-            >
-              <div
-                className="w-2 flex-shrink-0 rounded-full mt-1 self-stretch max-h-5"
-                style={{ background: 'linear-gradient(180deg, #2CCDDE, #46A3E1)', minHeight: '20px', maxHeight: '20px' }}
-              />
-              <div>
-                <h3 className="text-[var(--text-primary)] font-bold text-base mb-2 group-hover:text-[#2CCDDE] transition-colors duration-300">
-                  {h.title}
-                </h3>
-                <p className="text-[var(--text-muted)] text-sm leading-relaxed">{h.desc}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* CTA row */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-6 mb-20">
-          <p className="text-[var(--text-muted)] text-sm max-w-md">
-            Byteflow handles your entire IT ecosystem — from a single laptop to a full corporate network setup across the UAE.
-          </p>
-          <Link
-            href="/contact-us"
-            className="group inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full text-black font-bold text-sm flex-shrink-0 transition-all duration-300 hover:scale-[1.04] hover:shadow-[0_0_36px_rgba(44,205,222,0.5)]"
-            style={{ background: 'linear-gradient(135deg, #2CCDDE, #46A3E1)' }}
-          >
-            Get in Touch
-            <svg className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-            </svg>
-          </Link>
-        </div>
-
-        {/* Values */}
-        <div style={{ borderTop: '1px solid rgba(44,205,222,0.1)' }} className="pt-16">
-          <p className="text-center text-xs font-bold uppercase tracking-widest mb-10" style={{ color: '#2CCDDE' }}>
-            Why Businesses Choose Us
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {values.map((v) => (
-              <div
+          <ul className="grid sm:grid-cols-2 lg:grid-cols-4">
+            {values.map((v, i) => (
+              <li
                 key={v.title}
-                className="card-hover group flex flex-col gap-4 p-6 rounded-2xl transition-all duration-300"
-                style={{
-                  background: 'linear-gradient(160deg, rgba(44,205,222,0.06) 0%, rgba(70,163,225,0.02) 40%, var(--bg-surface) 100%)',
-                  border: '1px solid rgba(44,205,222,0.15)',
-                }}
+                className={`group relative isolate flex flex-col overflow-hidden border-[var(--border-default)] px-6 pb-9 pt-8 sm:px-8 lg:pb-11 lg:pt-10 ${commitmentCellClass[i]}`}
               >
-                <div
-                  className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300 group-hover:shadow-[0_0_20px_rgba(44,205,222,0.4)]"
-                  style={{
-                    background: 'linear-gradient(135deg, rgba(44,205,222,0.14), rgba(70,163,225,0.08))',
-                    border: '1px solid rgba(44,205,222,0.25)',
-                    color: '#2CCDDE',
-                  }}
+                {/* Fills in along the top edge on hover. */}
+                <span
+                  aria-hidden="true"
+                  className="absolute left-0 top-0 h-0.5 w-0 bg-[#2CCDDE] transition-[width] duration-500 group-hover:w-full motion-reduce:transition-none"
+                />
+                <span
+                  aria-hidden="true"
+                  className="about-glow pointer-events-none absolute inset-0 -z-10 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                />
+                {/* Ghost numeral, tucked into the top-right corner. */}
+                <span
+                  aria-hidden="true"
+                  className="about-ghost pointer-events-none absolute right-5 top-5 -z-10 select-none font-display text-[5.5rem] font-bold leading-none tracking-[-0.05em] tabular-nums sm:right-7 sm:top-6 sm:text-[6.5rem]"
+                >
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+
+                <span
+                  aria-hidden="true"
+                  className="about-accent grid h-12 w-12 place-items-center rounded-2xl border border-[var(--border-default)] bg-[var(--bg-page)] transition-colors duration-300 group-hover:border-[#2CCDDE]/50"
                 >
                   {v.icon}
-                </div>
-                <div>
-                  <h3 className="text-sm font-bold text-[var(--text-primary)] mb-1.5 group-hover:text-[#2CCDDE] transition-colors duration-300">
-                    {v.title}
-                  </h3>
-                  <p className="text-xs text-[var(--text-muted)] leading-relaxed">{v.desc}</p>
-                </div>
-              </div>
+                </span>
+
+                <p className="mt-12 flex flex-wrap items-baseline gap-x-2.5">
+                  <span className="font-display text-[2.75rem] font-semibold leading-none tracking-[-0.045em] tabular-nums text-[var(--text-primary)] sm:text-[3rem]">
+                    {v.value}
+                  </span>
+                  <span className="text-[14px] font-medium text-[var(--text-body)]">{v.unit}</span>
+                </p>
+
+                <span aria-hidden="true" className="mt-7 block h-px w-8 bg-[var(--border-strong)] transition-[width,background-color] duration-500 group-hover:w-14 group-hover:bg-[#2CCDDE] motion-reduce:transition-none" />
+
+                <h4 className="mt-5 font-display text-[1.0625rem] font-semibold tracking-[-0.015em] text-[var(--text-primary)]">{v.title}</h4>
+                <p className="mt-2 text-[14.5px] leading-relaxed text-[var(--text-body)]">{v.desc}</p>
+              </li>
             ))}
-          </div>
-        </div>
+          </ul>
+        </section>
 
       </div>
     </section>

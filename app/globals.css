@@ -106,7 +106,8 @@ h1 {
 .site-header :focus-visible,
 .site-menu :focus-visible,
 .home-hero :focus-visible,
-.home-services :focus-visible {
+.home-services :focus-visible,
+.home-about :focus-visible {
   outline: 2px solid var(--cyan);
   outline-offset: 2px;
 }
@@ -157,6 +158,55 @@ h1 {
   background-position: right top;
   -webkit-mask-image: radial-gradient(ellipse 80% 70% at 100% 0%, #000 0%, transparent 70%);
   mask-image: radial-gradient(ellipse 80% 70% at 100% 0%, #000 0%, transparent 70%);
+}
+
+/* ---- Home About section (app/components/AboutUs.tsx) ---- */
+
+/* List numbers and icons in the brand cyan, darkened on white so they stay legible. */
+.about-accent {
+  color: #0e7490;
+}
+
+:root:not([data-theme='light']) .about-accent {
+  color: #2ccdde;
+}
+
+/* Oversized numerals behind each commitment. The fill fades out towards the
+   bottom so the figure reads as texture, not as content, and warms to the
+   brand cyan when the card is hovered. Registered so the colour can animate. */
+@property --ghost-ink {
+  syntax: '<color>';
+  inherits: false;
+  initial-value: transparent;
+}
+
+.about-ghost {
+  --ghost-ink: color-mix(in srgb, var(--text-primary) 9%, transparent);
+  color: transparent;
+  background-image: linear-gradient(to bottom, var(--ghost-ink) 15%, transparent 90%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  transition: --ghost-ink 0.5s ease, transform 0.5s ease;
+}
+
+.group:hover .about-ghost {
+  --ghost-ink: color-mix(in srgb, var(--cyan) 30%, transparent);
+  transform: translateY(-4px);
+}
+
+/* Soft cyan wash that rises from the top of a commitment on hover. */
+.about-glow {
+  background: radial-gradient(120% 60% at 100% 0%, color-mix(in srgb, var(--cyan) 9%, transparent), transparent 70%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-ghost {
+    transition: none;
+  }
+
+  .group:hover .about-ghost {
+    transform: none;
+  }
 }
 
 /* An editor can give the home hero a photo. Whatever the site theme, the
