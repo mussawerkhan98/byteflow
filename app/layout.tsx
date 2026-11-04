@@ -17,6 +17,8 @@ import PageSections from "./components/PageSections";
 import PageFaq from "./components/PageFaq";
 import { getMenu, getPageMetadata, getSiteSettings, getWebsiteScripts } from "./lib/cms";
 import { getServices } from "./lib/db";
+import { splitHeadCode } from "./lib/head-code";
+import { headerBarFrom } from "./lib/header-bar";
 
 // Both are variable fonts, so the weight axis is loaded in one file each
 // instead of one request per weight.
@@ -72,7 +74,10 @@ export default async function RootLayout({
     getServices(),
     getWebsiteScripts(),
   ]);
-  const headScripts = scripts.filter((script) => script.placement === "head").map((script) => script.code).join("\n");
+  // Admin <meta>/<link> tags go in <head>; the scripts and JSON-LD go first in <body>.
+  const { tags: headTags, rest: headScripts } = splitHeadCode(
+    scripts.filter((script) => script.placement === "head").map((script) => script.code).join("\n"),
+  );
   const footerScripts = scripts.filter((script) => script.placement === "body_end").map((script) => script.code).join("\n");
   const themeScript = `(function(){try{var t=localStorage.getItem('theme');if(!t){t='light'}document.documentElement.setAttribute('data-theme',t)}catch(e){}})();`;
   type MenuNode = {
@@ -125,6 +130,9 @@ export default async function RootLayout({
           then crashed removing them ("reading 'removeChild'"). */}
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        {headTags.map(({ tag, attrs }, i) =>
+          tag === "meta" ? <meta key={i} {...attrs} /> : <link key={i} {...attrs} />,
+        )}
       </head>
       <body
         className="min-h-full flex flex-col text-[var(--text-primary)]"
@@ -133,8 +141,8 @@ export default async function RootLayout({
           background: "var(--bg-page)",
         }}
       >
-        {/* Admin "head" scripts run first thing in the body, the same way
-            the body-end ones are placed below. */}
+        {/* Admin "head" scripts and JSON-LD run first thing in the body, the
+            same way the body-end ones are placed below. */}
         {headScripts && (
           <div
             data-cms-scripts="head"
@@ -148,6 +156,7 @@ export default async function RootLayout({
           logoUrl={String(settings?.logo_url || "/images/logo.png")}
           phone={String(settings?.header_phone || "") || undefined}
           whatsappUrl={String(settings?.whatsapp_link || "") || undefined}
+          bar={headerBarFrom(settings)}
         />
         <main className="flex-1">{children}</main>
         <PageSections placement="before_faq" />

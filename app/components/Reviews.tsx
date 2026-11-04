@@ -100,7 +100,7 @@ export default function Reviews({ items }: { items?: { customer_name: string; cu
               Client Reviews
             </div>
             <h2 className="text-4xl sm:text-5xl font-bold leading-tight">
-              <span className="text-[var(--text-primary)]">Trusted by Businesses</span>
+              <span className="text-[var(--text-primary)]">Trusted by Businesses</span>{' '}
               <br />
               <span style={{ background: 'linear-gradient(135deg, #2CCDDE, #46A3E1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                 Across the UAE

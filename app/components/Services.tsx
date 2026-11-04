@@ -1,8 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
-import Link from 'next/link'
 import { getServices } from '../lib/db'
+import { getHomeBlock } from '../lib/home-blocks'
 import { services as serviceDetails } from '../lib/services-data'
-import { ArrowIcon } from './InlineIcons'
 import ServiceCard from './ServiceCard'
 
 // Each service's own page supplies the one-line tagline on the small cards,
@@ -139,7 +138,8 @@ function DbServiceIcon({ icon }: { icon: string }) {
 
 export default async function Services() {
   // Try DB first; fall back to static list if empty
-  const dbServices = await getServices()
+  const [dbServices, intro] = await Promise.all([getServices(), getHomeBlock('home_services_intro')])
+  const copy = intro.fields
   const listed = dbServices.length
     ? dbServices.map((s) => ({
         key: s.id,
@@ -161,15 +161,15 @@ export default async function Services() {
           <div className="lg:col-span-7">
             <p className="mb-6 flex items-center gap-3 text-[13px] font-medium text-[var(--text-body)]">
               <span aria-hidden="true" className="h-px w-10 bg-[#2CCDDE]" />
-              What we do
+              {copy.eyebrow}
             </p>
             <h2 className="text-balance text-[2.25rem] font-semibold leading-[1.05] tracking-[-0.04em] text-[var(--text-primary)] sm:text-5xl lg:text-[3.5rem]">
-              Services built for
-              <span className="block text-[var(--ink-soft)]">real business growth.</span>
+              {copy.heading}{' '}
+              <span className="block text-[var(--ink-soft)]">{copy.heading_soft}</span>
             </h2>
           </div>
           <p className="max-w-md text-[17px] leading-relaxed text-[var(--text-body)] lg:col-span-5 lg:justify-self-end">
-            End-to-end technology and creative services, all under one roof so you never have to chase multiple vendors again.
+            {copy.intro}
           </p>
         </div>
 
@@ -194,20 +194,6 @@ export default async function Services() {
               />
             )
           })}
-        </div>
-
-        <div className="mt-12 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-[15px] text-[var(--text-body)]">
-            Not sure which service you need?{' '}
-            <span className="font-medium text-[var(--text-primary)]">Our team will guide you.</span>
-          </p>
-          <Link
-            href="/contact-us"
-            className="group inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-full bg-[#2CCDDE] pl-6 pr-5 text-[15px] font-semibold text-[#04121A] transition-colors duration-200 hover:bg-[#5BDCE9]"
-          >
-            Talk to our team
-            <ArrowIcon className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
-          </Link>
         </div>
       </div>
     </section>

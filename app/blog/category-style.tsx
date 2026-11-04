@@ -51,5 +51,14 @@ export function getCategoryStyle(category: string): { gradient: string; icon: Re
     },
   }
 
-  return map[category] ?? map['IT Support']
+  // Categories are typed freely in the admin: match regardless of case and
+  // spacing, and give web/app topics the code icon rather than the default.
+  const key = String(category ?? '').trim().replace(/\s+/g, ' ').toLowerCase()
+  const found = Object.keys(map).find((name) => name.toLowerCase() === key)
+  if (found) return map[found]
+  if (/\b(web|website|app|apps|software|development)\b/.test(key)) return map['Web & Apps']
+  if (/\b(cyber|security)\b/.test(key)) return map['Cyber Security']
+  if (/\b(cloud|microsoft|azure|365)\b/.test(key)) return map['Cloud']
+  if (/\b(marketing|seo|ads|social)\b/.test(key)) return map['Digital Marketing']
+  return map['IT Support']
 }

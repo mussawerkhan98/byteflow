@@ -54,7 +54,8 @@ export default async function AboutPage() {
           >
             {[
               { value: '500+', label: 'Businesses served across the UAE' },
-              { value: '8+', label: 'Years operating in Dubai' },
+              // Counted from 2017, so it matches the home page and doesn't go stale.
+              { value: `${new Date().getFullYear() - 2017}+`, label: 'Years operating in Dubai' },
               { value: '2 hrs', label: 'On-site response guarantee' },
               { value: '24/7', label: 'Monitoring and support' },
             ].map((s, i, arr) => (

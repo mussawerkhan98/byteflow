@@ -198,7 +198,7 @@ export default function Contact({ settings = {}, hero }: { settings?: ContactSet
           </div>
           <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
             {hero?.hero_heading ? <h2 className="text-4xl sm:text-5xl font-bold leading-tight text-[var(--text-primary)]">{hero.hero_heading}</h2> : <h2 className="text-4xl sm:text-5xl font-bold leading-tight">
-              <span className="text-[var(--text-primary)]">Let's Talk About</span>
+              <span className="text-[var(--text-primary)]">Let's Talk About</span>{' '}
               <br />
               <span style={{ background: 'linear-gradient(135deg, #2CCDDE, #46A3E1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                 Your IT Needs

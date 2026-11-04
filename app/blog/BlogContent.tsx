@@ -5,8 +5,8 @@ import Link from 'next/link'
 import Image from 'next/image'
 import type { Post } from '@/app/lib/db'
 import { getCategoryStyle } from './category-style'
+import { blogCategories, sameCategory } from '../lib/blog-categories'
 
-const CATEGORIES = ['All', 'IT Support', 'Web & Apps', 'Cloud', 'Cyber Security', 'System Integration', 'Digital Marketing']
 
 function PostCard({ post }: { post: Post }) {
   const { gradient, icon } = getCategoryStyle(post.category)
@@ -159,7 +159,9 @@ function FeaturedPost({ post }: { post: Post }) {
 export default function BlogContent({ posts }: { posts: Post[] }) {
   const [active, setActive] = useState('All')
 
-  const filtered = active === 'All' ? posts : posts.filter((p) => p.category === active)
+  // A button per category the posts use, so one added in the admin shows up.
+  const categories = ['All', ...blogCategories(posts)]
+  const filtered = active === 'All' ? posts : posts.filter((p) => sameCategory(p.category, active))
   const featured = filtered[0]
   const rest = filtered.slice(1)
 
@@ -196,7 +198,7 @@ export default function BlogContent({ posts }: { posts: Post[] }) {
       {/* Filter */}
       <div className="px-4 sm:px-6 lg:px-8 mb-10">
         <div className="max-w-page mx-auto flex items-center gap-2 flex-wrap">
-          {CATEGORIES.map((cat) => (
+          {categories.map((cat) => (
             <button
               key={cat}
               onClick={() => setActive(cat)}
@@ -245,7 +247,7 @@ export default function BlogContent({ posts }: { posts: Post[] }) {
               <p className="text-[var(--text-primary)] text-xl font-bold mb-2">Have an IT problem you need solved?</p>
               <p className="text-[var(--text-muted)] text-sm max-w-sm">Reading about it is one thing. Getting it fixed is another. Our team responds within 2 hours.</p>
             </div>
-            <a
+            <Link
               href="/contact-us"
               className="inline-flex items-center gap-2 px-7 py-3 rounded-full text-black text-sm font-bold flex-shrink-0 transition-all duration-300 hover:scale-[1.04] hover:shadow-[0_0_28px_rgba(44,205,222,0.45)]"
               style={{ background: 'linear-gradient(135deg, #2CCDDE, #46A3E1)' }}
@@ -254,7 +256,7 @@ export default function BlogContent({ posts }: { posts: Post[] }) {
               <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>
-            </a>
+            </Link>
           </div>
         </div>
       </section>

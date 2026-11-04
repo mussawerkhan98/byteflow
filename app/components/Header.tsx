@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import ThemeToggle from "./ThemeToggle";
 import LogoLink from "./LogoLink";
 import { ArrowIcon, ChevronIcon, PhoneIcon, WhatsAppIcon } from "./InlineIcons";
+import { defaultHeaderBar, type HeaderBar } from "../lib/header-bar";
 
 export type NavItem = {
   label: string;
@@ -26,7 +27,6 @@ const fallbackNav: NavItem[] = [
   { label: "Blog", href: "/blog" },
 ];
 
-const CONTACT_HREF = "/contact-us";
 const DEFAULT_PHONE = "+971 54 328 2042";
 
 // Scroll position as an external store, so the header reads it while
@@ -73,9 +73,14 @@ const telHref = (phone: string) => `tel:${phone.replace(/[^\d+]/g, "")}`;
 
 // ── Desktop ────────────────────────────────────────────────────────────────
 
-/** Top-level items run the full height of the bar so the marker can sit on its bottom edge. */
-const topLevelClass = (highlighted: boolean) =>
-  `nav-item group relative flex h-full items-center gap-1 px-3 text-[14.5px] font-medium transition-colors duration-200 ${
+/**
+ * Top-level items run the full height of the bar so the marker can sit on its
+ * bottom edge. Capitals run wider, so they are set a size smaller and spaced.
+ */
+const topLevelClass = (highlighted: boolean, uppercase: boolean) =>
+  `nav-item group relative flex h-full items-center gap-1 px-3 font-medium transition-colors duration-200 ${
+    uppercase ? "text-[13px] uppercase tracking-[0.08em]" : "text-[14.5px]"
+  } ${
     highlighted
       ? "text-[var(--text-primary)]"
       : "text-[var(--text-nav)] hover:text-[var(--text-primary)]"
@@ -95,14 +100,14 @@ function Marker({ active }: { active: boolean }) {
   );
 }
 
-function DesktopLink({ item, pathname }: { item: NavItem; pathname: string }) {
+function DesktopLink({ item, pathname, bar }: { item: NavItem; pathname: string; bar: HeaderBar }) {
   const current = isCurrent(pathname, item.href);
   return (
     <Link
       href={item.href}
       {...newTabProps(item)}
       aria-current={current ? "page" : undefined}
-      className={topLevelClass(current)}
+      className={topLevelClass(current, bar.uppercase)}
     >
       {item.label}
       <Marker active={current} />
@@ -173,9 +178,11 @@ function PanelEntries({
 function DesktopDropdown({
   item,
   pathname,
+  bar,
 }: {
   item: NavItem;
   pathname: string;
+  bar: HeaderBar;
 }) {
   const [open, setOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -249,7 +256,7 @@ function DesktopDropdown({
           }
           setOpen((value) => !value);
         }}
-        className={topLevelClass(current || open)}
+        className={topLevelClass(current || open, bar.uppercase)}
       >
         {item.label}
         <ChevronIcon
@@ -287,13 +294,13 @@ function DesktopDropdown({
             <PanelEntries items={children} pathname={pathname} onNavigate={close} />
           </div>
           <Link
-            href={CONTACT_HREF}
+            href={bar.ctaLink}
             onClick={close}
             className="group/cta flex items-center justify-between gap-4 border-t border-[var(--border-default)] bg-[var(--bg-surface)] px-5 py-3.5"
           >
             <span>
-              <span className="block text-[12.5px] text-[var(--text-nav)]">Not sure which one fits?</span>
-              <span className="block text-[13.5px] font-semibold text-[var(--text-primary)]">Ask an engineer</span>
+              <span className="block text-[12.5px] text-[var(--text-nav)]">{bar.dropdownNote}</span>
+              <span className="block text-[13.5px] font-semibold text-[var(--text-primary)]">{bar.dropdownCta}</span>
             </span>
             <ArrowIcon className="h-4 w-4 shrink-0 text-[var(--text-primary)] transition-transform duration-200 group-hover/cta:translate-x-0.5" />
           </Link>
@@ -454,12 +461,14 @@ export default function Header({
   logoUrl = "/images/logo.png",
   phone = DEFAULT_PHONE,
   whatsappUrl,
+  bar = defaultHeaderBar,
 }: {
   navigation?: NavItem[];
   serviceLinks?: NavItem[];
   logoUrl?: string;
   phone?: string;
   whatsappUrl?: string;
+  bar?: HeaderBar;
 }) {
   const withServices = navigation.some((item) => item.children?.length)
     ? navigation
@@ -472,7 +481,7 @@ export default function Header({
       : navigation;
   // The Contact button always sits beside the menu, so a menu entry for the
   // same page would only say it twice.
-  const menu = withServices.filter((item) => item.href !== CONTACT_HREF);
+  const menu = withServices.filter((item) => item.href !== bar.ctaLink);
   const whatsapp = whatsappUrl || `https://wa.me/${phone.replace(/\D/g, "")}`;
 
   const pathname = usePathname();
@@ -552,28 +561,32 @@ export default function Header({
           <nav aria-label="Main" className="hidden h-full items-stretch lg:flex">
             {menu.map((item) =>
               item.children?.length ? (
-                <DesktopDropdown key={keyOf(item)} item={item} pathname={pathname} />
+                <DesktopDropdown key={keyOf(item)} item={item} pathname={pathname} bar={bar} />
               ) : (
-                <DesktopLink key={keyOf(item)} item={item} pathname={pathname} />
+                <DesktopLink key={keyOf(item)} item={item} pathname={pathname} bar={bar} />
               ),
             )}
           </nav>
 
           <div className="ml-auto flex items-center gap-2 sm:gap-3">
-            <a
-              href={telHref(phone)}
-              className="hidden items-center gap-2 text-[14px] font-medium tabular-nums text-[var(--text-nav)] transition-colors duration-200 hover:text-[var(--text-primary)] xl:inline-flex"
-            >
-              <PhoneIcon className="h-4 w-4" />
-              {phone}
-            </a>
-            <span aria-hidden="true" className="mx-1 hidden h-5 w-px bg-[var(--border-default)] xl:block" />
+            {bar.showPhone && (
+              <>
+                <a
+                  href={telHref(phone)}
+                  className="hidden items-center gap-2 text-[14px] font-medium tabular-nums text-[var(--text-nav)] transition-colors duration-200 hover:text-[var(--text-primary)] xl:inline-flex"
+                >
+                  <PhoneIcon className="h-4 w-4" />
+                  {phone}
+                </a>
+                <span aria-hidden="true" className="mx-1 hidden h-5 w-px bg-[var(--border-default)] xl:block" />
+              </>
+            )}
             <ThemeToggle />
             <Link
-              href={CONTACT_HREF}
+              href={bar.ctaLink}
               className="group hidden h-10 shrink-0 items-center gap-1.5 rounded-full bg-[#2CCDDE] pl-5 pr-4 text-[14px] font-semibold text-[#04121A] transition-colors duration-200 hover:bg-[#5BDCE9] lg:inline-flex"
             >
-              Contact us
+              {bar.ctaLabel}
               <ArrowIcon className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
             </Link>
             <button
@@ -630,11 +643,11 @@ export default function Header({
 
           <div className="mt-auto space-y-3 pt-10">
             <Link
-              href={CONTACT_HREF}
+              href={bar.ctaLink}
               onClick={closeMobile}
               className="flex h-12 items-center justify-center gap-2 rounded-full bg-[#2CCDDE] text-[15px] font-semibold text-[#04121A]"
             >
-              Contact us
+              {bar.ctaLabel}
               <ArrowIcon className="h-4 w-4" />
             </Link>
             <div className="grid grid-cols-2 gap-3">

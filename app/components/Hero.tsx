@@ -116,6 +116,7 @@ export default function Hero({
 
             <h1 className="text-balance text-[2.625rem] font-semibold leading-[1.03] tracking-[-0.045em] text-[var(--text-primary)] sm:text-[3.5rem] lg:text-[4rem] xl:text-[4.5rem] 2xl:text-[5rem]">
               {lead}
+              {rest && ' '}
               {rest && <span className="block text-[var(--ink-soft)]">{rest}</span>}
             </h1>
 
