@@ -15,6 +15,7 @@ import { faChevronRight, faEnvelope, faLocationDot, faPhone } from '@fortawesome
 import { Icon } from './Icon'
 import LogoLink from './LogoLink'
 import FooterWordmark from './FooterWordmark'
+import ThemeToggle from './ThemeToggle'
 
 const fallbackUsefulLinks = [
   { label: 'Home', href: '/' },
@@ -225,9 +226,12 @@ export default function Footer({ navigation = fallbackUsefulLinks, settings = {}
           <p className="text-[var(--text-dim)] text-sm">
             &copy; {new Date().getFullYear()} {settings.copyright_text || 'Byteflow Information Technology. All rights reserved.'}
           </p>
-          <p className="text-[var(--text-dim)] text-sm">
-            Trusted by 500+ businesses across Dubai and UAE since 2017.
-          </p>
+          <div className="flex items-center gap-4">
+            <p className="text-[var(--text-dim)] text-sm">
+              Trusted by 500+ businesses across Dubai and UAE since 2017.
+            </p>
+            <ThemeToggle />
+          </div>
         </div>
       </div>
     </footer>

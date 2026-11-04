@@ -100,6 +100,51 @@ export const homeDefaults = {
     },
     lists: {},
   },
+  // Not a home page section: the header's Services mega menu and Industries
+  // dropdown on every page. It is stored with the home blocks so the admin
+  // edits it on the same screen.
+  header_menu: {
+    fields: {
+      eyebrow: 'Our services',
+      heading: 'Everything IT, under one roof.',
+      description: 'Support, cloud, security and creative work from one accountable team.',
+      link_label: 'View all services',
+      link: '/#services',
+      featured_eyebrow: 'Most popular',
+      featured_title: 'IT AMC plans',
+      featured_label: 'See plans',
+      featured_link: '/it-amc-services-dubai',
+      whatsapp_label: 'WhatsApp us',
+      industries_label: 'Industries',
+      industries_heading: 'Industries we serve',
+    },
+    lists: {
+      services: [
+        { group: 'IT Support & Infrastructure', title: 'IT AMC / IT Support', description: 'Fixed monthly support plans', link: '/it-amc-services-dubai' },
+        { group: 'IT Support & Infrastructure', title: 'System Integration', description: 'Every device, one system', link: '/system-integration' },
+        { group: 'IT Support & Infrastructure', title: 'Data Backup & Recovery', description: 'Survive ransomware & failure', link: '/data-backup-recovery' },
+        { group: 'Cloud & Security', title: 'Cloud / Microsoft 365', description: 'Migration & management', link: '/cloud-services-dubai' },
+        { group: 'Cloud & Security', title: 'Cyber Security', description: 'Firewalls, endpoint, email', link: '/cyber-security' },
+        { group: 'Digital & Creative', title: 'Website / Apps / Bots', description: 'Built for the UAE market', link: '/website-development' },
+        { group: 'Digital & Creative', title: 'Landing Page Design', description: 'Pages built to convert', link: '/landing-page-designing' },
+        { group: 'Digital & Creative', title: 'UI/UX & Graphics', description: 'Brand & interface design', link: '/graphics-designing' },
+        { group: 'Digital & Creative', title: 'Digital Marketing', description: 'Measurable monthly leads', link: '/digital-marketing' },
+      ],
+      stats: [
+        { title: '2 hrs', description: 'On-site response' },
+        { title: '24/7', description: 'Monitoring' },
+      ],
+      industries: [
+        { title: 'Clinics & Healthcare', link: '/#industries' },
+        { title: 'Schools & Education', link: '/#industries' },
+        { title: 'Real Estate', link: '/#industries' },
+        { title: 'Retail & Ecommerce', link: '/#industries' },
+        { title: 'Logistics', link: '/#industries' },
+        { title: 'Hospitality', link: '/#industries' },
+        { title: 'Corporate Offices & SMEs', link: '/#industries' },
+      ],
+    },
+  },
 } satisfies Record<string, HomeBlock>
 
 export type HomeBlockKey = keyof typeof homeDefaults

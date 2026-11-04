@@ -13,6 +13,14 @@ export function ArrowIcon({ className }: IconProps) {
   );
 }
 
+export function ArrowUpRightIcon({ className }: IconProps) {
+  return (
+    <svg className={className} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">
+      <path d="M4.5 11.5l7-7m-5.5 0h5.5V10" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 export function ChevronIcon({ className }: IconProps) {
   return (
     <svg className={className} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth={1.6} aria-hidden="true">

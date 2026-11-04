@@ -114,11 +114,9 @@ h1 {
   outline-offset: 2px;
 }
 
-/* Desktop nav items run the full height of the bar, so pull the ring in
-   rather than drawing it past the header's edge. */
-.site-header .nav-item:focus-visible {
-  outline-offset: -14px;
-  border-radius: 12px;
+/* Cyan is too faint on the header's white dropdown panels. */
+.site-header [id$='-panel'] :focus-visible {
+  outline-color: #0e7490;
 }
 
 /* ---- Home service cards (app/components/ServiceCard.tsx) ---- */

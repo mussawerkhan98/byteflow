@@ -16,9 +16,9 @@ import PageCta from "./components/PageCta";
 import PageSections from "./components/PageSections";
 import PageFaq from "./components/PageFaq";
 import { getMenu, getPageMetadata, getSiteSettings, getWebsiteScripts } from "./lib/cms";
-import { getServices } from "./lib/db";
 import { splitHeadCode } from "./lib/head-code";
 import { headerBarFrom } from "./lib/header-bar";
+import { getHomeBlock } from "./lib/home-blocks";
 
 // Both are variable fonts, so the weight axis is loaded in one file each
 // instead of one request per weight.
@@ -67,11 +67,11 @@ export default async function RootLayout({
   // have to appear on the site straight away, which a cached page
   // cannot do. This opts every page out of static rendering.
   await connection();
-  const [settings, headerMenu, footerMenu, services, scripts] = await Promise.all([
+  const [settings, headerMenu, footerMenu, headerMenuContent, scripts] = await Promise.all([
     getSiteSettings(),
     getMenu("header"),
     getMenu("footer"),
-    getServices(),
+    getHomeBlock("header_menu"),
     getWebsiteScripts(),
   ]);
   // Admin <meta>/<link> tags go in <head>; the scripts and JSON-LD go first in <body>.
@@ -110,13 +110,6 @@ export default async function RootLayout({
           new_tab: item.new_tab,
         }))
     : undefined;
-  const serviceLinks =
-    !headerMenu.length && services.length
-      ? services.map((service) => ({
-          label: service.title,
-          href: `/${service.slug}`,
-        }))
-      : undefined;
   return (
     // The theme script sets data-theme before React hydrates, so the server
     // HTML never carries it; that one difference is expected.
@@ -152,11 +145,11 @@ export default async function RootLayout({
         )}
         <Header
           navigation={headerNavigation}
-          serviceLinks={serviceLinks}
           logoUrl={String(settings?.logo_url || "/images/logo.png")}
           phone={String(settings?.header_phone || "") || undefined}
           whatsappUrl={String(settings?.whatsapp_link || "") || undefined}
           bar={headerBarFrom(settings)}
+          menu={headerMenuContent}
         />
         <main className="flex-1">{children}</main>
         <PageSections placement="before_faq" />
