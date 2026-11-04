@@ -75,14 +75,31 @@ const values = [
   },
 ]
 
-// One column on phones, two on tablets, four on desktop. Hairlines between
-// cells are borders, so none runs along the panel's outer edge.
-const commitmentCellClass = [
-  '',
-  'border-t sm:border-l sm:border-t-0',
-  'border-t lg:border-l lg:border-t-0',
-  'border-t sm:border-l lg:border-t-0',
-]
+/**
+ * A seal for the promise panel. The wording and a dashed inner ring turn in
+ * opposite directions, and a soft pulse leaves the check mark.
+ */
+function PromiseSeal() {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 140 140" className="h-32 w-32 shrink-0 overflow-visible sm:h-36 sm:w-36">
+      <defs>
+        <path id="about-seal-path" d="M70 70 m-54 0 a54 54 0 1 1 108 0 a54 54 0 1 1 -108 0" />
+      </defs>
+      <circle cx="70" cy="70" r="68" fill="var(--promise-tile)" stroke="var(--border-default)" />
+      <g className="about-seal-ring">
+        <text className="fill-[var(--text-body)] text-[9.5px] font-semibold uppercase">
+          <textPath href="#about-seal-path" textLength="333" lengthAdjust="spacing">
+            Service promise · Byteflow · Since {FOUNDED} ·
+          </textPath>
+        </text>
+      </g>
+      <circle className="about-seal-dash" cx="70" cy="70" r="41" fill="none" stroke="rgba(44,205,222,0.45)" strokeDasharray="1.5 4.5" />
+      <circle className="about-seal-pulse" cx="70" cy="70" r="30" fill="#2CCDDE" />
+      <circle cx="70" cy="70" r="30" fill="#2CCDDE" />
+      <path d="M58.5 70.5l7.5 7.5 15.5-16" fill="none" stroke="#04121A" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}
 
 export default async function AboutUs() {
   // The front frame shows the founder photo from the About page. As there, an
@@ -195,12 +212,23 @@ export default async function AboutUs() {
           </div>
         </div>
 
-        {/* Why choose us: one panel of commitments, each led by the figure behind it. */}
+        {/* Why choose us: the service promise, set out like an agreement. Dark
+            in both themes, so it reads as its own band under the About block. */}
         <section
           aria-labelledby="about-commitments-title"
-          className="mt-20 overflow-hidden rounded-3xl lg:mt-28 border border-[var(--border-default)] bg-[var(--bg-surface)] shadow-(--shadow-card)"
+          className="tint-panel relative isolate mt-20 overflow-hidden rounded-3xl border border-[var(--border-default)] bg-[var(--bg-surface)] lg:mt-28"
         >
-          <div className="grid gap-5 border-b border-[var(--border-default)] px-6 py-9 sm:px-8 lg:grid-cols-12 lg:items-end lg:gap-10 lg:px-10 lg:py-12">
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute -right-40 -top-40 -z-10 h-[32rem] w-[32rem] rounded-full bg-[radial-gradient(closest-side,rgba(44,205,222,0.14),transparent)]"
+          />
+
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute -bottom-48 -left-32 -z-10 h-[28rem] w-[28rem] rounded-full bg-[radial-gradient(closest-side,rgba(70,163,225,0.08),transparent)]"
+          />
+
+          <div className="grid gap-8 px-6 pb-10 pt-10 sm:px-8 lg:grid-cols-12 lg:items-center lg:gap-10 lg:px-10 lg:pb-12 lg:pt-14">
             <div className="lg:col-span-7">
               <p className="flex items-center gap-3 text-[13px] font-medium text-[var(--text-body)]">
                 <span aria-hidden="true" className="h-px w-10 bg-[#2CCDDE]" />
@@ -208,61 +236,84 @@ export default async function AboutUs() {
               </p>
               <h3
                 id="about-commitments-title"
-                className="mt-4 font-display text-[1.75rem] font-semibold leading-[1.1] tracking-[-0.035em] text-[var(--text-primary)] sm:text-[2.25rem] lg:text-[2.5rem]"
+                className="mt-5 font-display text-[2rem] font-semibold leading-[1.05] tracking-[-0.04em] text-[var(--text-primary)] sm:text-[2.75rem] lg:text-[3.25rem]"
               >
-                What you can count on,{' '}
-                <span className="text-[var(--ink-soft)]">every time.</span>
+                What you can count on,
+                <span className="block text-[var(--ink-soft)]">every time.</span>
               </h3>
             </div>
-            <p className="max-w-md text-[15px] leading-relaxed text-[var(--text-body)] lg:col-span-5 lg:justify-self-end lg:text-right">
-              The standards every Byteflow client gets, from a single laptop to a full office.
+            <p className="max-w-sm text-pretty text-[15px] leading-relaxed text-[var(--text-body)] lg:col-span-3">
+              Four standards behind every job we take on, whether it&apos;s one laptop or a whole office.
             </p>
+            <div className="lg:col-span-2 lg:justify-self-end">
+              <PromiseSeal />
+            </div>
           </div>
 
-          <ul className="grid sm:grid-cols-2 lg:grid-cols-4">
+          {/* Column headings, shown once the rows lay out as a table. */}
+          <div
+            aria-hidden="true"
+            className="hidden grid-cols-12 gap-6 border-t border-[var(--border-default)] px-10 py-4 text-[11.5px] font-medium uppercase tracking-[0.1em] text-[var(--text-nav)] lg:grid"
+          >
+            <span className="col-span-4">Commitment</span>
+            <span className="col-span-3">Standard</span>
+            <span className="col-span-5">What it means for you</span>
+          </div>
+
+          <ol className="border-t border-[var(--border-default)]">
             {values.map((v, i) => (
               <li
                 key={v.title}
-                className={`group relative isolate flex flex-col overflow-hidden border-[var(--border-default)] px-6 pb-9 pt-8 sm:px-8 lg:pb-11 lg:pt-10 ${commitmentCellClass[i]}`}
+                className="about-reveal group relative grid gap-5 border-b border-[var(--border-default)] px-6 py-8 transition-colors duration-300 hover:bg-[var(--promise-row-hover)] sm:px-8 lg:grid-cols-12 lg:items-center lg:gap-6 lg:px-10 lg:py-9"
               >
-                {/* Fills in along the top edge on hover. */}
+                {/* Lights the row's edge on hover. */}
                 <span
                   aria-hidden="true"
-                  className="absolute left-0 top-0 h-0.5 w-0 bg-[#2CCDDE] transition-[width] duration-500 group-hover:w-full motion-reduce:transition-none"
+                  className="absolute inset-y-0 left-0 w-[3px] origin-top scale-y-0 bg-[#2CCDDE] transition-transform duration-300 group-hover:scale-y-100 motion-reduce:transition-none"
                 />
-                <span
-                  aria-hidden="true"
-                  className="about-glow pointer-events-none absolute inset-0 -z-10 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-                />
-                {/* Ghost numeral, tucked into the top-right corner. */}
-                <span
-                  aria-hidden="true"
-                  className="about-ghost pointer-events-none absolute right-5 top-5 -z-10 select-none font-display text-[5.5rem] font-bold leading-none tracking-[-0.05em] tabular-nums sm:right-7 sm:top-6 sm:text-[6.5rem]"
-                >
-                  {String(i + 1).padStart(2, '0')}
-                </span>
 
-                <span
-                  aria-hidden="true"
-                  className="about-accent grid h-12 w-12 place-items-center rounded-2xl border border-[var(--border-default)] bg-[var(--bg-page)] transition-colors duration-300 group-hover:border-[#2CCDDE]/50"
-                >
-                  {v.icon}
-                </span>
+                <div className="flex items-center gap-4 lg:col-span-4">
+                  <span
+                    aria-hidden="true"
+                    className="grid h-12 w-12 shrink-0 place-items-center rounded-xl border border-[var(--border-default)] bg-[var(--promise-tile)] text-[var(--promise-accent)] transition-colors duration-300 group-hover:border-[#2CCDDE] group-hover:bg-[#2CCDDE] group-hover:text-[#04121A]"
+                  >
+                    {v.icon}
+                  </span>
+                  <div>
+                    <span className="block text-[12px] font-medium tabular-nums text-[var(--text-nav)]">
+                      {String(i + 1).padStart(2, '0')}
+                    </span>
+                    <h4 className="font-display text-[1.25rem] font-semibold tracking-[-0.02em] text-[var(--text-primary)]">
+                      {v.title}
+                    </h4>
+                  </div>
+                </div>
 
-                <p className="mt-12 flex flex-wrap items-baseline gap-x-2.5">
-                  <span className="font-display text-[2.75rem] font-semibold leading-none tracking-[-0.045em] tabular-nums text-[var(--text-primary)] sm:text-[3rem]">
+                <p className="flex flex-wrap items-baseline gap-x-2.5 lg:col-span-3">
+                  <span className="font-display text-[2.5rem] font-semibold leading-none tracking-[-0.045em] tabular-nums text-[var(--text-primary)] transition-colors duration-300 group-hover:text-[var(--promise-accent)] sm:text-[2.75rem]">
                     {v.value}
                   </span>
-                  <span className="text-[14px] font-medium text-[var(--text-body)]">{v.unit}</span>
+                  <span className="text-[14px] font-medium text-[var(--promise-accent)]">{v.unit}</span>
                 </p>
 
-                <span aria-hidden="true" className="mt-7 block h-px w-8 bg-[var(--border-strong)] transition-[width,background-color] duration-500 group-hover:w-14 group-hover:bg-[#2CCDDE] motion-reduce:transition-none" />
-
-                <h4 className="mt-5 font-display text-[1.0625rem] font-semibold tracking-[-0.015em] text-[var(--text-primary)]">{v.title}</h4>
-                <p className="mt-2 text-[14.5px] leading-relaxed text-[var(--text-body)]">{v.desc}</p>
+                <p className="max-w-xl text-[15px] leading-relaxed text-[var(--text-body)] lg:col-span-5">{v.desc}</p>
               </li>
             ))}
-          </ul>
+          </ol>
+
+          <Link
+            href="/it-amc-services-dubai"
+            className="group flex flex-col gap-5 px-6 py-7 sm:flex-row sm:items-center sm:justify-between sm:px-8 lg:px-10"
+          >
+            <span className="text-[15px] text-[var(--text-body)]">
+              Want all four on one fixed monthly fee?{' '}
+              <span className="font-medium text-[var(--text-primary)]">That&apos;s what an IT AMC plan is for.</span>
+            </span>
+            <span className="inline-flex items-center gap-4 text-[15px] font-semibold text-[var(--text-primary)]">
+              See IT AMC plans
+              <ArrowButton />
+            </span>
+          </Link>
         </section>
 
       </div>

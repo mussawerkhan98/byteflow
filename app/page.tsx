@@ -3,6 +3,7 @@ import Services from "./components/Services";
 import AboutUs from "./components/AboutUs";
 import Reviews from "./components/Reviews";
 import HowItWorks from "./components/HowItWorks";
+import HelpPanel from "./components/HelpPanel";
 import Blog from "./components/Blog";
 import CTA from "./components/CTA";
 import Contact from "./components/Contact";
@@ -70,6 +71,7 @@ export default async function Home() {
       <Services />
       <AboutUs />
       <HowItWorks />
+      <HelpPanel />
       <Blog posts={posts.slice(0, 4)} />
       <Reviews items={testimonials} />
       <CTA />

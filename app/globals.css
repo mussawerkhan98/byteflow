@@ -107,7 +107,9 @@ h1 {
 .site-menu :focus-visible,
 .home-hero :focus-visible,
 .home-services :focus-visible,
-.home-about :focus-visible {
+.home-about :focus-visible,
+.home-help :focus-visible,
+.home-process :focus-visible {
   outline: 2px solid var(--cyan);
   outline-offset: 2px;
 }
@@ -162,50 +164,149 @@ h1 {
 
 /* ---- Home About section (app/components/AboutUs.tsx) ---- */
 
-/* List numbers and icons in the brand cyan, darkened on white so they stay legible. */
-.about-accent {
+/* Tinted panel, used for the service promise (AboutUs) and the help panel
+   (HelpPanel): a faint brand-cyan tint with cyan hairlines,
+   so it reads as its own block without going dark. Text keeps the site theme;
+   the accent darkens on light backgrounds so it stays legible. */
+.tint-panel {
+  --bg-surface: #f3fafc;
+  --border-default: rgba(14, 116, 144, 0.14);
+  --border-strong: rgba(14, 116, 144, 0.3);
+  --promise-accent: #0e7490;
+  --promise-tile: #ffffff;
+  --promise-row-hover: rgba(44, 205, 222, 0.07);
+  background-image: linear-gradient(160deg, rgba(44, 205, 222, 0.09) 0%, transparent 45%);
+  box-shadow: var(--shadow-card);
+}
+
+:root:not([data-theme='light']) .tint-panel {
+  --bg-surface: #061820;
+  --border-default: rgba(44, 205, 222, 0.14);
+  --border-strong: rgba(44, 205, 222, 0.3);
+  --promise-accent: #2ccdde;
+  --promise-tile: rgba(255, 255, 255, 0.04);
+  --promise-row-hover: rgba(44, 205, 222, 0.05);
+}
+
+/* How it works: step icons in the brand cyan, darkened on white so they stay legible. */
+.process-accent {
   color: #0e7490;
 }
 
-:root:not([data-theme='light']) .about-accent {
+:root:not([data-theme='light']) .process-accent {
   color: #2ccdde;
 }
 
-/* Oversized numerals behind each commitment. The fill fades out towards the
-   bottom so the figure reads as texture, not as content, and warms to the
-   brand cyan when the card is hovered. Registered so the colour can animate. */
-@property --ghost-ink {
-  syntax: '<color>';
-  inherits: false;
-  initial-value: transparent;
+/* The active step's rail fills while it waits, then the explorer moves on
+   (HowItWorks listens for animationend). With reduced motion the rail is
+   simply full and nothing advances on its own. */
+.process-fill {
+  height: 0;
+  animation: process-fill 7s linear forwards;
 }
 
-.about-ghost {
-  --ghost-ink: color-mix(in srgb, var(--text-primary) 9%, transparent);
-  color: transparent;
-  background-image: linear-gradient(to bottom, var(--ghost-ink) 15%, transparent 90%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  transition: --ghost-ink 0.5s ease, transform 0.5s ease;
+@keyframes process-fill {
+  to {
+    height: 100%;
+  }
 }
 
-.group:hover .about-ghost {
-  --ghost-ink: color-mix(in srgb, var(--cyan) 30%, transparent);
-  transform: translateY(-4px);
+.process-panel-in {
+  animation: process-panel-in 0.45s ease both;
 }
 
-/* Soft cyan wash that rises from the top of a commitment on hover. */
-.about-glow {
-  background: radial-gradient(120% 60% at 100% 0%, color-mix(in srgb, var(--cyan) 9%, transparent), transparent 70%);
+@keyframes process-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .about-ghost {
-    transition: none;
+  .process-fill {
+    height: 100%;
+    animation: none;
   }
 
-  .group:hover .about-ghost {
+  .process-panel-in {
+    animation: none;
+  }
+}
+
+/* The seal's wording turns slowly around its centre. */
+.about-seal-ring {
+  transform-box: view-box;
+  transform-origin: 50% 50%;
+  animation: about-seal-turn 28s linear infinite;
+}
+
+/* The dashed inner ring turns the other way, more slowly. */
+.about-seal-dash {
+  transform-box: view-box;
+  transform-origin: 50% 50%;
+  animation: about-seal-turn 46s linear infinite reverse;
+}
+
+/* A soft ring that leaves the check mark every few seconds. */
+.about-seal-pulse {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  animation: about-seal-pulse 3.2s ease-out infinite;
+}
+
+@keyframes about-seal-turn {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes about-seal-pulse {
+  from {
+    opacity: 0.45;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.55);
+  }
+}
+
+/* Rows rise into place as they scroll into view, where the browser supports
+   scroll-driven animations. Elsewhere they are simply there. */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .about-reveal {
+      animation: about-reveal linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 70%;
+    }
+  }
+}
+
+@keyframes about-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
     transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-seal-ring,
+  .about-seal-dash,
+  .about-seal-pulse {
+    animation: none;
+  }
+
+  .about-seal-pulse {
+    opacity: 0;
   }
 }
 

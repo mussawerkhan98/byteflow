@@ -1,8 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
-import Link from 'next/link'
 import { getServices } from '../lib/db'
 import { services as serviceDetails } from '../lib/services-data'
-import { ArrowIcon } from './InlineIcons'
 import ServiceCard from './ServiceCard'
 
 // Each service's own page supplies the one-line tagline on the small cards,
@@ -194,20 +192,6 @@ export default async function Services() {
               />
             )
           })}
-        </div>
-
-        <div className="mt-12 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-[15px] text-[var(--text-body)]">
-            Not sure which service you need?{' '}
-            <span className="font-medium text-[var(--text-primary)]">Our team will guide you.</span>
-          </p>
-          <Link
-            href="/contact-us"
-            className="group inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-full bg-[#2CCDDE] pl-6 pr-5 text-[15px] font-semibold text-[#04121A] transition-colors duration-200 hover:bg-[#5BDCE9]"
-          >
-            Talk to our team
-            <ArrowIcon className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
-          </Link>
         </div>
       </div>
     </section>
