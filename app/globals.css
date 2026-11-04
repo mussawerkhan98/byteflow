@@ -150,8 +150,25 @@ h1 {
   --bg-surface: #0c1923;
 }
 
+/* Hover: the icon tile fills with the brand cyan. Comes after the theme rules
+   above so it wins over them. */
+.service-card-icon {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+.group:hover .service-card-icon {
+  color: #04121a;
+  background: #2ccdde;
+  border-color: #2ccdde;
+}
+
+/* Faint cyan wash that fades in from the top-left corner of a hovered card. */
+.service-card-wash {
+  background: radial-gradient(90% 60% at 0% 0%, rgba(44, 205, 222, 0.1), transparent 70%);
+}
+
 /* Texture for the featured card: the receding grid from the Byteflow mark,
-   fading out towards the text. */
+   fading out towards the text. On hover it drifts and brightens a little. */
 .service-card-grid {
   background-image:
     linear-gradient(to right, rgba(44, 205, 222, 0.14) 1px, transparent 1px),
@@ -160,6 +177,19 @@ h1 {
   background-position: right top;
   -webkit-mask-image: radial-gradient(ellipse 80% 70% at 100% 0%, #000 0%, transparent 70%);
   mask-image: radial-gradient(ellipse 80% 70% at 100% 0%, #000 0%, transparent 70%);
+  opacity: 0.85;
+  transition: background-position 1.2s ease, opacity 0.6s ease;
+}
+
+.group:hover .service-card-grid {
+  opacity: 1;
+  background-position: right -18px top 18px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .service-card-grid {
+    transition: none;
+  }
 }
 
 /* ---- Home About section (app/components/AboutUs.tsx) ---- */
@@ -275,19 +305,21 @@ h1 {
   }
 }
 
-/* Rows rise into place as they scroll into view, where the browser supports
-   scroll-driven animations. Elsewhere they are simply there. */
+/* Rises into place on scrolling into view (service cards, promise rows),
+   where the browser supports scroll-driven animations; elsewhere it is simply
+   there. It animates `transform`, so hover lifts done with Tailwind's
+   translate utilities (the separate `translate` property) still work. */
 @media (prefers-reduced-motion: no-preference) {
   @supports (animation-timeline: view()) {
-    .about-reveal {
-      animation: about-reveal linear both;
+    .reveal {
+      animation: reveal linear both;
       animation-timeline: view();
       animation-range: entry 0% entry 70%;
     }
   }
 }
 
-@keyframes about-reveal {
+@keyframes reveal {
   from {
     opacity: 0;
     transform: translateY(28px);

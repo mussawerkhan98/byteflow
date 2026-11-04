@@ -15,6 +15,7 @@ import {
   getTestimonials,
 } from "./lib/cms";
 import { getPosts } from "./lib/db";
+import { getHomeBlock } from "./lib/home-blocks";
 import JsonLd from "./components/JsonLd";
 import { faqPageSchema, graph } from "./lib/structured-data";
 
@@ -24,7 +25,7 @@ export const metadata = {
 };
 
 export default async function Home() {
-  const [sectionHero, pageHero, testimonials, settings, posts, faqs] =
+  const [sectionHero, pageHero, testimonials, settings, posts, faqs, process] =
     await Promise.all([
       getSection("home", "hero"),
       getPageHero("home"),
@@ -36,6 +37,8 @@ export default async function Home() {
       // HTML a crawler receives — the markup still only describes what a
       // visitor sees on the page.
       getFaqsForSlug("home"),
+      // How it works runs in the browser, so its admin content is read here.
+      getHomeBlock("home_process"),
     ]);
   const hero = {
     ...(sectionHero ?? {}),
@@ -70,7 +73,7 @@ export default async function Home() {
       />
       <Services />
       <AboutUs />
-      <HowItWorks />
+      <HowItWorks content={process} />
       <HelpPanel />
       <Blog posts={posts.slice(0, 4)} />
       <Reviews items={testimonials} />

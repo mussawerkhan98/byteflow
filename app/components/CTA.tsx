@@ -55,7 +55,7 @@ export default function CTA() {
 
           {/* Headline */}
           <h2 className="max-w-4xl mx-auto text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1.04] tracking-tight mb-6">
-            <span style={{ color: 'var(--text-primary)' }}>Ready to Upgrade</span>
+            <span style={{ color: 'var(--text-primary)' }}>Ready to Upgrade</span>{' '}
             <br />
             <span style={{ background: 'linear-gradient(135deg, #2CCDDE, #46A3E1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
               Your IT Setup?

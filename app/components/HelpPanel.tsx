@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { getSiteSettings } from '../lib/cms'
+import { getHomeBlock } from '../lib/home-blocks'
 import { ArrowIcon, PhoneIcon } from './InlineIcons'
 
 const DEFAULT_PHONE = '+971 54 328 2042'
@@ -9,8 +10,9 @@ const DEFAULT_PHONE = '+971 54 328 2042'
  * How it works steps. Same tinted surface as the service promise in AboutUs.
  */
 export default async function HelpPanel() {
-  const settings = await getSiteSettings()
+  const [settings, block] = await Promise.all([getSiteSettings(), getHomeBlock('home_help')])
   const phone = String(settings?.header_phone || '') || DEFAULT_PHONE
+  const copy = block.fields
 
   return (
     <section className="home-help pb-20 sm:pb-24 lg:-mt-8 lg:pb-28">
@@ -27,11 +29,9 @@ export default async function HelpPanel() {
             </span>
             <div>
               <h2 className="font-display text-[1.375rem] font-semibold leading-snug tracking-[-0.02em] text-[var(--text-primary)] sm:text-[1.5rem]">
-                Not sure which service you need?
+                {copy.heading}
               </h2>
-              <p className="mt-1.5 max-w-xl text-[15px] leading-relaxed text-[var(--text-body)]">
-                Our team will guide you. Tell us what&apos;s slowing your business down and we&apos;ll point you to the right fit.
-              </p>
+              <p className="mt-1.5 max-w-xl text-[15px] leading-relaxed text-[var(--text-body)]">{copy.description}</p>
             </div>
           </div>
 
@@ -44,10 +44,10 @@ export default async function HelpPanel() {
               {phone}
             </a>
             <Link
-              href="/contact-us"
+              href={copy.button_link}
               className="group inline-flex h-12 items-center justify-center gap-2 rounded-full bg-[#2CCDDE] pl-6 pr-5 text-[15px] font-semibold text-[#04121A] transition-colors duration-200 hover:bg-[#5BDCE9]"
             >
-              Talk to our team
+              {copy.button_label}
               <ArrowIcon className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
             </Link>
           </div>

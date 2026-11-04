@@ -11,7 +11,7 @@ export default function Blog({ posts }: { posts: Post[] }) {
         <div className="mb-16 flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-cyan-400/25 bg-cyan-400/[.07] px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-[#2CCDDE]">Insights</div>
-            <h2 className="text-4xl font-bold leading-tight sm:text-5xl"><span className="text-[var(--text-primary)]">From Our</span><br /><span className="bg-gradient-to-br from-[#2CCDDE] to-[#46A3E1] bg-clip-text text-transparent">IT Experts</span></h2>
+            <h2 className="text-4xl font-bold leading-tight sm:text-5xl"><span className="text-[var(--text-primary)]">From Our</span>{' '}<br /><span className="bg-gradient-to-br from-[#2CCDDE] to-[#46A3E1] bg-clip-text text-transparent">IT Experts</span></h2>
           </div>
           <Link href="/blog" className="group inline-flex flex-shrink-0 items-center gap-2 text-sm font-bold text-[#2CCDDE]">View all articles <span className="transition-transform group-hover:translate-x-1">→</span></Link>
         </div>

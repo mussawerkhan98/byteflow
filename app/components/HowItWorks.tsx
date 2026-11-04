@@ -1,17 +1,13 @@
 'use client'
 
 import { useState, type KeyboardEvent } from 'react'
+import { lines, type HomeBlock } from '../lib/home-content'
 import { ArrowIcon } from './InlineIcons'
 
-// Each step's timing and points are taken from its own description, so the
-// explorer never promises more than the copy does.
-const steps = [
+// Step icons, by position. The words come from the admin panel
+// ("Home page sections" → How it works); a sixth step reuses the first icon.
+const stepIcons = [
   {
-    num: '01',
-    title: 'Free consultation',
-    when: 'Your first call',
-    desc: 'Reach out by phone, WhatsApp or the contact form. We listen to your setup, team size and pain points — no jargon, no sales pressure.',
-    points: ['Phone, WhatsApp or form', 'Your setup and team size', 'No sales pressure'],
     icon: (
       <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 01-.825-.242m9.345-8.334a2.126 2.126 0 00-.476-.095 48.64 48.64 0 00-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0011.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" />
@@ -19,11 +15,6 @@ const steps = [
     ),
   },
   {
-    num: '02',
-    title: 'Custom proposal',
-    when: 'Within 24 hours',
-    desc: 'Within 24 hours you receive a clear, itemised proposal — scope, timeline and fixed pricing. No hidden costs, no vague estimates.',
-    points: ['Itemised scope', 'Clear timeline', 'Fixed pricing'],
     icon: (
       <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
@@ -31,11 +22,6 @@ const steps = [
     ),
   },
   {
-    num: '03',
-    title: 'Onboarding & setup',
-    when: 'On-site or remote',
-    desc: 'Our certified engineers arrive on-site or connect remotely. We configure your network, servers, cloud or software with zero disruption to your workday.',
-    points: ['Network & servers', 'Cloud & software', 'No disruption to your day'],
     icon: (
       <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0H3" />
@@ -43,11 +29,6 @@ const steps = [
     ),
   },
   {
-    num: '04',
-    title: 'Testing & handover',
-    when: 'Before sign-off',
-    desc: 'Everything is tested end-to-end before we hand over. We walk your team through what was done, answer every question and make sure you are 100% comfortable.',
-    points: ['End-to-end testing', 'Team walkthrough', 'Every question answered'],
     icon: (
       <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z" />
@@ -55,11 +36,6 @@ const steps = [
     ),
   },
   {
-    num: '05',
-    title: 'Ongoing support',
-    when: '24/7, for as long as you need',
-    desc: 'We monitor your systems 24/7 and fix issues before they affect your business. One call or message and our engineers are on it — on-site within 2 hours.',
-    points: ['24/7 monitoring', 'Issues fixed early', 'On-site within 2 hours'],
     icon: (
       <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
@@ -94,7 +70,16 @@ function Points({ points }: { points: string[] }) {
   )
 }
 
-export default function HowItWorks() {
+export default function HowItWorks({ content }: { content: HomeBlock }) {
+  const copy = content.fields
+  const steps = content.lists.steps.map((s, i) => ({
+    num: String(i + 1).padStart(2, '0'),
+    title: s.title,
+    when: s.when,
+    desc: s.description,
+    points: lines(s.points ?? ''),
+    icon: stepIcons[i % stepIcons.length].icon,
+  }))
   const [active, setActive] = useState(0)
   // Hovering or focusing the explorer pauses the auto-advance; choosing a
   // step stops it for good, so the visitor stays where they put it.
@@ -134,15 +119,15 @@ export default function HowItWorks() {
           <div className="lg:col-span-7">
             <p className="mb-6 flex items-center gap-3 text-[13px] font-medium text-[var(--text-body)]">
               <span aria-hidden="true" className="h-px w-10 bg-[#2CCDDE]" />
-              Our process
+              {copy.eyebrow}
             </p>
             <h2 className="text-balance text-[2.25rem] font-semibold leading-[1.05] tracking-[-0.04em] text-[var(--text-primary)] sm:text-5xl lg:text-[3.5rem]">
-              From first call
-              <span className="block text-[var(--ink-soft)]">to full delivery.</span>
+              {copy.heading}{' '}
+              <span className="block text-[var(--ink-soft)]">{copy.heading_soft}</span>
             </h2>
           </div>
           <p className="max-w-md text-[17px] leading-relaxed text-[var(--text-body)] lg:col-span-5 lg:justify-self-end">
-            A simple, transparent process so you always know exactly where things stand.
+            {copy.intro}
           </p>
         </div>
 
@@ -156,7 +141,7 @@ export default function HowItWorks() {
         >
           <div
             role="tablist"
-            aria-label="Our process"
+            aria-label={copy.eyebrow}
             aria-orientation="vertical"
             onKeyDown={onTabKey}
             className="border-t border-[var(--border-default)] lg:col-span-5"
@@ -235,9 +220,11 @@ export default function HowItWorks() {
                 <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-[#2CCDDE]" />
                 {step.when}
               </p>
-              <h3 className="mt-6 max-w-md font-display text-[2.5rem] font-semibold leading-[1.05] tracking-[-0.04em] text-[var(--text-primary)] xl:text-[2.75rem]">
+              {/* Not a heading: the stacked list below already gives each step
+                  its own h3, and the panel is labelled by its tab. */}
+              <p className="mt-6 max-w-md font-display text-[2.5rem] font-semibold leading-[1.05] tracking-[-0.04em] text-[var(--text-primary)] xl:text-[2.75rem]">
                 {step.title}
-              </h3>
+              </p>
               <p className="mt-5 max-w-xl text-[17px] leading-relaxed text-[var(--text-body)]">{step.desc}</p>
               <div className="mt-8">
                 <Points points={step.points} />
