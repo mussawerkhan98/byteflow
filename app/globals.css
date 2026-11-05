@@ -12,10 +12,11 @@
 
 /* The page's horizontal measurements, in one place so the header and the
    sections can never drift apart.
-   --container-max / --container-px  the shared container (page-container):
-                                      at most 1440px including its side
-                                      padding, which grows with the window
-                                      from 16px to 48px.
+   --container-max / --container-px  the one container every section and the
+                                      header bar share: at most 2000px
+                                      including its side padding, which grows
+                                      with the window from 16px to 40px. The
+                                      navbar's outer edges are its edges.
    --panel-px                         inside padding of a rounded panel sitting
                                       in that container: the header bar, the
                                       hero panel and any later section panel.
@@ -23,8 +24,8 @@
    and both pad by --panel-px, so the logo lines up with the hero heading and
    the bar's last button with the panel's right-hand content. */
 :root {
-  --container-max: 90rem;
-  --container-px: clamp(16px, 4vw, 48px);
+  --container-max: 2000px;
+  --container-px: clamp(16px, 2.5vw, 40px);
   --panel-px: 1rem;
 }
 
@@ -49,13 +50,12 @@
   padding-inline: var(--container-px);
 }
 
-/* The home page hero's own, wider container: up to 40px from the window's
-   edges on big screens (16px on phones, like page-container). */
+/* The header and the hero's name for the same container. */
 @utility hero-container {
   width: 100%;
-  max-width: 2000px;
+  max-width: var(--container-max);
   margin-inline: auto;
-  padding-inline: clamp(16px, 2.5vw, 40px);
+  padding-inline: var(--container-px);
 }
 
 /* The inside padding of a panel in page-container (header bar, hero panel). */
