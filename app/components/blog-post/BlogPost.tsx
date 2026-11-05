@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import sanitizeHtml from "sanitize-html";
+import { postImageAttributes } from "@/app/lib/post-images";
 import { getPosts, type Post } from "@/app/lib/db";
 import { getSiteFigures, getSiteSettings } from "@/app/lib/cms";
 import { getCategoryStyle } from "../../blog/category-style";
@@ -37,7 +38,7 @@ const COVER_HEIGHT = 900;
 const ALLOWED_TAGS = [
   "p", "br", "h2", "h3", "h4", "strong", "b", "em", "i", "u", "ul", "ol",
   "li", "blockquote", "a", "code", "pre", "div", "table", "thead", "tbody",
-  "tfoot", "tr", "th", "td", "caption",
+  "tfoot", "tr", "th", "td", "caption", "img", "figure", "figcaption",
 ];
 
 function sanitize(html: string) {
@@ -48,11 +49,14 @@ function sanitize(html: string) {
       div: ["class"],
       th: ["colspan", "rowspan", "scope"],
       td: ["colspan", "rowspan"],
+      img: ["src", "alt", "width", "height", "loading", "decoding", "srcset", "sizes"],
     },
     allowedClasses: { div: ["table-scroll"] },
     allowedSchemes: ["http", "https", "mailto", "tel"],
     transformTags: {
       a: sanitizeHtml.simpleTransform("a", { rel: "noopener noreferrer" }),
+      // Pictures keep their saved src; see post-images.ts for what they gain.
+      img: (tagName, attribs) => ({ tagName, attribs: postImageAttributes(attribs) }),
     },
   });
 }

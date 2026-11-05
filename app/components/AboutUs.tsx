@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import type { ReactNode } from 'react'
-import { getSiteFigures } from '../lib/cms'
+import { getSection, getSiteFigures, getTestimonials } from '../lib/cms'
 import { getHomeBlock } from '../lib/home-blocks'
 import { homeDefaults } from '../lib/home-content'
 import { ArrowIcon, ArrowUpRightIcon } from './InlineIcons'
@@ -66,29 +66,6 @@ function PromiseSeal({ text }: { text: string }) {
   )
 }
 
-/** "4.9★ Google rating" on the photo, linked to the Google profile when one is set. */
-function RatingBadge({ rating, label, href }: { rating: string; label: string; href: string }) {
-  const className =
-    'ml-auto inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-[rgba(4,13,18,0.66)] px-3.5 py-1.5 text-[12.5px] font-medium text-white backdrop-blur-md'
-  const body = (
-    <>
-      <span className="font-semibold tabular-nums">{rating}</span>
-      <span aria-hidden="true" className="text-[#F5B400]">
-        ★
-      </span>
-      <span className="sr-only"> out of 5,</span> {label}
-    </>
-  )
-  return href ? (
-    <a href={href} target="_blank" rel="noopener noreferrer" className={`${className} transition-colors hover:bg-[rgba(4,13,18,0.85)]`}>
-      {body}
-      <span className="sr-only"> (opens Google in a new tab)</span>
-    </a>
-  ) : (
-    <span className={className}>{body}</span>
-  )
-}
-
 // The feature icons the admin can choose from (Home page sections → About
 // Byteflow); keep the names in step with the admin's list. A row saved
 // without one takes the default for its position.
@@ -116,21 +93,53 @@ function FeatureIcon({ name }: { name: string }) {
   )
 }
 
+/** The founder's line from the About page, for a site with no founder record yet. */
+const FOUNDER_QUOTE = 'Started with a laptop and a promise to fix IT in Dubai properly.'
+
+/** Every bento tile: 20px corners, a hairline that turns cyan, a 2px lift on hover. */
+const TILE =
+  'overflow-hidden rounded-[20px] border border-[var(--border-default)] transition duration-300 hover:-translate-y-0.5 hover:border-[#2CCDDE] motion-reduce:transition-none motion-reduce:hover:translate-y-0'
+
+/** Background and text for the initials of reviewers without a photo. */
+const AVATAR_TONES = ['bg-[#0b1724] text-[#2CCDDE]', 'bg-[#2CCDDE] text-[#04121A]', 'bg-[#46A3E1] text-white', 'bg-[#0e7490] text-white', 'bg-[#cbd5e1] text-[#0b1724]']
+
+const initials = (name: string) =>
+  name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((word) => word[0]?.toUpperCase() ?? '')
+    .join('') || '·'
+
 /**
- * Hairlines between the features: stacked on phones (a rule between each),
- * two by two from sm, one row of four from lg. The outer items sit flush
- * with the container edges.
+ * A stylised line of the coast from Abu Dhabi up to Sharjah, with a dot for
+ * each city and a pulse on Dubai. Drawn inline (no map library, nothing to
+ * load); the place names are real text in the chips beside it.
  */
-function featureCellClass(index: number, count: number) {
-  return [
-    'border-[var(--border-default)] py-7 sm:py-8',
-    index > 0 ? 'border-t' : '',
-    index >= 2 ? 'sm:border-t' : 'sm:border-t-0',
-    index % 2 ? 'sm:border-l sm:pl-6' : 'sm:pr-6',
-    'lg:border-t-0',
-    index > 0 ? 'lg:border-l lg:pl-8' : 'lg:pl-0',
-    index < count - 1 ? 'lg:pr-8' : 'lg:pr-0',
-  ].join(' ')
+function CoverageMap() {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 240 130" className="h-28 w-full sm:h-32" fill="none">
+      <path
+        d="M6 118 C 34 112, 58 104, 74 98 S 112 84, 132 70 S 168 46, 186 36 S 220 14, 236 8"
+        stroke="var(--border-strong)"
+        strokeWidth="1.5"
+        strokeDasharray="2 5"
+        strokeLinecap="round"
+      />
+      <path d="M74 98 C 100 88, 118 78, 140 66 S 168 46, 180 40" stroke="#2CCDDE" strokeOpacity="0.55" strokeWidth="1.5" strokeLinecap="round" />
+      {[
+        { x: 74, y: 98 },
+        { x: 140, y: 66 },
+        { x: 180, y: 40 },
+      ].map((city) => (
+        <g key={city.x}>
+          <circle cx={city.x} cy={city.y} r="9" fill="#2CCDDE" fillOpacity="0.14" />
+          <circle cx={city.x} cy={city.y} r="4" fill="#2CCDDE" />
+        </g>
+      ))}
+      <circle cx="140" cy="66" r="9" stroke="#2CCDDE" strokeOpacity="0.6" className="about-map-pulse" />
+    </svg>
+  )
 }
 
 // A headline line stays on one line only while it is short enough to fit the
@@ -138,35 +147,76 @@ function featureCellClass(index: number, count: number) {
 const holdTogether = (line: string) => (line.length <= 26 ? 'whitespace-nowrap' : '')
 
 export default async function AboutUs() {
-  const [about, promise, figures] = await Promise.all([getHomeBlock('home_about'), getHomeBlock('home_promise'), getSiteFigures()])
+  const [about, promise, figures, founder, testimonials] = await Promise.all([
+    getHomeBlock('home_about'),
+    getHomeBlock('home_promise'),
+    getSiteFigures(),
+    // The quote is the founder's own line from the About page ("About Us —
+    // Founder" in the admin), so the two pages never say different things.
+    getSection('about-us', 'founder'),
+    getTestimonials(),
+  ])
 
   const copy = about.fields
   const promiseCopy = promise.fields
   const defaults = homeDefaults.home_about.fields
   // The built-in artwork stands in until a photo is uploaded in the admin, and
-  // is mirrored so its cube sits clear of the badges. A block saved while the
+  // is mirrored so its cube sits clear of the caption. A block saved while the
   // artwork was still a PNG gets the WebP copy (the PNG stays for old links).
   const defaultImage = copy.image_url === defaults.image_url || copy.image_url === LEGACY_ARTWORK
   const image = defaultImage ? defaults.image_url : copy.image_url
   const imageAlt = defaultImage ? defaults.image_alt : copy.image_alt
+  // A real photo carries the caption; the stand-in artwork, the plain label.
+  const caption = defaultImage ? copy.image_badge : copy.image_caption
   const features = about.lists.highlights.filter((item) => item.show !== 'no').slice(0, 4)
+
+  // As on the About page: an existing founder record is the truth, including
+  // an empty photo; with no record at all, the bundled photo and wording.
+  const quote = founder ? String(founder.heading ?? '').trim() : FOUNDER_QUOTE
+  const founderName = String(founder?.name ?? '').trim()
+  const founderTitle = [String(founder?.role || 'Founder & CEO'), String(founder?.company || 'Byteflow Information Technology')].join(' · ')
+  const founderPhoto = founder ? String(founder.image_url ?? '').trim() : '/images/owner/owner.png'
+  const founderAlt = String(founder?.image_alt || 'Byteflow founder')
+  const showQuote = copy.show_quote !== 'no' && quote
+
+  // Real reviewers only: their photo when the review has one, else initials.
+  const reviewers = testimonials.slice(0, 5).map((review) => ({ name: review.customer_name, photo: review.image_url }))
+  const locations = copy.coverage_locations.split(/[\n,·]/).map((place) => place.trim()).filter(Boolean)
 
   return (
     <section className="home-about bg-[var(--bg-page)] py-16 lg:py-24">
       <div className="page-container">
-        <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,45fr)_minmax(0,55fr)] lg:gap-16">
-          <div>
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,40fr)_minmax(0,60fr)] lg:items-start lg:gap-14">
+          {/* Stays in view while the bento beside it scrolls past (wide screens only). */}
+          <div className="lg:sticky lg:top-28">
             <p className="mb-6 flex items-center gap-3 text-[12px] font-semibold uppercase tracking-[0.2em] text-[var(--about-accent)]">
               <span aria-hidden="true" className="h-px w-10 bg-[#2CCDDE]" />
               {copy.eyebrow}
             </p>
             {/* Two lines: each holds together while it fits, and the size scales
                 with the viewport so the longer one still fits its column. */}
-            <h2 className="text-[clamp(1.5rem,5.4vw,3rem)] font-semibold leading-[1.08] tracking-[-0.04em] text-[var(--text-primary)] lg:text-[clamp(2rem,2.6vw,2.75rem)]">
+            <h2 className="text-[clamp(1.5rem,5.4vw,3rem)] font-semibold leading-[1.08] tracking-[-0.04em] text-[var(--text-primary)] lg:text-[clamp(1.875rem,2.5vw,2.75rem)]">
               <span className={`block ${holdTogether(copy.heading)}`}>{copy.heading}</span>{' '}
               <span className={`block text-[var(--ink-soft)] ${holdTogether(copy.heading_soft)}`}>{copy.heading_soft}</span>
             </h2>
             <p className="mt-6 max-w-[34rem] text-[17px] leading-relaxed text-[var(--text-body)]">{copy.intro}</p>
+
+            {showQuote && (
+              <figure className="mt-8 max-w-[34rem] border-l-2 border-[#2CCDDE] py-1 pl-5">
+                <blockquote className="font-display text-[1.125rem] font-medium leading-snug tracking-[-0.01em] text-[var(--text-primary)]">
+                  “{quote}”
+                </blockquote>
+                <figcaption className="mt-4 flex items-center gap-3">
+                  {founderPhoto && (
+                    <Image src={founderPhoto} alt={founderAlt} width={88} height={88} sizes="44px" className="h-11 w-11 rounded-full object-cover object-top" />
+                  )}
+                  <span className="text-[13px] leading-snug text-[var(--text-body)]">
+                    {founderName && <span className="block font-semibold text-[var(--text-primary)]">{founderName}</span>}
+                    {founderTitle}
+                  </span>
+                </figcaption>
+              </figure>
+            )}
 
             <div className="mt-9 flex flex-wrap items-center gap-x-7 gap-y-4">
               <Link
@@ -188,61 +238,131 @@ export default async function AboutUs() {
             </div>
           </div>
 
-          {/* The photo, with the site-wide figures on it as glass badges. */}
-          <figure className="relative aspect-[4/3] overflow-hidden rounded-[24px] bg-[#040D12]">
-            <Image
-              src={image}
-              alt={imageAlt}
-              width={1200}
-              height={900}
-              sizes="(min-width: 1440px) 740px, (min-width: 1024px) 52vw, 100vw"
-              className={`h-full w-full object-cover ${defaultImage ? '-scale-x-100 object-[100%_55%]' : 'object-center'}`}
-            />
-            {/* The label top left, the rating top right; on a narrow photo the
-                rating wraps under the label instead of covering it. */}
-            <div className="absolute inset-x-4 top-4 flex flex-wrap items-start justify-between gap-2 sm:inset-x-5 sm:top-5">
-              {copy.image_badge && (
-                <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-[rgba(4,13,18,0.66)] px-3.5 py-1.5 text-[12.5px] font-medium text-white backdrop-blur-md">
-                  <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-[#2CCDDE]" />
-                  {copy.image_badge}
-                </span>
+          {/* The bento: photo, years, rating, coverage. All text is real text. */}
+          <div className="grid gap-3 sm:grid-cols-2 sm:auto-rows-[minmax(13rem,auto)]">
+            <figure className={`${TILE} relative min-h-[20rem] bg-[#040D12] sm:row-span-2`}>
+              <Image
+                src={image}
+                alt={imageAlt}
+                width={1200}
+                height={1500}
+                sizes="(min-width: 1440px) 400px, (min-width: 1024px) 28vw, (min-width: 640px) 50vw, 100vw"
+                className={`absolute inset-0 h-full w-full object-cover ${defaultImage ? '-scale-x-100 object-[100%_55%]' : 'object-center'}`}
+              />
+              <span aria-hidden="true" className="absolute inset-x-0 bottom-0 h-1/2 bg-[linear-gradient(to_top,rgba(4,13,18,0.92),transparent)]" />
+              {caption && (
+                <figcaption className="absolute inset-x-5 bottom-5 flex items-center gap-2 text-[14px] font-semibold text-white">
+                  <span aria-hidden="true" className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#2CCDDE]" />
+                  {caption}
+                </figcaption>
               )}
-              {copy.show_rating_badge !== 'no' && <RatingBadge rating={figures.rating} label={copy.rating_label} href={figures.googleUrl} />}
-            </div>
+            </figure>
+
             {copy.show_years_badge !== 'no' && (
-              <p className="absolute bottom-4 left-4 flex items-center gap-4 rounded-2xl border border-white/10 bg-[rgba(4,13,18,0.66)] py-3.5 pl-5 pr-6 text-white backdrop-blur-md sm:bottom-5 sm:left-5">
-                <span className="font-display text-[2.25rem] font-semibold leading-none tracking-[-0.05em] tabular-nums sm:text-[2.5rem]">
-                  {figures.years}
-                  <span className="text-[#2CCDDE]">+</span>
-                </span>
-                <span aria-hidden="true" className="h-9 w-px bg-white/15" />
-                <span className="max-w-[10.5rem] text-[13px] font-medium leading-snug text-[#cbd5e1]">{copy.years_label}</span>
-              </p>
+              <div className={`${TILE} flex flex-col justify-between bg-[#0b1724] p-6 text-white`}>
+                <p className="font-display text-[3.5rem] font-semibold leading-none tracking-[-0.05em] text-[#2CCDDE] tabular-nums">{figures.years}+</p>
+                <p className="mt-6 max-w-[14rem] text-[15px] font-medium leading-snug text-[#cbd5e1]">{copy.years_label}</p>
+              </div>
             )}
-          </figure>
+
+            {copy.show_rating_badge !== 'no' && (
+              <div className={`${TILE} flex flex-col justify-between bg-[var(--bg-surface)] p-6`}>
+                <div>
+                  <p className="font-display text-[2.75rem] font-semibold leading-none tracking-[-0.04em] text-[var(--text-primary)] tabular-nums">
+                    {figures.rating}
+                    <span className="ml-1 text-[0.7em] text-[#F5B400]">★</span>
+                  </p>
+                  <p className="mt-2 text-[14px] text-[var(--text-body)]">{copy.rating_label}</p>
+                </div>
+                <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
+                  {reviewers.length > 0 && (
+                    <ul aria-label="Some of our Google reviewers" className="flex -space-x-1.5">
+                      {reviewers.map((reviewer, i) => (
+                        <li key={`${reviewer.name}-${i}`} title={reviewer.name} className="relative">
+                          {reviewer.photo ? (
+                            // eslint-disable-next-line @next/next/no-img-element -- a reviewer's own small photo, as uploaded
+                            <img src={reviewer.photo} alt={reviewer.name} width={36} height={36} loading="lazy" decoding="async" className="h-9 w-9 rounded-full border-2 border-[var(--bg-surface)] object-cover" />
+                          ) : (
+                            <span
+                              className={`grid h-9 w-9 place-items-center rounded-full border-2 border-[var(--bg-surface)] text-[11px] font-bold tracking-tight ${AVATAR_TONES[i % AVATAR_TONES.length]}`}
+                            >
+                              <span aria-hidden="true">{initials(reviewer.name)}</span>
+                              <span className="sr-only">{reviewer.name}</span>
+                            </span>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  {figures.googleUrl && (
+                    <a
+                      href={figures.googleUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group inline-flex items-center gap-1 text-[14px] font-semibold text-[var(--text-primary)] underline-offset-4 hover:underline"
+                    >
+                      {copy.reviews_label}
+                      <ArrowUpRightIcon className="h-3 w-3 transition-transform duration-200 group-hover:-translate-y-px group-hover:translate-x-px" />
+                      <span className="sr-only"> on Google (opens in a new tab)</span>
+                    </a>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {copy.show_coverage !== 'no' && (
+              <div className={`${TILE} grid gap-5 bg-[var(--bg-surface)] p-6 sm:col-span-2 sm:grid-cols-[minmax(0,1fr)_minmax(0,14rem)] sm:items-center`}>
+                <div>
+                  <p className="font-display text-[1.375rem] font-semibold tracking-[-0.02em] text-[var(--text-primary)]">{copy.coverage_title}</p>
+                  {locations.length > 0 && (
+                    <ul className="mt-4 flex flex-wrap gap-2">
+                      {locations.map((place) => (
+                        <li key={place} className="rounded-full border border-[var(--border-default)] bg-[var(--bg-page)] px-3 py-1 text-[13px] font-medium text-[var(--text-primary)]">
+                          {place}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  {copy.coverage_note && (
+                    <p className="mt-4 flex items-center gap-2 text-[14px] font-medium text-[var(--about-accent)]">
+                      <FeatureIcon name="clock" />
+                      {copy.coverage_note}
+                    </p>
+                  )}
+                </div>
+                <CoverageMap />
+              </div>
+            )}
+          </div>
         </div>
 
-        {/* Four reasons, as a row with hairlines between them: no cards. */}
+        {/* The four features, each a row that leads to its page. */}
         {features.length > 0 && (
-          <ul className="mt-14 grid border-t border-[var(--border-default)] sm:grid-cols-2 lg:mt-20 lg:grid-cols-4">
+          <ol className="mt-16 border-t border-[var(--border-default)] lg:mt-20">
             {features.map((item, i) => (
-              <li key={item.title} className={featureCellClass(i, features.length)}>
-                <span aria-hidden="true" className="grid h-10 w-10 place-items-center rounded-xl bg-[rgba(44,205,222,0.12)] text-[var(--about-accent)]">
-                  <FeatureIcon name={item.icon || DEFAULT_FEATURE_ICONS[i % DEFAULT_FEATURE_ICONS.length]} />
-                </span>
-                <h3 className="mt-5 font-display text-[1.125rem] font-semibold leading-snug tracking-[-0.02em] text-[var(--text-primary)]">
-                  {item.link ? (
-                    <Link href={item.link} className="underline-offset-4 hover:underline">
-                      {item.title}
-                    </Link>
-                  ) : (
-                    item.title
-                  )}
-                </h3>
-                <p className="mt-2 text-[14.5px] leading-relaxed text-[var(--text-body)]">{item.description}</p>
+              <li key={item.title} className="border-b border-[var(--border-default)]">
+                <Link
+                  href={item.link || '/contact-us'}
+                  className="group grid grid-cols-[2.25rem_2.5rem_minmax(0,1fr)_2.5rem] items-center gap-x-3 gap-y-2 px-2 py-6 transition-colors duration-300 hover:bg-[var(--about-row-hover)] focus-visible:bg-[var(--about-row-hover)] sm:px-4 lg:grid-cols-[3.5rem_2.75rem_minmax(0,18rem)_minmax(0,1fr)_2.75rem] lg:gap-x-6 lg:px-5"
+                >
+                  <span className="font-display text-[15px] font-semibold tabular-nums text-[var(--text-nav)] transition-colors duration-300 group-hover:text-[var(--about-accent)]">
+                    {String(i + 1).padStart(2, '0')}
+                  </span>
+                  <span aria-hidden="true" className="grid h-10 w-10 place-items-center rounded-xl bg-[rgba(44,205,222,0.12)] text-[var(--about-accent)]">
+                    <FeatureIcon name={item.icon || DEFAULT_FEATURE_ICONS[i % DEFAULT_FEATURE_ICONS.length]} />
+                  </span>
+                  <h3 className="font-display text-[1.125rem] font-semibold leading-snug tracking-[-0.02em] text-[var(--text-primary)]">{item.title}</h3>
+                  <p className="col-span-2 col-start-3 row-start-2 text-[14.5px] leading-relaxed text-[var(--text-body)] lg:col-span-1 lg:col-start-4 lg:row-start-1">{item.description}</p>
+                  <span
+                    aria-hidden="true"
+                    className="col-start-4 row-start-1 grid h-10 w-10 place-items-center justify-self-end rounded-full border border-[var(--border-strong)] text-[var(--text-primary)] transition-all duration-300 group-hover:border-[#2CCDDE] group-hover:bg-[#2CCDDE] group-hover:text-[#04121A] lg:col-start-5"
+                  >
+                    <ArrowUpRightIcon className="h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 motion-reduce:transition-none" />
+                  </span>
+                </Link>
               </li>
             ))}
-          </ul>
+          </ol>
         )}
 
         {/* Why choose us: the service promise, set out like an agreement, on
