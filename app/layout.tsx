@@ -146,6 +146,7 @@ export default async function RootLayout({
           navigation={footerNavigation}
           settings={(settings ?? {}) as never}
           serviceNames={Object.fromEntries(serviceNames)}
+          year={new Date().getFullYear()}
         />
         <StickyContactButtons />
         <InquiryDrawer />

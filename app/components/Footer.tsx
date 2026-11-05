@@ -54,7 +54,9 @@ const fallbackSocials = [
 ]
 
 type FooterSettings = { logo_url?: string; header_phone?: string; primary_email?: string; physical_address?: string; footer_text?: string; copyright_text?: string; facebook_url?: string; instagram_url?: string; linkedin_url?: string; x_url?: string; youtube_url?: string; tiktok_url?: string; github_url?: string }
-export default function Footer({ navigation = fallbackUsefulLinks, settings = {}, serviceNames = {} }: { navigation?: { label: string; href: string; new_tab?: boolean }[]; settings?: FooterSettings; serviceNames?: Record<string, string> }) {
+// `year` comes from the server: a client component reading the clock would
+// disagree with the server's HTML when the two straddle New Year.
+export default function Footer({ navigation = fallbackUsefulLinks, settings = {}, serviceNames = {}, year }: { navigation?: { label: string; href: string; new_tab?: boolean }[]; settings?: FooterSettings; serviceNames?: Record<string, string>; year: number }) {
   const usefulLinks = navigation
   // The site-wide clients and founding year (Contact details & logo).
   const figures = figuresFrom(settings as Record<string, unknown>)
@@ -84,8 +86,10 @@ export default function Footer({ navigation = fallbackUsefulLinks, settings = {}
           <div className="space-y-6">
             <LogoLink
               src={settings.logo_url || '/images/logo.png'}
-              width={140}
-              height={40}
+              // The logo's own shape (portrait, as in the header), so the
+              // space kept for it matches before it loads.
+              width={56}
+              height={72}
               imageClassName="h-10 w-auto object-contain"
             />
             <p className="text-[var(--text-footer-link)] text-sm leading-relaxed">
@@ -228,7 +232,7 @@ export default function Footer({ navigation = fallbackUsefulLinks, settings = {}
       <div style={{ borderTop: '1px solid var(--border-subtle)' }}>
         <div className="page-container py-5 flex flex-col sm:flex-row items-center justify-between gap-2">
           <p className="text-[var(--text-dim)] text-sm">
-            &copy; {new Date().getFullYear()} {settings.copyright_text || 'Byteflow Information Technology. All rights reserved.'}
+            &copy; {year} {settings.copyright_text || 'Byteflow Information Technology. All rights reserved.'}
           </p>
           <p className="text-[var(--text-dim)] text-sm">
             Trusted by {figures.clients} businesses across Dubai and UAE since {figures.founded}.
