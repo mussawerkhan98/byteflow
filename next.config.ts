@@ -32,6 +32,9 @@ loadParentDatabaseEnvironment();
 
 const nextConfig: NextConfig = {
   images: {
+    // The responsive widths every image is offered at (srcset). The admin's
+    // uploads are capped at 2400px wide, so nothing larger is ever needed.
+    deviceSizes: [640, 1024, 1600, 2400],
     remotePatterns: [
       {
         protocol: "https",

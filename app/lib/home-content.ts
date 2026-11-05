@@ -31,36 +31,50 @@ export const homeDefaults = {
     },
     lists: {},
   },
+  // The heading of the Selected Work section. The projects themselves are
+  // chosen on the Projects screen ("Feature on homepage").
+  home_work: {
+    fields: {
+      eyebrow: 'Selected work',
+      heading: 'Real businesses.',
+      heading_soft: 'Real results.',
+      intro: 'A look at recent projects for UAE businesses, from IT support and security to cloud and the web.',
+      link_label: 'Explore our work',
+      link: '/projects',
+    },
+    lists: {},
+  },
+  // "Where does your IT need help?": three common starting points, each
+  // linked to the service that answers it (by slug; the link shows the
+  // service's own name). A scenario set to show: 'no' is left out.
+  home_needs: {
+    fields: {
+      eyebrow: 'Your business comes first',
+      heading: 'Where does your IT need help?',
+      link_label: 'Book a free IT assessment',
+      link: '/contact-us',
+      // The bottom line, one step per line.
+      steps: 'Free consultation\nProposal\nSetup\nOngoing support',
+      steps_link_label: 'How we work',
+      steps_link: '/#how-we-work',
+    },
+    lists: {
+      scenarios: [
+        { label: 'A new office', title: 'Moving or opening an office.', description: 'Cabling, Wi-Fi, CCTV and access control planned and installed together, so your team works from day one.', service: 'system-integration', show: 'yes' },
+        { label: 'A safer business', title: 'Worried about ransomware or data loss.', description: 'Firewall, endpoint and email protection with tested backups, so one bad click does not stop the business.', service: 'cyber-security', show: 'yes' },
+        { label: 'More customers', title: 'Need a better website or more leads.', description: 'A fast, mobile-first website, landing pages and chatbots built to turn visitors into enquiries.', service: 'website-development', show: 'yes' },
+      ],
+    },
+  },
+  // The dark About section: heading and paragraph, then the numbered reasons
+  // beside a preview card. Each reason's icon also picks the small picture in
+  // its preview (AboutPreview.tsx).
   home_about: {
     fields: {
-      eyebrow: 'About Byteflow',
+      eyebrow: 'About Byteflow · Since {founded}',
       heading: 'Your trusted IT partner,',
       heading_soft: 'serving Dubai since {founded}.',
       intro: 'We make enterprise-grade IT accessible to every business in the UAE, so you can focus entirely on growth.',
-      // The quote, name, role and photo are the founder's, from "About Us — Founder".
-      show_quote: 'yes',
-      primary_label: 'Get in touch',
-      primary_link: '/contact-us',
-      secondary_label: 'More about Byteflow',
-      secondary_link: '/about-us',
-      // The bento's photo tile.
-      image_url: '/images/hero/hero.webp',
-      // Describes the built-in artwork; an uploaded photo needs its own.
-      image_alt: 'Illustration of connected servers and network links',
-      image_caption: 'Our engineers on site in Dubai',
-      image_badge: 'Based in Dubai since {founded}',
-      // Years tile (the number counts from the year founded).
-      show_years_badge: 'yes',
-      years_label: 'Years keeping UAE businesses running',
-      // Rating tile (rating, review count and Google link from site settings).
-      show_rating_badge: 'yes',
-      rating_label: 'Google rating · {reviews} reviews',
-      reviews_label: 'Read reviews',
-      // Coverage tile.
-      show_coverage: 'yes',
-      coverage_title: 'On-site across the UAE',
-      coverage_locations: 'Dubai, Sharjah, Abu Dhabi',
-      coverage_note: '2-hr on-site response',
     },
     lists: {
       highlights: [

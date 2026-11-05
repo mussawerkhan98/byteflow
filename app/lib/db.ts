@@ -64,6 +64,13 @@ export type DbProject = {
   published: boolean;
   featured: boolean;
   created_at: string;
+  /** The home page Selected Work section. Blank (or not migrated yet) is empty. */
+  home_featured: boolean;
+  home_order: number;
+  /** The card's "Business requirement". */
+  challenge: string;
+  card_image: string;
+  card_image_alt: string;
 };
 
 export const db = createClient({
@@ -225,31 +232,58 @@ export async function getServiceBySlug(
 
 // ── Projects ───────────────────────────────────────────────────────────────
 
+const text = (value: unknown) => String(value ?? "").trim();
+
+function toProject(row: Record<string, unknown>): DbProject {
+  return {
+    id: String(row.id),
+    slug: row.slug as string,
+    title: row.title as string,
+    description: (row.description as string) || "",
+    category: (row.category as string) || "",
+    industry: (row.industry as string) || "",
+    year: (row.year as string) || "",
+    image_url: (row.image_url as string) ?? null,
+    bullet_points: safeJsonParse<string[]>(row.bullet_points, []),
+    metrics: safeJsonParse<{ value: string; label: string }[]>(row.metrics, []),
+    tags: safeJsonParse<string[]>(row.tags, []),
+    sort_order: Number(row.sort_order),
+    published: Boolean(row.published),
+    featured: Boolean(row.featured),
+    created_at: row.created_at as string,
+    home_featured: Boolean(row.home_featured),
+    home_order: Number(row.home_order ?? 0),
+    challenge: text(row.challenge),
+    card_image: text(row.card_image),
+    card_image_alt: text(row.card_image_alt),
+  };
+}
+
+/**
+ * Up to four projects for the home page, those switched on with "Feature on
+ * homepage", in their homepage order. Before the admin has added that switch
+ * (an older database), the first four published projects stand in.
+ */
+export async function getHomeProjects(limit = 4): Promise<DbProject[]> {
+  try {
+    const result = await db.execute({
+      sql: "SELECT * FROM projects WHERE published = 1 AND home_featured = 1 ORDER BY home_order ASC, sort_order ASC LIMIT ?",
+      args: [limit],
+    });
+    return result.rows.map(toProject);
+  } catch (error) {
+    if (/no such column/i.test(String(error))) return (await getProjects()).slice(0, limit);
+    console.error("Turso home projects error:", error instanceof Error ? error.message : error);
+    return [];
+  }
+}
+
 export async function getProjects(): Promise<DbProject[]> {
   try {
     const result = await db.execute(
       "SELECT * FROM projects WHERE published = 1 ORDER BY sort_order ASC",
     );
-    return result.rows.map((row) => ({
-      id: String(row.id),
-      slug: row.slug as string,
-      title: row.title as string,
-      description: (row.description as string) || "",
-      category: (row.category as string) || "",
-      industry: (row.industry as string) || "",
-      year: (row.year as string) || "",
-      image_url: (row.image_url as string) ?? null,
-      bullet_points: safeJsonParse<string[]>(row.bullet_points, []),
-      metrics: safeJsonParse<{ value: string; label: string }[]>(
-        row.metrics,
-        [],
-      ),
-      tags: safeJsonParse<string[]>(row.tags, []),
-      sort_order: Number(row.sort_order),
-      published: Boolean(row.published),
-      featured: Boolean(row.featured),
-      created_at: row.created_at as string,
-    }));
+    return result.rows.map(toProject);
   } catch (error) {
     console.error(
       "Turso projects error:",
@@ -269,26 +303,7 @@ export async function getProjectBySlug(
     });
     const row = result.rows[0];
     if (!row) return null;
-    return {
-      id: String(row.id),
-      slug: row.slug as string,
-      title: row.title as string,
-      description: (row.description as string) || "",
-      category: (row.category as string) || "",
-      industry: (row.industry as string) || "",
-      year: (row.year as string) || "",
-      image_url: (row.image_url as string) ?? null,
-      bullet_points: safeJsonParse<string[]>(row.bullet_points, []),
-      metrics: safeJsonParse<{ value: string; label: string }[]>(
-        row.metrics,
-        [],
-      ),
-      tags: safeJsonParse<string[]>(row.tags, []),
-      sort_order: Number(row.sort_order),
-      published: Boolean(row.published),
-      featured: false,
-      created_at: row.created_at as string,
-    };
+    return { ...toProject(row), featured: false };
   } catch (error) {
     console.error(
       "Turso project slug error:",

@@ -22,7 +22,7 @@ test('blank fields fall back to the service page: tagline, four features, headli
   const tab = serviceTab(amc)
   assert.equal(tab.subtitle, 'Predictable IT costs. Zero surprises.')
   assert.equal(tab.bullets.length, 4)
-  assert.equal(tab.caption, '2 hrs · On-site response guarantee')
+  assert.equal(tab.caption, '24/7 monitoring · 2-hr on-site response')
   assert.equal(tab.eyebrow, 'Keep your business running')
   assert.deepEqual(tab.button, { label: 'Discuss this service', href: '/contact-us' })
   assert.equal(tab.href, '/it-amc-services-dubai')
