@@ -716,10 +716,10 @@ export default function Header({
     <>
       {/* The bar floats: the header itself is a transparent strip that
           holds the page's top spacing, and only the bar takes clicks.
-          The strip is the same page-container as every section and the bar
+          The strip is the hero's wider container (hero-container) and the bar
           fills it exactly, padded by --panel-px like the hero panel, so the
           two share their edges and the logo lines up with the hero heading. */}
-      <header className="site-header page-container pointer-events-none sticky top-0 z-[65] pt-3 lg:pt-4">
+      <header className="site-header hero-container pointer-events-none sticky top-0 z-[65] pt-3 lg:pt-4">
         <div className="panel-px pointer-events-auto relative isolate flex h-16 items-center gap-1.5 rounded-[20px] sm:gap-2 lg:h-[72px]">
           {/* The frosted backing lives on its own layer, so the blur never
               becomes the containing block of anything inside the bar. */}

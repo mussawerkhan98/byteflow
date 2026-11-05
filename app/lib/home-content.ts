@@ -22,24 +22,6 @@ export type HomeBlock = { fields: Record<string, string>; lists: Record<string, 
 // Text here can quote the site-wide figures with placeholders like {founded}
 // (see site-figures.ts); getHomeBlock fills them in.
 export const homeDefaults = {
-  // The trust strip under the banner. Every figure except "custom" shows
-  // the site-wide number from Contact details & logo, so it can't drift.
-  // The last stat stands in for the logo row until a client logo is up.
-  home_trust: {
-    fields: {
-      logos_label: 'Trusted by teams across the UAE',
-    },
-    lists: {
-      stats: [
-        { title: 'Businesses supported across the UAE', figure: 'clients', value: '', show: 'yes' },
-        { title: 'Google rating · {reviews} reviews', figure: 'rating', value: '', show: 'yes' },
-        { title: 'Years in Dubai', figure: 'years', value: '', show: 'yes' },
-        { title: 'On-site response across Dubai, Sharjah & Abu Dhabi', figure: 'custom', value: '2 hrs', show: 'no_logos' },
-      ],
-      // Only clients who have agreed to be shown. None until one is added.
-      logos: [] as Item[],
-    },
-  },
   home_services_intro: {
     fields: {
       eyebrow: 'What we do',
@@ -55,24 +37,36 @@ export const homeDefaults = {
       heading: 'Your trusted IT partner,',
       heading_soft: 'serving Dubai since {founded}.',
       intro: 'We make enterprise-grade IT accessible to every business in the UAE, so you can focus entirely on growth.',
-      image_url: '/images/hero/hero.webp',
-      // Describes the built-in artwork; an uploaded photo needs its own.
-      image_alt: 'Illustration of connected servers and network links',
-      image_badge: 'Based in Dubai since {founded}',
-      show_years_badge: 'yes',
-      years_label: 'Years keeping UAE businesses running',
-      show_rating_badge: 'yes',
-      rating_label: 'Google rating',
+      // The quote, name, role and photo are the founder's, from "About Us — Founder".
+      show_quote: 'yes',
       primary_label: 'Get in touch',
       primary_link: '/contact-us',
       secondary_label: 'More about Byteflow',
       secondary_link: '/about-us',
+      // The bento's photo tile.
+      image_url: '/images/hero/hero.webp',
+      // Describes the built-in artwork; an uploaded photo needs its own.
+      image_alt: 'Illustration of connected servers and network links',
+      image_caption: 'Our engineers on site in Dubai',
+      image_badge: 'Based in Dubai since {founded}',
+      // Years tile (the number counts from the year founded).
+      show_years_badge: 'yes',
+      years_label: 'Years keeping UAE businesses running',
+      // Rating tile (rating, review count and Google link from site settings).
+      show_rating_badge: 'yes',
+      rating_label: 'Google rating · {reviews} reviews',
+      reviews_label: 'Read reviews',
+      // Coverage tile.
+      show_coverage: 'yes',
+      coverage_title: 'On-site across the UAE',
+      coverage_locations: 'Dubai, Sharjah, Abu Dhabi',
+      coverage_note: '2-hr on-site response',
     },
     lists: {
       highlights: [
-        { title: 'Full IT under one roof', description: 'Infrastructure, cloud, security, design and marketing, all managed by one expert team with full accountability.', link: '/about-us', icon: 'layers', show: 'yes' },
+        { title: 'Full IT under one roof', description: 'Infrastructure, cloud, security, design and marketing, all managed by one expert team with full accountability.', link: '/#services', icon: 'layers', show: 'yes' },
         { title: 'Zero hidden costs', description: 'Fixed monthly or annual packages so you always know what you pay. No surprises, no extra invoices.', link: '/it-amc-services-dubai', icon: 'receipt', show: 'yes' },
-        { title: 'Rapid on-site response', description: 'Certified engineers on-site or remote within 2 hours across Dubai, Sharjah and Abu Dhabi.', link: '/contact-us', icon: 'clock', show: 'yes' },
+        { title: 'Rapid on-site response', description: 'Certified engineers on-site or remote within 2 hours across Dubai, Sharjah and Abu Dhabi.', link: '/it-amc-services-dubai', icon: 'clock', show: 'yes' },
         { title: 'Microsoft & cloud ready', description: 'Official Microsoft 365 setup, cloud migrations and ongoing management for UAE businesses of every size.', link: '/cloud-services-dubai', icon: 'cloud', show: 'yes' },
       ],
     },

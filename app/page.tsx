@@ -7,7 +7,6 @@ import HelpPanel from "./components/HelpPanel";
 import Blog from "./components/Blog";
 import CTA from "./components/CTA";
 import Contact from "./components/Contact";
-import TrustStrip, { logoBox } from "./components/TrustStrip";
 import {
   getPageHero,
   getSection,
@@ -20,8 +19,6 @@ import { getPosts } from "./lib/db";
 import { getHomeBlock } from "./lib/home-blocks";
 import JsonLd from "./components/JsonLd";
 import { faqPageSchema, graph } from "./lib/structured-data";
-import { logosFrom, statsFrom } from "./lib/site-figures";
-import { mediaSizes } from "./lib/media";
 
 export const revalidate = 3600;
 export const metadata = {
@@ -29,7 +26,7 @@ export const metadata = {
 };
 
 export default async function Home() {
-  const [sectionHero, pageHero, testimonials, settings, posts, faqs, process, trust, figures] =
+  const [sectionHero, pageHero, testimonials, settings, posts, faqs, process, figures] =
     await Promise.all([
       getSection("home", "hero"),
       getPageHero("home"),
@@ -43,14 +40,8 @@ export default async function Home() {
       getFaqsForSlug("home"),
       // How it works runs in the browser, so its admin content is read here.
       getHomeBlock("home_process"),
-      getHomeBlock("home_trust"),
       getSiteFigures(),
     ]);
-  // The trust strip's logos, each at its own shape (sizes recorded at upload).
-  const logos = logosFrom(trust.lists.logos ?? []);
-  const mediaId = (url: string) => Number(/^\/api\/media\/(\d+)/.exec(url)?.[1]);
-  const sizes = await mediaSizes(logos.map((logo) => mediaId(logo.image)));
-  const sizedLogos = logos.map((logo) => ({ ...logo, ...logoBox(sizes.get(mediaId(logo.image))) }));
   const hero = {
     ...(sectionHero ?? {}),
     ...(pageHero?.hero_label ? { badge: pageHero.hero_label } : {}),
@@ -97,11 +88,6 @@ export default async function Home() {
         phone={String(settings?.header_phone || "") || undefined}
         whatsappUrl={String(settings?.whatsapp_link || "") || undefined}
         figures={figures}
-      />
-      <TrustStrip
-        stats={statsFrom(trust.lists.stats, figures, { hasLogos: sizedLogos.length > 0 })}
-        logos={sizedLogos}
-        logosLabel={trust.fields.logos_label}
       />
       <Services />
       <AboutUs />

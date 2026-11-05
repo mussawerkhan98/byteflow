@@ -45,26 +45,3 @@ export async function mediaAsset(id: number): Promise<MediaAsset | null> {
     return null;
   }
 }
-
-/**
- * The width and height recorded for media rows, by id. Rows without them
- * (older uploads, or a database before those columns) are simply missing,
- * and the caller falls back to a fixed box.
- */
-export async function mediaSizes(ids: number[]): Promise<Map<number, { width: number; height: number }>> {
-  const wanted = [...new Set(ids.filter((id) => Number.isInteger(id) && id > 0))];
-  if (!wanted.length) return new Map();
-  try {
-    const result = await db.execute({
-      sql: `SELECT id, width, height FROM media WHERE id IN (${wanted.map(() => "?").join(",")})`,
-      args: wanted,
-    });
-    return new Map(
-      result.rows
-        .filter((row) => Number(row.width) > 0 && Number(row.height) > 0)
-        .map((row) => [Number(row.id), { width: Number(row.width), height: Number(row.height) }]),
-    );
-  } catch {
-    return new Map();
-  }
-}
