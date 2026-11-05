@@ -1,5 +1,6 @@
 import Hero from "./components/Hero";
 import Services from "./components/Services";
+import SelectedWork from "./components/SelectedWork";
 import AboutUs from "./components/AboutUs";
 import Reviews from "./components/Reviews";
 import HowItWorks from "./components/HowItWorks";
@@ -90,6 +91,7 @@ export default async function Home() {
         figures={figures}
       />
       <Services />
+      <SelectedWork />
       <AboutUs />
       <HowItWorks content={process} />
       <HelpPanel />

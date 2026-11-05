@@ -31,6 +31,19 @@ export const homeDefaults = {
     },
     lists: {},
   },
+  // The heading of the Selected Work section. The projects themselves are
+  // chosen on the Projects screen ("Feature on homepage").
+  home_work: {
+    fields: {
+      eyebrow: 'Selected work',
+      heading: 'Real businesses.',
+      heading_soft: 'Real results.',
+      intro: 'A look at recent projects for UAE businesses, from IT support and security to cloud and the web.',
+      link_label: 'Explore our work',
+      link: '/projects',
+    },
+    lists: {},
+  },
   home_about: {
     fields: {
       eyebrow: 'About Byteflow',

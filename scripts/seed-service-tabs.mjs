@@ -37,15 +37,23 @@ let changed = 0
 for (const row of rows) {
   const page = pages.find((p) => p.slug === row.slug)
   if (!page) continue
-  const stat = page.heroStats[0]
   const wanted = {
     eyebrow: page.eyebrow,
     tagline: page.tagline,
     highlights: page.features.slice(0, 4).map((feature) => feature.title).join('\n'),
-    image_caption: stat ? `${stat.value} · ${stat.label}` : '',
+    image_caption: page.caption,
+  }
+  // An earlier run of this script filled captions from the service page's
+  // headline figure, most of them unverified. A caption still saying exactly
+  // that was never edited, so it is replaced like a blank one.
+  const stat = page.heroStats[0]
+  const oldCaption = stat ? `${stat.value} · ${stat.label}` : null
+  const isBlank = (name) => {
+    const current = String(row[name] ?? '').trim()
+    return !current || (name === 'image_caption' && current === oldCaption)
   }
   // Only the blank ones.
-  const fill = Object.entries(wanted).filter(([name, value]) => value && !String(row[name] ?? '').trim())
+  const fill = Object.entries(wanted).filter(([name, value]) => value && isBlank(name))
   if (!fill.length) continue
   changed++
   console.log(`${row.slug}: ${fill.map(([name]) => name).join(', ')}`)

@@ -59,7 +59,6 @@ type ServiceInput = Pick<
 
 export function serviceTab(service: ServiceInput): ServiceTab {
   const page = pagesBySlug.get(service.slug)
-  const stat = page?.heroStats[0]
   const bullets = bulletLines(service.highlights)
   return {
     slug: service.slug,
@@ -71,7 +70,7 @@ export function serviceTab(service: ServiceInput): ServiceTab {
     bullets: bullets.length ? bullets : (page?.features ?? []).slice(0, 4).map((feature) => feature.title),
     image: service.image_url || null,
     imageAlt: service.image_alt || `${service.title} by Byteflow in Dubai`,
-    caption: service.image_caption || (stat ? `${stat.value} · ${stat.label}` : ''),
+    caption: service.image_caption || page?.caption || '',
     button: {
       label: service.cta_label || 'Discuss this service',
       href: safeHref(service.cta_link, '/contact-us'),
