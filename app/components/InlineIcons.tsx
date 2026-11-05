@@ -13,10 +13,31 @@ export function ArrowIcon({ className }: IconProps) {
   );
 }
 
+export function ArrowUpRightIcon({ className }: IconProps) {
+  return (
+    <svg className={className} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">
+      <path d="M4.5 11.5l7-7m-5.5 0h5.5V10" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 export function ChevronIcon({ className }: IconProps) {
   return (
     <svg className={className} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth={1.6} aria-hidden="true">
       <path d="m4 6 4 4 4-4" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export function PinIcon({ className }: IconProps) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6} aria-hidden="true">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"
+      />
     </svg>
   );
 }

@@ -1,4 +1,6 @@
 import { db } from "@/app/lib/db";
+import { getSiteFigures } from "@/app/lib/cms";
+import { fillDeep } from "@/app/lib/site-figures";
 
 /**
  * Cached at the edge for an hour, with a day of stale-while-revalidate.
@@ -26,18 +28,21 @@ export async function GET(request: Request) {
   const slug = cleanPath || "home";
 
   try {
-    const result = await db.execute({
-      sql: `SELECT s.id, s.name, s.content
-            FROM page_sections s JOIN pages p ON p.id = s.page_id
-            WHERE p.slug = ? AND s.section_type = 'custom'
-              AND s.visible = 1 AND s.status = 'published'
-            ORDER BY s.sort_order, s.id`,
-      args: [slug],
-    });
+    const [result, figures] = await Promise.all([
+      db.execute({
+        sql: `SELECT s.id, s.name, s.content
+              FROM page_sections s JOIN pages p ON p.id = s.page_id
+              WHERE p.slug = ? AND s.section_type = 'custom'
+                AND s.visible = 1 AND s.status = 'published'
+              ORDER BY s.sort_order, s.id`,
+        args: [slug],
+      }),
+      getSiteFigures(),
+    ]);
     const sections = result.rows.map((row) => {
       let content: Record<string, string> = {};
       try {
-        content = JSON.parse(String(row.content ?? "{}"));
+        content = fillDeep(JSON.parse(String(row.content ?? "{}")), figures);
       } catch {
         content = {};
       }

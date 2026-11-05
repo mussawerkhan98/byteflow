@@ -37,6 +37,15 @@ export type DbService = {
   sort_order: number;
   published: boolean;
   created_at: string;
+  /** The home page Services tabs. Blank (or a column not added yet) falls back. */
+  image_alt: string;
+  cta_label: string;
+  cta_link: string;
+  eyebrow: string;
+  tagline: string;
+  /** One bullet per line. */
+  highlights: string;
+  image_caption: string;
 };
 
 export type DbProject = {
@@ -157,23 +166,34 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
 
 // ── Services ───────────────────────────────────────────────────────────────
 
+function toService(row: Record<string, unknown>): DbService {
+  return {
+    id: String(row.id),
+    slug: row.slug as string,
+    title: row.title as string,
+    icon: (row.icon as string) || "",
+    excerpt: (row.excerpt as string) || "",
+    description: (row.description as string) || "",
+    image_url: (row.image_url as string) ?? null,
+    sort_order: Number(row.sort_order),
+    published: Boolean(row.published),
+    created_at: row.created_at as string,
+    image_alt: String(row.image_alt ?? "").trim(),
+    cta_label: String(row.cta_label ?? "").trim(),
+    cta_link: String(row.cta_link ?? "").trim(),
+    eyebrow: String(row.eyebrow ?? "").trim(),
+    tagline: String(row.tagline ?? "").trim(),
+    highlights: String(row.highlights ?? ""),
+    image_caption: String(row.image_caption ?? "").trim(),
+  };
+}
+
 export async function getServices(): Promise<DbService[]> {
   try {
     const result = await db.execute(
       "SELECT * FROM services WHERE status = 'published' ORDER BY sort_order ASC",
     );
-    return result.rows.map((row) => ({
-      id: String(row.id),
-      slug: row.slug as string,
-      title: row.title as string,
-      icon: (row.icon as string) || "",
-      excerpt: (row.excerpt as string) || "",
-      description: (row.description as string) || "",
-      image_url: (row.image_url as string) ?? null,
-      sort_order: Number(row.sort_order),
-      published: Boolean(row.published),
-      created_at: row.created_at as string,
-    }));
+    return result.rows.map(toService);
   } catch (error) {
     console.error(
       "Turso services error:",
@@ -193,18 +213,7 @@ export async function getServiceBySlug(
     });
     const row = result.rows[0];
     if (!row) return null;
-    return {
-      id: String(row.id),
-      slug: row.slug as string,
-      title: row.title as string,
-      icon: (row.icon as string) || "",
-      excerpt: (row.excerpt as string) || "",
-      description: (row.description as string) || "",
-      image_url: (row.image_url as string) ?? null,
-      sort_order: Number(row.sort_order),
-      published: Boolean(row.published),
-      created_at: row.created_at as string,
-    };
+    return toService(row);
   } catch (error) {
     console.error(
       "Turso service error:",

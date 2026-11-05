@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { figuresFrom, type SiteFigures } from '../lib/site-figures'
 
 const reviews = [
   {
@@ -54,7 +55,7 @@ function Stars({ count }: { count: number }) {
   )
 }
 
-export default function AboutReviews({ items }: { items?: { customer_name:string; customer_role:string; review_text:string; rating:number }[] }) {
+export default function AboutReviews({ items, figures = figuresFrom(null) }: { items?: { customer_name:string; customer_role:string; review_text:string; rating:number }[]; figures?: SiteFigures }) {
   const shownReviews = items?.length ? items.map(item=>({name:item.customer_name,role:item.customer_role,text:item.review_text,rating:item.rating})) : reviews
   const totalPages = Math.ceil(shownReviews.length / CARDS_PER_PAGE)
   const [page, setPage] = useState(0)
@@ -82,14 +83,14 @@ export default function AboutReviews({ items }: { items?: { customer_name:string
   const visible = shownReviews.slice(page * CARDS_PER_PAGE, page * CARDS_PER_PAGE + CARDS_PER_PAGE)
 
   return (
-    <section className="relative py-24 px-4 sm:px-6 lg:px-8 overflow-hidden">
+    <section className="relative py-24 overflow-hidden">
 
       <div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] pointer-events-none"
         style={{ background: 'radial-gradient(ellipse, rgba(44,205,222,0.06) 0%, transparent 65%)', filter: 'blur(80px)' }}
       />
 
-      <div className="relative max-w-page mx-auto">
+      <div className="page-container relative">
 
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-12">
@@ -117,13 +118,13 @@ export default function AboutReviews({ items }: { items?: { customer_name:string
               border: '1px solid rgba(44,205,222,0.18)',
             }}
           >
-            <img src="/google.svg" alt="Google" className="w-8 h-8 object-contain flex-shrink-0" />
+            <img src="/google.svg" alt="Google" width={32} height={32} className="w-8 h-8 object-contain flex-shrink-0" />
             <div>
               <div className="flex items-center gap-2 mb-0.5">
-                <span className="text-2xl font-black text-[var(--text-primary)] leading-none">4.9</span>
+                <span className="text-2xl font-black text-[var(--text-primary)] leading-none">{figures.rating}</span>
                 <Stars count={5} />
               </div>
-              <p className="text-[var(--text-muted)] text-xs">50+ Google reviews</p>
+              <p className="text-[var(--text-muted)] text-xs">{figures.reviews} Google reviews</p>
             </div>
           </div>
         </div>
@@ -183,7 +184,7 @@ export default function AboutReviews({ items }: { items?: { customer_name:string
                     <p className="text-[var(--text-muted)] text-xs mt-0.5">{r.role}</p>
                   </div>
                 </div>
-                <img src="/google.svg" alt="Google" className="w-5 h-5 object-contain opacity-50" />
+                <img src="/google.svg" alt="Google" width={20} height={20} loading="lazy" className="w-5 h-5 object-contain opacity-50" />
               </div>
             </div>
           ))}

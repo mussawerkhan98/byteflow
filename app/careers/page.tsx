@@ -1,10 +1,13 @@
 import type { Metadata } from 'next'
-import { getPageHero } from '../lib/cms'
+import { getPageHero, getSiteFigures } from '../lib/cms'
 
-export const metadata: Metadata = {
-  alternates: { canonical: "/careers" },
-  title: 'Careers | Byteflow Information Technology',
-  description: 'Join the team behind 500+ businesses across Dubai and the UAE. See how we work and how to reach us about opportunities at Byteflow.',
+export async function generateMetadata(): Promise<Metadata> {
+  const figures = await getSiteFigures()
+  return {
+    alternates: { canonical: "/careers" },
+    title: 'Careers | Byteflow Information Technology',
+    description: `Join the team behind ${figures.clients} businesses across Dubai and the UAE. See how we work and how to reach us about opportunities at Byteflow.`,
+  }
 }
 
 const values = [
@@ -27,7 +30,7 @@ const values = [
 ]
 
 export default async function CareersPage() {
-  const hero = await getPageHero('careers')
+  const [hero, figures] = await Promise.all([getPageHero('careers'), getSiteFigures()])
   return (
     <main>
       <section className="relative pt-20 pb-16 px-4 sm:px-6 lg:px-8 overflow-hidden" style={hero?.hero_background_image?{backgroundImage:`linear-gradient(rgba(4,13,18,.8),rgba(4,13,18,.95)),url(${hero.hero_background_image})`,backgroundSize:'cover',backgroundPosition:'center'}:undefined}>
@@ -46,7 +49,7 @@ export default async function CareersPage() {
                 WebkitTextFillColor: 'transparent',
               }}
             >
-              500+ businesses
+              {figures.clients} businesses
             </span>
             <span className="text-[var(--text-primary)]"> running smoothly.</span>
           </h1>
@@ -57,8 +60,8 @@ export default async function CareersPage() {
         </div>
       </section>
 
-      <section className="py-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-6xl mx-auto">
+      <section className="py-16">
+        <div className="page-container">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {values.map((v) => (
               <div

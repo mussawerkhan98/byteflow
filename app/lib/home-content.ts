@@ -19,7 +19,27 @@ type Item = Record<string, string>
 
 export type HomeBlock = { fields: Record<string, string>; lists: Record<string, Item[]> }
 
+// Text here can quote the site-wide figures with placeholders like {founded}
+// (see site-figures.ts); getHomeBlock fills them in.
 export const homeDefaults = {
+  // The trust strip under the banner. Every figure except "custom" shows
+  // the site-wide number from Contact details & logo, so it can't drift.
+  // The last stat stands in for the logo row until a client logo is up.
+  home_trust: {
+    fields: {
+      logos_label: 'Trusted by teams across the UAE',
+    },
+    lists: {
+      stats: [
+        { title: 'Businesses supported across the UAE', figure: 'clients', value: '', show: 'yes' },
+        { title: 'Google rating · {reviews} reviews', figure: 'rating', value: '', show: 'yes' },
+        { title: 'Years in Dubai', figure: 'years', value: '', show: 'yes' },
+        { title: 'On-site response across Dubai, Sharjah & Abu Dhabi', figure: 'custom', value: '2 hrs', show: 'no_logos' },
+      ],
+      // Only clients who have agreed to be shown. None until one is added.
+      logos: [] as Item[],
+    },
+  },
   home_services_intro: {
     fields: {
       eyebrow: 'What we do',
@@ -33,12 +53,16 @@ export const homeDefaults = {
     fields: {
       eyebrow: 'About Byteflow',
       heading: 'Your trusted IT partner,',
-      heading_soft: 'serving Dubai since 2017.',
+      heading_soft: 'serving Dubai since {founded}.',
       intro: 'We make enterprise-grade IT accessible to every business in the UAE, so you can focus entirely on growth.',
-      founded_year: '2017',
-      image_url: '/images/hero/hero.png',
-      image_badge: 'Based in Dubai since 2017',
+      image_url: '/images/hero/hero.webp',
+      // Describes the built-in artwork; an uploaded photo needs its own.
+      image_alt: 'Illustration of connected servers and network links',
+      image_badge: 'Based in Dubai since {founded}',
+      show_years_badge: 'yes',
       years_label: 'Years keeping UAE businesses running',
+      show_rating_badge: 'yes',
+      rating_label: 'Google rating',
       primary_label: 'Get in touch',
       primary_link: '/contact-us',
       secondary_label: 'More about Byteflow',
@@ -46,10 +70,10 @@ export const homeDefaults = {
     },
     lists: {
       highlights: [
-        { title: 'Full IT under one roof', description: 'Infrastructure, cloud, security, design and marketing, all managed by one expert team with full accountability.', link: '/about-us' },
-        { title: 'Zero hidden costs', description: 'Fixed monthly or annual packages so you always know what you pay. No surprises, no extra invoices.', link: '/it-amc-services-dubai' },
-        { title: 'Rapid on-site response', description: 'Certified engineers on-site or remote within 2 hours across Dubai, Sharjah and Abu Dhabi.', link: '/contact-us' },
-        { title: 'Microsoft & cloud ready', description: 'Official Microsoft 365 setup, cloud migrations and ongoing management for UAE businesses of every size.', link: '/cloud-services-dubai' },
+        { title: 'Full IT under one roof', description: 'Infrastructure, cloud, security, design and marketing, all managed by one expert team with full accountability.', link: '/about-us', icon: 'layers', show: 'yes' },
+        { title: 'Zero hidden costs', description: 'Fixed monthly or annual packages so you always know what you pay. No surprises, no extra invoices.', link: '/it-amc-services-dubai', icon: 'receipt', show: 'yes' },
+        { title: 'Rapid on-site response', description: 'Certified engineers on-site or remote within 2 hours across Dubai, Sharjah and Abu Dhabi.', link: '/contact-us', icon: 'clock', show: 'yes' },
+        { title: 'Microsoft & cloud ready', description: 'Official Microsoft 365 setup, cloud migrations and ongoing management for UAE businesses of every size.', link: '/cloud-services-dubai', icon: 'cloud', show: 'yes' },
       ],
     },
   },
@@ -59,7 +83,7 @@ export const homeDefaults = {
       heading: 'What you can count on,',
       heading_soft: 'every time.',
       intro: "Four standards behind every job we take on, whether it's one laptop or a whole office.",
-      seal_text: 'Service promise · Byteflow · Since 2017 ·',
+      seal_text: 'Service promise · Byteflow · Since {founded} ·',
       footer_text: 'Want all four on one fixed monthly fee?',
       footer_strong: "That's what an IT AMC plan is for.",
       link_label: 'See IT AMC plans',
@@ -100,6 +124,53 @@ export const homeDefaults = {
     },
     lists: {},
   },
+  // Not a home page section: the header's Services mega menu and Industries
+  // dropdown on every page. It is stored with the home blocks so the admin
+  // edits it on the same screen.
+  header_menu: {
+    fields: {
+      eyebrow: 'Our services',
+      heading: 'Everything IT, under one roof.',
+      description: 'Support, cloud, security and creative work from one accountable team.',
+      link_label: 'View all services',
+      link: '/#services',
+      featured_eyebrow: 'Most popular',
+      featured_title: 'IT AMC plans',
+      featured_label: 'See plans',
+      featured_link: '/it-amc-services-dubai',
+      whatsapp_label: 'WhatsApp us',
+      industries_label: 'Industries',
+      industries_heading: 'Industries we serve',
+    },
+    lists: {
+      services: [
+        { group: 'IT Support & Infrastructure', title: 'IT AMC / IT Support', description: 'Fixed monthly support plans', link: '/it-amc-services-dubai' },
+        { group: 'IT Support & Infrastructure', title: 'System Integration', description: 'Every device, one system', link: '/system-integration' },
+        { group: 'IT Support & Infrastructure', title: 'Data Backup & Recovery', description: 'Survive ransomware & failure', link: '/data-backup-recovery' },
+        { group: 'Cloud & Security', title: 'Cloud Services', description: 'Migration & management', link: '/cloud-services-dubai' },
+        { group: 'Cloud & Security', title: 'Cyber Security', description: 'Firewalls, endpoint, email', link: '/cyber-security' },
+        { group: 'Digital & Creative', title: 'Website / Apps / Bots', description: 'Built for the UAE market', link: '/website-development' },
+        { group: 'Digital & Creative', title: 'Landing Page Designing', description: 'Pages built to convert', link: '/landing-page-designing' },
+        { group: 'Digital & Creative', title: 'UI/UX & Graphics Design', description: 'Brand & interface design', link: '/graphics-designing' },
+        { group: 'Digital & Creative', title: 'Digital Marketing', description: 'Measurable monthly leads', link: '/digital-marketing' },
+      ],
+      stats: [
+        { title: '2 hrs', description: 'On-site response' },
+        { title: '24/7', description: 'Monitoring' },
+      ],
+      // No industry has a page yet, so the Industries menu stays hidden.
+      // Giving an industry a link in the admin brings the menu back.
+      industries: [
+        { title: 'Clinics & Healthcare', link: '' },
+        { title: 'Schools & Education', link: '' },
+        { title: 'Real Estate', link: '' },
+        { title: 'Retail & Ecommerce', link: '' },
+        { title: 'Logistics', link: '' },
+        { title: 'Hospitality', link: '' },
+        { title: 'Corporate Offices & SMEs', link: '' },
+      ],
+    },
+  },
 } satisfies Record<string, HomeBlock>
 
 export type HomeBlockKey = keyof typeof homeDefaults
@@ -118,7 +189,9 @@ export function mergeHomeBlock(key: HomeBlockKey, saved: Record<string, unknown>
       const items = Array.isArray(raw)
         ? raw
             .filter((item): item is Record<string, unknown> => Boolean(item) && typeof item === 'object')
-            .map((item) => Object.fromEntries(Object.keys(fallback[0] ?? {}).map((field) => [field, text(item[field])])))
+            // The default item names the fields; a list that starts empty
+            // (client logos) keeps every text field it was saved with.
+            .map((item) => Object.fromEntries((fallback[0] ? Object.keys(fallback[0]) : Object.keys(item)).map((field) => [field, text(item[field])])))
             .filter((item) => item.title)
         : []
       return [name, items.length ? items : fallback]

@@ -113,7 +113,13 @@ type ContactSettings = { header_phone?: string; primary_email?: string; physical
 type ContactHero = { hero_label?:string; hero_heading?:string; hero_description?:string; hero_background_image?:string }
 function safeMapUrl(value?: string) { try { if (!value) return ''; const url = new URL(value); return url.protocol === 'https:' && /(^|\.)google\.(com|ae)$/.test(url.hostname) && url.pathname.startsWith('/maps/embed') ? url.toString() : '' } catch { return '' } }
 
-export default function Contact({ settings = {}, hero }: { settings?: ContactSettings; hero?: ContactHero | null }) {
+/**
+ * `asPage` is set by /contact-us, where this section is the whole page: its
+ * heading becomes the page's only h1. On the home page it stays an h2 under
+ * the hero's h1.
+ */
+export default function Contact({ settings = {}, hero, asPage = false }: { settings?: ContactSettings; hero?: ContactHero | null; asPage?: boolean }) {
+  const Heading = asPage ? 'h1' : 'h2'
   const shownContactInfo = contactInfo.map((item) => item.label === 'Phone' ? { ...item, value: settings.header_phone || item.value, href: `tel:${(settings.header_phone || item.value).replace(/[^+\d]/g, '')}` } : item.label === 'Email' ? { ...item, value: settings.primary_email || item.value, href: `mailto:${settings.primary_email || item.value}` } : item.label === 'Location' ? { ...item, value: settings.physical_address || item.value } : item.label === 'Support Hours' ? { ...item, value: settings.business_hours || item.value } : item)
   const socialValues: Record<string, string | undefined> = { Facebook: settings.facebook_url, LinkedIn: settings.linkedin_url, Instagram: settings.instagram_url, TikTok: settings.tiktok_url, WhatsApp: settings.whatsapp_link }
   const configuredSocials = socials.map((item) => ({ ...item, href: socialValues[item.label] || item.href })).filter((item) => item.href)
@@ -178,7 +184,7 @@ export default function Contact({ settings = {}, hero }: { settings?: ContactSet
   })
 
   return (
-    <section className="relative py-28 overflow-hidden" style={hero?.hero_background_image?{backgroundImage:`linear-gradient(rgba(4,13,18,.82),rgba(4,13,18,.95)),url(${hero.hero_background_image})`,backgroundSize:'cover',backgroundPosition:'top center'}:undefined}>
+    <section className={`relative overflow-hidden ${asPage ? 'pt-12 pb-28' : 'py-28'}`} style={hero?.hero_background_image?{backgroundImage:`linear-gradient(rgba(4,13,18,.82),rgba(4,13,18,.95)),url(${hero.hero_background_image})`,backgroundSize:'cover',backgroundPosition:'top center'}:undefined}>
 
       {/* Ambient glows */}
       <div className="absolute top-0 right-0 w-[600px] h-[600px] pointer-events-none"
@@ -186,7 +192,7 @@ export default function Contact({ settings = {}, hero }: { settings?: ContactSet
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] pointer-events-none"
         style={{ background: 'radial-gradient(circle, rgba(70,163,225,0.05) 0%, transparent 65%)', filter: 'blur(80px)' }} />
 
-      <div className="relative max-w-page mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="page-container relative">
 
         {/* Header */}
         <div className="mb-16">
@@ -197,13 +203,13 @@ export default function Contact({ settings = {}, hero }: { settings?: ContactSet
             {hero?.hero_label || 'Contact Us'}
           </div>
           <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
-            {hero?.hero_heading ? <h2 className="text-4xl sm:text-5xl font-bold leading-tight text-[var(--text-primary)]">{hero.hero_heading}</h2> : <h2 className="text-4xl sm:text-5xl font-bold leading-tight">
-              <span className="text-[var(--text-primary)]">Let's Talk About</span>{' '}
+            {hero?.hero_heading ? <Heading className="text-4xl sm:text-5xl font-bold leading-tight text-[var(--text-primary)]">{hero.hero_heading}</Heading> : <Heading className="text-4xl sm:text-5xl font-bold leading-tight">
+              <span className="text-[var(--text-primary)]">{asPage ? 'Contact Byteflow:' : "Let's Talk About"}</span>{' '}
               <br />
               <span style={{ background: 'linear-gradient(135deg, #2CCDDE, #46A3E1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-                Your IT Needs
+                {asPage ? 'IT Support in Dubai' : 'Your IT Needs'}
               </span>
-            </h2>}
+            </Heading>}
             <p className="text-[var(--text-muted)] text-base leading-relaxed max-w-sm lg:text-right">
               {hero?.hero_description || 'Free consultation, no commitment. We will get back to you within 2 hours on business days.'}
             </p>

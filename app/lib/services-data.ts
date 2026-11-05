@@ -2,6 +2,8 @@ export type ServiceData = {
   slug: string
   title: string
   tagline: string
+  /** The small line above the service on the home page Services tabs. */
+  eyebrow: string
   description: string
   heroStats: { value: string; label: string }[]
   features: { title: string; desc: string }[]
@@ -14,8 +16,9 @@ export type ServiceData = {
 export const services: ServiceData[] = [
   {
     slug: 'it-amc-services-dubai',
-    title: 'IT AMC',
+    title: 'IT AMC / IT Support',
     tagline: 'Predictable IT costs. Zero surprises.',
+    eyebrow: 'Keep your business running',
     description:
       'IT AMC support that covers every device, server and network in your office under one fixed monthly fee. No per-incident charges and no surprise repair bills, with a two-hour on-site response anywhere in Dubai \u2014 Business Bay, JLT and World Trade Centre included \u2014 as well as Sharjah and Abu Dhabi.',
     heroStats: [
@@ -132,6 +135,7 @@ export const services: ServiceData[] = [
     slug: 'cyber-security',
     title: 'Cyber Security',
     tagline: 'Enterprise-grade protection built for UAE businesses.',
+    eyebrow: 'Protect what you have built',
     description:
       'Layered cyber security covering firewalls, endpoint protection, email security and real-time network monitoring. We protect Dubai businesses from ransomware, phishing, data breaches and insider threats with solutions that scale from 5 to 500 users.',
     heroStats: [
@@ -240,6 +244,7 @@ export const services: ServiceData[] = [
     slug: 'system-integration',
     title: 'System Integration',
     tagline: 'Every device, every office, one connected system.',
+    eyebrow: 'One connected office',
     description:
       'We connect your computers, servers, printers, IP phones, CCTV, access control, cloud storage and Microsoft 365 into one cohesive infrastructure. From a single-office setup in Business Bay to a multi-site network across the UAE, we design and build it all.',
     heroStats: [
@@ -346,8 +351,9 @@ export const services: ServiceData[] = [
 
   {
     slug: 'data-backup-recovery',
-    title: 'Data Backup and Recovery',
+    title: 'Data Backup & Recovery',
     tagline: 'Your data survives ransomware, hardware failure and human error.',
+    eyebrow: 'Never lose a working day',
     description:
       'Automated multi-destination backups running every hour, with fast recovery that restores individual files or entire servers within hours. Purpose-built for UAE businesses that cannot afford extended downtime or data loss.',
     heroStats: [
@@ -454,8 +460,9 @@ export const services: ServiceData[] = [
 
   {
     slug: 'website-development',
-    title: 'Websites, Apps and Bots',
+    title: 'Website / Apps / Bots',
     tagline: 'Digital products built to perform in the UAE market.',
+    eyebrow: 'Win customers online',
     description:
       'Professional websites, e-commerce stores, mobile applications and AI-powered chatbots built by our in-house development team. From a sharp corporate site on WordPress to a fully custom web application, we design and build everything with Dubai business goals in mind.',
     heroStats: [
@@ -564,6 +571,7 @@ export const services: ServiceData[] = [
     slug: 'cloud-services-dubai',
     title: 'Cloud Services',
     tagline: 'Your business in the cloud, fully managed from day one.',
+    eyebrow: 'Work from anywhere',
     description:
       'Microsoft 365 setup and migration, Azure cloud servers, cloud backup and hybrid infrastructure management for Dubai businesses. We handle every aspect of your cloud environment so you can focus on running your business, not managing your IT.',
     heroStats: [
@@ -670,8 +678,9 @@ export const services: ServiceData[] = [
 
   {
     slug: 'graphics-designing',
-    title: 'UI/UX and Graphics Design',
+    title: 'UI/UX & Graphics Design',
     tagline: 'A brand that looks as serious as the business behind it.',
+    eyebrow: 'Look as good as you are',
     description:
       'Logo design, brand identity, UI/UX design, social media graphics, company profiles, brochures and presentation design for Dubai businesses. Fast turnaround, unlimited revisions and a creative team that understands the UAE market.',
     heroStats: [
@@ -780,6 +789,7 @@ export const services: ServiceData[] = [
     slug: 'digital-marketing',
     title: 'Digital Marketing',
     tagline: 'More leads from Dubai. Measurable results every month.',
+    eyebrow: 'Get found by the right customers',
     description:
       'SEO, Google Ads, social media advertising, content marketing and email campaigns built around UAE search behaviour and buying patterns. Every campaign is tracked to actual leads and revenue, not just impressions and clicks.',
     heroStats: [
@@ -888,6 +898,7 @@ export const services: ServiceData[] = [
     slug: 'landing-page-designing',
     title: 'Landing Page Designing',
     tagline: 'A page built to convert, not just to look good.',
+    eyebrow: 'Turn clicks into enquiries',
     description:
       'High-converting landing pages for Google Ads, social media campaigns and product launches. Fast load times, mobile-first design and clear calls to action built around what Dubai audiences actually respond to.',
     heroStats: [

@@ -247,11 +247,11 @@ export default function FooterWordmark() {
   }
 
   return (
-    <div className="px-4 sm:px-6 lg:px-8 pt-10 pb-4 select-none">
+    <div className="page-container pt-10 pb-4 select-none">
       <div
         ref={host}
         aria-hidden="true"
-        className="footer-wordmark max-w-page mx-auto flex justify-center items-end leading-none"
+        className="footer-wordmark flex justify-center items-end leading-none"
       >
         {WORD.split('').map((char, i) => (
           <span

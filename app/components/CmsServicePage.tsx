@@ -26,7 +26,7 @@ export default function CmsServicePage({
     <main style={{ background: 'var(--bg-page)' }}>
 
       {/* ── HERO ─────────────────────────────────────────────── */}
-      <section className="relative pt-20 pb-16 px-4 sm:px-6 lg:px-8 overflow-hidden">
+      <section className="relative pt-12 pb-16 overflow-hidden">
         <div
           className="absolute top-0 right-0 w-[700px] h-[700px] pointer-events-none"
           style={{
@@ -35,7 +35,7 @@ export default function CmsServicePage({
           }}
         />
 
-        <div className="relative max-w-page mx-auto">
+        <div className="page-container relative">
           <div className="max-w-3xl">
             <p className="text-[#2CCDDE] text-xs font-bold uppercase tracking-widest mb-5">
               Our Services
@@ -107,8 +107,8 @@ export default function CmsServicePage({
 
       {/* ── IMAGE ────────────────────────────────────────────── */}
       {service.image_url && (
-        <section className="px-4 sm:px-6 lg:px-8 pb-4">
-          <div className="max-w-page mx-auto">
+        <section className="pb-4">
+          <div className="page-container">
             <div
               className="relative h-[280px] sm:h-[420px] rounded-3xl overflow-hidden"
               style={{ border: '1px solid rgba(44,205,222,0.15)' }}
@@ -127,8 +127,8 @@ export default function CmsServicePage({
 
       {/* ── DESCRIPTION ──────────────────────────────────────── */}
       {paragraphs.length > 0 && (
-        <section className="py-20 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-page mx-auto">
+        <section className="py-20">
+          <div className="page-container">
             <div className="max-w-3xl">
               <p className="text-[#2CCDDE] text-xs font-bold uppercase tracking-widest mb-5">
                 What&apos;s Included
@@ -146,8 +146,8 @@ export default function CmsServicePage({
       )}
 
       {/* ── CTA BAND ─────────────────────────────────────────── */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-page mx-auto">
+      <section className="py-16">
+        <div className="page-container">
           <div
             className="relative overflow-hidden rounded-3xl p-10 sm:p-14"
             style={{
@@ -181,8 +181,8 @@ export default function CmsServicePage({
 
       {/* ── RELATED ──────────────────────────────────────────── */}
       {related.length > 0 && (
-        <section className="pb-24 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-page mx-auto">
+        <section className="pb-24">
+          <div className="page-container">
             <div className="mb-10">
               <p className="text-[#2CCDDE] text-xs font-bold uppercase tracking-widest mb-4">
                 Related Services

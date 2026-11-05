@@ -58,9 +58,9 @@ export default function PageCta({ embedded = false }: { embedded?: boolean } = {
   return (
     <div>
       {ctas.map((cta) => (
-        <section key={cta.id} className="px-4 py-8 sm:px-6 lg:px-8">
+        <section key={cta.id} className="page-container py-8">
           <div
-            className="relative mx-auto max-w-page overflow-hidden rounded-3xl border border-cyan-400/20 bg-[#091820] bg-cover bg-center px-6 py-16 text-center shadow-2xl sm:px-12 sm:py-20"
+            className="relative overflow-hidden rounded-3xl border border-cyan-400/20 bg-[#091820] bg-cover bg-center px-6 py-16 text-center shadow-2xl sm:px-12 sm:py-20"
             style={
               cta.background_image
                 ? {

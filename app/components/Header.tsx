@@ -1,121 +1,265 @@
 "use client";
-import { useEffect, useId, useRef, useState, useSyncExternalStore } from "react";
+import {
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type FocusEvent,
+  type PointerEvent,
+  type ReactNode,
+} from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import ThemeToggle from "./ThemeToggle";
 import LogoLink from "./LogoLink";
-import { ArrowIcon, ChevronIcon, PhoneIcon, WhatsAppIcon } from "./InlineIcons";
-import { defaultHeaderBar, type HeaderBar } from "../lib/header-bar";
+import { ArrowIcon, ArrowUpRightIcon, ChevronIcon, PhoneIcon, WhatsAppIcon } from "./InlineIcons";
+import { ServiceIcon } from "./ServiceIcon";
+import ThemeToggle from "./ThemeToggle";
+import { isCurrent, type NavItem } from "../lib/header-menu";
+import { fallbackHeader, type HeaderModel, type MenuLink } from "../lib/header-model";
 
-export type NavItem = {
-  label: string;
-  href: string;
-  new_tab?: boolean;
-  children?: NavItem[];
-};
-const fallbackServices = [
-  { label: "IT AMC / IT Support", href: "/it-amc-services-dubai" },
-  { label: "Cyber Security", href: "/cyber-security" },
-  { label: "System Integration", href: "/system-integration" },
-  { label: "Cloud Services", href: "/cloud-services-dubai" },
-];
-const fallbackNav: NavItem[] = [
-  { label: "Home", href: "/" },
-  { label: "About Us", href: "/about-us" },
-  { label: "Services", href: "#", children: fallbackServices },
-  { label: "Projects", href: "/projects" },
-  { label: "Blog", href: "/blog" },
-];
+export type { NavItem };
 
 const DEFAULT_PHONE = "+971 54 328 2042";
 
-// Scroll position as an external store, so the header reads it while
-// rendering rather than copying it into state from an effect. The server
-// always renders the un-scrolled bar.
-function subscribeToScroll(onChange: () => void) {
-  addEventListener("scroll", onChange, { passive: true });
-  return () => removeEventListener("scroll", onChange);
-}
-const readScrolled = () => scrollY > 8;
-const readScrolledOnServer = () => false;
+// How long the pointer rests on a menu before it opens, and how long it may
+// stray off one (cutting a corner on the way to the panel) before it closes.
+const HOVER_DELAY = 150;
 
-/** True when `href` is the page being viewed, or a section containing it. */
-function isCurrent(pathname: string, href: string) {
-  if (!href.startsWith("/") || href.startsWith("//")) return false;
-  const path = href.split(/[?#]/)[0] || "/";
-  if (path === "/") return pathname === "/";
-  return pathname === path || pathname.startsWith(`${path}/`);
-}
-
-function containsCurrent(pathname: string, item: NavItem): boolean {
-  return (
-    isCurrent(pathname, item.href) ||
-    Boolean(item.children?.some((child) => containsCurrent(pathname, child)))
-  );
-}
-
-const countLinks = (items: NavItem[]): number =>
-  items.reduce(
-    (total, item) =>
-      total + (item.children?.length ? countLinks(item.children) : 1),
-    0,
-  );
-
-// "#" is how the CMS marks a menu entry that only groups others.
-const hasPage = (href: string) => Boolean(href) && href !== "#";
-
-const newTabProps = (item: NavItem) =>
+const newTabProps = (item: { new_tab?: boolean }) =>
   item.new_tab ? { target: "_blank", rel: "noopener noreferrer" } : {};
-
-const keyOf = (item: NavItem) => `${item.label}-${item.href}`;
 
 const telHref = (phone: string) => `tel:${phone.replace(/[^\d+]/g, "")}`;
 
-// ── Desktop ────────────────────────────────────────────────────────────────
-
-/**
- * Top-level items run the full height of the bar so the marker can sit on its
- * bottom edge. Capitals run wider, so they are set a size smaller and spaced.
- */
-const topLevelClass = (highlighted: boolean, uppercase: boolean) =>
-  `nav-item group relative flex h-full items-center gap-1 px-3 font-medium transition-colors duration-200 ${
-    uppercase ? "text-[13px] uppercase tracking-[0.08em]" : "text-[14.5px]"
-  } ${
-    highlighted
-      ? "text-[var(--text-primary)]"
-      : "text-[var(--text-nav)] hover:text-[var(--text-primary)]"
+/** Top-level links and dropdown buttons: a cyan pill marks hover, an open menu and the current page. */
+const pillClass = (active: boolean) =>
+  `inline-flex items-center gap-1.5 whitespace-nowrap rounded-[10px] px-[13px] py-[9px] text-[14.5px] font-medium leading-5 transition-colors duration-200 ${
+    active
+      ? "bg-[rgba(44,205,222,0.12)] text-[#2CCDDE]"
+      : "text-[#e2e8f0] hover:bg-[rgba(44,205,222,0.12)] hover:text-[#2CCDDE]"
   }`;
 
-/** Brand-colour bar under the current section; a neutral one draws in on hover. */
-function Marker({ active }: { active: boolean }) {
+const eyebrowClass = "text-[11px] font-semibold uppercase tracking-[0.16em] text-[#0e9aa8]";
+
+/** The white panels share one surface. */
+const panelSurface =
+  "overflow-hidden rounded-[20px] bg-white text-left shadow-[0_32px_80px_-24px_rgba(4,18,26,0.5),0_8px_24px_-8px_rgba(4,18,26,0.18)] ring-1 ring-[rgba(15,23,42,0.06)]";
+
+// ── Desktop panels ─────────────────────────────────────────────────────────
+
+/** A light intro column on the left of a mega menu. */
+function IntroZone({
+  eyebrow,
+  heading,
+  text,
+  link,
+  outward = false,
+  onNavigate,
+}: {
+  eyebrow: string;
+  heading: string;
+  text: string;
+  link: MenuLink;
+  /** A ↗ arrow (for a list that continues elsewhere) instead of →. */
+  outward?: boolean;
+  onNavigate: () => void;
+}) {
   return (
-    <span
-      aria-hidden="true"
-      className={`pointer-events-none absolute inset-x-3 bottom-0 h-[2px] origin-left rounded-full transition-transform duration-300 ease-out ${
-        active
-          ? "scale-x-100 bg-[#2CCDDE]"
-          : "scale-x-0 bg-[var(--border-strong)] group-hover:scale-x-100"
-      }`}
-    />
+    // At 1024px the intro gives its room to the columns beside it.
+    <div className="hidden flex-col border-r border-[#e2e8f0] bg-[#f1f6fa] p-7 xl:flex">
+      <p className={eyebrowClass}>{eyebrow}</p>
+      <p className="mt-3 font-display text-[22px] font-semibold leading-[1.2] tracking-[-0.02em] text-[#0b1724]">
+        {heading}
+      </p>
+      {text && <p className="mt-3 text-[13.5px] leading-relaxed text-[#64748b]">{text}</p>}
+      <Link
+        href={link.href}
+        onClick={onNavigate}
+        className="group/all mt-auto inline-flex items-center gap-1.5 pt-6 text-[13.5px] font-semibold text-[#0b1724] transition-colors hover:text-[#0e7490]"
+      >
+        {link.label}
+        {outward ? (
+          <ArrowUpRightIcon className="h-3.5 w-3.5 transition-transform duration-200 group-hover/all:-translate-y-px group-hover/all:translate-x-px" />
+        ) : (
+          <ArrowIcon className="h-3.5 w-3.5 transition-transform duration-200 group-hover/all:translate-x-0.5" />
+        )}
+      </Link>
+    </div>
   );
 }
 
-function DesktopLink({ item, pathname, bar }: { item: NavItem; pathname: string; bar: HeaderBar }) {
+/** Small uppercase column heading, two lines tall so the rules under them line up. */
+function ColumnTitle({ children }: { children: ReactNode }) {
+  return (
+    <p className="mb-2 flex min-h-[2.75rem] items-end border-b border-[#e2e8f0] px-2 pb-2.5 text-[11px] font-semibold uppercase leading-[1.45] tracking-[0.12em] text-[#94a3b8]">
+      {children}
+    </p>
+  );
+}
+
+/** The grey strip along the bottom of a mega menu. */
+function FooterStrip({ children }: { children: ReactNode }) {
+  return (
+    <div className="flex items-center justify-between gap-4 border-t border-[#e2e8f0] bg-[#f8fafc] px-6 py-3.5 text-[13.5px]">
+      {children}
+    </div>
+  );
+}
+
+function ServicesPanel({
+  services,
+  whatsapp,
+  onNavigate,
+}: {
+  services: HeaderModel["services"];
+  whatsapp: string;
+  onNavigate: () => void;
+}) {
+  const { intro, groups, featured, footer } = services;
+  return (
+    <div className={panelSurface}>
+      <div
+        className={`grid ${
+          featured
+            ? "lg:grid-cols-[minmax(0,1fr)_260px] xl:grid-cols-[250px_minmax(0,1fr)_290px]"
+            : "xl:grid-cols-[250px_minmax(0,1fr)]"
+        }`}
+      >
+        <IntroZone {...intro} onNavigate={onNavigate} />
+
+        <div className="grid grid-cols-3 gap-x-2 gap-y-5 p-5">
+          {groups.map((group) => (
+            <div key={group.title} className="min-w-0">
+              <ColumnTitle>{group.title}</ColumnTitle>
+              <ul className="space-y-0.5">
+                {group.items.map((item) => (
+                  <li key={`${item.label}-${item.href}`}>
+                    <Link
+                      href={item.href}
+                      onClick={onNavigate}
+                      className="group/item flex items-start gap-2.5 rounded-xl p-2 transition-colors duration-150 hover:bg-[#ecfbfd]"
+                    >
+                      <span
+                        aria-hidden="true"
+                        className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-[rgba(44,205,222,0.12)] text-[#0e7490] transition-colors duration-150 group-hover/item:bg-[#2CCDDE] group-hover/item:text-[#04121A]"
+                      >
+                        <ServiceIcon link={item.href} className="h-4 w-4" />
+                      </span>
+                      <span className="min-w-0">
+                        <span className="block text-[13.5px] font-semibold leading-snug text-[#0b1724]">
+                          {item.label}
+                        </span>
+                        {item.description && (
+                          <span className="mt-0.5 block text-[12.5px] leading-snug text-[#64748b]">
+                            {item.description}
+                          </span>
+                        )}
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+
+        {featured && (
+          <div className="p-3 lg:pl-0">
+            <div className="relative isolate flex h-full flex-col overflow-hidden rounded-2xl bg-[#0b1724] p-6 text-white">
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute -right-20 -top-20 -z-10 h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(44,205,222,0.32),transparent_68%)]"
+              />
+              <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#2CCDDE]">{featured.eyebrow}</p>
+              <p className="mt-2 font-display text-[22px] font-semibold leading-tight tracking-[-0.02em]">
+                {featured.title}
+              </p>
+              {featured.text && <p className="mt-2 text-[13px] leading-relaxed text-[#cbd5e1]">{featured.text}</p>}
+              {featured.stats.length > 0 && (
+                <div className="mt-5 grid grid-cols-2 gap-2.5">
+                  {featured.stats.map((stat) => (
+                    <p key={stat.value + stat.label} className="rounded-xl border border-white/10 bg-white/[0.05] px-3 py-3">
+                      <span className="block font-display text-[20px] font-semibold leading-none text-[#2CCDDE]">{stat.value}</span>
+                      <span className="mt-1.5 block text-[12px] leading-snug text-[#cbd5e1]">{stat.label}</span>
+                    </p>
+                  ))}
+                </div>
+              )}
+              <div className="mt-auto pt-6">
+                <Link
+                  href={featured.button.href}
+                  onClick={onNavigate}
+                  className="group/plans inline-flex h-10 items-center gap-2.5 rounded-full bg-[#2CCDDE] pl-4 pr-1 text-[13.5px] font-bold text-[#04121A] transition-colors hover:bg-[#5BDCE9]"
+                >
+                  {featured.button.label}
+                  <span className="grid h-8 w-8 place-items-center rounded-full bg-[#04121A] text-[#2CCDDE]">
+                    <ArrowUpRightIcon className="h-3.5 w-3.5 transition-transform duration-200 group-hover/plans:-translate-y-px group-hover/plans:translate-x-px" />
+                  </span>
+                </Link>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <FooterStrip>
+        <p className="text-[#64748b]">
+          {footer.text}{" "}
+          {footer.link && (
+            <Link
+              href={footer.link.href}
+              onClick={onNavigate}
+              className="font-semibold text-[#0b1724] underline-offset-4 transition-colors hover:text-[#0e7490] hover:underline"
+            >
+              {footer.link.label}
+            </Link>
+          )}
+        </p>
+        {footer.whatsappLabel && (
+          <a
+            href={whatsapp}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group/wa inline-flex items-center gap-2 font-semibold text-[#0b1724] transition-colors hover:text-[#0e7490]"
+          >
+            <WhatsAppIcon className="h-4 w-4 text-[#25D366]" />
+            {footer.whatsappLabel}
+            <ArrowIcon className="h-3.5 w-3.5 transition-transform duration-200 group-hover/wa:translate-x-0.5" />
+          </a>
+        )}
+      </FooterStrip>
+    </div>
+  );
+}
+
+/** One row in a list menu: the label, and an arrow that slides in on hover. */
+function ListLink({
+  item,
+  pathname,
+  onNavigate,
+}: {
+  item: { label: string; href: string; new_tab?: boolean };
+  pathname: string;
+  onNavigate: () => void;
+}) {
   const current = isCurrent(pathname, item.href);
   return (
     <Link
       href={item.href}
       {...newTabProps(item)}
+      onClick={onNavigate}
       aria-current={current ? "page" : undefined}
-      className={topLevelClass(current, bar.uppercase)}
+      className={`group/item flex items-center justify-between gap-3 rounded-xl px-3 py-2.5 text-[13.5px] font-medium transition-colors duration-150 hover:bg-[#ecfbfd] hover:text-[#0e7490] ${
+        current ? "bg-[#ecfbfd] text-[#0e7490]" : "text-[#0b1724]"
+      }`}
     >
       {item.label}
-      <Marker active={current} />
+      <ArrowIcon className="h-3.5 w-3.5 shrink-0 -translate-x-1 opacity-0 transition duration-200 group-hover/item:translate-x-0 group-hover/item:opacity-100" />
     </Link>
   );
 }
 
-function PanelEntries({
+function ListPanel({
   items,
   pathname,
   onNavigate,
@@ -125,186 +269,248 @@ function PanelEntries({
   onNavigate: () => void;
 }) {
   return (
-    <>
-      {items.map((item) => {
-        if (item.children?.length) {
-          const heading =
-            "block px-3 pb-1 pt-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--text-nav)]";
-          return (
-            <div key={keyOf(item)} className="pb-1">
-              {hasPage(item.href) ? (
-                <Link
-                  href={item.href}
-                  {...newTabProps(item)}
-                  onClick={onNavigate}
-                  className={`${heading} transition-colors hover:text-[var(--text-primary)]`}
-                >
-                  {item.label}
-                </Link>
-              ) : (
-                <p className={heading}>{item.label}</p>
-              )}
-              <PanelEntries
-                items={item.children}
-                pathname={pathname}
-                onNavigate={onNavigate}
-              />
-            </div>
-          );
-        }
-        const current = isCurrent(pathname, item.href);
-        return (
-          <Link
-            key={keyOf(item)}
-            href={item.href}
-            {...newTabProps(item)}
-            onClick={onNavigate}
-            aria-current={current ? "page" : undefined}
-            className={`group/link flex items-center justify-between gap-3 rounded-lg px-3 py-2.5 text-[14px] transition-colors duration-150 ${
-              current
-                ? "bg-[var(--overlay-hover)] font-medium text-[var(--text-primary)]"
-                : "text-[var(--text-body)] hover:bg-[var(--overlay-hover)] hover:text-[var(--text-primary)]"
-            }`}
-          >
-            <span>{item.label}</span>
-            <ArrowIcon className="h-3.5 w-3.5 shrink-0 -translate-x-1 opacity-0 transition duration-200 group-hover/link:translate-x-0 group-hover/link:opacity-100" />
-          </Link>
-        );
-      })}
-    </>
+    <div className={`${panelSurface} w-[30rem]`}>
+      <ul className="grid grid-cols-2 gap-0.5 p-3">
+        {items.map((item) => (
+          <li key={`${item.label}-${item.href}`}>
+            <ListLink item={item} pathname={pathname} onNavigate={onNavigate} />
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
 
-function DesktopDropdown({
-  item,
+function IndustriesPanel({
+  industries,
   pathname,
-  bar,
+  onNavigate,
 }: {
-  item: NavItem;
+  industries: HeaderModel["industries"];
   pathname: string;
-  bar: HeaderBar;
+  onNavigate: () => void;
 }) {
-  const [open, setOpen] = useState(false);
-  const wrapperRef = useRef<HTMLDivElement>(null);
-  const buttonRef = useRef<HTMLButtonElement>(null);
-  const closeTimer = useRef<number | undefined>(undefined);
-  // A mouse opens the panel on hover; the click that usually follows should
-  // keep it open rather than toggle it shut again.
-  const openedByHover = useRef(false);
-  const panelId = useId();
-  const children = item.children ?? [];
-  const current = containsCurrent(pathname, item);
-  const wide = countLinks(children) > 6;
-  const close = () => setOpen(false);
+  const { heading, viewAll, groups } = industries;
+  const columns = groups.length > 1;
+  return (
+    <div className={`${panelSurface} ${columns ? "" : "w-[30rem]"}`}>
+      {heading && <p className={`${eyebrowClass} px-6 pt-5`}>{heading}</p>}
+      <div className={columns ? "grid grid-cols-3 gap-x-2 gap-y-5 p-5" : "p-3"}>
+        {groups.map((group) => (
+          <div key={group.title} className="min-w-0">
+            {columns && <ColumnTitle>{group.title}</ColumnTitle>}
+            <ul className={columns ? "space-y-0.5" : "grid grid-cols-2 gap-0.5"}>
+              {group.items.map((item) => (
+                <li key={`${item.label}-${item.href}`}>
+                  <ListLink item={item} pathname={pathname} onNavigate={onNavigate} />
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+      {viewAll && (
+        <FooterStrip>
+          <Link
+            href={viewAll.href}
+            onClick={onNavigate}
+            className="group/all inline-flex items-center gap-1.5 font-semibold text-[#0b1724] transition-colors hover:text-[#0e7490]"
+          >
+            {viewAll.label}
+            <ArrowIcon className="h-3.5 w-3.5 transition-transform duration-200 group-hover/all:translate-x-0.5" />
+          </Link>
+        </FooterStrip>
+      )}
+    </div>
+  );
+}
 
-  useEffect(() => {
-    if (!open) return;
-    function onPointerDown(event: PointerEvent) {
-      if (!wrapperRef.current?.contains(event.target as Node)) setOpen(false);
-    }
-    function onKeyDown(event: KeyboardEvent) {
-      if (event.key !== "Escape") return;
-      setOpen(false);
-      buttonRef.current?.focus();
-    }
-    document.addEventListener("pointerdown", onPointerDown);
-    document.addEventListener("keydown", onKeyDown);
-    return () => {
-      document.removeEventListener("pointerdown", onPointerDown);
-      document.removeEventListener("keydown", onKeyDown);
-    };
-  }, [open]);
+function InsightsPanel({
+  insights,
+  showImages,
+  onNavigate,
+}: {
+  insights: HeaderModel["insights"];
+  /** Thumbnails load once the menu has been opened, not on every page view. */
+  showImages: boolean;
+  onNavigate: () => void;
+}) {
+  const { topics, posts, footer } = insights;
+  return (
+    <div className={panelSurface}>
+      <div
+        className={`grid ${
+          topics.length
+            ? "lg:grid-cols-[270px_minmax(0,1fr)] xl:grid-cols-[250px_270px_minmax(0,1fr)]"
+            : "xl:grid-cols-[250px_minmax(0,1fr)]"
+        }`}
+      >
+        <IntroZone
+          eyebrow={insights.eyebrow}
+          heading={insights.heading}
+          text={insights.text}
+          link={insights.viewAll}
+          outward
+          onNavigate={onNavigate}
+        />
 
+        {topics.length > 0 && (
+          <div className="border-r border-[#e2e8f0] p-5">
+            <ColumnTitle>Topics</ColumnTitle>
+            <ul className="space-y-0.5">
+              {topics.map((topic) => (
+                <li key={topic.label}>
+                  <Link
+                    href={topic.href}
+                    onClick={onNavigate}
+                    className="group/topic flex items-center gap-2 rounded-xl px-2 py-2 text-[13.5px] font-medium leading-snug text-[#0b1724] transition-colors duration-150 hover:bg-[#ecfbfd] hover:text-[#0e7490]"
+                  >
+                    <span className="min-w-0 flex-1">{topic.label}</span>
+                    <span className="rounded-full bg-[#f1f5f9] px-2 py-0.5 text-[11.5px] font-semibold tabular-nums text-[#64748b]">
+                      {topic.count}
+                    </span>
+                    <ArrowUpRightIcon className="h-3.5 w-3.5 shrink-0 text-[#94a3b8] transition-colors group-hover/topic:text-[#0e7490]" />
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        <div className="min-w-0 p-5">
+          <ColumnTitle>Latest articles</ColumnTitle>
+          {posts.length ? (
+            <ul className="space-y-1">
+              {posts.map((post) => (
+                <li key={post.href}>
+                  <Link
+                    href={post.href}
+                    onClick={onNavigate}
+                    className="group/post flex items-start gap-3.5 rounded-xl p-2 transition-colors duration-150 hover:bg-[#ecfbfd]"
+                  >
+                    {/* Fixed size whether or not the image has loaded, so nothing shifts. */}
+                    <span className="relative block h-[60px] w-[84px] shrink-0 overflow-hidden rounded-lg bg-[#e2e8f0]">
+                      {showImages && post.image && (
+                        <Image
+                          src={post.image}
+                          alt={post.alt}
+                          width={84}
+                          height={60}
+                          sizes="84px"
+                          loading="lazy"
+                          unoptimized={!post.image.startsWith("/")}
+                          className="h-full w-full object-cover"
+                        />
+                      )}
+                    </span>
+                    <span className="min-w-0">
+                      {post.category && (
+                        <span className="inline-block rounded-full bg-[rgba(44,205,222,0.12)] px-2 py-0.5 text-[10.5px] font-semibold uppercase tracking-[0.08em] text-[#0e7490]">
+                          {post.category}
+                        </span>
+                      )}
+                      <span className="mt-1 line-clamp-2 block text-[13.5px] font-semibold leading-snug text-[#0b1724] group-hover/post:text-[#0e7490]">
+                        {post.title}
+                      </span>
+                      <span className="mt-1 block text-[12px] text-[#64748b]">
+                        {[post.date, post.readTime].filter(Boolean).join(" · ")}
+                      </span>
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="px-2 py-3 text-[13.5px]">
+              <Link href={insights.viewAll.href} onClick={onNavigate} className="font-semibold text-[#0b1724] hover:text-[#0e7490]">
+                {insights.viewAll.label}
+              </Link>
+            </p>
+          )}
+        </div>
+      </div>
+
+      <FooterStrip>
+        <p className="text-[#64748b]">{footer.text}</p>
+        <Link
+          href={footer.link.href}
+          onClick={onNavigate}
+          className="group/blog inline-flex items-center gap-2 font-semibold text-[#0b1724] transition-colors hover:text-[#0e7490]"
+        >
+          {footer.link.label}
+          <ArrowIcon className="h-3.5 w-3.5 transition-transform duration-200 group-hover/blog:translate-x-0.5" />
+        </Link>
+      </FooterStrip>
+    </div>
+  );
+}
+
+/**
+ * A top-level button and its panel. The mega menu is positioned against the
+ * whole bar (its wrapper is left static), a list panel against its button.
+ * The panel follows the button in the page, so Tab walks straight into it.
+ */
+function Dropdown({
+  id,
+  label,
+  active,
+  open,
+  wide,
+  hover,
+  onToggle,
+  onKeyboardFocus,
+  onLeave,
+  children,
+}: {
+  id: string;
+  label: string;
+  active: boolean;
+  open: boolean;
+  wide: boolean;
+  hover: {
+    onPointerEnter: (event: PointerEvent) => void;
+    onPointerLeave: (event: PointerEvent) => void;
+  };
+  onToggle: (pointerType: string) => void;
+  onKeyboardFocus: () => void;
+  onLeave: () => void;
+  children: ReactNode;
+}) {
   return (
     <div
-      ref={wrapperRef}
-      className="relative flex h-full items-center"
-      onPointerEnter={(event) => {
-        if (event.pointerType !== "mouse") return;
-        clearTimeout(closeTimer.current);
-        openedByHover.current = true;
-        setOpen(true);
-      }}
-      onPointerLeave={(event) => {
-        if (event.pointerType !== "mouse") return;
-        openedByHover.current = false;
-        // A short grace period, so cutting a corner on the way to the panel
-        // does not slam it shut.
-        clearTimeout(closeTimer.current);
-        closeTimer.current = window.setTimeout(close, 150);
-      }}
-      onBlur={(event) => {
-        // Keyboard focus moving on to something outside the menu closes it.
-        // Clicks outside are handled by the pointerdown listener above.
-        if (
-          event.relatedTarget &&
-          !event.currentTarget.contains(event.relatedTarget)
-        )
-          setOpen(false);
+      className={wide ? "flex" : "relative flex"}
+      {...hover}
+      onBlur={(event: FocusEvent<HTMLDivElement>) => {
+        // Keyboard focus moving on past the panel closes it. Clicks outside
+        // are handled by the header's pointerdown listener.
+        if (event.relatedTarget && !event.currentTarget.contains(event.relatedTarget)) onLeave();
       }}
     >
       <button
-        ref={buttonRef}
+        id={`${id}-button`}
         type="button"
         aria-expanded={open}
-        aria-controls={panelId}
-        onClick={() => {
-          if (openedByHover.current) {
-            openedByHover.current = false;
-            setOpen(true);
-            return;
-          }
-          setOpen((value) => !value);
+        aria-controls={`${id}-panel`}
+        // A keyboard "click" reports no pointer type.
+        onClick={(event) => onToggle((event.nativeEvent as globalThis.PointerEvent).pointerType ?? "")}
+        onFocus={(event) => {
+          if (event.currentTarget.matches(":focus-visible")) onKeyboardFocus();
         }}
-        className={topLevelClass(current || open, bar.uppercase)}
+        className={pillClass(active || open)}
       >
-        {item.label}
+        {label}
         <ChevronIcon
           className={`h-3.5 w-3.5 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
         />
-        <Marker active={current} />
       </button>
-
       <div
-        id={panelId}
+        id={`${id}-panel`}
         inert={!open}
-        className={`absolute -left-1 top-full z-10 pt-1.5 transition-[opacity,translate,visibility] duration-200 ease-out ${
-          open
-            ? "visible translate-y-0 opacity-100"
-            : "invisible -translate-y-1 opacity-0"
-        }`}
+        className={`absolute top-full z-10 transition-[opacity,translate,visibility] duration-200 ease-out motion-reduce:transition-none ${
+          wide ? "inset-x-0 pt-2.5" : "left-1/2 -translate-x-1/2 pt-[27px]"
+        } ${open ? "visible translate-y-0 opacity-100" : "invisible -translate-y-1.5 opacity-0"}`}
       >
-        <div
-          className={`overflow-hidden rounded-2xl border border-[var(--border-default)] bg-[var(--bg-page)] shadow-(--shadow-pop) ${
-            wide ? "w-[34rem]" : "w-[20rem]"
-          }`}
-        >
-          {hasPage(item.href) && (
-            <Link
-              href={item.href}
-              {...newTabProps(item)}
-              onClick={close}
-              className="group/all flex items-center justify-between border-b border-[var(--border-default)] px-5 py-3 text-[13px] font-semibold text-[var(--text-primary)]"
-            >
-              All {item.label.toLowerCase()}
-              <ArrowIcon className="h-3.5 w-3.5 transition-transform duration-200 group-hover/all:translate-x-0.5" />
-            </Link>
-          )}
-          <div className={`p-2 ${wide ? "grid grid-cols-2 gap-x-1" : "flex flex-col"}`}>
-            <PanelEntries items={children} pathname={pathname} onNavigate={close} />
-          </div>
-          <Link
-            href={bar.ctaLink}
-            onClick={close}
-            className="group/cta flex items-center justify-between gap-4 border-t border-[var(--border-default)] bg-[var(--bg-surface)] px-5 py-3.5"
-          >
-            <span>
-              <span className="block text-[12.5px] text-[var(--text-nav)]">{bar.dropdownNote}</span>
-              <span className="block text-[13.5px] font-semibold text-[var(--text-primary)]">{bar.dropdownCta}</span>
-            </span>
-            <ArrowIcon className="h-4 w-4 shrink-0 text-[var(--text-primary)] transition-transform duration-200 group-hover/cta:translate-x-0.5" />
-          </Link>
-        </div>
+        {children}
       </div>
     </div>
   );
@@ -312,96 +518,12 @@ function DesktopDropdown({
 
 // ── Mobile ─────────────────────────────────────────────────────────────────
 
-function MobileSubEntries({
-  items,
-  pathname,
-  onNavigate,
-}: {
-  items: NavItem[];
-  pathname: string;
-  onNavigate: () => void;
-}) {
-  return (
-    <>
-      {items.map((item) => {
-        if (item.children?.length)
-          return (
-            <li key={keyOf(item)}>
-              <p className="pb-1 pt-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--text-nav)]">
-                {item.label}
-              </p>
-              <ul>
-                <MobileSubEntries
-                  items={item.children}
-                  pathname={pathname}
-                  onNavigate={onNavigate}
-                />
-              </ul>
-            </li>
-          );
-        const current = isCurrent(pathname, item.href);
-        return (
-          <li key={keyOf(item)}>
-            <Link
-              href={item.href}
-              {...newTabProps(item)}
-              onClick={onNavigate}
-              aria-current={current ? "page" : undefined}
-              className={`flex items-center justify-between gap-3 py-2.5 text-[15px] ${
-                current
-                  ? "font-medium text-[var(--text-primary)]"
-                  : "text-[var(--text-body)]"
-              }`}
-            >
-              {item.label}
-              {current && (
-                <span aria-hidden="true" className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#2CCDDE]" />
-              )}
-            </Link>
-          </li>
-        );
-      })}
-    </>
-  );
-}
+const mobileRowClass =
+  "flex w-full items-center justify-between gap-4 py-4 text-left font-display text-[21px] font-semibold tracking-[-0.02em] text-white";
 
-function MobileEntry({
-  item,
-  pathname,
-  onNavigate,
-}: {
-  item: NavItem;
-  pathname: string;
-  onNavigate: () => void;
-}) {
-  // A group holding the page being viewed starts expanded.
-  const [open, setOpen] = useState(() => containsCurrent(pathname, item));
+function MobileAccordion({ label, children }: { label: string; children: ReactNode }) {
+  const [open, setOpen] = useState(false);
   const panelId = useId();
-  const rowClass =
-    "flex w-full items-center justify-between gap-4 py-4 text-left font-display text-[22px] font-semibold tracking-[-0.02em] text-[var(--text-primary)]";
-
-  if (!item.children?.length) {
-    const current = isCurrent(pathname, item.href);
-    return (
-      <li>
-        <Link
-          href={item.href}
-          {...newTabProps(item)}
-          onClick={onNavigate}
-          aria-current={current ? "page" : undefined}
-          className={rowClass}
-        >
-          {item.label}
-          {current ? (
-            <span aria-hidden="true" className="h-2 w-2 shrink-0 rounded-full bg-[#2CCDDE]" />
-          ) : (
-            <ArrowIcon className="h-4 w-4 shrink-0 text-[var(--text-dim)]" />
-          )}
-        </Link>
-      </li>
-    );
-  }
-
   return (
     <li>
       <button
@@ -409,96 +531,153 @@ function MobileEntry({
         aria-expanded={open}
         aria-controls={panelId}
         onClick={() => setOpen((value) => !value)}
-        className={rowClass}
+        className={mobileRowClass}
       >
-        {item.label}
-        <span
-          aria-hidden="true"
-          className="relative grid h-8 w-8 shrink-0 place-items-center rounded-full border border-[var(--border-default)] text-[var(--text-nav)]"
-        >
-          <span className="absolute h-[1.5px] w-3 rounded-full bg-current" />
-          <span
-            className={`absolute h-3 w-[1.5px] rounded-full bg-current transition-transform duration-300 ${open ? "scale-y-0" : ""}`}
-          />
-        </span>
+        {label}
+        <ChevronIcon
+          className={`h-5 w-5 shrink-0 text-[#2CCDDE] transition-transform duration-300 ${open ? "rotate-180" : ""}`}
+        />
       </button>
       <div
         id={panelId}
         inert={!open}
-        className={`grid transition-[grid-template-rows] duration-300 ease-out ${open ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
+        className={`grid transition-[grid-template-rows] duration-300 ease-out motion-reduce:transition-none ${open ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
       >
         <div className="overflow-hidden">
-          <ul className="mb-4 ml-1 border-l border-[var(--border-default)] pl-4">
-            {hasPage(item.href) && (
-              <li>
-                <Link
-                  href={item.href}
-                  {...newTabProps(item)}
-                  onClick={onNavigate}
-                  className="block py-2.5 text-[15px] font-medium text-[var(--text-primary)]"
-                >
-                  All {item.label.toLowerCase()}
-                </Link>
-              </li>
-            )}
-            <MobileSubEntries
-              items={item.children}
-              pathname={pathname}
-              onNavigate={onNavigate}
-            />
-          </ul>
+          <div className="pb-5">{children}</div>
         </div>
       </div>
     </li>
   );
 }
 
+const mobileGroupTitleClass = "px-2 pb-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#64748b]";
+
+/** The "view all" link under a mobile accordion's list. */
+function MobileMore({ link, onNavigate }: { link: MenuLink; onNavigate: () => void }) {
+  return (
+    <Link
+      href={link.href}
+      onClick={onNavigate}
+      className="mt-3 inline-flex items-center gap-1.5 px-2 text-[14px] font-semibold text-[#2CCDDE]"
+    >
+      {link.label}
+      <ArrowIcon className="h-3.5 w-3.5" />
+    </Link>
+  );
+}
+
+const mobileSubLinkClass =
+  "flex items-center gap-3 rounded-xl px-2 py-2.5 text-[15px] text-[#e2e8f0] transition-colors hover:bg-white/[0.06] hover:text-white";
+
 // ── Header ─────────────────────────────────────────────────────────────────
 
 export default function Header({
-  navigation = fallbackNav,
-  serviceLinks,
+  model = fallbackHeader(),
   logoUrl = "/images/logo.png",
   phone = DEFAULT_PHONE,
   whatsappUrl,
-  bar = defaultHeaderBar,
 }: {
-  navigation?: NavItem[];
-  serviceLinks?: NavItem[];
+  /** Built on the server by getHeaderModel(), so every link is in the HTML. */
+  model?: HeaderModel;
   logoUrl?: string;
   phone?: string;
   whatsappUrl?: string;
-  bar?: HeaderBar;
 }) {
-  const withServices = navigation.some((item) => item.children?.length)
-    ? navigation
-    : serviceLinks?.length
-      ? [
-          ...navigation.slice(0, 2),
-          { label: "Services", href: "#", children: serviceLinks },
-          ...navigation.slice(2),
-        ]
-      : navigation;
-  // The Contact button always sits beside the menu, so a menu entry for the
-  // same page would only say it twice.
-  const menu = withServices.filter((item) => item.href !== bar.ctaLink);
+  const { nav: entries, services, industries, insights, cta } = model;
   const whatsapp = whatsappUrl || `https://wa.me/${phone.replace(/\D/g, "")}`;
-
   const pathname = usePathname();
-  const scrolled = useSyncExternalStore(
-    subscribeToScroll,
-    readScrolled,
-    readScrolledOnServer,
-  );
+  const baseId = useId();
+  const navRef = useRef<HTMLElement>(null);
+
+  // ── Desktop dropdowns: one open at a time.
+  const [openMenu, setOpenMenu] = useState<string | null>(null);
+  const timer = useRef<number | undefined>(undefined);
+  // A menu opened by hover or keyboard focus stays open on the click (or
+  // Enter) that usually follows, rather than toggling shut again.
+  const openedWithoutClick = useRef(false);
+  // Escape hands focus back to the menu's button; that focus must not reopen it.
+  const skipFocusOpen = useRef(false);
+  const closeMenu = () => {
+    clearTimeout(timer.current);
+    setOpenMenu(null);
+  };
+  const [insightsSeen, setInsightsSeen] = useState(false);
+  if (openMenu === "insights" && !insightsSeen) setInsightsSeen(true);
+  const later = (next: string | null, delay: number) => {
+    clearTimeout(timer.current);
+    timer.current = window.setTimeout(() => setOpenMenu(next), delay);
+  };
+  const hoverFor = (key: string) => ({
+    onPointerEnter: (event: PointerEvent) => {
+      if (event.pointerType !== "mouse") return;
+      if (openMenu === key) return clearTimeout(timer.current);
+      openedWithoutClick.current = true;
+      // Moving from one open menu to the next swaps at once.
+      later(key, openMenu ? 0 : HOVER_DELAY);
+    },
+    onPointerLeave: (event: PointerEvent) => {
+      if (event.pointerType !== "mouse") return;
+      openedWithoutClick.current = false;
+      later(null, HOVER_DELAY);
+    },
+  });
+  const toggleFor = (key: string) => (pointerType: string) => {
+    clearTimeout(timer.current);
+    // With a mouse the menu is already open (or about to be) from hovering,
+    // so a click confirms it rather than toggling it shut. Moving away,
+    // clicking elsewhere or Escape closes it. Touch and keyboard still toggle.
+    if (pointerType === "mouse") {
+      openedWithoutClick.current = false;
+      setOpenMenu(key);
+      return;
+    }
+    if (openedWithoutClick.current) {
+      openedWithoutClick.current = false;
+      setOpenMenu(key);
+      return;
+    }
+    setOpenMenu((value) => (value === key ? null : key));
+  };
+
+  useEffect(() => () => clearTimeout(timer.current), []);
+
+  useEffect(() => {
+    if (!openMenu) return;
+    function onPointerDown(event: globalThis.PointerEvent) {
+      if (!navRef.current?.contains(event.target as Node)) setOpenMenu(null);
+    }
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key !== "Escape") return;
+      const button = document.getElementById(`${baseId}-${openMenu}-button`);
+      const hadFocus = Boolean(button?.parentElement?.contains(document.activeElement));
+      setOpenMenu(null);
+      // Back to the menu's button, without that focus reopening it.
+      if (hadFocus && button) {
+        skipFocusOpen.current = true;
+        button.focus();
+        skipFocusOpen.current = false;
+      }
+    }
+    document.addEventListener("pointerdown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [openMenu, baseId]);
+
+  // ── Mobile menu.
   const [mobileOpen, setMobileOpen] = useState(false);
   const closeMobile = () => setMobileOpen(false);
 
   // Any navigation — a menu link, the logo, the browser's back button —
-  // lands on a new page with the mobile menu closed.
+  // lands on a new page with every menu closed.
   const [menuPathname, setMenuPathname] = useState(pathname);
   if (menuPathname !== pathname) {
     setMenuPathname(pathname);
     setMobileOpen(false);
+    setOpenMenu(null);
   }
 
   useEffect(() => {
@@ -523,152 +702,345 @@ export default function Header({
     };
   }, [mobileOpen]);
 
-  const solid = scrolled || mobileOpen;
+  const inGroups = (groups: { items: { href: string }[] }[]) =>
+    groups.some((group) => group.items.some((item) => isCurrent(pathname, item.href)));
+  const activeFor = (entry: Exclude<(typeof entries)[number], { kind: "link" }>) => {
+    if (entry.kind === "services") return inGroups(services.groups);
+    if (entry.kind === "industries") return inGroups(industries.groups);
+    if (entry.kind === "insights")
+      return isCurrent(pathname, entry.href) || insights.posts.some((post) => isCurrent(pathname, post.href));
+    return entry.items.some((item) => isCurrent(pathname, item.href));
+  };
 
   return (
     <>
-      <header
-        className={`site-header sticky top-0 z-50 border-b transition-colors duration-300 ${
-          solid ? "border-[var(--border-default)]" : "border-transparent"
-        }`}
-      >
-        {/* The frosted backing lives on its own layer: a backdrop-filter on
-            the header itself would trap the fixed-position mobile menu. */}
-        <div
-          aria-hidden="true"
-          className={`absolute inset-0 -z-10 backdrop-blur-xl backdrop-saturate-150 transition-opacity duration-300 ${
-            solid ? "opacity-100" : "opacity-0"
-          }`}
-          style={{
-            background: mobileOpen ? "var(--bg-page)" : "var(--header-scrolled-bg)",
-          }}
-        />
+      {/* The bar floats: the header itself is a transparent strip that
+          holds the page's top spacing, and only the bar takes clicks.
+          The strip is the same page-container as every section and the bar
+          fills it exactly, padded by --panel-px like the hero panel, so the
+          two share their edges and the logo lines up with the hero heading. */}
+      <header className="site-header page-container pointer-events-none sticky top-0 z-[65] pt-3 lg:pt-4">
+        <div className="panel-px pointer-events-auto relative isolate flex h-16 items-center gap-1.5 rounded-[20px] sm:gap-2 lg:h-[72px]">
+          {/* The frosted backing lives on its own layer, so the blur never
+              becomes the containing block of anything inside the bar. */}
+          <span
+            aria-hidden="true"
+            className="absolute inset-0 -z-10 rounded-[20px] border border-white/[0.07] bg-[linear-gradient(180deg,rgba(19,33,47,0.97),rgba(15,27,39,0.97))] shadow-[0_12px_40px_rgba(4,13,18,0.35)] backdrop-blur-[10px]"
+          />
 
-        <div className="mx-auto flex h-16 max-w-page items-center gap-4 px-4 sm:px-6 lg:h-[72px] lg:gap-6 lg:px-8 xl:gap-10">
           <LogoLink
             src={logoUrl}
             width={56}
             height={72}
             className="flex shrink-0 items-center gap-2.5"
-            imageClassName="h-8 w-auto object-contain lg:h-9"
+            imageClassName="h-7 w-auto object-contain sm:h-8 lg:h-9"
             preload
           >
-            <span className="font-brand text-[19px] font-extrabold uppercase leading-none tracking-[-0.01em] text-[var(--text-primary)] lg:text-xl">
+            <span className="font-brand text-[17px] font-extrabold uppercase leading-none tracking-[-0.01em] text-white sm:text-[19px] lg:text-xl">
               Byteflo<span className="brand-accent">w</span>
             </span>
           </LogoLink>
 
-          <nav aria-label="Main" className="hidden h-full items-stretch lg:flex">
-            {menu.map((item) =>
-              item.children?.length ? (
-                <DesktopDropdown key={keyOf(item)} item={item} pathname={pathname} bar={bar} />
-              ) : (
-                <DesktopLink key={keyOf(item)} item={item} pathname={pathname} bar={bar} />
-              ),
-            )}
+          <span aria-hidden="true" className="flex-1" />
+
+          <nav ref={navRef} aria-label="Main" className="hidden items-center gap-0.5 lg:flex">
+            {entries.map((entry) => {
+              if (entry.kind === "link") {
+                const current = isCurrent(pathname, entry.item.href);
+                return (
+                  <Link
+                    key={entry.key}
+                    href={entry.item.href}
+                    {...newTabProps(entry.item)}
+                    aria-current={current ? "page" : undefined}
+                    className={pillClass(current)}
+                  >
+                    {entry.item.label}
+                  </Link>
+                );
+              }
+              const id = `${baseId}-${entry.key}`;
+              const open = openMenu === entry.key;
+              return (
+                <Dropdown
+                  key={entry.key}
+                  id={id}
+                  label={entry.label}
+                  active={activeFor(entry)}
+                  open={open}
+                  wide={
+                    entry.kind === "services" ||
+                    entry.kind === "insights" ||
+                    (entry.kind === "industries" && industries.groups.length > 1)
+                  }
+                  hover={hoverFor(entry.key)}
+                  onToggle={toggleFor(entry.key)}
+                  onKeyboardFocus={() => {
+                    if (skipFocusOpen.current) return;
+                    clearTimeout(timer.current);
+                    openedWithoutClick.current = true;
+                    setOpenMenu(entry.key);
+                  }}
+                  onLeave={() => {
+                    if (open) closeMenu();
+                  }}
+                >
+                  {entry.kind === "services" ? (
+                    <ServicesPanel services={services} whatsapp={whatsapp} onNavigate={closeMenu} />
+                  ) : entry.kind === "insights" ? (
+                    <InsightsPanel insights={insights} showImages={insightsSeen} onNavigate={closeMenu} />
+                  ) : entry.kind === "industries" ? (
+                    <IndustriesPanel industries={industries} pathname={pathname} onNavigate={closeMenu} />
+                  ) : (
+                    <ListPanel items={entry.items} pathname={pathname} onNavigate={closeMenu} />
+                  )}
+                </Dropdown>
+              );
+            })}
           </nav>
 
-          <div className="ml-auto flex items-center gap-2 sm:gap-3">
-            {bar.showPhone && (
-              <>
-                <a
-                  href={telHref(phone)}
-                  className="hidden items-center gap-2 text-[14px] font-medium tabular-nums text-[var(--text-nav)] transition-colors duration-200 hover:text-[var(--text-primary)] xl:inline-flex"
-                >
-                  <PhoneIcon className="h-4 w-4" />
-                  {phone}
-                </a>
-                <span aria-hidden="true" className="mx-1 hidden h-5 w-px bg-[var(--border-default)] xl:block" />
-              </>
-            )}
-            <ThemeToggle />
-            <Link
-              href={bar.ctaLink}
-              className="group hidden h-10 shrink-0 items-center gap-1.5 rounded-full bg-[#2CCDDE] pl-5 pr-4 text-[14px] font-semibold text-[#04121A] transition-colors duration-200 hover:bg-[#5BDCE9] lg:inline-flex"
-            >
-              {bar.ctaLabel}
-              <ArrowIcon className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
-            </Link>
-            <button
-              type="button"
-              onClick={() => setMobileOpen((value) => !value)}
-              aria-expanded={mobileOpen}
-              aria-controls="site-menu"
-              aria-label={mobileOpen ? "Close menu" : "Open menu"}
-              className="grid h-10 w-10 place-items-center rounded-full border border-[var(--border-default)] text-[var(--text-primary)] transition-colors duration-200 hover:bg-[var(--overlay-hover)] lg:hidden"
-            >
-              <span aria-hidden="true" className="relative block h-3 w-[18px]">
-                <span
-                  className={`absolute left-0 top-0 h-[1.5px] w-full rounded-full bg-current transition-transform duration-300 ${
-                    mobileOpen ? "translate-y-[5.25px] rotate-45" : ""
-                  }`}
-                />
-                <span
-                  className={`absolute bottom-0 left-0 h-[1.5px] w-full rounded-full bg-current transition-transform duration-300 ${
-                    mobileOpen ? "-translate-y-[5.25px] -rotate-45" : ""
-                  }`}
-                />
-              </span>
-            </button>
-          </div>
+          {model.showPhone && (
+            <>
+              <span aria-hidden="true" className="mx-3 hidden h-6 w-px bg-white/15 xl:block" />
+              <a
+                href={telHref(phone)}
+                className="hidden items-center gap-2 whitespace-nowrap text-[13.5px] tabular-nums text-[#cbd5e1] transition-colors duration-200 hover:text-white xl:inline-flex"
+              >
+                <PhoneIcon className="h-4 w-4 text-[#2CCDDE]" />
+                {phone}
+              </a>
+            </>
+          )}
+
+          {/* On phones it lives in the menu instead, where there is room. */}
+          {model.showThemeToggle && <ThemeToggle className="ml-3 hidden lg:grid xl:ml-5" />}
+
+          <Link
+            href={cta.href}
+            className="group inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full bg-[#2CCDDE] pl-3.5 pr-1 text-[13px] sm:ml-1 sm:gap-2 sm:pl-4 font-bold text-[#04121A] transition-colors duration-200 hover:bg-[#5BDCE9] lg:ml-3 lg:h-12 lg:gap-3 lg:pl-5 lg:pr-1.5 lg:text-[14.5px] xl:ml-5"
+          >
+            <span className="lg:hidden">{cta.shortLabel}</span>
+            <span className="hidden lg:inline">{cta.label}</span>
+            <span className="grid h-7 w-7 place-items-center rounded-full bg-[#04121A] text-[#2CCDDE] sm:h-8 sm:w-8">
+              <ArrowUpRightIcon className="h-3.5 w-3.5 transition-transform duration-200 group-hover:-translate-y-px group-hover:translate-x-px" />
+            </span>
+          </Link>
+
+          <button
+            type="button"
+            onClick={() => setMobileOpen((value) => !value)}
+            aria-expanded={mobileOpen}
+            aria-controls="site-menu"
+            aria-label={mobileOpen ? "Close menu" : "Open menu"}
+            className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-white/15 text-white transition-colors duration-200 hover:bg-white/[0.08] sm:h-10 sm:w-10 lg:hidden"
+          >
+            <span aria-hidden="true" className="relative block h-3 w-[18px]">
+              <span
+                className={`absolute left-0 top-0 h-[1.5px] w-full rounded-full bg-current transition-transform duration-300 ${
+                  mobileOpen ? "translate-y-[5.25px] rotate-45" : ""
+                }`}
+              />
+              <span
+                className={`absolute bottom-0 left-0 h-[1.5px] w-full rounded-full bg-current transition-transform duration-300 ${
+                  mobileOpen ? "-translate-y-[5.25px] -rotate-45" : ""
+                }`}
+              />
+            </span>
+          </button>
         </div>
       </header>
 
+      {/* Full-screen, under the floating bar (which keeps its close button)
+          but above the floating WhatsApp/call buttons and the Inquiry tab. */}
       <div
         id="site-menu"
         inert={!mobileOpen}
-        // Above the floating WhatsApp/call buttons (z-50) and the Inquiry tab
-        // (z-60), which would otherwise sit on top of the menu's own buttons.
-        // It starts below the bar, so it never covers the header itself.
-        className={`site-menu fixed inset-x-0 bottom-0 top-16 z-[70] bg-[var(--bg-page)] transition-[opacity,translate,visibility] duration-300 ease-out lg:hidden ${
-          mobileOpen
-            ? "visible translate-y-0 opacity-100"
-            : "invisible -translate-y-2 opacity-0"
+        className={`site-menu fixed inset-0 z-[62] overflow-y-auto overscroll-contain bg-[#0b1622] transition-[opacity,translate,visibility] duration-300 ease-out motion-reduce:transition-none lg:hidden ${
+          mobileOpen ? "visible translate-y-0 opacity-100" : "invisible -translate-y-2 opacity-0"
         }`}
       >
-        <nav
-          aria-label="Main"
-          className="mx-auto flex h-full max-w-page flex-col overflow-y-auto px-4 pb-8 pt-2 sm:px-6"
-        >
-          <ul className="divide-y divide-[var(--border-default)] border-b border-[var(--border-default)]">
-            {menu.map((item) => (
-              <MobileEntry
-                key={keyOf(item)}
-                item={item}
-                pathname={pathname}
-                onNavigate={closeMobile}
-              />
-            ))}
+        <nav aria-label="Main" className="mx-auto flex min-h-full max-w-xl flex-col px-5 pb-8 pt-[92px] sm:px-6">
+          <ul className="divide-y divide-white/10 border-b border-white/10">
+            {entries.map((entry) => {
+              if (entry.kind === "services")
+                return (
+                  <MobileAccordion key={entry.key} label={entry.label}>
+                    {services.groups.map((group) => (
+                      <div key={group.title} className="pt-2">
+                        <p className={mobileGroupTitleClass}>{group.title}</p>
+                        <ul>
+                          {group.items.map((item) => (
+                            <li key={`${item.label}-${item.href}`}>
+                              <Link
+                                href={item.href}
+                                onClick={closeMobile}
+                                aria-current={isCurrent(pathname, item.href) ? "page" : undefined}
+                                className={mobileSubLinkClass}
+                              >
+                                <span
+                                  aria-hidden="true"
+                                  className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-[rgba(44,205,222,0.12)] text-[#2CCDDE]"
+                                >
+                                  <ServiceIcon link={item.href} className="h-4 w-4" />
+                                </span>
+                                {item.label}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                    <MobileMore link={services.intro.link} onNavigate={closeMobile} />
+                  </MobileAccordion>
+                );
+              if (entry.kind === "industries")
+                return (
+                  <MobileAccordion key={entry.key} label={entry.label}>
+                    {industries.groups.map((group) => (
+                      <div key={group.title} className="pt-2">
+                        {group.title && <p className={mobileGroupTitleClass}>{group.title}</p>}
+                        <ul className="grid gap-0.5 sm:grid-cols-2">
+                          {group.items.map((item) => (
+                            <li key={`${item.label}-${item.href}`}>
+                              <Link
+                                href={item.href}
+                                onClick={closeMobile}
+                                aria-current={isCurrent(pathname, item.href) ? "page" : undefined}
+                                className={mobileSubLinkClass}
+                              >
+                                {item.label}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                    {industries.viewAll && <MobileMore link={industries.viewAll} onNavigate={closeMobile} />}
+                  </MobileAccordion>
+                );
+              if (entry.kind === "insights")
+                return (
+                  <MobileAccordion key={entry.key} label={entry.label}>
+                    {insights.posts.length > 0 && (
+                      <div className="pt-2">
+                        <p className={mobileGroupTitleClass}>Latest articles</p>
+                        <ul>
+                          {insights.posts.map((post) => (
+                            <li key={post.href}>
+                              <Link
+                                href={post.href}
+                                onClick={closeMobile}
+                                aria-current={isCurrent(pathname, post.href) ? "page" : undefined}
+                                className="block rounded-xl px-2 py-2.5 transition-colors hover:bg-white/[0.06]"
+                              >
+                                <span className="line-clamp-2 block text-[15px] leading-snug text-[#e2e8f0]">{post.title}</span>
+                                <span className="mt-1 block text-[12.5px] text-[#94a3b8]">
+                                  {[post.category, post.date].filter(Boolean).join(" · ")}
+                                </span>
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    {insights.topics.length > 0 && (
+                      <div className="pt-3">
+                        <p className={mobileGroupTitleClass}>Topics</p>
+                        <ul className="flex flex-wrap gap-2 px-2 pt-1">
+                          {insights.topics.map((topic) => (
+                            <li key={topic.label}>
+                              <Link
+                                href={topic.href}
+                                onClick={closeMobile}
+                                className="inline-flex items-center gap-1.5 rounded-full border border-white/15 px-3 py-1.5 text-[13px] text-[#e2e8f0]"
+                              >
+                                {topic.label}
+                                <span className="tabular-nums text-[#94a3b8]">{topic.count}</span>
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    <MobileMore link={insights.viewAll} onNavigate={closeMobile} />
+                  </MobileAccordion>
+                );
+              if (entry.kind === "list")
+                return (
+                  <MobileAccordion key={entry.key} label={entry.label}>
+                    <ul className="grid gap-0.5 sm:grid-cols-2">
+                      {entry.items.map((item) => (
+                        <li key={`${item.label}-${item.href}`}>
+                          <Link
+                            href={item.href}
+                            {...newTabProps(item)}
+                            onClick={closeMobile}
+                            aria-current={isCurrent(pathname, item.href) ? "page" : undefined}
+                            className={mobileSubLinkClass}
+                          >
+                            {item.label}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </MobileAccordion>
+                );
+              const current = isCurrent(pathname, entry.item.href);
+              return (
+                <li key={entry.key}>
+                  <Link
+                    href={entry.item.href}
+                    {...newTabProps(entry.item)}
+                    onClick={closeMobile}
+                    aria-current={current ? "page" : undefined}
+                    className={mobileRowClass}
+                  >
+                    {entry.item.label}
+                    {current ? (
+                      <span aria-hidden="true" className="h-2 w-2 shrink-0 rounded-full bg-[#2CCDDE]" />
+                    ) : (
+                      <ArrowIcon className="h-4 w-4 shrink-0 text-[#64748b]" />
+                    )}
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
 
           <div className="mt-auto space-y-3 pt-10">
-            <Link
-              href={bar.ctaLink}
-              onClick={closeMobile}
-              className="flex h-12 items-center justify-center gap-2 rounded-full bg-[#2CCDDE] text-[15px] font-semibold text-[#04121A]"
-            >
-              {bar.ctaLabel}
-              <ArrowIcon className="h-4 w-4" />
-            </Link>
+            {model.showThemeToggle && (
+              <div className="flex items-center justify-between border-t border-white/10 pb-2 pt-5">
+                <span className="text-[14px] font-medium text-[#cbd5e1]">Appearance</span>
+                <ThemeToggle />
+              </div>
+            )}
             <div className="grid grid-cols-2 gap-3">
               <a
                 href={telHref(phone)}
-                className="flex h-12 items-center justify-center gap-2 rounded-full border border-[var(--border-strong)] text-[14px] font-semibold text-[var(--text-primary)]"
+                className="flex h-12 items-center justify-center gap-2 rounded-full border border-white/15 text-[14px] font-semibold text-white"
               >
-                <PhoneIcon className="h-4 w-4" />
+                <PhoneIcon className="h-4 w-4 text-[#2CCDDE]" />
                 Call
               </a>
               <a
                 href={whatsapp}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex h-12 items-center justify-center gap-2 rounded-full border border-[var(--border-strong)] text-[14px] font-semibold text-[var(--text-primary)]"
+                className="flex h-12 items-center justify-center gap-2 rounded-full border border-white/15 text-[14px] font-semibold text-white"
               >
                 <WhatsAppIcon className="h-4 w-4 text-[#25D366]" />
                 WhatsApp
               </a>
             </div>
-            <p className="pt-1 text-center text-[13px] tabular-nums text-[var(--text-nav)]">{phone}</p>
+            <Link
+              href={cta.href}
+              onClick={closeMobile}
+              className="flex h-12 items-center justify-center gap-2 rounded-full bg-[#2CCDDE] text-[15px] font-bold text-[#04121A]"
+            >
+              {cta.label}
+              <ArrowUpRightIcon className="h-4 w-4" />
+            </Link>
+            <p className="pt-1 text-center text-[13px] tabular-nums text-[#94a3b8]">{phone}</p>
           </div>
         </nav>
       </div>

@@ -43,7 +43,7 @@ export default function CTA() {
       />
 
       <div className="relative py-28">
-        <div className="max-w-page mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div className="page-container text-center">
 
           {/* Badge */}
           <div

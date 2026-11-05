@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import sanitizeHtml from "sanitize-html";
 import { getPosts, type Post } from "@/app/lib/db";
-import { getSiteSettings } from "@/app/lib/cms";
+import { getSiteFigures, getSiteSettings } from "@/app/lib/cms";
 import { getCategoryStyle } from "../../blog/category-style";
 import PostServiceLinks from "../PostServiceLinks";
 import JsonLd from "../JsonLd";
@@ -104,7 +104,7 @@ function ArrowRight({ className = "w-3.5 h-3.5" }: { className?: string }) {
 }
 
 export default async function BlogPost({ post }: { post: Post }) {
-  const [settings, allPosts] = await Promise.all([getSiteSettings(), getPosts()]);
+  const [settings, allPosts, figures] = await Promise.all([getSiteSettings(), getPosts(), getSiteFigures()]);
   const logo = String(settings?.logo_url || DEFAULT_LOGO);
   const phone = String(settings?.header_phone || DEFAULT_PHONE);
   const phoneHref = `tel:${phone.replace(/[^+\d]/g, "")}`;
@@ -158,8 +158,8 @@ export default async function BlogPost({ post }: { post: Post }) {
       <JsonLd data={schema} />
 
       {/* ── Header ─────────────────────────────────────────────── */}
-      <header className="relative px-4 sm:px-6 lg:px-8 pt-10 sm:pt-14 pb-10">
-        <div className="max-w-6xl mx-auto">
+      <header className="relative pt-10 sm:pt-14 pb-10">
+        <div className="page-container">
           <nav aria-label="Breadcrumb" className="mb-8">
             <ol className="post-breadcrumb">
               <li>
@@ -266,8 +266,8 @@ export default async function BlogPost({ post }: { post: Post }) {
       </header>
 
       {/* ── Body + sidebar ─────────────────────────────────────── */}
-      <div className="px-4 sm:px-6 lg:px-8 pb-16">
-        <div className="max-w-6xl mx-auto grid gap-12 lg:grid-cols-[minmax(0,1fr)_300px] xl:gap-16">
+      <div className="pb-16">
+        <div className="page-container grid gap-12 lg:grid-cols-[minmax(0,1fr)_300px] xl:gap-16">
           <div className="min-w-0 max-w-3xl">
             <MobileToc items={toc} />
 
@@ -300,8 +300,8 @@ export default async function BlogPost({ post }: { post: Post }) {
                     {post.author_name
                       ? `Written by ${post.author_name} and published by ${BRAND}`
                       : `This guide was written by the ${BRAND} team`}
-                    , an IT solutions provider serving 500+ businesses across
-                    Dubai and the UAE since 2017 with IT AMC support, cyber
+                    , an IT solutions provider serving {figures.clients} businesses across
+                    Dubai and the UAE since {figures.founded} with IT AMC support, cyber
                     security, cloud services and system integration.
                   </p>
                   <div className="flex flex-wrap gap-x-5 gap-y-2 text-sm font-semibold">
@@ -329,8 +329,8 @@ export default async function BlogPost({ post }: { post: Post }) {
       </div>
 
       {/* ── Call to action ─────────────────────────────────────── */}
-      <section className="px-4 sm:px-6 lg:px-8 pb-16" aria-labelledby="post-cta-heading">
-        <div className="max-w-6xl mx-auto">
+      <section className="pb-16" aria-labelledby="post-cta-heading">
+        <div className="page-container">
           <div className="post-cta relative overflow-hidden rounded-2xl px-6 py-10 sm:px-10 sm:py-12 flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
             <div className="absolute top-0 left-0 right-0 h-px" style={{ background: "linear-gradient(90deg, transparent, rgba(44,205,222,0.6), transparent)" }} />
             <div>
@@ -356,8 +356,8 @@ export default async function BlogPost({ post }: { post: Post }) {
 
       {/* ── Related posts ──────────────────────────────────────── */}
       {post.show_related && related.length > 0 && (
-        <section className="px-4 sm:px-6 lg:px-8 pb-16" aria-labelledby="related-heading">
-          <div className="max-w-6xl mx-auto">
+        <section className="pb-16" aria-labelledby="related-heading">
+          <div className="page-container">
             <div className="flex items-end justify-between gap-4 mb-6">
               <div>
                 <p className="post-eyebrow mb-2">Keep reading</p>

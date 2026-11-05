@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import type { SiteFigures } from '../lib/site-figures'
 
 export type UiProject = {
   slug: string
@@ -212,7 +213,7 @@ function ProjectCard({ project }: { project: UiProject }) {
   )
 }
 
-export default function ProjectsClient({ projects }: { projects: UiProject[] }) {
+export default function ProjectsClient({ projects, figures }: { projects: UiProject[]; figures: Pick<SiteFigures, 'clients' | 'years'> }) {
   const [active, setActive] = useState('All')
   const filtered = active === 'All' ? projects : projects.filter((p) => p.category === active)
   const featured = filtered.find((p) => p.featured)
@@ -221,8 +222,8 @@ export default function ProjectsClient({ projects }: { projects: UiProject[] }) 
   return (
     <div>
       {/* Header */}
-      <section className="pt-20 pb-10 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-page mx-auto">
+      <section className="pt-12 pb-10">
+        <div className="page-container">
           <p className="text-[#2CCDDE] text-xs font-bold uppercase tracking-widest mb-5">Our Work</p>
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-8">
             <div>
@@ -234,7 +235,7 @@ export default function ProjectsClient({ projects }: { projects: UiProject[] }) 
             </div>
             <div className="flex items-center gap-8 px-7 py-5 rounded-2xl flex-shrink-0 self-start"
               style={{ background:'linear-gradient(160deg, rgba(44,205,222,0.07) 0%, var(--bg-surface) 100%)', border:'1px solid rgba(44,205,222,0.15)' }}>
-              {[['500+','Clients served'],['8+','Years operating'],['24/7','Support, always']].map(([v,l]) => (
+              {[[figures.clients,'Clients served'],[`${figures.years}+`,'Years operating'],['24/7','Support, always']].map(([v,l]) => (
                 <div key={l} className="flex flex-col items-center">
                   <span className="text-xl font-black text-[var(--text-primary)] leading-none">{v}</span>
                   <span className="text-[var(--text-muted)] text-[10px] mt-1 whitespace-nowrap">{l}</span>
@@ -246,8 +247,8 @@ export default function ProjectsClient({ projects }: { projects: UiProject[] }) 
       </section>
 
       {/* Filter tabs */}
-      <div className="px-4 sm:px-6 lg:px-8 mb-10">
-        <div className="max-w-page mx-auto">
+      <div className="mb-10">
+        <div className="page-container">
           <div className="flex items-center gap-2 flex-wrap">
             {CATEGORIES.map((cat) => (
               <button key={cat} onClick={() => setActive(cat)} className="px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-200"
@@ -262,8 +263,8 @@ export default function ProjectsClient({ projects }: { projects: UiProject[] }) 
       </div>
 
       {/* Projects */}
-      <section className="px-4 sm:px-6 lg:px-8 pb-28">
-        <div className="max-w-page mx-auto flex flex-col gap-6">
+      <section className="pb-28">
+        <div className="page-container flex flex-col gap-6">
           {featured && <div className="relative"><FeaturedCard project={featured} /></div>}
           {rest.length > 0 && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -279,8 +280,8 @@ export default function ProjectsClient({ projects }: { projects: UiProject[] }) 
       </section>
 
       {/* Bottom CTA */}
-      <section className="px-4 sm:px-6 lg:px-8 pb-24">
-        <div className="max-w-page mx-auto">
+      <section className="pb-24">
+        <div className="page-container">
           <div className="relative overflow-hidden rounded-2xl px-8 py-12 flex flex-col sm:flex-row items-center justify-between gap-8"
             style={{ background:'linear-gradient(135deg, rgba(44,205,222,0.09) 0%, rgba(70,163,225,0.05) 50%, var(--bg-surface) 100%)', border:'1px solid rgba(44,205,222,0.18)' }}>
             <div className="absolute top-0 left-0 right-0 h-px" style={{ background:'linear-gradient(90deg, transparent, rgba(44,205,222,0.6), transparent)' }} />

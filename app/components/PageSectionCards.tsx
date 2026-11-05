@@ -44,8 +44,8 @@ export default function PageSectionCards({
   return (
     <div>
       {sections.map((section) => (
-        <section key={section.id} className="px-4 py-12 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-page">
+        <section key={section.id} className="py-12">
+          <div className="page-container">
             <div
               className="card-hover overflow-hidden rounded-3xl"
               style={{

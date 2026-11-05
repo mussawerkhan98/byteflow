@@ -8,7 +8,9 @@ import {
   breadcrumbSchema,
   faqPageSchema,
   graph,
+  organizationSchema,
   plainText,
+  publishesOrganization,
   serviceSchema,
 } from '../app/lib/structured-data'
 
@@ -142,4 +144,18 @@ test('a post with an organization names it, with its logo, as author and publish
   assert.equal(post.dateModified, '2026-10-05T11:00:00.000Z')
   // An inline image cannot be fetched by Google, so it is left out.
   assert.ok(!('image' in post))
+})
+
+test('the stand-in organization is the node everything else points at', () => {
+  assert.equal(organizationSchema['@id'], ORG_ID)
+  assert.equal(organizationSchema['@type'], 'ProfessionalService')
+})
+
+test('the stand-in is only needed when no admin script publishes the organization', () => {
+  const address = `<script type="application/ld+json">{"@id":"${ORG_ID}"}</script>`
+  assert.ok(publishesOrganization(address))
+  // The same script with its slashes escaped, as some JSON tools write it.
+  assert.ok(publishesOrganization(address.replace(/\//g, '\\/')))
+  assert.ok(!publishesOrganization('<script>gtag("config", "G-1")</script>'))
+  assert.ok(!publishesOrganization(''))
 })
