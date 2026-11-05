@@ -15,10 +15,12 @@ import InquiryDrawer from "./components/InquiryDrawer";
 import PageCta from "./components/PageCta";
 import PageSections from "./components/PageSections";
 import PageFaq from "./components/PageFaq";
-import { getMenu, getPageMetadata, getSiteSettings, getWebsiteScripts } from "./lib/cms";
+import { getMenu, getPageMetadata, getServiceNames, getSiteFigures, getSiteSettings, getWebsiteScripts } from "./lib/cms";
 import { splitHeadCode } from "./lib/head-code";
-import { headerBarFrom } from "./lib/header-bar";
-import { getHomeBlock } from "./lib/home-blocks";
+import { getHeaderModel } from "./lib/header-data";
+import JsonLd from "./components/JsonLd";
+import { organizationSchemaWith, publishesOrganization } from "./lib/structured-data";
+import { figuresFrom, type SiteFigures } from "./lib/site-figures";
 
 // Both are variable fonts, so the weight axis is loaded in one file each
 // instead of one request per weight.
@@ -44,16 +46,20 @@ const outfit = Outfit({
 });
 
 
+const fallbackTitle = "IT Support | IT AMC Support | Managed IT Services UAE";
+// Quotes the site-wide figures, so it says what the pages say.
+const fallbackMetadata = (figures: SiteFigures): Metadata => {
+  const description = `Leading IT solutions provider trusted by ${figures.clients} businesses across Dubai and UAE since ${figures.founded}.`;
+  return { title: fallbackTitle, description, openGraph: { title: fallbackTitle, description } };
+};
+
 export async function generateMetadata(): Promise<Metadata> {
-  const cms = await getPageMetadata("home");
+  const [cms, figures] = await Promise.all([getPageMetadata("home"), getSiteFigures()]);
   return {
     metadataBase: new URL("https://www.byteflow.ae"),
-    ...(cms ?? {
-      title: "Byteflow Information Technology",
-      description:
-        "Leading IT solutions provider trusted by 500+ businesses across Dubai and UAE since 2017.",
-    }),
-  
+    // Matches the live home page, so an unreachable database never
+    // publishes a different title.
+    ...(cms ?? fallbackMetadata(figures)),
     verification: { google: "tAM-FG-hPH1-sxVzCRVhEVnLM0OhIATbEoeYXTTShc4" },
   };
 }
@@ -67,12 +73,12 @@ export default async function RootLayout({
   // have to appear on the site straight away, which a cached page
   // cannot do. This opts every page out of static rendering.
   await connection();
-  const [settings, headerMenu, footerMenu, headerMenuContent, scripts] = await Promise.all([
+  const [settings, headerModel, footerMenu, scripts, serviceNames] = await Promise.all([
     getSiteSettings(),
-    getMenu("header"),
+    getHeaderModel(),
     getMenu("footer"),
-    getHomeBlock("header_menu"),
     getWebsiteScripts(),
+    getServiceNames(),
   ]);
   // Admin <meta>/<link> tags go in <head>; the scripts and JSON-LD go first in <body>.
   const { tags: headTags, rest: headScripts } = splitHeadCode(
@@ -80,27 +86,6 @@ export default async function RootLayout({
   );
   const footerScripts = scripts.filter((script) => script.placement === "body_end").map((script) => script.code).join("\n");
   const themeScript = `(function(){try{var t=localStorage.getItem('theme');if(!t){t='light'}document.documentElement.setAttribute('data-theme',t)}catch(e){}})();`;
-  type MenuNode = {
-    label: string;
-    href: string;
-    new_tab: boolean;
-    children: MenuNode[];
-  };
-  const buildTree = (
-    records: typeof headerMenu,
-    parent: number | null = null,
-  ): MenuNode[] =>
-    records
-      .filter((item) => item.parent_id === parent)
-      .map((item) => ({
-        label: item.label,
-        href: item.href,
-        new_tab: item.new_tab,
-        children: buildTree(records, item.id),
-      }));
-  const headerNavigation = headerMenu.length
-    ? buildTree(headerMenu)
-    : undefined;
   const footerNavigation = footerMenu.length
     ? footerMenu
         .filter((item) => item.parent_id === null)
@@ -134,6 +119,9 @@ export default async function RootLayout({
           background: "var(--bg-page)",
         }}
       >
+        {/* The organization every other node points at. Normally the admin's
+            "Address" script publishes it; this stands in when none does. */}
+        {!publishesOrganization(headScripts + footerScripts) && <JsonLd data={organizationSchemaWith(figuresFrom(settings))} />}
         {/* Admin "head" scripts and JSON-LD run first thing in the body, the
             same way the body-end ones are placed below. */}
         {headScripts && (
@@ -144,12 +132,10 @@ export default async function RootLayout({
           />
         )}
         <Header
-          navigation={headerNavigation}
+          model={headerModel}
           logoUrl={String(settings?.logo_url || "/images/logo.png")}
           phone={String(settings?.header_phone || "") || undefined}
           whatsappUrl={String(settings?.whatsapp_link || "") || undefined}
-          bar={headerBarFrom(settings)}
-          menu={headerMenuContent}
         />
         <main className="flex-1">{children}</main>
         <PageSections placement="before_faq" />
@@ -159,6 +145,7 @@ export default async function RootLayout({
         <Footer
           navigation={footerNavigation}
           settings={(settings ?? {}) as never}
+          serviceNames={Object.fromEntries(serviceNames)}
         />
         <StickyContactButtons />
         <InquiryDrawer />

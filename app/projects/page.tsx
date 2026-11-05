@@ -1,6 +1,6 @@
 import { getProjects } from "../lib/db";
 import ProjectsClient, { type UiProject, CATEGORIES } from "./ProjectsClient";
-import { getPageHero, getPageMetadata } from "../lib/cms";
+import { getPageHero, getPageMetadata, getSiteFigures } from "../lib/cms";
 
 export const revalidate = 3600;
 export async function generateMetadata() {
@@ -35,9 +35,10 @@ function plainText(html: string) {
 }
 
 export default async function ProjectsPage() {
-  const [dbProjects, hero] = await Promise.all([
+  const [dbProjects, hero, figures] = await Promise.all([
     getProjects(),
     getPageHero("projects"),
+    getSiteFigures(),
   ]);
   const uiProjects: UiProject[] = dbProjects.map((project) => ({
     slug: project.slug,
@@ -68,7 +69,7 @@ export default async function ProjectsPage() {
           }}
         >
           {hero.hero_heading && (
-            <div className="mx-auto flex h-full max-w-page items-end px-4 pb-8">
+            <div className="page-container flex h-full items-end pb-8">
               <p className="text-4xl font-bold text-white">
                 {hero.hero_heading}
               </p>
@@ -76,7 +77,7 @@ export default async function ProjectsPage() {
           )}
         </div>
       )}
-      <ProjectsClient projects={uiProjects} />
+      <ProjectsClient projects={uiProjects} figures={figures} />
     </>
   );
 }

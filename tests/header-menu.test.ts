@@ -5,6 +5,16 @@ import { mergeHomeBlock } from '../app/lib/home-content'
 
 const menu = mergeHomeBlock('header_menu', null)
 
+// The same menu once two industries have pages of their own.
+const withPages = mergeHomeBlock('header_menu', {
+  industries: [
+    { title: 'Clinics & Healthcare', link: '/industries/healthcare' },
+    { title: 'Schools & Education', link: '/#industries' },
+    { title: 'Real Estate', link: '' },
+    { title: 'Hospitality', link: '/industries/hospitality' },
+  ],
+})
+
 // The menu as the admin had it before the redesign.
 const live = [
   { label: 'Home', href: '/' },
@@ -15,23 +25,33 @@ const live = [
   { label: 'Contact', href: '/contact-us' },
 ]
 
+const labels = (nav: ReturnType<typeof buildNav>) =>
+  nav.map((entry) => (entry.kind === 'link' ? entry.item.label : `${entry.label}▾`))
+
 test('Home and the button\'s own page are dropped; Industries follows Services', () => {
-  const nav = buildNav(live, menu, '/contact-us')
-  assert.deepEqual(
-    nav.map((entry) => (entry.kind === 'link' ? entry.item.label : `${entry.label}▾`)),
-    ['About Us', 'Projects', 'Services▾', 'Industries▾', 'Blog'],
-  )
+  assert.deepEqual(labels(buildNav(live, withPages, '/contact-us')), ['About Us', 'Projects', 'Services▾', 'Industries▾', 'Blog'])
+})
+
+test('Industries stays hidden while no industry has a page', () => {
+  assert.deepEqual(labels(buildNav(live, menu, '/contact-us')), ['About Us', 'Projects', 'Services▾', 'Blog'])
+  // Not even when the admin's menu names it.
+  const nav = buildNav([{ label: 'Industries', href: '#' }, { label: 'Services', href: '#' }], menu, '/contact-us')
+  assert.deepEqual(nav.map((entry) => entry.key), ['services'])
+})
+
+test('only industries with a page of their own are listed', () => {
+  const industries = buildNav(live, withPages, '/contact-us').find((entry) => entry.key === 'industries')
+  assert.ok(industries?.kind === 'list')
+  assert.deepEqual(industries.items.map((item) => item.href), ['/industries/healthcare', '/industries/hospitality'])
 })
 
 test('an Industries entry in the menu is used where it stands, never added twice', () => {
   const nav = buildNav(
     [{ label: 'Industries', href: '#' }, { label: 'Services', href: '#' }],
-    menu,
+    withPages,
     '/contact-us',
   )
   assert.deepEqual(nav.map((entry) => entry.key), ['industries', 'services'])
-  const industries = nav[0]
-  assert.ok(industries.kind === 'list' && industries.items.length === 7)
 })
 
 test('other entries with sub-links open a plain list of their links', () => {

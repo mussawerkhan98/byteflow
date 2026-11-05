@@ -8,7 +8,8 @@
  *
  * An entry called "Services" opens the mega menu; one called "Industries"
  * opens the industries list, which is added after Services when the menu has
- * no such entry. Any other entry with sub-links opens a plain list of them.
+ * no such entry, and left out while no industry has a page. Any other entry
+ * with sub-links opens a plain list of them.
  *
  * No database access or React here, so the rules can be tested directly.
  */
@@ -53,8 +54,20 @@ export function serviceGroups(menu: HomeBlock) {
   return groups
 }
 
+/**
+ * An industry is listed only once it has a page of its own. A blank link, or
+ * an anchor on the home page, leads nowhere: there is no industries section
+ * to land on. With none left, the Industries menu is not shown at all.
+ */
+export const hasIndustryPage = (link: string | undefined) => {
+  const href = (link ?? '').trim()
+  return href !== '' && !/^\/?#/.test(href)
+}
+
 export function buildNav(navigation: NavItem[], menu: HomeBlock, ctaLink: string): NavEntry[] {
-  const industries = (menu.lists.industries ?? []).map((item) => ({ label: item.title, href: item.link || '/#industries' }))
+  const industries = (menu.lists.industries ?? [])
+    .filter((item) => item.title && hasIndustryPage(item.link))
+    .map((item) => ({ label: item.title, href: item.link.trim() }))
   const industriesEntry = (label: string): NavEntry => ({
     kind: 'list',
     key: 'industries',
@@ -69,7 +82,9 @@ export function buildNav(navigation: NavItem[], menu: HomeBlock, ctaLink: string
     // The logo already goes home, and the button beside the menu to ctaLink.
     if (!item.children?.length && (item.href === '/' || item.href === ctaLink)) continue
     if (SERVICES.test(label)) entries.push({ kind: 'services', key: 'services', label })
-    else if (INDUSTRIES.test(label)) entries.push(industriesEntry(label))
+    else if (INDUSTRIES.test(label)) {
+      if (industries.length) entries.push(industriesEntry(label))
+    }
     else if (item.children?.length)
       entries.push({ kind: 'list', key: `${label}-${item.href}`, label, heading: '', items: leaves(item.children) })
     else entries.push({ kind: 'link', key: `${label}-${item.href}`, item })

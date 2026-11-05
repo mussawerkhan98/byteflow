@@ -2,22 +2,32 @@ import Image from 'next/image'
 import Link from 'next/link'
 import AboutReviews from '../components/AboutReviews'
 import Team from '../components/Team'
-import { getPageHero, getPageMetadata, getSection, getTeam, getTestimonials } from '../lib/cms'
+import { getPageHero, getPageMetadata, getSection, getSiteFigures, getTeam, getTestimonials } from '../lib/cms'
+import { fillFigures } from '../lib/site-figures'
+
+// The built-in founder story; {founded}, {years} and {clients} are the
+// site-wide figures from the admin, so it never contradicts the home page.
+const DEFAULT_STORY = `Byteflow was born out of frustration. Too many Dubai businesses were being overcharged, underserved, and left waiting days for a simple fix. We started in {founded} with one goal: build the kind of IT company that actually shows up.
+
+{years} years later, we manage IT for {clients} businesses across Dubai, Sharjah and Abu Dhabi. We have grown from a two-person team to a full-service operation covering everything from server rooms to Google Ads campaigns — all under one roof, one monthly fee.
+
+The philosophy has never changed: respond fast, be honest about pricing, and treat every client like they are your only one.`
 
 export async function generateMetadata() {
-  const cms = await getPageMetadata('about-us')
+  const [cms, figures] = await Promise.all([getPageMetadata('about-us'), getSiteFigures()])
   return {
     ...(cms ?? {
-      title: 'About Byteflow | IT Company in Dubai Since 2017',
-      description: 'Meet the team behind 500+ UAE businesses. Byteflow delivers IT support, AMC and software development across Dubai.',
+      title: `About Byteflow | IT Company in Dubai Since ${figures.founded}`,
+      description: `Meet the team behind ${figures.clients} UAE businesses. Byteflow delivers IT support, AMC and software development across Dubai.`,
     }),
     alternates: { canonical: '/about-us' },
   }
 }
 
 export default async function AboutPage() {
-  const [hero, founder, testimonials, team] = await Promise.all([getPageHero('about-us'), getSection('about-us', 'founder'), getTestimonials(), getTeam()])
-  const founderStory = String(founder?.story || 'Byteflow was born out of frustration. Too many Dubai businesses were being overcharged, underserved, and left waiting days for a simple fix. We started in 2017 with one goal: build the kind of IT company that actually shows up.\n\nEight years later, we manage IT for over 500 businesses across Dubai, Sharjah and Abu Dhabi. We have grown from a two-person team to a full-service operation covering everything from server rooms to Google Ads campaigns — all under one roof, one monthly fee.\n\nThe philosophy has never changed: respond fast, be honest about pricing, and treat every client like they are your only one.')
+  const [hero, founder, testimonials, team, figures] = await Promise.all([getPageHero('about-us'), getSection('about-us', 'founder'), getTestimonials(), getTeam(), getSiteFigures()])
+  const t = (text: string) => fillFigures(text, figures)
+  const founderStory = String(founder?.story || t(DEFAULT_STORY))
   // When a founder CMS record exists, its image_url is the source of truth —
   // including when it's deliberately empty (admin removed the photo and
   // wants none shown). Only fall back to the bundled placeholder photo when
@@ -27,17 +37,17 @@ export default async function AboutPage() {
     <main>
 
       {/* ── Hero ─────────────────────────────────────────────── */}
-      <section className="relative pt-20 pb-0 px-4 sm:px-6 lg:px-8 overflow-hidden" style={hero?.hero_background_image ? { backgroundImage: `linear-gradient(rgba(4,13,18,.78),rgba(4,13,18,.94)),url(${hero.hero_background_image})`, backgroundSize: 'cover', backgroundPosition: 'center' } : undefined}>
+      <section className="relative pt-12 pb-0 overflow-hidden" style={hero?.hero_background_image ? { backgroundImage: `linear-gradient(rgba(4,13,18,.78),rgba(4,13,18,.94)),url(${hero.hero_background_image})`, backgroundSize: 'cover', backgroundPosition: 'center' } : undefined}>
         <div className="absolute top-0 right-0 w-[700px] h-[700px] pointer-events-none"
           style={{ background: 'radial-gradient(circle at 80% 20%, rgba(44,205,222,0.07) 0%, transparent 60%)', filter: 'blur(60px)' }} />
 
-        <div className="relative max-w-page mx-auto">
+        <div className="page-container relative">
           <div className="max-w-2xl mb-16">
-            <p className="text-[#2CCDDE] text-sm font-semibold uppercase tracking-widest mb-4">{hero?.hero_label || 'Dubai, UAE — Since 2017'}</p>
+            <p className="text-[#2CCDDE] text-sm font-semibold uppercase tracking-widest mb-4">{hero?.hero_label || `Dubai, UAE — Since ${figures.founded}`}</p>
             {hero?.hero_heading ? <h1 className="text-5xl sm:text-6xl lg:text-[72px] font-bold leading-[1.04] tracking-tight mb-6 text-[var(--text-primary)]">{hero.hero_heading}</h1> : <h1 className="text-5xl sm:text-6xl lg:text-[72px] font-bold leading-[1.04] tracking-tight mb-6">
               <span className="text-[var(--text-primary)]">The team behind </span>
               <span style={{ background: 'linear-gradient(135deg, #2CCDDE, #46A3E1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-                500+ businesses
+                {figures.clients} businesses
               </span>
               <br />
               <span className="text-[var(--text-primary)]">running smoothly.</span>
@@ -53,9 +63,9 @@ export default async function AboutPage() {
             style={{ border: '1px solid rgba(44,205,222,0.12)', borderBottom: 'none' }}
           >
             {[
-              { value: '500+', label: 'Businesses served across the UAE' },
-              // Counted from 2017, so it matches the home page and doesn't go stale.
-              { value: `${new Date().getFullYear() - 2017}+`, label: 'Years operating in Dubai' },
+              { value: figures.clients, label: 'Businesses served across the UAE' },
+              // Counted from the founding year, so it matches the home page and doesn't go stale.
+              { value: `${figures.years}+`, label: 'Years operating in Dubai' },
               { value: '2 hrs', label: 'On-site response guarantee' },
               { value: '24/7', label: 'Monitoring and support' },
             ].map((s, i, arr) => (
@@ -81,8 +91,8 @@ export default async function AboutPage() {
       </section>
 
       {/* ── Founder ──────────────────────────────────────────── */}
-      <section className="relative py-0 px-4 sm:px-6 lg:px-8 overflow-hidden">
-        <div className="relative max-w-page mx-auto">
+      <section className="relative py-0 overflow-hidden">
+        <div className="page-container relative">
 
           {/* Full-width card that continues from stats */}
           <div
@@ -137,10 +147,10 @@ export default async function AboutPage() {
                 <div className="flex flex-col gap-4 text-[var(--text-muted)] text-sm leading-relaxed mb-8">
                   {founder?.story ? founderStory.split(/\n\s*\n/).filter(Boolean).map((paragraph) => <p key={paragraph}>{paragraph}</p>) : <>
                     <p>
-                      Byteflow was born out of frustration. Too many Dubai businesses were being overcharged, underserved, and left waiting days for a simple fix. We started in 2017 with one goal: build the kind of IT company that actually shows up.
+                      Byteflow was born out of frustration. Too many Dubai businesses were being overcharged, underserved, and left waiting days for a simple fix. We started in {figures.founded} with one goal: build the kind of IT company that actually shows up.
                     </p>
                     <p>
-                      Eight years later, we manage IT for over 500 businesses across Dubai, Sharjah and Abu Dhabi. We have grown from a two-person team to a full-service operation covering everything from server rooms to Google Ads campaigns — all under one roof, one monthly fee.
+                      {figures.years} years later, we manage IT for {figures.clients} businesses across Dubai, Sharjah and Abu Dhabi. We have grown from a two-person team to a full-service operation covering everything from server rooms to Google Ads campaigns — all under one roof, one monthly fee.
                     </p>
                     <p>
                       The philosophy has never changed: respond fast, be honest about pricing, and treat every client like they are your only one.
@@ -180,8 +190,8 @@ export default async function AboutPage() {
       </section>
 
       {/* ── Story timeline ───────────────────────────────────── */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-page mx-auto">
+      <section className="py-24">
+        <div className="page-container">
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-16">
 
@@ -189,7 +199,7 @@ export default async function AboutPage() {
             <div>
               <p className="text-[#2CCDDE] text-xs font-bold uppercase tracking-widest mb-4">Our story</p>
               <h2 className="text-4xl font-bold text-[var(--text-primary)] leading-snug mb-6">
-                Eight years.<br />
+                {figures.years} years.<br />
                 <span style={{ background: 'linear-gradient(135deg, #2CCDDE, #46A3E1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                   One mission.
                 </span>
@@ -203,7 +213,7 @@ export default async function AboutPage() {
             <div className="lg:col-span-2 flex flex-col gap-0">
               {[
                 {
-                  year: '2017',
+                  year: figures.founded,
                   title: 'Byteflow is founded in Dubai',
                   desc: 'Started as a lean IT support team serving small businesses in Deira and Bur Dubai. First 10 clients onboarded within the first month.',
                 },
@@ -225,7 +235,7 @@ export default async function AboutPage() {
                 {
                   year: '2024',
                   title: '500+ businesses and still growing',
-                  desc: 'Now serving over 500 businesses across the UAE with a full team of certified engineers, designers, marketers and cloud specialists.',
+                  desc: t('Now serving {clients} businesses across the UAE with a full team of certified engineers, designers, marketers and cloud specialists.'),
                 },
               ].map((item, i, arr) => (
                 <div key={item.year} className="flex gap-6 group">
@@ -263,8 +273,8 @@ export default async function AboutPage() {
       </section>
 
       {/* ── How we work ──────────────────────────────────────── */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-page mx-auto">
+      <section className="py-20">
+        <div className="page-container">
           <div
             className="rounded-2xl overflow-hidden"
             style={{ border: '1px solid rgba(44,205,222,0.12)' }}
@@ -330,8 +340,8 @@ export default async function AboutPage() {
       </section>
 
       {/* ── Services ─────────────────────────────────────────── */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-page mx-auto">
+      <section className="py-20">
+        <div className="page-container">
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-10">
             <div>
               <p className="text-[#2CCDDE] text-xs font-bold uppercase tracking-widest mb-3">What we do</p>
@@ -379,7 +389,7 @@ export default async function AboutPage() {
 
       {/* ── Reviews ──────────────────────────────────────────── */}
       <Team members={team} />
-      <AboutReviews items={testimonials} />
+      <AboutReviews items={testimonials} figures={figures} />
 
       {/* ── Final CTA ────────────────────────────────────────── */}
       {/* ── Company information ──────────────────────────────
@@ -389,8 +399,8 @@ export default async function AboutPage() {
           Organization markup injected by the "Address" script in the admin
           panel — if one changes, the other has to change with it, or the
           mismatch counts against the site rather than for it. */}
-      <section id="company-information" className="py-24 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-page mx-auto">
+      <section id="company-information" className="py-24">
+        <div className="page-container">
 
           <div className="mb-14 max-w-3xl">
             <p className="text-[#2CCDDE] text-xs font-bold uppercase tracking-widest mb-4">Company information</p>
@@ -416,7 +426,7 @@ export default async function AboutPage() {
                 {[
                   { term: 'Registered name', detail: 'Byteflow Information Technology Co. L.L.C.' },
                   { term: 'Trading as', detail: 'Byteflow' },
-                  { term: 'Established', detail: '2017 — operating in Dubai for eight years' },
+                  { term: 'Established', detail: t('{founded} — operating in Dubai for {years} years') },
                   { term: 'Registered office', detail: 'Emaar Park 4, Greens, TECOM, Dubai, United Arab Emirates' },
                   { term: 'Telephone', detail: '+971 54 328 2042', href: 'tel:+971543282042' },
                   { term: 'Email', detail: 'info@byteflow.ae', href: 'mailto:info@byteflow.ae' },
@@ -447,8 +457,8 @@ export default async function AboutPage() {
             <div className="lg:col-span-2 flex flex-col gap-4">
               {[
                 {
-                  title: 'Eight years, one city',
-                  body: 'Byteflow has supported businesses in Dubai since 2017, from our first ten clients in Deira and Bur Dubai to more than 500 across the UAE today.',
+                  title: t('{years} years, one city'),
+                  body: t('Byteflow has supported businesses in Dubai since {founded}, from our first ten clients in Deira and Bur Dubai to {clients} across the UAE today.'),
                 },
                 {
                   title: 'Our own engineers',
@@ -474,8 +484,8 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      <section className="py-24 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-page mx-auto">
+      <section className="py-24">
+        <div className="page-container">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
             <div

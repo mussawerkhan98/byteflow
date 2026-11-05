@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { figuresFrom } from '../lib/site-figures'
 import type { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 import {
   faFacebookF,
@@ -15,7 +16,6 @@ import { faChevronRight, faEnvelope, faLocationDot, faPhone } from '@fortawesome
 import { Icon } from './Icon'
 import LogoLink from './LogoLink'
 import FooterWordmark from './FooterWordmark'
-import ThemeToggle from './ThemeToggle'
 
 const fallbackUsefulLinks = [
   { label: 'Home', href: '/' },
@@ -25,6 +25,8 @@ const fallbackUsefulLinks = [
   { label: 'Contact Us', href: '/contact-us' },
 ]
 
+// Which services the footer lists. Their names come from the admin's Services
+// list (serviceNames), so they match the menu and the pages.
 const services = [
   { label: 'Digital Marketing', href: '/digital-marketing' },
   { label: 'IT AMC', href: '/it-amc-services-dubai' },
@@ -52,8 +54,10 @@ const fallbackSocials = [
 ]
 
 type FooterSettings = { logo_url?: string; header_phone?: string; primary_email?: string; physical_address?: string; footer_text?: string; copyright_text?: string; facebook_url?: string; instagram_url?: string; linkedin_url?: string; x_url?: string; youtube_url?: string; tiktok_url?: string; github_url?: string }
-export default function Footer({ navigation = fallbackUsefulLinks, settings = {} }: { navigation?: { label: string; href: string; new_tab?: boolean }[]; settings?: FooterSettings }) {
+export default function Footer({ navigation = fallbackUsefulLinks, settings = {}, serviceNames = {} }: { navigation?: { label: string; href: string; new_tab?: boolean }[]; settings?: FooterSettings; serviceNames?: Record<string, string> }) {
   const usefulLinks = navigation
+  // The site-wide clients and founding year (Contact details & logo).
+  const figures = figuresFrom(settings as Record<string, unknown>)
   const configuredSocials = [
     { label: 'Facebook', href: settings.facebook_url },
     { label: 'Instagram', href: settings.instagram_url },
@@ -74,7 +78,7 @@ export default function Footer({ navigation = fallbackUsefulLinks, settings = {}
         style={{ background: 'linear-gradient(90deg, #2CCDDE, #46A3E1)' }}
       />
 
-      <div className="max-w-page mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div className="page-container py-16">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
 
           <div className="space-y-6">
@@ -85,7 +89,7 @@ export default function Footer({ navigation = fallbackUsefulLinks, settings = {}
               imageClassName="h-10 w-auto object-contain"
             />
             <p className="text-[var(--text-footer-link)] text-sm leading-relaxed">
-              {settings.footer_text || 'Leading IT solutions provider trusted by 500+ businesses across Dubai and UAE since 2017.'}
+              {settings.footer_text || `Leading IT solutions provider trusted by ${figures.clients} businesses across Dubai and UAE since ${figures.founded}.`}
             </p>
             <ul className="space-y-3.5 text-sm">
               <li>
@@ -173,7 +177,7 @@ export default function Footer({ navigation = fallbackUsefulLinks, settings = {}
                       className="w-2.5 h-2.5 transition-transform duration-200 group-hover:translate-x-0.5"
                       style={{ color: '#2CCDDE' }}
                     />
-                    {s.label}
+                    {serviceNames[s.href.slice(1)] ?? s.label}
                   </Link>
                 </li>
               ))}
@@ -222,16 +226,13 @@ export default function Footer({ navigation = fallbackUsefulLinks, settings = {}
       <FooterWordmark />
 
       <div style={{ borderTop: '1px solid var(--border-subtle)' }}>
-        <div className="max-w-page mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-2">
+        <div className="page-container py-5 flex flex-col sm:flex-row items-center justify-between gap-2">
           <p className="text-[var(--text-dim)] text-sm">
             &copy; {new Date().getFullYear()} {settings.copyright_text || 'Byteflow Information Technology. All rights reserved.'}
           </p>
-          <div className="flex items-center gap-4">
-            <p className="text-[var(--text-dim)] text-sm">
-              Trusted by 500+ businesses across Dubai and UAE since 2017.
-            </p>
-            <ThemeToggle />
-          </div>
+          <p className="text-[var(--text-dim)] text-sm">
+            Trusted by {figures.clients} businesses across Dubai and UAE since {figures.founded}.
+          </p>
         </div>
       </div>
     </footer>

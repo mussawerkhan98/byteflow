@@ -12,5 +12,5 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function ContactPage() {
   const [settings,hero] = await Promise.all([getSiteSettings(),getPageHero('contact-us')])
-  return <Contact settings={(settings ?? {}) as never} hero={hero} />
+  return <Contact settings={(settings ?? {}) as never} hero={hero} asPage />
 }

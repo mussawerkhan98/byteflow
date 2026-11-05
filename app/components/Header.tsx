@@ -8,31 +8,17 @@ import {
   type PointerEvent,
   type ReactNode,
 } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import LogoLink from "./LogoLink";
 import { ArrowIcon, ArrowUpRightIcon, ChevronIcon, PhoneIcon, WhatsAppIcon } from "./InlineIcons";
 import { ServiceIcon } from "./ServiceIcon";
-import { defaultHeaderBar, safeLink, type HeaderBar } from "../lib/header-bar";
-import { mergeHomeBlock, type HomeBlock } from "../lib/home-content";
-import {
-  buildNav,
-  isCurrent,
-  serviceGroups,
-  type NavEntry,
-  type NavItem,
-} from "../lib/header-menu";
+import ThemeToggle from "./ThemeToggle";
+import { isCurrent, type NavItem } from "../lib/header-menu";
+import { fallbackHeader, type HeaderModel, type MenuLink } from "../lib/header-model";
 
 export type { NavItem };
-
-const fallbackNav: NavItem[] = [
-  { label: "Services", href: "#" },
-  { label: "Projects", href: "/projects" },
-  { label: "About", href: "/about-us" },
-  { label: "Insights", href: "/blog" },
-];
-
-const defaultMenu = mergeHomeBlock("header_menu", null);
 
 const DEFAULT_PHONE = "+971 54 328 2042";
 
@@ -61,51 +47,95 @@ const panelSurface =
 
 // ── Desktop panels ─────────────────────────────────────────────────────────
 
+/** A light intro column on the left of a mega menu. */
+function IntroZone({
+  eyebrow,
+  heading,
+  text,
+  link,
+  outward = false,
+  onNavigate,
+}: {
+  eyebrow: string;
+  heading: string;
+  text: string;
+  link: MenuLink;
+  /** A ↗ arrow (for a list that continues elsewhere) instead of →. */
+  outward?: boolean;
+  onNavigate: () => void;
+}) {
+  return (
+    // At 1024px the intro gives its room to the columns beside it.
+    <div className="hidden flex-col border-r border-[#e2e8f0] bg-[#f1f6fa] p-7 xl:flex">
+      <p className={eyebrowClass}>{eyebrow}</p>
+      <p className="mt-3 font-display text-[22px] font-semibold leading-[1.2] tracking-[-0.02em] text-[#0b1724]">
+        {heading}
+      </p>
+      {text && <p className="mt-3 text-[13.5px] leading-relaxed text-[#64748b]">{text}</p>}
+      <Link
+        href={link.href}
+        onClick={onNavigate}
+        className="group/all mt-auto inline-flex items-center gap-1.5 pt-6 text-[13.5px] font-semibold text-[#0b1724] transition-colors hover:text-[#0e7490]"
+      >
+        {link.label}
+        {outward ? (
+          <ArrowUpRightIcon className="h-3.5 w-3.5 transition-transform duration-200 group-hover/all:-translate-y-px group-hover/all:translate-x-px" />
+        ) : (
+          <ArrowIcon className="h-3.5 w-3.5 transition-transform duration-200 group-hover/all:translate-x-0.5" />
+        )}
+      </Link>
+    </div>
+  );
+}
+
+/** Small uppercase column heading, two lines tall so the rules under them line up. */
+function ColumnTitle({ children }: { children: ReactNode }) {
+  return (
+    <p className="mb-2 flex min-h-[2.75rem] items-end border-b border-[#e2e8f0] px-2 pb-2.5 text-[11px] font-semibold uppercase leading-[1.45] tracking-[0.12em] text-[#94a3b8]">
+      {children}
+    </p>
+  );
+}
+
+/** The grey strip along the bottom of a mega menu. */
+function FooterStrip({ children }: { children: ReactNode }) {
+  return (
+    <div className="flex items-center justify-between gap-4 border-t border-[#e2e8f0] bg-[#f8fafc] px-6 py-3.5 text-[13.5px]">
+      {children}
+    </div>
+  );
+}
+
 function ServicesPanel({
-  menu,
-  bar,
+  services,
   whatsapp,
   onNavigate,
 }: {
-  menu: HomeBlock;
-  bar: HeaderBar;
+  services: HeaderModel["services"];
   whatsapp: string;
   onNavigate: () => void;
 }) {
-  const f = menu.fields;
-  const groups = serviceGroups(menu);
+  const { intro, groups, featured, footer } = services;
   return (
     <div className={panelSurface}>
-      <div className="grid lg:grid-cols-[minmax(0,1fr)_260px] xl:grid-cols-[250px_minmax(0,1fr)_290px]">
-        {/* At 1024px the intro gives its room to the service columns. */}
-        <div className="hidden flex-col border-r border-[#e2e8f0] bg-[#f1f6fa] p-7 xl:flex">
-          <p className={eyebrowClass}>{f.eyebrow}</p>
-          <p className="mt-3 font-display text-[22px] font-semibold leading-[1.2] tracking-[-0.02em] text-[#0b1724]">
-            {f.heading}
-          </p>
-          <p className="mt-3 text-[13.5px] leading-relaxed text-[#64748b]">{f.description}</p>
-          <Link
-            href={safeLink(f.link, "/#services")}
-            onClick={onNavigate}
-            className="group/all mt-auto inline-flex items-center gap-1.5 pt-6 text-[13.5px] font-semibold text-[#0b1724] transition-colors hover:text-[#0e7490]"
-          >
-            {f.link_label}
-            <ArrowIcon className="h-3.5 w-3.5 transition-transform duration-200 group-hover/all:translate-x-0.5" />
-          </Link>
-        </div>
+      <div
+        className={`grid ${
+          featured
+            ? "lg:grid-cols-[minmax(0,1fr)_260px] xl:grid-cols-[250px_minmax(0,1fr)_290px]"
+            : "xl:grid-cols-[250px_minmax(0,1fr)]"
+        }`}
+      >
+        <IntroZone {...intro} onNavigate={onNavigate} />
 
         <div className="grid grid-cols-3 gap-x-2 gap-y-5 p-5">
           {groups.map((group) => (
             <div key={group.title} className="min-w-0">
-              {/* Two lines tall, so a long group name keeps the rules in line. */}
-              <p className="mb-2 flex min-h-[2.75rem] items-end border-b border-[#e2e8f0] px-2 pb-2.5 text-[11px] font-semibold uppercase leading-[1.45] tracking-[0.12em] text-[#94a3b8]">
-                {group.title}
-              </p>
+              <ColumnTitle>{group.title}</ColumnTitle>
               <ul className="space-y-0.5">
                 {group.items.map((item) => (
-                  <li key={`${item.title}-${item.link}`}>
+                  <li key={`${item.label}-${item.href}`}>
                     <Link
-                      href={safeLink(item.link, "/#services")}
+                      href={item.href}
                       onClick={onNavigate}
                       className="group/item flex items-start gap-2.5 rounded-xl p-2 transition-colors duration-150 hover:bg-[#ecfbfd]"
                     >
@@ -113,11 +143,11 @@ function ServicesPanel({
                         aria-hidden="true"
                         className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-[rgba(44,205,222,0.12)] text-[#0e7490] transition-colors duration-150 group-hover/item:bg-[#2CCDDE] group-hover/item:text-[#04121A]"
                       >
-                        <ServiceIcon link={item.link} className="h-4 w-4" />
+                        <ServiceIcon link={item.href} className="h-4 w-4" />
                       </span>
                       <span className="min-w-0">
                         <span className="block text-[13.5px] font-semibold leading-snug text-[#0b1724]">
-                          {item.title}
+                          {item.label}
                         </span>
                         {item.description && (
                           <span className="mt-0.5 block text-[12.5px] leading-snug text-[#64748b]">
@@ -133,101 +163,284 @@ function ServicesPanel({
           ))}
         </div>
 
-        <div className="p-3 lg:pl-0">
-          <div className="relative isolate flex h-full flex-col overflow-hidden rounded-2xl bg-[#0b1724] p-6 text-white">
-            <span
-              aria-hidden="true"
-              className="pointer-events-none absolute -right-20 -top-20 -z-10 h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(44,205,222,0.32),transparent_68%)]"
-            />
-            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#2CCDDE]">
-              {f.featured_eyebrow}
-            </p>
-            <p className="mt-2 font-display text-[22px] font-semibold leading-tight tracking-[-0.02em]">
-              {f.featured_title}
-            </p>
-            <div className="mt-5 grid grid-cols-2 gap-2.5">
-              {(menu.lists.stats ?? []).slice(0, 2).map((stat) => (
-                <p key={stat.title} className="rounded-xl border border-white/10 bg-white/[0.05] px-3 py-3">
-                  <span className="block font-display text-[20px] font-semibold leading-none text-[#2CCDDE]">{stat.title}</span>
-                  <span className="mt-1.5 block text-[12px] leading-snug text-[#cbd5e1]">{stat.description}</span>
-                </p>
-              ))}
-            </div>
-            <div className="mt-auto pt-6">
-              <Link
-                href={safeLink(f.featured_link, "/it-amc-services-dubai")}
-                onClick={onNavigate}
-                className="group/plans inline-flex h-10 items-center gap-2.5 rounded-full bg-[#2CCDDE] pl-4 pr-1 text-[13.5px] font-bold text-[#04121A] transition-colors hover:bg-[#5BDCE9]"
-              >
-                {f.featured_label}
-                <span className="grid h-8 w-8 place-items-center rounded-full bg-[#04121A] text-[#2CCDDE]">
-                  <ArrowUpRightIcon className="h-3.5 w-3.5 transition-transform duration-200 group-hover/plans:-translate-y-px group-hover/plans:translate-x-px" />
-                </span>
-              </Link>
+        {featured && (
+          <div className="p-3 lg:pl-0">
+            <div className="relative isolate flex h-full flex-col overflow-hidden rounded-2xl bg-[#0b1724] p-6 text-white">
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute -right-20 -top-20 -z-10 h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(44,205,222,0.32),transparent_68%)]"
+              />
+              <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#2CCDDE]">{featured.eyebrow}</p>
+              <p className="mt-2 font-display text-[22px] font-semibold leading-tight tracking-[-0.02em]">
+                {featured.title}
+              </p>
+              {featured.text && <p className="mt-2 text-[13px] leading-relaxed text-[#cbd5e1]">{featured.text}</p>}
+              {featured.stats.length > 0 && (
+                <div className="mt-5 grid grid-cols-2 gap-2.5">
+                  {featured.stats.map((stat) => (
+                    <p key={stat.value + stat.label} className="rounded-xl border border-white/10 bg-white/[0.05] px-3 py-3">
+                      <span className="block font-display text-[20px] font-semibold leading-none text-[#2CCDDE]">{stat.value}</span>
+                      <span className="mt-1.5 block text-[12px] leading-snug text-[#cbd5e1]">{stat.label}</span>
+                    </p>
+                  ))}
+                </div>
+              )}
+              <div className="mt-auto pt-6">
+                <Link
+                  href={featured.button.href}
+                  onClick={onNavigate}
+                  className="group/plans inline-flex h-10 items-center gap-2.5 rounded-full bg-[#2CCDDE] pl-4 pr-1 text-[13.5px] font-bold text-[#04121A] transition-colors hover:bg-[#5BDCE9]"
+                >
+                  {featured.button.label}
+                  <span className="grid h-8 w-8 place-items-center rounded-full bg-[#04121A] text-[#2CCDDE]">
+                    <ArrowUpRightIcon className="h-3.5 w-3.5 transition-transform duration-200 group-hover/plans:-translate-y-px group-hover/plans:translate-x-px" />
+                  </span>
+                </Link>
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
 
-      <div className="flex items-center justify-between gap-4 border-t border-[#e2e8f0] bg-[#f8fafc] px-6 py-3.5 text-[13.5px]">
+      <FooterStrip>
         <p className="text-[#64748b]">
-          {bar.dropdownNote}{" "}
-          <Link
-            href={bar.ctaLink}
-            onClick={onNavigate}
-            className="font-semibold text-[#0b1724] underline-offset-4 transition-colors hover:text-[#0e7490] hover:underline"
-          >
-            {bar.dropdownCta}
-          </Link>
+          {footer.text}{" "}
+          {footer.link && (
+            <Link
+              href={footer.link.href}
+              onClick={onNavigate}
+              className="font-semibold text-[#0b1724] underline-offset-4 transition-colors hover:text-[#0e7490] hover:underline"
+            >
+              {footer.link.label}
+            </Link>
+          )}
         </p>
-        <a
-          href={whatsapp}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="group/wa inline-flex items-center gap-2 font-semibold text-[#0b1724] transition-colors hover:text-[#0e7490]"
-        >
-          <WhatsAppIcon className="h-4 w-4 text-[#25D366]" />
-          {f.whatsapp_label}
-          <ArrowIcon className="h-3.5 w-3.5 transition-transform duration-200 group-hover/wa:translate-x-0.5" />
-        </a>
-      </div>
+        {footer.whatsappLabel && (
+          <a
+            href={whatsapp}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group/wa inline-flex items-center gap-2 font-semibold text-[#0b1724] transition-colors hover:text-[#0e7490]"
+          >
+            <WhatsAppIcon className="h-4 w-4 text-[#25D366]" />
+            {footer.whatsappLabel}
+            <ArrowIcon className="h-3.5 w-3.5 transition-transform duration-200 group-hover/wa:translate-x-0.5" />
+          </a>
+        )}
+      </FooterStrip>
     </div>
   );
 }
 
-function ListPanel({
-  entry,
+/** One row in a list menu: the label, and an arrow that slides in on hover. */
+function ListLink({
+  item,
   pathname,
   onNavigate,
 }: {
-  entry: Extract<NavEntry, { kind: "list" }>;
+  item: { label: string; href: string; new_tab?: boolean };
+  pathname: string;
+  onNavigate: () => void;
+}) {
+  const current = isCurrent(pathname, item.href);
+  return (
+    <Link
+      href={item.href}
+      {...newTabProps(item)}
+      onClick={onNavigate}
+      aria-current={current ? "page" : undefined}
+      className={`group/item flex items-center justify-between gap-3 rounded-xl px-3 py-2.5 text-[13.5px] font-medium transition-colors duration-150 hover:bg-[#ecfbfd] hover:text-[#0e7490] ${
+        current ? "bg-[#ecfbfd] text-[#0e7490]" : "text-[#0b1724]"
+      }`}
+    >
+      {item.label}
+      <ArrowIcon className="h-3.5 w-3.5 shrink-0 -translate-x-1 opacity-0 transition duration-200 group-hover/item:translate-x-0 group-hover/item:opacity-100" />
+    </Link>
+  );
+}
+
+function ListPanel({
+  items,
+  pathname,
+  onNavigate,
+}: {
+  items: NavItem[];
   pathname: string;
   onNavigate: () => void;
 }) {
   return (
     <div className={`${panelSurface} w-[30rem]`}>
-      {entry.heading && <p className={`${eyebrowClass} px-6 pt-5`}>{entry.heading}</p>}
       <ul className="grid grid-cols-2 gap-0.5 p-3">
-        {entry.items.map((item) => {
-          const current = isCurrent(pathname, item.href);
-          return (
-            <li key={`${item.label}-${item.href}`}>
-              <Link
-                href={item.href}
-                {...newTabProps(item)}
-                onClick={onNavigate}
-                aria-current={current ? "page" : undefined}
-                className={`group/item flex items-center justify-between gap-3 rounded-xl px-3 py-2.5 text-[13.5px] font-medium transition-colors duration-150 hover:bg-[#ecfbfd] hover:text-[#0e7490] ${
-                  current ? "bg-[#ecfbfd] text-[#0e7490]" : "text-[#0b1724]"
-                }`}
-              >
-                {item.label}
-                <ArrowIcon className="h-3.5 w-3.5 shrink-0 -translate-x-1 opacity-0 transition duration-200 group-hover/item:translate-x-0 group-hover/item:opacity-100" />
-              </Link>
-            </li>
-          );
-        })}
+        {items.map((item) => (
+          <li key={`${item.label}-${item.href}`}>
+            <ListLink item={item} pathname={pathname} onNavigate={onNavigate} />
+          </li>
+        ))}
       </ul>
+    </div>
+  );
+}
+
+function IndustriesPanel({
+  industries,
+  pathname,
+  onNavigate,
+}: {
+  industries: HeaderModel["industries"];
+  pathname: string;
+  onNavigate: () => void;
+}) {
+  const { heading, viewAll, groups } = industries;
+  const columns = groups.length > 1;
+  return (
+    <div className={`${panelSurface} ${columns ? "" : "w-[30rem]"}`}>
+      {heading && <p className={`${eyebrowClass} px-6 pt-5`}>{heading}</p>}
+      <div className={columns ? "grid grid-cols-3 gap-x-2 gap-y-5 p-5" : "p-3"}>
+        {groups.map((group) => (
+          <div key={group.title} className="min-w-0">
+            {columns && <ColumnTitle>{group.title}</ColumnTitle>}
+            <ul className={columns ? "space-y-0.5" : "grid grid-cols-2 gap-0.5"}>
+              {group.items.map((item) => (
+                <li key={`${item.label}-${item.href}`}>
+                  <ListLink item={item} pathname={pathname} onNavigate={onNavigate} />
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+      {viewAll && (
+        <FooterStrip>
+          <Link
+            href={viewAll.href}
+            onClick={onNavigate}
+            className="group/all inline-flex items-center gap-1.5 font-semibold text-[#0b1724] transition-colors hover:text-[#0e7490]"
+          >
+            {viewAll.label}
+            <ArrowIcon className="h-3.5 w-3.5 transition-transform duration-200 group-hover/all:translate-x-0.5" />
+          </Link>
+        </FooterStrip>
+      )}
+    </div>
+  );
+}
+
+function InsightsPanel({
+  insights,
+  showImages,
+  onNavigate,
+}: {
+  insights: HeaderModel["insights"];
+  /** Thumbnails load once the menu has been opened, not on every page view. */
+  showImages: boolean;
+  onNavigate: () => void;
+}) {
+  const { topics, posts, footer } = insights;
+  return (
+    <div className={panelSurface}>
+      <div
+        className={`grid ${
+          topics.length
+            ? "lg:grid-cols-[270px_minmax(0,1fr)] xl:grid-cols-[250px_270px_minmax(0,1fr)]"
+            : "xl:grid-cols-[250px_minmax(0,1fr)]"
+        }`}
+      >
+        <IntroZone
+          eyebrow={insights.eyebrow}
+          heading={insights.heading}
+          text={insights.text}
+          link={insights.viewAll}
+          outward
+          onNavigate={onNavigate}
+        />
+
+        {topics.length > 0 && (
+          <div className="border-r border-[#e2e8f0] p-5">
+            <ColumnTitle>Topics</ColumnTitle>
+            <ul className="space-y-0.5">
+              {topics.map((topic) => (
+                <li key={topic.label}>
+                  <Link
+                    href={topic.href}
+                    onClick={onNavigate}
+                    className="group/topic flex items-center gap-2 rounded-xl px-2 py-2 text-[13.5px] font-medium leading-snug text-[#0b1724] transition-colors duration-150 hover:bg-[#ecfbfd] hover:text-[#0e7490]"
+                  >
+                    <span className="min-w-0 flex-1">{topic.label}</span>
+                    <span className="rounded-full bg-[#f1f5f9] px-2 py-0.5 text-[11.5px] font-semibold tabular-nums text-[#64748b]">
+                      {topic.count}
+                    </span>
+                    <ArrowUpRightIcon className="h-3.5 w-3.5 shrink-0 text-[#94a3b8] transition-colors group-hover/topic:text-[#0e7490]" />
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        <div className="min-w-0 p-5">
+          <ColumnTitle>Latest articles</ColumnTitle>
+          {posts.length ? (
+            <ul className="space-y-1">
+              {posts.map((post) => (
+                <li key={post.href}>
+                  <Link
+                    href={post.href}
+                    onClick={onNavigate}
+                    className="group/post flex items-start gap-3.5 rounded-xl p-2 transition-colors duration-150 hover:bg-[#ecfbfd]"
+                  >
+                    {/* Fixed size whether or not the image has loaded, so nothing shifts. */}
+                    <span className="relative block h-[60px] w-[84px] shrink-0 overflow-hidden rounded-lg bg-[#e2e8f0]">
+                      {showImages && post.image && (
+                        <Image
+                          src={post.image}
+                          alt={post.alt}
+                          width={84}
+                          height={60}
+                          sizes="84px"
+                          loading="lazy"
+                          unoptimized={!post.image.startsWith("/")}
+                          className="h-full w-full object-cover"
+                        />
+                      )}
+                    </span>
+                    <span className="min-w-0">
+                      {post.category && (
+                        <span className="inline-block rounded-full bg-[rgba(44,205,222,0.12)] px-2 py-0.5 text-[10.5px] font-semibold uppercase tracking-[0.08em] text-[#0e7490]">
+                          {post.category}
+                        </span>
+                      )}
+                      <span className="mt-1 line-clamp-2 block text-[13.5px] font-semibold leading-snug text-[#0b1724] group-hover/post:text-[#0e7490]">
+                        {post.title}
+                      </span>
+                      <span className="mt-1 block text-[12px] text-[#64748b]">
+                        {[post.date, post.readTime].filter(Boolean).join(" · ")}
+                      </span>
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="px-2 py-3 text-[13.5px]">
+              <Link href={insights.viewAll.href} onClick={onNavigate} className="font-semibold text-[#0b1724] hover:text-[#0e7490]">
+                {insights.viewAll.label}
+              </Link>
+            </p>
+          )}
+        </div>
+      </div>
+
+      <FooterStrip>
+        <p className="text-[#64748b]">{footer.text}</p>
+        <Link
+          href={footer.link.href}
+          onClick={onNavigate}
+          className="group/blog inline-flex items-center gap-2 font-semibold text-[#0b1724] transition-colors hover:text-[#0e7490]"
+        >
+          {footer.link.label}
+          <ArrowIcon className="h-3.5 w-3.5 transition-transform duration-200 group-hover/blog:translate-x-0.5" />
+        </Link>
+      </FooterStrip>
     </div>
   );
 }
@@ -258,7 +471,7 @@ function Dropdown({
     onPointerEnter: (event: PointerEvent) => void;
     onPointerLeave: (event: PointerEvent) => void;
   };
-  onToggle: () => void;
+  onToggle: (pointerType: string) => void;
   onKeyboardFocus: () => void;
   onLeave: () => void;
   children: ReactNode;
@@ -278,7 +491,8 @@ function Dropdown({
         type="button"
         aria-expanded={open}
         aria-controls={`${id}-panel`}
-        onClick={onToggle}
+        // A keyboard "click" reports no pointer type.
+        onClick={(event) => onToggle((event.nativeEvent as globalThis.PointerEvent).pointerType ?? "")}
         onFocus={(event) => {
           if (event.currentTarget.matches(":focus-visible")) onKeyboardFocus();
         }}
@@ -337,29 +551,41 @@ function MobileAccordion({ label, children }: { label: string; children: ReactNo
   );
 }
 
+const mobileGroupTitleClass = "px-2 pb-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#64748b]";
+
+/** The "view all" link under a mobile accordion's list. */
+function MobileMore({ link, onNavigate }: { link: MenuLink; onNavigate: () => void }) {
+  return (
+    <Link
+      href={link.href}
+      onClick={onNavigate}
+      className="mt-3 inline-flex items-center gap-1.5 px-2 text-[14px] font-semibold text-[#2CCDDE]"
+    >
+      {link.label}
+      <ArrowIcon className="h-3.5 w-3.5" />
+    </Link>
+  );
+}
+
 const mobileSubLinkClass =
   "flex items-center gap-3 rounded-xl px-2 py-2.5 text-[15px] text-[#e2e8f0] transition-colors hover:bg-white/[0.06] hover:text-white";
 
 // ── Header ─────────────────────────────────────────────────────────────────
 
 export default function Header({
-  navigation = fallbackNav,
+  model = fallbackHeader(),
   logoUrl = "/images/logo.png",
   phone = DEFAULT_PHONE,
   whatsappUrl,
-  bar = defaultHeaderBar,
-  menu = defaultMenu,
 }: {
-  navigation?: NavItem[];
+  /** Built on the server by getHeaderModel(), so every link is in the HTML. */
+  model?: HeaderModel;
   logoUrl?: string;
   phone?: string;
   whatsappUrl?: string;
-  bar?: HeaderBar;
-  menu?: HomeBlock;
 }) {
-  const entries = buildNav(navigation, menu, bar.ctaLink);
+  const { nav: entries, services, industries, insights, cta } = model;
   const whatsapp = whatsappUrl || `https://wa.me/${phone.replace(/\D/g, "")}`;
-  const groups = serviceGroups(menu);
   const pathname = usePathname();
   const baseId = useId();
   const navRef = useRef<HTMLElement>(null);
@@ -376,6 +602,8 @@ export default function Header({
     clearTimeout(timer.current);
     setOpenMenu(null);
   };
+  const [insightsSeen, setInsightsSeen] = useState(false);
+  if (openMenu === "insights" && !insightsSeen) setInsightsSeen(true);
   const later = (next: string | null, delay: number) => {
     clearTimeout(timer.current);
     timer.current = window.setTimeout(() => setOpenMenu(next), delay);
@@ -394,8 +622,16 @@ export default function Header({
       later(null, HOVER_DELAY);
     },
   });
-  const toggleFor = (key: string) => () => {
+  const toggleFor = (key: string) => (pointerType: string) => {
     clearTimeout(timer.current);
+    // With a mouse the menu is already open (or about to be) from hovering,
+    // so a click confirms it rather than toggling it shut. Moving away,
+    // clicking elsewhere or Escape closes it. Touch and keyboard still toggle.
+    if (pointerType === "mouse") {
+      openedWithoutClick.current = false;
+      setOpenMenu(key);
+      return;
+    }
     if (openedWithoutClick.current) {
       openedWithoutClick.current = false;
       setOpenMenu(key);
@@ -466,19 +702,30 @@ export default function Header({
     };
   }, [mobileOpen]);
 
-  const servicesCurrent = (menu.lists.services ?? []).some((item) => isCurrent(pathname, item.link));
+  const inGroups = (groups: { items: { href: string }[] }[]) =>
+    groups.some((group) => group.items.some((item) => isCurrent(pathname, item.href)));
+  const activeFor = (entry: Exclude<(typeof entries)[number], { kind: "link" }>) => {
+    if (entry.kind === "services") return inGroups(services.groups);
+    if (entry.kind === "industries") return inGroups(industries.groups);
+    if (entry.kind === "insights")
+      return isCurrent(pathname, entry.href) || insights.posts.some((post) => isCurrent(pathname, post.href));
+    return entry.items.some((item) => isCurrent(pathname, item.href));
+  };
 
   return (
     <>
       {/* The bar floats: the header itself is a transparent strip that
-          holds the page's top spacing, and only the bar takes clicks. */}
-      <header className="site-header pointer-events-none sticky top-0 z-[65] px-3 pt-3 sm:px-4 lg:pt-4">
-        <div className="pointer-events-auto relative isolate mx-auto flex h-16 max-w-[1200px] items-center gap-2 rounded-[20px] pl-4 pr-2 lg:h-[72px] lg:pl-6 lg:pr-3">
+          holds the page's top spacing, and only the bar takes clicks.
+          The strip is the same page-container as every section and the bar
+          fills it exactly, padded by --panel-px like the hero panel, so the
+          two share their edges and the logo lines up with the hero heading. */}
+      <header className="site-header page-container pointer-events-none sticky top-0 z-[65] pt-3 lg:pt-4">
+        <div className="panel-px pointer-events-auto relative isolate flex h-16 items-center gap-1.5 rounded-[20px] sm:gap-2 lg:h-[72px]">
           {/* The frosted backing lives on its own layer, so the blur never
               becomes the containing block of anything inside the bar. */}
           <span
             aria-hidden="true"
-            className="absolute inset-0 -z-10 rounded-[20px] border border-white/[0.08] bg-[rgba(19,33,47,0.92)] shadow-[0_12px_40px_rgba(0,0,0,0.35)] backdrop-blur-[10px]"
+            className="absolute inset-0 -z-10 rounded-[20px] border border-white/[0.07] bg-[linear-gradient(180deg,rgba(19,33,47,0.97),rgba(15,27,39,0.97))] shadow-[0_12px_40px_rgba(4,13,18,0.35)] backdrop-blur-[10px]"
           />
 
           <LogoLink
@@ -519,13 +766,13 @@ export default function Header({
                   key={entry.key}
                   id={id}
                   label={entry.label}
-                  active={
-                    entry.kind === "services"
-                      ? servicesCurrent
-                      : entry.items.some((item) => isCurrent(pathname, item.href))
-                  }
+                  active={activeFor(entry)}
                   open={open}
-                  wide={entry.kind === "services"}
+                  wide={
+                    entry.kind === "services" ||
+                    entry.kind === "insights" ||
+                    (entry.kind === "industries" && industries.groups.length > 1)
+                  }
                   hover={hoverFor(entry.key)}
                   onToggle={toggleFor(entry.key)}
                   onKeyboardFocus={() => {
@@ -539,16 +786,20 @@ export default function Header({
                   }}
                 >
                   {entry.kind === "services" ? (
-                    <ServicesPanel menu={menu} bar={bar} whatsapp={whatsapp} onNavigate={closeMenu} />
+                    <ServicesPanel services={services} whatsapp={whatsapp} onNavigate={closeMenu} />
+                  ) : entry.kind === "insights" ? (
+                    <InsightsPanel insights={insights} showImages={insightsSeen} onNavigate={closeMenu} />
+                  ) : entry.kind === "industries" ? (
+                    <IndustriesPanel industries={industries} pathname={pathname} onNavigate={closeMenu} />
                   ) : (
-                    <ListPanel entry={entry} pathname={pathname} onNavigate={closeMenu} />
+                    <ListPanel items={entry.items} pathname={pathname} onNavigate={closeMenu} />
                   )}
                 </Dropdown>
               );
             })}
           </nav>
 
-          {bar.showPhone && (
+          {model.showPhone && (
             <>
               <span aria-hidden="true" className="mx-3 hidden h-6 w-px bg-white/15 xl:block" />
               <a
@@ -561,13 +812,16 @@ export default function Header({
             </>
           )}
 
+          {/* On phones it lives in the menu instead, where there is room. */}
+          {model.showThemeToggle && <ThemeToggle className="ml-3 hidden lg:grid xl:ml-5" />}
+
           <Link
-            href={bar.ctaLink}
-            className="group ml-1 inline-flex h-10 shrink-0 items-center gap-2 rounded-full bg-[#2CCDDE] pl-4 pr-1 text-[13px] font-bold text-[#04121A] transition-colors duration-200 hover:bg-[#5BDCE9] lg:ml-3 lg:h-12 lg:gap-3 lg:pl-5 lg:pr-1.5 lg:text-[14.5px] xl:ml-5"
+            href={cta.href}
+            className="group inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full bg-[#2CCDDE] pl-3.5 pr-1 text-[13px] sm:ml-1 sm:gap-2 sm:pl-4 font-bold text-[#04121A] transition-colors duration-200 hover:bg-[#5BDCE9] lg:ml-3 lg:h-12 lg:gap-3 lg:pl-5 lg:pr-1.5 lg:text-[14.5px] xl:ml-5"
           >
-            <span className="lg:hidden">{bar.ctaShortLabel}</span>
-            <span className="hidden lg:inline">{bar.ctaLabel}</span>
-            <span className="grid h-8 w-8 place-items-center rounded-full bg-[#04121A] text-[#2CCDDE]">
+            <span className="lg:hidden">{cta.shortLabel}</span>
+            <span className="hidden lg:inline">{cta.label}</span>
+            <span className="grid h-7 w-7 place-items-center rounded-full bg-[#04121A] text-[#2CCDDE] sm:h-8 sm:w-8">
               <ArrowUpRightIcon className="h-3.5 w-3.5 transition-transform duration-200 group-hover:-translate-y-px group-hover:translate-x-px" />
             </span>
           </Link>
@@ -578,7 +832,7 @@ export default function Header({
             aria-expanded={mobileOpen}
             aria-controls="site-menu"
             aria-label={mobileOpen ? "Close menu" : "Open menu"}
-            className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-white/15 text-white transition-colors duration-200 hover:bg-white/[0.08] lg:hidden"
+            className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-white/15 text-white transition-colors duration-200 hover:bg-white/[0.08] sm:h-10 sm:w-10 lg:hidden"
           >
             <span aria-hidden="true" className="relative block h-3 w-[18px]">
               <span
@@ -611,41 +865,104 @@ export default function Header({
               if (entry.kind === "services")
                 return (
                   <MobileAccordion key={entry.key} label={entry.label}>
-                    {groups.map((group) => (
+                    {services.groups.map((group) => (
                       <div key={group.title} className="pt-2">
-                        <p className="px-2 pb-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#64748b]">
-                          {group.title}
-                        </p>
+                        <p className={mobileGroupTitleClass}>{group.title}</p>
                         <ul>
                           {group.items.map((item) => (
-                            <li key={`${item.title}-${item.link}`}>
+                            <li key={`${item.label}-${item.href}`}>
                               <Link
-                                href={safeLink(item.link, "/#services")}
+                                href={item.href}
                                 onClick={closeMobile}
-                                aria-current={isCurrent(pathname, item.link) ? "page" : undefined}
+                                aria-current={isCurrent(pathname, item.href) ? "page" : undefined}
                                 className={mobileSubLinkClass}
                               >
                                 <span
                                   aria-hidden="true"
                                   className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-[rgba(44,205,222,0.12)] text-[#2CCDDE]"
                                 >
-                                  <ServiceIcon link={item.link} className="h-4 w-4" />
+                                  <ServiceIcon link={item.href} className="h-4 w-4" />
                                 </span>
-                                {item.title}
+                                {item.label}
                               </Link>
                             </li>
                           ))}
                         </ul>
                       </div>
                     ))}
-                    <Link
-                      href={safeLink(menu.fields.link, "/#services")}
-                      onClick={closeMobile}
-                      className="mt-3 inline-flex items-center gap-1.5 px-2 text-[14px] font-semibold text-[#2CCDDE]"
-                    >
-                      {menu.fields.link_label}
-                      <ArrowIcon className="h-3.5 w-3.5" />
-                    </Link>
+                    <MobileMore link={services.intro.link} onNavigate={closeMobile} />
+                  </MobileAccordion>
+                );
+              if (entry.kind === "industries")
+                return (
+                  <MobileAccordion key={entry.key} label={entry.label}>
+                    {industries.groups.map((group) => (
+                      <div key={group.title} className="pt-2">
+                        {group.title && <p className={mobileGroupTitleClass}>{group.title}</p>}
+                        <ul className="grid gap-0.5 sm:grid-cols-2">
+                          {group.items.map((item) => (
+                            <li key={`${item.label}-${item.href}`}>
+                              <Link
+                                href={item.href}
+                                onClick={closeMobile}
+                                aria-current={isCurrent(pathname, item.href) ? "page" : undefined}
+                                className={mobileSubLinkClass}
+                              >
+                                {item.label}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                    {industries.viewAll && <MobileMore link={industries.viewAll} onNavigate={closeMobile} />}
+                  </MobileAccordion>
+                );
+              if (entry.kind === "insights")
+                return (
+                  <MobileAccordion key={entry.key} label={entry.label}>
+                    {insights.posts.length > 0 && (
+                      <div className="pt-2">
+                        <p className={mobileGroupTitleClass}>Latest articles</p>
+                        <ul>
+                          {insights.posts.map((post) => (
+                            <li key={post.href}>
+                              <Link
+                                href={post.href}
+                                onClick={closeMobile}
+                                aria-current={isCurrent(pathname, post.href) ? "page" : undefined}
+                                className="block rounded-xl px-2 py-2.5 transition-colors hover:bg-white/[0.06]"
+                              >
+                                <span className="line-clamp-2 block text-[15px] leading-snug text-[#e2e8f0]">{post.title}</span>
+                                <span className="mt-1 block text-[12.5px] text-[#94a3b8]">
+                                  {[post.category, post.date].filter(Boolean).join(" · ")}
+                                </span>
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    {insights.topics.length > 0 && (
+                      <div className="pt-3">
+                        <p className={mobileGroupTitleClass}>Topics</p>
+                        <ul className="flex flex-wrap gap-2 px-2 pt-1">
+                          {insights.topics.map((topic) => (
+                            <li key={topic.label}>
+                              <Link
+                                href={topic.href}
+                                onClick={closeMobile}
+                                className="inline-flex items-center gap-1.5 rounded-full border border-white/15 px-3 py-1.5 text-[13px] text-[#e2e8f0]"
+                              >
+                                {topic.label}
+                                <span className="tabular-nums text-[#94a3b8]">{topic.count}</span>
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    <MobileMore link={insights.viewAll} onNavigate={closeMobile} />
                   </MobileAccordion>
                 );
               if (entry.kind === "list")
@@ -691,6 +1008,12 @@ export default function Header({
           </ul>
 
           <div className="mt-auto space-y-3 pt-10">
+            {model.showThemeToggle && (
+              <div className="flex items-center justify-between border-t border-white/10 pb-2 pt-5">
+                <span className="text-[14px] font-medium text-[#cbd5e1]">Appearance</span>
+                <ThemeToggle />
+              </div>
+            )}
             <div className="grid grid-cols-2 gap-3">
               <a
                 href={telHref(phone)}
@@ -710,11 +1033,11 @@ export default function Header({
               </a>
             </div>
             <Link
-              href={bar.ctaLink}
+              href={cta.href}
               onClick={closeMobile}
               className="flex h-12 items-center justify-center gap-2 rounded-full bg-[#2CCDDE] text-[15px] font-bold text-[#04121A]"
             >
-              {bar.ctaLabel}
+              {cta.label}
               <ArrowUpRightIcon className="h-4 w-4" />
             </Link>
             <p className="pt-1 text-center text-[13px] tabular-nums text-[#94a3b8]">{phone}</p>

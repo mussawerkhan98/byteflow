@@ -4,12 +4,12 @@ import { services } from '../lib/services-data'
 import ServiceFAQ from './ServiceFAQ'
 import PageSectionCards, { placementOf } from './PageSectionCards'
 import PageCta from './PageCta'
-import { getCmsService, getPageHero, getFaqsForSlug, getCustomSections } from '../lib/cms'
+import { getCmsService, getPageHero, getFaqsForSlug, getCustomSections, getServiceNames } from '../lib/cms'
 import JsonLd from './JsonLd'
 import { breadcrumbSchema, faqPageSchema, graph, serviceSchema } from '../lib/structured-data'
 
 export default async function ServicePageTemplate({ service }: { service: ServiceData }) {
-  const [cmsService, hero, cmsFaqs, customSections] = await Promise.all([getCmsService(service.slug), getPageHero(service.slug), getFaqsForSlug(service.slug), getCustomSections(service.slug)])
+  const [cmsService, hero, cmsFaqs, customSections, serviceNames] = await Promise.all([getCmsService(service.slug), getPageHero(service.slug), getFaqsForSlug(service.slug), getCustomSections(service.slug), getServiceNames()])
   // Fetched here rather than by the client-side PageSections component so
   // the blocks an editor added — pricing, exclusions and the like — are in
   // the HTML the page is served with instead of appearing only once
@@ -17,7 +17,10 @@ export default async function ServicePageTemplate({ service }: { service: Servic
   const sectionsAboveFaq = customSections.filter((section) => placementOf(section) === 'before_faq')
   const sectionsBelowFaq = customSections.filter((section) => placementOf(section) === 'after_faq')
   const shown = { ...service, title: String(cmsService?.title || service.title), description: String(hero?.hero_description || cmsService?.description || service.description), tagline: String(hero?.hero_heading || service.tagline) }
-  const related = services.filter((s) => shown.relatedSlugs.includes(s.slug))
+  // Named as the admin's Services list names them, like the menu and home tabs.
+  const related = services
+    .filter((s) => shown.relatedSlugs.includes(s.slug))
+    .map((s) => ({ ...s, title: serviceNames.get(s.slug) ?? s.title }))
   // CMS-added FAQs (from the admin panel) are appended after the built-in
   // ones so this page shows exactly one FAQ section, not a second one from
   // the global PageFaq block (which skips these 9 static service pages).
@@ -51,7 +54,7 @@ export default async function ServicePageTemplate({ service }: { service: Servic
       <JsonLd data={schema} />
 
       {/* ── HERO ─────────────────────────────────────────────── */}
-      <section className="relative pt-20 pb-16 px-4 sm:px-6 lg:px-8 overflow-hidden" style={hero?.hero_background_image ? { backgroundImage:`linear-gradient(rgba(4,13,18,.78),rgba(4,13,18,.93)),url(${hero.hero_background_image})`, backgroundSize:'cover', backgroundPosition:'center' } : undefined}>
+      <section className="relative pt-12 pb-16 overflow-hidden" style={hero?.hero_background_image ? { backgroundImage:`linear-gradient(rgba(4,13,18,.78),rgba(4,13,18,.93)),url(${hero.hero_background_image})`, backgroundSize:'cover', backgroundPosition:'center' } : undefined}>
         {/* Ambient glows */}
         <div
           className="absolute top-0 right-0 w-[700px] h-[700px] pointer-events-none"
@@ -68,7 +71,7 @@ export default async function ServicePageTemplate({ service }: { service: Servic
           }}
         />
 
-        <div className="relative max-w-page mx-auto">
+        <div className="page-container relative">
           <div className="max-w-3xl">
             {/* Section label */}
             <p className="text-[#2CCDDE] text-xs font-bold uppercase tracking-widest mb-5">
@@ -155,8 +158,8 @@ export default async function ServicePageTemplate({ service }: { service: Servic
       </section>
 
       {/* ── WHAT'S INCLUDED ──────────────────────────────────── */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-page mx-auto">
+      <section className="py-24">
+        <div className="page-container">
           <div className="mb-14">
             <p className="text-[#2CCDDE] text-xs font-bold uppercase tracking-widest mb-4">
               What&apos;s Included
@@ -199,8 +202,8 @@ export default async function ServicePageTemplate({ service }: { service: Servic
       </section>
 
       {/* ── BENEFITS ─────────────────────────────────────────── */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-page mx-auto">
+      <section className="py-24">
+        <div className="page-container">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
 
             {/* Left */}
@@ -268,7 +271,7 @@ export default async function ServicePageTemplate({ service }: { service: Servic
       </section>
 
       {/* ── PROCESS ──────────────────────────────────────────── */}
-      <section className="relative py-24 px-4 sm:px-6 lg:px-8 overflow-hidden">
+      <section className="relative py-24 overflow-hidden">
         <div
           className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[400px] pointer-events-none"
           style={{
@@ -277,7 +280,7 @@ export default async function ServicePageTemplate({ service }: { service: Servic
           }}
         />
 
-        <div className="relative max-w-page mx-auto">
+        <div className="page-container relative">
           <div className="text-center mb-20">
             <p className="text-[#2CCDDE] text-xs font-bold uppercase tracking-widest mb-5">
               How It Works
@@ -383,8 +386,8 @@ export default async function ServicePageTemplate({ service }: { service: Servic
       </section>
 
       {/* ── CTA BAND ─────────────────────────────────────────── */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-page mx-auto">
+      <section className="py-24">
+        <div className="page-container">
           <div
             className="relative overflow-hidden rounded-3xl p-10 sm:p-14"
             style={{
@@ -447,8 +450,8 @@ export default async function ServicePageTemplate({ service }: { service: Servic
 
       {/* ── RELATED SERVICES ─────────────────────────────────── */}
       {related.length > 0 && (
-        <section className="py-24 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-page mx-auto">
+        <section className="py-24">
+          <div className="page-container">
             <div className="mb-12">
               <p className="text-[#2CCDDE] text-xs font-bold uppercase tracking-widest mb-4">
                 Related Services

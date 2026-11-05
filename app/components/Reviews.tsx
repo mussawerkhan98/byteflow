@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { figuresFrom, type SiteFigures } from '../lib/site-figures'
 
 const reviews = [
   {
@@ -53,7 +54,7 @@ function Stars({ count }: { count: number }) {
   )
 }
 
-export default function Reviews({ items }: { items?: { customer_name: string; customer_role: string; review_text: string; rating: number }[] }) {
+export default function Reviews({ items, figures = figuresFrom(null) }: { items?: { customer_name: string; customer_role: string; review_text: string; rating: number }[]; figures?: SiteFigures }) {
   const shownReviews = items?.length ? items.map((item) => ({ name: item.customer_name, role: item.customer_role, text: item.review_text, rating: item.rating })) : reviews
   const [active, setActive] = useState(0)
   const [animating, setAnimating] = useState(false)
@@ -88,7 +89,7 @@ export default function Reviews({ items }: { items?: { customer_name: string; cu
         style={{ background: 'radial-gradient(ellipse, rgba(44,205,222,0.07) 0%, transparent 65%)', filter: 'blur(80px)' }}
       />
 
-      <div className="relative max-w-page mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="page-container relative">
 
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 mb-16">
@@ -116,13 +117,13 @@ export default function Reviews({ items }: { items?: { customer_name: string; cu
               border: '1px solid rgba(44,205,222,0.18)',
             }}
           >
-            <img src="/google.svg" alt="Google" className="w-9 h-9 object-contain flex-shrink-0" />
+            <img src="/google.svg" alt="Google" width={36} height={36} className="w-9 h-9 object-contain flex-shrink-0" />
             <div>
               <div className="flex items-center gap-2 mb-0.5">
-                <span className="text-2xl font-black text-[var(--text-primary)] leading-none">4.9</span>
+                <span className="text-2xl font-black text-[var(--text-primary)] leading-none">{figures.rating}</span>
                 <Stars count={5} />
               </div>
-              <p className="text-[var(--text-muted)] text-xs">50+ Google reviews</p>
+              <p className="text-[var(--text-muted)] text-xs">{figures.reviews} Google reviews</p>
             </div>
           </div>
         </div>
@@ -199,7 +200,7 @@ export default function Reviews({ items }: { items?: { customer_name: string; cu
                 <div className="flex flex-col items-end gap-2">
                   <Stars count={r.rating} />
                   <div className="flex items-center gap-1.5">
-                    <img src="/google.svg" alt="Google" className="w-4 h-4 object-contain opacity-50" />
+                    <img src="/google.svg" alt="Google" width={16} height={16} loading="lazy" className="w-4 h-4 object-contain opacity-50" />
                     <span className="text-xs text-[var(--text-dim)] font-medium">Posted on Google</span>
                   </div>
                 </div>

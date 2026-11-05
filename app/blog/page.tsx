@@ -27,7 +27,7 @@ export default async function BlogPage() {
           }}
         >
           {hero.hero_heading && (
-            <div className="mx-auto flex h-full max-w-page items-end px-4 pb-8">
+            <div className="page-container flex h-full items-end pb-8">
               <p className="text-4xl font-bold text-white">{hero.hero_heading}</p>
             </div>
           )}

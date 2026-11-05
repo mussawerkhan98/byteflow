@@ -24,12 +24,76 @@ export const SITE_URL = 'https://www.byteflow.ae'
  * than either alone.
  *
  * So this string has to keep matching the @id in that script. If the script
- * is ever removed, the organization needs publishing from here instead, or
- * every `provider` and `publisher` below points at nothing.
+ * is removed, or the database cannot be read, the layout publishes
+ * `organizationSchema` below instead, so `provider` and `publisher` never
+ * point at nothing.
  */
 export const ORG_ID = `${SITE_URL}/#organization`
 
 export type JsonLd = Record<string, unknown>
+
+/**
+ * The organization as the admin's "Address" script publishes it on the live
+ * site. Only a stand-in for that script: keep the two in step.
+ */
+export const organizationSchema: JsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfessionalService',
+  '@id': ORG_ID,
+  name: 'Byteflow Information Technology',
+  url: SITE_URL,
+  logo: `${SITE_URL}/images/logo.png`,
+  image: `${SITE_URL}/images/logo.png`,
+  // The description and foundingDate quote the site-wide figures, so the
+  // layout publishes organizationSchemaWith(figures) rather than this.
+  description:
+    'IT solutions provider serving businesses across Dubai and the UAE. IT AMC, cyber security, cloud services, system integration and software development.',
+  telephone: '+971543282042',
+  email: 'info@byteflow.ae',
+  foundingDate: '2017',
+  priceRange: '$$',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: 'Emaar Park 4, Greens',
+    addressLocality: 'TECOM, Dubai',
+    addressRegion: 'Dubai',
+    addressCountry: 'AE',
+  },
+  areaServed: [
+    { '@type': 'City', name: 'Dubai' },
+    { '@type': 'City', name: 'Sharjah' },
+    { '@type': 'City', name: 'Abu Dhabi' },
+  ],
+  sameAs: [
+    'https://m.facebook.com/byteflow.ae/',
+    'https://www.instagram.com/byteflow.ae/',
+    'https://www.tiktok.com/@byteflow.ae',
+  ],
+  openingHoursSpecification: [
+    {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+      opens: '09:00',
+      closes: '18:00',
+    },
+  ],
+}
+
+/**
+ * The organization with the site-wide figures from the admin (clients and
+ * founding year), so the stand-in node says what the pages say.
+ */
+export const organizationSchemaWith = (figures: { clients: string; founded: string }): JsonLd => ({
+  ...organizationSchema,
+  description: `IT solutions provider serving ${figures.clients} businesses across Dubai and the UAE since ${figures.founded}. IT AMC, cyber security, cloud services, system integration and software development.`,
+  foundingDate: figures.founded,
+})
+
+/**
+ * True when admin-supplied code already publishes the organization node.
+ * JSON may write `/` as `\/`, so that is undone before looking.
+ */
+export const publishesOrganization = (code: string) => code.replace(/\\\//g, '/').includes(ORG_ID)
 
 export const absoluteUrl = (path: string) => {
   const value = String(path ?? '').trim()

@@ -16,7 +16,7 @@ export default async function HelpPanel() {
 
   return (
     <section className="home-help pb-20 sm:pb-24 lg:-mt-8 lg:pb-28">
-      <div className="mx-auto max-w-page px-4 sm:px-6 lg:px-8">
+      <div className="page-container">
         <div className="tint-panel flex flex-col gap-7 rounded-3xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6 sm:p-8 lg:flex-row lg:items-center lg:justify-between lg:px-10">
           <div className="flex items-start gap-5">
             <span

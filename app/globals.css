@@ -5,15 +5,53 @@
 @theme inline {
   --font-sans: var(--font-body);
   --font-display: var(--font-heading);
-  /* The width every page's content is held to. It used to be Tailwind's
-     max-w-7xl (1280px), which left roughly 320px of empty margin either side
-     on a 1920px monitor and twice that on a 2560px one -- the page looked
-     like it was not using the screen. Named rather than inlined so the whole
-     site stays on one measurement. */
-  --container-page: 100rem;
   /* Outfit, the face the footer wordmark is set in. The header wordmark uses
      it too so the brand name reads the same at both ends of the page. */
   --font-brand: var(--font-wordmark);
+}
+
+/* The page's horizontal measurements, in one place so the header and the
+   sections can never drift apart.
+   --container-max / --container-px  the shared container (page-container):
+                                      at most 1440px including its side
+                                      padding, which grows with the window
+                                      from 16px to 48px.
+   --panel-px                         inside padding of a rounded panel sitting
+                                      in that container: the header bar, the
+                                      hero panel and any later section panel.
+   The bar and a panel both fill the container exactly, so their edges match,
+   and both pad by --panel-px, so the logo lines up with the hero heading and
+   the bar's last button with the panel's right-hand content. */
+:root {
+  --container-max: 90rem;
+  --container-px: clamp(16px, 4vw, 48px);
+  --panel-px: 1rem;
+}
+
+@media (width >= 40rem) {
+  :root {
+    --panel-px: 1.5rem;
+  }
+}
+
+@media (width >= 64rem) {
+  :root {
+    --panel-px: 2.5rem;
+  }
+}
+
+/* The one container the header bar and every section share. Pad or size a
+   section's content inside it, never on it. */
+@utility page-container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--container-px);
+}
+
+/* The inside padding of a panel in page-container (header bar, hero panel). */
+@utility panel-px {
+  padding-inline: var(--panel-px);
 }
 
 :root {
@@ -119,75 +157,16 @@ h1 {
   outline-color: #0e7490;
 }
 
-/* ---- Home service cards (app/components/ServiceCard.tsx) ---- */
+/* ---- Home Services tabs (app/components/ServiceTabs.tsx) ---- */
 
-/* Icon tile: a faint brand tint, so the icons read as one set. */
-.service-card-icon {
+/* Icon tiles and the cyan subtitle: darker cyan on white so they stay
+   legible, the brand cyan on dark. */
+.service-tab-icon {
   color: #0e7490;
-  background: rgba(44, 205, 222, 0.1);
-  border-color: rgba(44, 205, 222, 0.28);
 }
 
-:root:not([data-theme='light']) .service-card-icon,
-.service-card-featured .service-card-icon {
+:root:not([data-theme="light"]) .service-tab-icon {
   color: #2ccdde;
-  background: rgba(44, 205, 222, 0.08);
-  border-color: rgba(44, 205, 222, 0.24);
-}
-
-/* The large bento card is ink in both themes, so it carries its own palette. */
-.service-card-featured {
-  --bg-surface: #0b1220;
-  --text-primary: #ffffff;
-  --text-body: #bcc6d2;
-  --text-nav: #8f9bab;
-  --border-default: rgba(255, 255, 255, 0.12);
-}
-
-:root:not([data-theme='light']) .service-card-featured {
-  --bg-surface: #0c1923;
-}
-
-/* Hover: the icon tile fills with the brand cyan. Comes after the theme rules
-   above so it wins over them. */
-.service-card-icon {
-  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
-}
-
-.group:hover .service-card-icon {
-  color: #04121a;
-  background: #2ccdde;
-  border-color: #2ccdde;
-}
-
-/* Faint cyan wash that fades in from the top-left corner of a hovered card. */
-.service-card-wash {
-  background: radial-gradient(90% 60% at 0% 0%, rgba(44, 205, 222, 0.1), transparent 70%);
-}
-
-/* Texture for the featured card: the receding grid from the Byteflow mark,
-   fading out towards the text. On hover it drifts and brightens a little. */
-.service-card-grid {
-  background-image:
-    linear-gradient(to right, rgba(44, 205, 222, 0.14) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(44, 205, 222, 0.14) 1px, transparent 1px);
-  background-size: 36px 36px;
-  background-position: right top;
-  -webkit-mask-image: radial-gradient(ellipse 80% 70% at 100% 0%, #000 0%, transparent 70%);
-  mask-image: radial-gradient(ellipse 80% 70% at 100% 0%, #000 0%, transparent 70%);
-  opacity: 0.85;
-  transition: background-position 1.2s ease, opacity 0.6s ease;
-}
-
-.group:hover .service-card-grid {
-  opacity: 1;
-  background-position: right -18px top 18px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .service-card-grid {
-    transition: none;
-  }
 }
 
 /* ---- Home About section (app/components/AboutUs.tsx) ---- */
@@ -1210,4 +1189,70 @@ h1 {
     opacity: 1;
     transition: none;
   }
+}
+
+/* ---- Trust strip logos (app/components/TrustStrip.tsx) ----
+   Below lg the logos loop as a marquee: the list holds them twice, so moving
+   it by half its width lands exactly where it started. Hover or keyboard
+   focus pauses it. From lg, and with reduced motion, it is a still row and
+   the second copy is not shown; with reduced motion on a narrow screen the
+   row scrolls by hand instead. */
+@keyframes trust-marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+.trust-logos {
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+.trust-marquee {
+  animation: trust-marquee 32s linear infinite;
+}
+.trust-logos:hover .trust-marquee,
+.trust-logos:focus-within .trust-marquee {
+  animation-play-state: paused;
+}
+@media (min-width: 1024px) {
+  .trust-logos {
+    mask-image: none;
+  }
+  .trust-marquee {
+    animation: none;
+  }
+  .trust-marquee [data-copy] {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .trust-logos {
+    overflow-x: auto;
+    mask-image: none;
+    scrollbar-width: none;
+  }
+  .trust-marquee {
+    animation: none;
+  }
+  .trust-marquee [data-copy] {
+    display: none;
+  }
+}
+
+/* ---- CountUp (app/components/CountUp.tsx) ----
+   The final value, drawn invisibly in the same grid cell as the counting
+   number, reserves its width. Generated content is not page text, so the
+   number appears once in the DOM. */
+.count-up::before {
+  content: attr(data-final);
+  grid-area: 1 / 1;
+  visibility: hidden;
+}
+
+/* ---- Home About block (app/components/AboutUs.tsx) ----
+   The cyan used for its eyebrow and feature icons: darkened on light
+   backgrounds so it stays legible, the brand cyan on dark. */
+.home-about {
+  --about-accent: #0e7490;
+}
+:root:not([data-theme='light']) .home-about {
+  --about-accent: #2ccdde;
 }

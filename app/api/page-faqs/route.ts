@@ -1,4 +1,6 @@
 import { db } from "@/app/lib/db";
+import { getSiteFigures } from "@/app/lib/cms";
+import { fillDeep } from "@/app/lib/site-figures";
 
 /**
  * Cached at the edge for an hour, with a day of stale-while-revalidate.
@@ -21,13 +23,18 @@ export async function GET(request: Request) {
   const slug = cleanPath || "home";
 
   try {
-    const result = await db.execute({
-      sql: `SELECT f.id,f.category,f.question,f.answer
-            FROM faqs f JOIN pages p ON p.id=f.page_id
-            WHERE f.active=1 AND p.slug=? ORDER BY f.sort_order,f.id`,
-      args: [slug],
-    });
-    return Response.json({ faqs: result.rows }, { headers: CACHE_HEADERS });
+    const [result, figures] = await Promise.all([
+      db.execute({
+        sql: `SELECT f.id,f.category,f.question,f.answer
+              FROM faqs f JOIN pages p ON p.id=f.page_id
+              WHERE f.active=1 AND p.slug=? ORDER BY f.sort_order,f.id`,
+        args: [slug],
+      }),
+      getSiteFigures(),
+    ]);
+    // Answers can quote the site-wide figures ({clients}, {founded}, …).
+    const faqs = result.rows.map((row) => fillDeep({ ...row }, figures));
+    return Response.json({ faqs }, { headers: CACHE_HEADERS });
   } catch {
     return Response.json({ faqs: [] }, { headers: CACHE_HEADERS });
   }

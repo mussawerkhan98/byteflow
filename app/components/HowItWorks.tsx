@@ -111,10 +111,10 @@ export default function HowItWorks({ content }: { content: HomeBlock }) {
   }
 
   return (
-    <section className="home-process py-20 sm:py-24 lg:py-32">
+    <section id="how-we-work" className="home-process scroll-mt-28 py-20 sm:py-24 lg:py-32">
       {/* Same container as the header, so the edges sit under the logo and
           the Contact button. */}
-      <div className="mx-auto max-w-page px-4 sm:px-6 lg:px-8">
+      <div className="page-container">
         <div className="grid gap-8 lg:grid-cols-12 lg:items-end lg:gap-10">
           <div className="lg:col-span-7">
             <p className="mb-6 flex items-center gap-3 text-[13px] font-medium text-[var(--text-body)]">

@@ -7,7 +7,7 @@ export default function Blog({ posts }: { posts: Post[] }) {
   return (
     <section className="relative overflow-hidden py-28">
       <div className="pointer-events-none absolute left-1/2 top-1/2 h-[600px] w-[900px] -translate-x-1/2 -translate-y-1/2" style={{ background: "radial-gradient(ellipse, rgba(44,205,222,0.05) 0%, transparent 70%)", filter: "blur(80px)" }} />
-      <div className="relative mx-auto max-w-page px-4 sm:px-6 lg:px-8">
+      <div className="page-container relative">
         <div className="mb-16 flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-cyan-400/25 bg-cyan-400/[.07] px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-[#2CCDDE]">Insights</div>
@@ -24,7 +24,7 @@ export default function Blog({ posts }: { posts: Post[] }) {
                 <Link key={post.id} href={`/${post.slug}`} className="card-hover group relative flex flex-col overflow-hidden rounded-2xl border border-cyan-400/10 bg-[var(--bg-surface)] transition-all duration-300">
                   <div className="relative flex h-44 flex-shrink-0 items-center justify-center overflow-hidden" style={{ background: gradient }}>
                     {post.image_url ? (
-                      <Image src={post.image_url} alt={post.title} fill sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw" className="object-cover transition-transform duration-300 group-hover:scale-105" />
+                      <Image src={post.image_url} alt={post.title} width={640} height={352} sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw" className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
                     ) : (
                       <><div className="absolute inset-0 opacity-20" style={{ backgroundImage: "linear-gradient(rgba(44,205,222,.15) 1px,transparent 1px),linear-gradient(90deg,rgba(44,205,222,.15) 1px,transparent 1px)", backgroundSize: "28px 28px" }} /><div className="relative z-10 flex h-16 w-16 items-center justify-center rounded-2xl border border-cyan-400/30 bg-black/50 text-[#2CCDDE] transition-transform group-hover:scale-110">{icon}</div></>
                     )}

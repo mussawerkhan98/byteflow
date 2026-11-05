@@ -86,7 +86,7 @@ export default function FAQ({
   if (!shownFaqs.length) return null;
 
   return (
-    <section className="relative py-28 px-4 sm:px-6 lg:px-8 overflow-hidden">
+    <section className="relative py-28 overflow-hidden">
       <div
         className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[700px] h-[500px] pointer-events-none"
         style={{
@@ -96,7 +96,7 @@ export default function FAQ({
         }}
       />
 
-      <div className="relative max-w-6xl mx-auto">
+      <div className="page-container relative">
         {/* Header */}
         <div className="text-center mb-14">
           <div
