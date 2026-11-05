@@ -155,6 +155,7 @@ h1 {
 .home-hero :focus-visible,
 .home-services :focus-visible,
 .home-about :focus-visible,
+.home-promise :focus-visible,
 .home-help :focus-visible,
 .home-process :focus-visible {
   outline: 2px solid var(--cyan);
@@ -1216,37 +1217,23 @@ h1 {
   }
 }
 
-/* ---- Home About block (app/components/AboutUs.tsx) ----
-   The cyan used for its eyebrow and feature icons: darkened on light
-   backgrounds so it stays legible, the brand cyan on dark. */
-.home-about {
-  --about-accent: #0e7490;
-}
-:root:not([data-theme='light']) .home-about {
-  --about-accent: #2ccdde;
-}
-.home-about {
-  --about-row-hover: rgba(44, 205, 222, 0.07);
-}
-
-/* The pulse on Dubai in the coverage map. Still, with reduced motion. */
-@keyframes about-map-pulse {
+/* ---- Home About section (app/components/AboutReasons.tsx) ----
+   The preview card fades in as the reason changes. Still, with reduced motion. */
+@keyframes about-preview-in {
   from {
-    transform: scale(1);
-    opacity: 0.7;
+    opacity: 0;
+    transform: translateY(6px);
   }
   to {
-    transform: scale(2.2);
-    opacity: 0;
+    opacity: 1;
+    transform: none;
   }
 }
-.about-map-pulse {
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: about-map-pulse 2.4s ease-out infinite;
+.about-preview-in {
+  animation: about-preview-in 0.35s ease-out;
 }
 @media (prefers-reduced-motion: reduce) {
-  .about-map-pulse {
+  .about-preview-in {
     animation: none;
   }
 }

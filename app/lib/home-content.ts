@@ -66,36 +66,15 @@ export const homeDefaults = {
       ],
     },
   },
+  // The dark About section: heading and paragraph, then the numbered reasons
+  // beside a preview card. Each reason's icon also picks the small picture in
+  // its preview (AboutPreview.tsx).
   home_about: {
     fields: {
-      eyebrow: 'About Byteflow',
+      eyebrow: 'About Byteflow · Since {founded}',
       heading: 'Your trusted IT partner,',
       heading_soft: 'serving Dubai since {founded}.',
       intro: 'We make enterprise-grade IT accessible to every business in the UAE, so you can focus entirely on growth.',
-      // The quote, name, role and photo are the founder's, from "About Us — Founder".
-      show_quote: 'yes',
-      primary_label: 'Get in touch',
-      primary_link: '/contact-us',
-      secondary_label: 'More about Byteflow',
-      secondary_link: '/about-us',
-      // The bento's photo tile.
-      image_url: '/images/hero/hero.webp',
-      // Describes the built-in artwork; an uploaded photo needs its own.
-      image_alt: 'Illustration of connected servers and network links',
-      image_caption: 'Our engineers on site in Dubai',
-      image_badge: 'Based in Dubai since {founded}',
-      // Years tile (the number counts from the year founded).
-      show_years_badge: 'yes',
-      years_label: 'Years keeping UAE businesses running',
-      // Rating tile (rating, review count and Google link from site settings).
-      show_rating_badge: 'yes',
-      rating_label: 'Google rating · {reviews} reviews',
-      reviews_label: 'Read reviews',
-      // Coverage tile.
-      show_coverage: 'yes',
-      coverage_title: 'On-site across the UAE',
-      coverage_locations: 'Dubai, Sharjah, Abu Dhabi',
-      coverage_note: '2-hr on-site response',
     },
     lists: {
       highlights: [
