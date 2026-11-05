@@ -44,6 +44,28 @@ export const homeDefaults = {
     },
     lists: {},
   },
+  // "Where does your IT need help?": three common starting points, each
+  // linked to the service that answers it (by slug; the link shows the
+  // service's own name). A scenario set to show: 'no' is left out.
+  home_needs: {
+    fields: {
+      eyebrow: 'Your business comes first',
+      heading: 'Where does your IT need help?',
+      link_label: 'Book a free IT assessment',
+      link: '/contact-us',
+      // The bottom line, one step per line.
+      steps: 'Free consultation\nProposal\nSetup\nOngoing support',
+      steps_link_label: 'How we work',
+      steps_link: '/#how-we-work',
+    },
+    lists: {
+      scenarios: [
+        { label: 'A new office', title: 'Moving or opening an office.', description: 'Cabling, Wi-Fi, CCTV and access control planned and installed together, so your team works from day one.', service: 'system-integration', show: 'yes' },
+        { label: 'A safer business', title: 'Worried about ransomware or data loss.', description: 'Firewall, endpoint and email protection with tested backups, so one bad click does not stop the business.', service: 'cyber-security', show: 'yes' },
+        { label: 'More customers', title: 'Need a better website or more leads.', description: 'A fast, mobile-first website, landing pages and chatbots built to turn visitors into enquiries.', service: 'website-development', show: 'yes' },
+      ],
+    },
+  },
   home_about: {
     fields: {
       eyebrow: 'About Byteflow',

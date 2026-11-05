@@ -178,6 +178,22 @@ h1 {
   color: #2ccdde;
 }
 
+/* ---- Home "Where does your IT need help?" (app/components/NeedsSection.tsx) ---- */
+
+/* A warm off-white band between the cooler sections, with warm hairlines;
+   a warm near-black on dark. The accent darkens on light so it stays legible. */
+.warm-section {
+  --warm-line: rgba(70, 52, 24, 0.16);
+  --warm-accent: #0e7490;
+  background-color: #f7f4ee;
+}
+
+:root:not([data-theme='light']) .warm-section {
+  --warm-line: rgba(255, 240, 215, 0.12);
+  --warm-accent: #2ccdde;
+  background-color: #0f0e0c;
+}
+
 /* ---- Home About section (app/components/AboutUs.tsx) ---- */
 
 /* Tinted panel, used for the service promise (AboutUs) and the help panel

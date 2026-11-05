@@ -1,6 +1,7 @@
 import Hero from "./components/Hero";
 import Services from "./components/Services";
 import SelectedWork from "./components/SelectedWork";
+import NeedsSection from "./components/NeedsSection";
 import AboutUs from "./components/AboutUs";
 import Reviews from "./components/Reviews";
 import HowItWorks from "./components/HowItWorks";
@@ -92,6 +93,7 @@ export default async function Home() {
       />
       <Services />
       <SelectedWork />
+      <NeedsSection />
       <AboutUs />
       <HowItWorks content={process} />
       <HelpPanel />
