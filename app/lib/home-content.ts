@@ -22,24 +22,6 @@ export type HomeBlock = { fields: Record<string, string>; lists: Record<string, 
 // Text here can quote the site-wide figures with placeholders like {founded}
 // (see site-figures.ts); getHomeBlock fills them in.
 export const homeDefaults = {
-  // The trust strip under the banner. Every figure except "custom" shows
-  // the site-wide number from Contact details & logo, so it can't drift.
-  // The last stat stands in for the logo row until a client logo is up.
-  home_trust: {
-    fields: {
-      logos_label: 'Trusted by teams across the UAE',
-    },
-    lists: {
-      stats: [
-        { title: 'Businesses supported across the UAE', figure: 'clients', value: '', show: 'yes' },
-        { title: 'Google rating · {reviews} reviews', figure: 'rating', value: '', show: 'yes' },
-        { title: 'Years in Dubai', figure: 'years', value: '', show: 'yes' },
-        { title: 'On-site response across Dubai, Sharjah & Abu Dhabi', figure: 'custom', value: '2 hrs', show: 'no_logos' },
-      ],
-      // Only clients who have agreed to be shown. None until one is added.
-      logos: [] as Item[],
-    },
-  },
   home_services_intro: {
     fields: {
       eyebrow: 'What we do',

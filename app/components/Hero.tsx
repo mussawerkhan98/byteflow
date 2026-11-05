@@ -64,13 +64,82 @@ export default function Hero({
   const [lead, rest] = splitHeading(content.heading, content.highlight)
   const whatsapp = whatsappUrl || `https://wa.me/${phone.replace(/\D/g, '')}`
   const stripLink = content.stripLink || '#how-we-work'
+  // "Picture on the right" in the admin (hero_image).
+  const picture = content.image || ''
+  // Under the text (with a picture) the card is wide, so its three times sit side by side.
+  const wide = Boolean(picture)
+
+  const card = (
+    <aside
+      aria-labelledby="hero-response-title"
+      className="rounded-2xl border border-white/10 bg-white/[0.05] shadow-[0_30px_70px_-30px_rgba(0,0,0,0.7)] backdrop-blur-md"
+    >
+      <div className="px-6 pt-6 sm:px-7 sm:pt-7">
+        <p className="text-[12px] font-medium uppercase tracking-[0.08em] text-[#94a3b8]">Response times</p>
+        <p id="hero-response-title" className="mt-2 font-display text-[1.375rem] font-semibold leading-snug tracking-[-0.02em] text-white">
+          When something breaks
+        </p>
+      </div>
+
+      <ul className={`mt-6 border-t border-white/10 ${wide ? 'grid sm:grid-cols-3' : ''}`}>
+        {responseTimes.map((row) =>
+          wide ? (
+            <li key={row.task} className="border-b border-white/10 px-6 py-5 sm:border-l sm:px-5 sm:first:border-l-0">
+              <p className="leading-none">
+                <span className="block text-[11px] font-medium uppercase tracking-[0.08em] text-[#94a3b8]">Within</span>
+                <span className="mt-1.5 inline-block font-display text-[1.75rem] font-semibold tracking-[-0.03em] tabular-nums text-[#2CCDDE]">
+                  {row.value}
+                </span>
+                <span className="ml-1 text-[14px] font-medium text-[#cbd5e1]">{row.unit}</span>
+              </p>
+              <p className="mt-3 text-[14px] font-semibold text-white">{row.task}</p>
+              <p className="mt-1 text-[12.5px] leading-snug text-[#aab7c6]">{row.detail}</p>
+            </li>
+          ) : (
+          <li key={row.task} className="flex items-center justify-between gap-6 border-b border-white/10 px-6 py-5 sm:px-7">
+            <div className="min-w-0">
+              <p className="text-[15px] font-semibold text-white">{row.task}</p>
+              <p className="mt-1 text-[13px] leading-snug text-[#aab7c6]">{row.detail}</p>
+            </div>
+            <p className="shrink-0 text-right leading-none">
+              <span className="block text-[11px] font-medium uppercase tracking-[0.08em] text-[#94a3b8]">Within</span>
+              <span className="mt-1.5 inline-block font-display text-[1.75rem] font-semibold tracking-[-0.03em] tabular-nums text-[#2CCDDE]">
+                {row.value}
+              </span>
+              <span className="ml-1 text-[14px] font-medium text-[#cbd5e1]">{row.unit}</span>
+            </p>
+          </li>
+          ),
+        )}
+      </ul>
+
+      <div className="flex gap-3 p-6 sm:p-7">
+        <a
+          href={`tel:${phone.replace(/[^\d+]/g, '')}`}
+          className="inline-flex h-11 flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-full border border-white/20 px-4 text-[14px] font-semibold tabular-nums text-white transition-colors duration-200 hover:bg-white/[0.07]"
+        >
+          <PhoneIcon className="h-4 w-4 text-[#2CCDDE]" />
+          Call {phone}
+        </a>
+        <a
+          href={whatsapp}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Chat on WhatsApp"
+          className="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-white/20 text-[#25D366] transition-colors duration-200 hover:bg-white/[0.07]"
+        >
+          <WhatsAppIcon className="h-[18px] w-[18px]" />
+        </a>
+      </div>
+    </aside>
+  )
 
   return (
     <section className="home-hero pt-4 lg:pt-5">
-      <div className="page-container">
-        {/* A dark panel in either site theme. It fills the same container as
-            the header bar and pads by the same --panel-px, so its edges are the
-            bar's edges and the heading starts under the logo. */}
+      {/* Wider than the shared container on big screens (hero-container in
+          globals.css): the panel runs to 40px from the window's edges. */}
+      <div className="hero-container">
+        {/* A dark panel in either site theme. */}
         <div className="relative isolate overflow-hidden rounded-3xl bg-[#0f1b27] text-white ring-1 ring-white/[0.06]">
           {content.backgroundImage ? (
             <>
@@ -80,7 +149,7 @@ export default function Hero({
                 fill
                 preload
                 fetchPriority="high"
-                sizes="(min-width: 1280px) 1232px, 100vw"
+                sizes="(min-width: 1840px) 1760px, 100vw"
                 className="-z-20 object-cover object-center"
               />
               <div
@@ -100,8 +169,8 @@ export default function Hero({
             </div>
           )}
 
-          <div className="panel-px grid gap-12 pb-10 pt-10 sm:pb-12 sm:pt-12 lg:grid-cols-12 lg:gap-10 lg:pb-14 lg:pt-16">
-            <div className="flex flex-col justify-center lg:col-span-7 lg:max-w-[42rem]">
+          <div className={`panel-px grid pb-10 pt-10 sm:pb-12 sm:pt-12 lg:pb-14 lg:pt-16 ${picture ? 'gap-10 xl:grid-cols-12 xl:gap-x-12 xl:gap-y-10' : 'gap-12 lg:grid-cols-12 lg:gap-10'}`}>
+            <div className={`flex flex-col justify-center lg:max-w-[42rem] ${picture ? 'xl:col-span-6 xl:col-start-1 xl:row-start-1' : 'lg:col-span-7'}`}>
               <p className="text-[12px] font-semibold uppercase tracking-[0.22em] text-[#6fd0da]">
                 {content.badge || 'IT Support & AMC · Dubai, UAE'}
               </p>
@@ -141,75 +210,37 @@ export default function Hero({
               </p>
             </div>
 
-            <div className="relative lg:col-span-5 lg:self-center xl:col-span-4 xl:col-start-9">
-              {content.image ? (
-                // Uploaded in the admin. It loads first: when there is one,
-                // it is the largest thing in view.
+            {picture ? (
+              // An uploaded picture: shown clearly on the right at the height of
+              // the text and card beside it (from xl); stacked between them below.
+              <div className="relative aspect-[16/10] overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] xl:col-span-6 xl:col-start-7 xl:row-span-2 xl:row-start-1 xl:aspect-auto">
                 <Image
-                  src={content.image}
+                  src={picture}
                   alt={content.imageAlt || ''}
-                  width={1200}
-                  height={1000}
+                  width={1600}
+                  height={1200}
                   preload
                   fetchPriority="high"
-                  sizes="(min-width: 1024px) 420px, 90vw"
-                  className="pointer-events-none absolute -inset-x-6 -top-10 -z-10 h-[calc(100%+5rem)] w-[calc(100%+3rem)] max-w-none rounded-3xl object-cover opacity-70"
+                  sizes="(min-width: 1280px) 50vw, 100vw"
+                  className="absolute inset-0 h-full w-full object-cover"
                 />
-              ) : (
+              </div>
+            ) : null}
+
+            <div
+              className={
+                picture
+                  ? 'xl:col-span-6 xl:col-start-1 xl:row-start-2 xl:max-w-[42rem]'
+                  : 'relative lg:col-span-5 lg:self-center xl:col-span-4 xl:col-start-9'
+              }
+            >
+              {!picture && (
                 <div
                   aria-hidden="true"
                   className="pointer-events-none absolute -top-16 left-1/2 -z-10 h-[38rem] w-[38rem] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(44,205,222,0.18),transparent)]"
                 />
               )}
-
-              <aside
-                aria-labelledby="hero-response-title"
-                className="rounded-2xl border border-white/10 bg-white/[0.05] shadow-[0_30px_70px_-30px_rgba(0,0,0,0.7)] backdrop-blur-md"
-              >
-                <div className="px-6 pt-6 sm:px-7 sm:pt-7">
-                  <p className="text-[12px] font-medium uppercase tracking-[0.08em] text-[#94a3b8]">Response times</p>
-                  <p id="hero-response-title" className="mt-2 font-display text-[1.375rem] font-semibold leading-snug tracking-[-0.02em] text-white">
-                    When something breaks
-                  </p>
-                </div>
-
-                <ul className="mt-6 border-t border-white/10">
-                  {responseTimes.map((row) => (
-                    <li key={row.task} className="flex items-center justify-between gap-6 border-b border-white/10 px-6 py-5 sm:px-7">
-                      <div className="min-w-0">
-                        <p className="text-[15px] font-semibold text-white">{row.task}</p>
-                        <p className="mt-1 text-[13px] leading-snug text-[#aab7c6]">{row.detail}</p>
-                      </div>
-                      <p className="shrink-0 text-right leading-none">
-                        <span className="block text-[11px] font-medium uppercase tracking-[0.08em] text-[#94a3b8]">Within</span>
-                        <span className="mt-1.5 inline-block font-display text-[1.75rem] font-semibold tracking-[-0.03em] tabular-nums text-[#2CCDDE]">
-                          {row.value}
-                        </span>
-                        <span className="ml-1 text-[14px] font-medium text-[#cbd5e1]">{row.unit}</span>
-                      </p>
-                    </li>
-                  ))}
-                </ul>
-
-                <div className="flex gap-3 p-6 sm:p-7">
-                  <a
-                    href={`tel:${phone.replace(/[^\d+]/g, '')}`}
-                    className="inline-flex h-11 flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-full border border-white/20 px-4 text-[14px] font-semibold tabular-nums text-white transition-colors duration-200 hover:bg-white/[0.07]"
-                  >
-                    <PhoneIcon className="h-4 w-4 text-[#2CCDDE]" />
-                    Call {phone}
-                  </a>
-                  <a
-                    href={whatsapp}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="Chat on WhatsApp"
-                    className="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-white/20 text-[#25D366] transition-colors duration-200 hover:bg-white/[0.07]"
-                  >
-                    <WhatsAppIcon className="h-[18px] w-[18px]" />
-                  </a>
-                </div>
-              </aside>
+              {card}
             </div>
           </div>
 

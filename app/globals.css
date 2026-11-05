@@ -49,6 +49,15 @@
   padding-inline: var(--container-px);
 }
 
+/* The home page hero's own, wider container: up to 40px from the window's
+   edges on big screens (16px on phones, like page-container). */
+@utility hero-container {
+  width: 100%;
+  max-width: 2000px;
+  margin-inline: auto;
+  padding-inline: clamp(16px, 2.5vw, 40px);
+}
+
 /* The inside padding of a panel in page-container (header bar, hero panel). */
 @utility panel-px {
   padding-inline: var(--panel-px);
@@ -1189,62 +1198,6 @@ h1 {
     opacity: 1;
     transition: none;
   }
-}
-
-/* ---- Trust strip logos (app/components/TrustStrip.tsx) ----
-   Below lg the logos loop as a marquee: the list holds them twice, so moving
-   it by half its width lands exactly where it started. Hover or keyboard
-   focus pauses it. From lg, and with reduced motion, it is a still row and
-   the second copy is not shown; with reduced motion on a narrow screen the
-   row scrolls by hand instead. */
-@keyframes trust-marquee {
-  to {
-    transform: translateX(-50%);
-  }
-}
-.trust-logos {
-  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
-}
-.trust-marquee {
-  animation: trust-marquee 32s linear infinite;
-}
-.trust-logos:hover .trust-marquee,
-.trust-logos:focus-within .trust-marquee {
-  animation-play-state: paused;
-}
-@media (min-width: 1024px) {
-  .trust-logos {
-    mask-image: none;
-  }
-  .trust-marquee {
-    animation: none;
-  }
-  .trust-marquee [data-copy] {
-    display: none;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .trust-logos {
-    overflow-x: auto;
-    mask-image: none;
-    scrollbar-width: none;
-  }
-  .trust-marquee {
-    animation: none;
-  }
-  .trust-marquee [data-copy] {
-    display: none;
-  }
-}
-
-/* ---- CountUp (app/components/CountUp.tsx) ----
-   The final value, drawn invisibly in the same grid cell as the counting
-   number, reserves its width. Generated content is not page text, so the
-   number appears once in the DOM. */
-.count-up::before {
-  content: attr(data-final);
-  grid-area: 1 / 1;
-  visibility: hidden;
 }
 
 /* ---- Home About block (app/components/AboutUs.tsx) ----
