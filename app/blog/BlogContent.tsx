@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useSyncExternalStore } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import type { Post } from '@/app/lib/db'
@@ -156,11 +156,30 @@ function FeaturedPost({ post }: { post: Post }) {
   )
 }
 
-export default function BlogContent({ posts }: { posts: Post[] }) {
-  const [active, setActive] = useState('All')
+const subscribeToHistory = (onChange: () => void) => {
+  window.addEventListener('popstate', onChange)
+  return () => window.removeEventListener('popstate', onChange)
+}
+const categoryInAddress = () => new URLSearchParams(window.location.search).get('category')
 
+export default function BlogContent({ posts }: { posts: Post[] }) {
   // A button per category the posts use, so one added in the admin shows up.
   const categories = ['All', ...blogCategories(posts)]
+
+  // /blog?category=Cloud (the home page's topic links) opens on that filter.
+  // Read in the browser only, so the page itself can stay static.
+  const wanted = useSyncExternalStore(subscribeToHistory, categoryInAddress, () => null)
+  const [chosen, setChosen] = useState<string | null>(null)
+  const active = chosen ?? (wanted && categories.find((category) => sameCategory(category, wanted))) ?? 'All'
+
+  /** A filter chosen here is kept in the address, so it can be shared. */
+  const choose = (category: string) => {
+    setChosen(category)
+    const url = new URL(window.location.href)
+    if (category === 'All') url.searchParams.delete('category')
+    else url.searchParams.set('category', category)
+    window.history.replaceState(window.history.state, '', url)
+  }
   const filtered = active === 'All' ? posts : posts.filter((p) => sameCategory(p.category, active))
   const featured = filtered[0]
   const rest = filtered.slice(1)
@@ -201,7 +220,8 @@ export default function BlogContent({ posts }: { posts: Post[] }) {
           {categories.map((cat) => (
             <button
               key={cat}
-              onClick={() => setActive(cat)}
+              onClick={() => choose(cat)}
+              aria-pressed={active === cat}
               className="px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-200"
               style={
                 active === cat

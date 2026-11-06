@@ -154,6 +154,34 @@ export const homeDefaults = {
       ],
     },
   },
+  // Insights: the latest blog posts, magazine style. "featured" is a post's
+  // slug, or "latest" for the newest; the list shows the next newest posts.
+  // Each topic links to the blog filtered to its category, and is left out
+  // while no published post uses that category.
+  home_insights: {
+    fields: {
+      eyebrow: 'Insights',
+      heading: 'Better IT decisions',
+      heading_soft: 'start here.',
+      intro: 'Practical guides on IT support, security, cloud and the web for businesses in Dubai and the UAE.',
+      link_label: 'View all articles',
+      link: '/blog',
+      featured: 'latest',
+      list_count: '3',
+      list_label: 'More articles',
+      read_label: 'Read article',
+      topics_label: 'Browse by topic',
+    },
+    lists: {
+      topics: [
+        { title: 'IT Support', category: 'IT Support', show: 'yes' },
+        { title: 'Cyber Security', category: 'Cyber Security', show: 'yes' },
+        { title: 'Cloud', category: 'Cloud', show: 'yes' },
+        { title: 'Web', category: 'Web Development', show: 'yes' },
+        { title: 'Marketing', category: 'Digital Marketing', show: 'yes' },
+      ],
+    },
+  },
   home_process: {
     fields: {
       eyebrow: 'Our process',

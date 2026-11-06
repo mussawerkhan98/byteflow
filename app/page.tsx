@@ -5,6 +5,7 @@ import NeedsSection from "./components/NeedsSection";
 import AboutUs from "./components/AboutUs";
 import ServicePromise from "./components/ServicePromise";
 import TechStack from "./components/TechStack";
+import Insights from "./components/Insights";
 import Reviews from "./components/Reviews";
 import HowItWorks from "./components/HowItWorks";
 import HelpPanel from "./components/HelpPanel";
@@ -99,6 +100,7 @@ export default async function Home() {
       <AboutUs />
       <ServicePromise />
       <TechStack />
+      <Insights posts={posts} />
       <HowItWorks content={process} />
       <HelpPanel />
       <Blog posts={posts.slice(0, 4)} />
