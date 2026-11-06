@@ -20,6 +20,24 @@ export function initials(name: string): string {
   return words.slice(0, 2).map((word) => word[0]).join('').toUpperCase() || name.trim().slice(0, 1)
 }
 
+/** How many different platforms the tabs show, and in how many areas (tabs). */
+export function techCounts(tabs: TechTab[]): { platforms: number; areas: number } {
+  const names = new Set(tabs.flatMap((tab) => tab.logos.map((logo) => tabKey(logo.name))))
+  return { platforms: names.size, areas: tabs.length }
+}
+
+/** The icon a tab shows, from its name; anything unrecognised gets "layers". */
+export function tabIcon(title: string): 'microsoft' | 'shield' | 'network' | 'backup' | 'cloud' | 'code' | 'layers' {
+  const key = tabKey(title)
+  if (/microsoft|office|365/.test(key)) return 'microsoft'
+  if (/secur|cctv|firewall|protect/.test(key)) return 'shield'
+  if (/network|wi-?fi|cabling/.test(key)) return 'network'
+  if (/backup|recover|storage/.test(key)) return 'backup'
+  if (/cloud|azure|aws/.test(key)) return 'cloud'
+  if (/web|app|software|develop/.test(key)) return 'code'
+  return 'layers'
+}
+
 export function techTabs(block: HomeBlock): TechTab[] {
   const logos = (block.lists.logos ?? []).filter((item) => item.show !== 'no' && item.title)
   const seen = new Set<string>()

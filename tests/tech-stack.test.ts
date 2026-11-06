@@ -1,7 +1,7 @@
 import { strict as assert } from 'node:assert'
 import { test } from 'node:test'
 import { mergeHomeBlock } from '../app/lib/home-content'
-import { initials, techTabs } from '../app/lib/tech-stack'
+import { initials, tabIcon, techCounts, techTabs } from '../app/lib/tech-stack'
 
 test('the default tabs, with a tab that has no logos (Backup) left out', () => {
   const tabs = techTabs(mergeHomeBlock('home_tech', null))
@@ -48,4 +48,16 @@ test('a tile without a logo shows the name’s initials', () => {
   assert.equal(initials('Microsoft 365'), 'M')
   assert.equal(initials('HPE Aruba'), 'HA')
   assert.equal(initials('3CX'), '3')
+})
+
+test('the counts: different platforms across the shown tabs, once each', () => {
+  // Fortinet, Azure and Microsoft 365 appear under two tabs each in the defaults.
+  assert.deepEqual(techCounts(techTabs(mergeHomeBlock('home_tech', null))), { platforms: 18, areas: 5 })
+})
+
+test('each tab gets an icon from its name', () => {
+  assert.deepEqual(
+    ['Microsoft', 'Security', 'Networking', 'Backup', 'Cloud', 'Web', 'Printers'].map(tabIcon),
+    ['microsoft', 'shield', 'network', 'backup', 'cloud', 'code', 'layers'],
+  )
 })
