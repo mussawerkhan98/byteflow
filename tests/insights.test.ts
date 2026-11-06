@@ -36,12 +36,15 @@ test('the list length stays between 1 and 5', () => {
 test('topics link to their category, and only while it has posts', () => {
   const { topics } = insightPicks(mergeHomeBlock('home_insights', null), posts)
   // "Marketing" has no posts, so it is left out; case and spacing don't matter.
-  assert.deepEqual(topics, [
-    { label: 'IT Support', href: '/blog?category=IT%20Support' },
-    { label: 'Cyber Security', href: '/blog?category=Cyber%20Security' },
-    { label: 'Cloud', href: '/blog?category=Cloud' },
-    { label: 'Web', href: '/blog?category=Web%20Development' },
-  ])
+  assert.deepEqual(
+    topics.map((topic) => [topic.label, topic.href]),
+    [
+      ['IT Support', '/blog?category=IT%20Support'],
+      ['Cyber Security', '/blog?category=Cyber%20Security'],
+      ['Cloud', '/blog?category=Cloud'],
+      ['Web', '/blog?category=Web%20Development'],
+    ],
+  )
   assert.equal(categoryHref(' Web & Apps '), '/blog?category=Web%20%26%20Apps')
 })
 

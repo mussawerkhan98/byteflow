@@ -205,6 +205,7 @@ h1 {
   --insights-line: rgba(15, 52, 48, 0.12);
   --insights-line-strong: rgba(15, 52, 48, 0.22);
   --insights-card: #dde9e7;
+  --insights-tile: #ffffff;
   --insights-ink: #0f1b27;
   --insights-on-ink: #ffffff;
   background-color: #eef4f3;
@@ -215,6 +216,7 @@ h1 {
   --insights-line: rgba(220, 245, 240, 0.1);
   --insights-line-strong: rgba(220, 245, 240, 0.2);
   --insights-card: #10201f;
+  --insights-tile: rgba(255, 255, 255, 0.04);
   --insights-ink: #2ccdde;
   --insights-on-ink: #04121a;
   background-color: #08130f;

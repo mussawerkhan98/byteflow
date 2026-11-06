@@ -13,7 +13,7 @@ export const MIN_LIST = 1
 export const MAX_LIST = 5
 const DEFAULT_LIST = 3
 
-export type InsightTopic = { label: string; href: string }
+export type InsightTopic = { label: string; category: string; href: string }
 
 /** The blog, opened on one category's filter. */
 export const categoryHref = (category: string) => `/blog?category=${encodeURIComponent(category.trim())}`
@@ -34,7 +34,7 @@ export function insightPicks<P extends PostLike>(block: HomeBlock, posts: P[]) {
     .filter((topic) => topic.show !== 'no' && topic.title)
     .map((topic) => ({ label: topic.title, category: topic.category || topic.title }))
     .filter((topic) => posts.some((post) => sameCategory(post.category, topic.category)))
-    .map((topic) => ({ label: topic.label, href: categoryHref(topic.category) }))
+    .map((topic) => ({ label: topic.label, category: topic.category, href: categoryHref(topic.category) }))
 
   return { featured, list, topics }
 }
