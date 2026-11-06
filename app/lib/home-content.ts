@@ -119,6 +119,9 @@ export const homeDefaults = {
       link_label: 'Discuss your project',
       link: '/contact-us',
       note: 'Technology choices depend on your setup and budget.',
+      // Beside the figures counted from the logos below.
+      platforms_label: 'Platforms we support',
+      areas_label: 'Areas of your IT',
     },
     lists: {
       tabs: [
