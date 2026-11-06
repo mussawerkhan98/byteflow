@@ -47,3 +47,15 @@ test('a long first sentence is cut at a word, not mid-word', () => {
   const short = firstSentences(long)
   assert.ok(short.length <= 221 && short.endsWith('…') && !/\bwor…$/.test(short))
 })
+
+test('the results are the first three complete metrics, as published', () => {
+  assert.deepEqual(projectCard(project).metrics, [])
+  const metrics = [
+    { value: '6h', label: 'total downtime' },
+    { value: ' ', label: 'blank value' },
+    { value: '100%', label: 'data recovered' },
+    { value: 'AED 0', label: 'ransom paid' },
+    { value: '4', label: 'a fourth' },
+  ]
+  assert.deepEqual(projectCard({ ...project, metrics }).metrics.map((m) => m.value), ['6h', '100%', 'AED 0'])
+})
