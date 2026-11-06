@@ -175,54 +175,61 @@ export default function FAQ({ items, copy, contact }: { items: Faq[]; copy: FaqC
   return (
     <section aria-labelledby={`${id}-title`} className="faq-section relative overflow-hidden py-16 sm:py-20">
       <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-        <div className="absolute left-1/2 top-0 h-[26rem] w-[56rem] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(44,205,222,0.12),transparent)]" />
-        <div className="absolute inset-x-0 top-0 h-[22rem] bg-[radial-gradient(rgba(44,205,222,0.12)_1px,transparent_1px)] bg-[size:22px_22px] [mask-image:radial-gradient(ellipse_at_top,black,transparent_70%)]" />
+        <div className="absolute -left-40 top-0 h-[30rem] w-[30rem] rounded-full bg-[radial-gradient(closest-side,rgba(44,205,222,0.1),transparent)]" />
       </div>
 
       <div className="page-container relative">
-        {/* Heading, search and topics, centred. */}
-        <div className="mx-auto max-w-3xl text-center">
-          <p className="inline-flex items-center gap-2 rounded-full border border-[rgba(44,205,222,0.3)] bg-[var(--bg-surface)] py-1.5 pl-1.5 pr-4 text-[12px] font-semibold uppercase tracking-[0.16em] text-[var(--text-primary)] shadow-[0_8px_24px_-12px_rgba(44,205,222,0.5)]">
-            <span className="grid h-6 w-6 place-items-center rounded-full bg-[linear-gradient(135deg,#2CCDDE,#46A3E1)] text-[#04121A]">{QUESTION_ICON}</span>
-            {copy.eyebrow}
-          </p>
-          <h2 id={`${id}-title`} className="mt-6 text-balance text-[2.25rem] font-semibold leading-[1.05] tracking-[-0.04em] text-[var(--text-primary)] sm:text-[3rem]">
-            {copy.heading} <span className="bg-[linear-gradient(100deg,#2CCDDE,#46A3E1)] bg-clip-text text-transparent">{copy.heading_soft}</span>
-          </h2>
-          {copy.intro && <p className="mx-auto mt-4 max-w-xl text-[15.5px] leading-relaxed text-[var(--text-muted)]">{copy.intro}</p>}
+        {/* Heading on the left, intro and search on the right, as the other sections. */}
+        <div className="grid gap-8 lg:grid-cols-12 lg:items-end lg:gap-16">
+          <div className="lg:col-span-7">
+            <p className="flex items-center gap-3 text-[12px] font-semibold uppercase tracking-[0.18em] text-[#2CCDDE]">
+              <span aria-hidden="true" className="h-px w-10 bg-current" />
+              {copy.eyebrow}
+            </p>
+            <h2 id={`${id}-title`} className="mt-5 text-balance text-[2.25rem] font-semibold leading-[1.05] tracking-[-0.04em] text-[var(--text-primary)] sm:text-5xl lg:text-[3.5rem]">
+              {copy.heading} <span className="bg-[linear-gradient(100deg,#2CCDDE,#46A3E1)] bg-clip-text text-transparent">{copy.heading_soft}</span>
+            </h2>
+          </div>
+          <div className="lg:col-span-5 lg:pb-1.5">
+            {copy.intro && <p className="text-[16px] leading-relaxed text-[var(--text-muted)]">{copy.intro}</p>}
+            <label className="relative mt-5 block">
+              <span className="sr-only">{copy.search_label}</span>
+              <svg aria-hidden="true" className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#2CCDDE]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <circle cx="11" cy="11" r="7" />
+                <path strokeLinecap="round" d="m20 20-3.5-3.5" />
+              </svg>
+              <input
+                type="search"
+                value={query}
+                onChange={(event) => {
+                  setQuery(event.target.value);
+                  setOpen(null);
+                }}
+                placeholder={`${copy.search_label}…`}
+                className="w-full rounded-full border border-[var(--border-strong)] bg-[var(--bg-surface)] py-3 pl-11 pr-4 text-[15px] text-[var(--input-text)] outline-none transition-colors placeholder:text-[var(--text-dim)] focus:border-[#2CCDDE]/70"
+              />
+            </label>
+          </div>
+        </div>
 
-          <label className="relative mx-auto mt-8 block max-w-2xl">
-            <span className="sr-only">{copy.search_label}</span>
-            <svg aria-hidden="true" className="pointer-events-none absolute left-5 top-1/2 h-5 w-5 -translate-y-1/2 text-[#2CCDDE]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <circle cx="11" cy="11" r="7" />
-              <path strokeLinecap="round" d="m20 20-3.5-3.5" />
-            </svg>
-            <input
-              type="search"
-              value={query}
-              onChange={(event) => {
-                setQuery(event.target.value);
-                setOpen(null);
-              }}
-              placeholder={`${copy.search_label}…`}
-              className="w-full rounded-full border border-[var(--border-strong)] bg-[var(--bg-surface)] py-4 pl-14 pr-20 text-[15.5px] text-[var(--input-text)] shadow-[0_20px_50px_-30px_rgba(4,13,18,0.6)] outline-none transition-colors placeholder:text-[var(--text-dim)] focus:border-[#2CCDDE]/70"
-            />
-            <span aria-live="polite" className="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2 text-[12.5px] font-medium tabular-nums text-[var(--text-dim)]">
-              {shown.length}/{inTopic.length}
-            </span>
-          </label>
-
-          {categories.length > 1 && (
-            <div role="group" aria-label="Filter questions by topic" className="-mx-4 mt-5 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:justify-center sm:overflow-visible sm:px-0 [&::-webkit-scrollbar]:hidden">
+        {/* Topics on the left, how many questions are showing on the right. */}
+        <div className="mt-10 flex flex-col gap-3 border-b border-[var(--border-default)] pb-4 sm:flex-row sm:items-center sm:justify-between">
+          {categories.length > 1 ? (
+            <div role="group" aria-label="Filter questions by topic" className="-mx-4 flex gap-2 overflow-x-auto px-4 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 [&::-webkit-scrollbar]:hidden">
               {tab(copy.all_label, null, items.length)}
               {categories.map((category) => tab(category, category, items.filter((faq) => faq.category.trim() === category).length))}
             </div>
+          ) : (
+            <span />
           )}
+          <p aria-live="polite" className="hidden shrink-0 font-mono text-[12px] font-medium tabular-nums text-[var(--text-dim)] sm:block">
+            {String(shown.length).padStart(2, "0")} / {String(inTopic.length).padStart(2, "0")}
+          </p>
         </div>
 
         {/* The questions, in two columns on wide screens. */}
         {shown.length ? (
-          <div className={`mt-10 grid items-start gap-3 ${columns.length > 1 ? "lg:grid-cols-2 lg:gap-4" : "mx-auto max-w-3xl"}`}>
+          <div className={`mt-6 grid items-start gap-3 ${columns.length > 1 ? "lg:grid-cols-2 lg:gap-4" : ""}`}>
             {columns.map((column, c) => (
               <ol key={c} className="grid gap-3 lg:gap-4">
                 {column.map((faq) => (
