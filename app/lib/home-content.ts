@@ -106,6 +106,54 @@ export const homeDefaults = {
       ],
     },
   },
+  // Technologies: the vendors we work with, one tab per area. Each logo names
+  // its tab by the tab's title; a tab with no logo to show is left out. The
+  // defaults list only vendors Byteflow's own pages already name, with no
+  // pictures (the tile shows the name's initials until a logo is uploaded).
+  home_tech: {
+    fields: {
+      eyebrow: 'Technologies',
+      heading: 'The tools behind',
+      heading_soft: 'reliable IT.',
+      intro: 'Proven platforms we install, configure and support, chosen to fit your business rather than our habits.',
+      link_label: 'Discuss your project',
+      link: '/contact-us',
+      note: 'Technology choices depend on your setup and budget.',
+    },
+    lists: {
+      tabs: [
+        { title: 'Microsoft', description: 'Email, files, meetings and cloud for your whole team.', show: 'yes' },
+        { title: 'Security', description: 'Firewalls, CCTV and access control that protect people and data.', show: 'yes' },
+        { title: 'Networking', description: 'Switching, routing and Wi-Fi for offices of every size.', show: 'yes' },
+        { title: 'Backup', description: 'Copies of your data you can restore when something goes wrong.', show: 'yes' },
+        { title: 'Cloud', description: 'Cloud platforms we migrate to and manage.', show: 'yes' },
+        { title: 'Web', description: 'Websites, apps and tools built for the UAE market.', show: 'yes' },
+      ],
+      logos: [
+        { title: 'Microsoft 365', tab: 'Microsoft', logo: '', show: 'yes' },
+        { title: 'Microsoft Azure', tab: 'Microsoft', logo: '', show: 'yes' },
+        { title: 'Microsoft Teams', tab: 'Microsoft', logo: '', show: 'yes' },
+        { title: 'SharePoint', tab: 'Microsoft', logo: '', show: 'yes' },
+        { title: 'Exchange Online', tab: 'Microsoft', logo: '', show: 'yes' },
+        { title: 'Fortinet', tab: 'Security', logo: '', show: 'yes' },
+        { title: 'Hikvision', tab: 'Security', logo: '', show: 'yes' },
+        { title: 'ZKTeco', tab: 'Security', logo: '', show: 'yes' },
+        { title: 'Cisco', tab: 'Networking', logo: '', show: 'yes' },
+        { title: 'Ubiquiti', tab: 'Networking', logo: '', show: 'yes' },
+        { title: 'HPE Aruba', tab: 'Networking', logo: '', show: 'yes' },
+        { title: 'Fortinet', tab: 'Networking', logo: '', show: 'yes' },
+        { title: 'Microsoft Azure', tab: 'Cloud', logo: '', show: 'yes' },
+        { title: 'Microsoft 365', tab: 'Cloud', logo: '', show: 'yes' },
+        { title: 'Google Workspace', tab: 'Cloud', logo: '', show: 'yes' },
+        { title: 'React', tab: 'Web', logo: '', show: 'yes' },
+        { title: 'Node.js', tab: 'Web', logo: '', show: 'yes' },
+        { title: 'Laravel', tab: 'Web', logo: '', show: 'yes' },
+        { title: 'Python', tab: 'Web', logo: '', show: 'yes' },
+        { title: 'Flutter', tab: 'Web', logo: '', show: 'yes' },
+        { title: 'WordPress', tab: 'Web', logo: '', show: 'yes' },
+      ],
+    },
+  },
   home_process: {
     fields: {
       eyebrow: 'Our process',

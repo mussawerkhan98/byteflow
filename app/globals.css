@@ -156,6 +156,7 @@ h1 {
 .home-services :focus-visible,
 .home-about :focus-visible,
 .home-promise :focus-visible,
+.home-tech :focus-visible,
 .home-help :focus-visible,
 .home-process :focus-visible {
   outline: 2px solid var(--cyan);
