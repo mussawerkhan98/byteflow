@@ -158,6 +158,7 @@ h1 {
 .home-promise :focus-visible,
 .home-tech :focus-visible,
 .home-insights :focus-visible,
+.needs-band :focus-visible,
 .home-help :focus-visible,
 .home-process :focus-visible {
   outline: 2px solid var(--cyan);
@@ -181,20 +182,19 @@ h1 {
   color: #2ccdde;
 }
 
-/* ---- Home "Where does your IT need help?" (app/components/NeedsSection.tsx) ---- */
-
-/* A warm off-white band between the cooler sections, with warm hairlines;
-   a warm near-black on dark. The accent darkens on light so it stays legible. */
-.warm-section {
-  --warm-line: rgba(70, 52, 24, 0.16);
-  --warm-accent: #0e7490;
-  background-color: #f7f4ee;
-}
-
-:root:not([data-theme='light']) .warm-section {
-  --warm-line: rgba(255, 240, 215, 0.12);
-  --warm-accent: #2ccdde;
-  background-color: #0f0e0c;
+/* ---- Home "Where does your IT need help?" (app/components/NeedsSection.tsx) ----
+   A bright band in both themes: the light theme's text and line colours are
+   set here, so the section reads the same however the visitor's theme is set. */
+.needs-band {
+  --text-primary: #0b1220;
+  --text-body: #475569;
+  --text-nav: #64748b;
+  --border-default: rgba(11, 18, 32, 0.09);
+  --border-strong: rgba(11, 18, 32, 0.2);
+  --needs-accent: #0e7490;
+  --needs-tint: #e6f7f9;
+  color: var(--text-primary);
+  background: linear-gradient(180deg, #f2f7f8 0%, #fbfcfc 55%, #f4f8f9 100%);
 }
 
 /* ---- Home Insights (app/components/Insights.tsx) ----
