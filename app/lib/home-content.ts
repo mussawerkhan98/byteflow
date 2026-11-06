@@ -188,6 +188,20 @@ export const homeDefaults = {
       ],
     },
   },
+  // Client reviews: the words around the reviews, which come from Customer
+  // reviews in the admin. The rating and count quote the site-wide figures.
+  home_reviews: {
+    fields: {
+      eyebrow: 'Client reviews',
+      heading: 'Trusted by businesses',
+      heading_soft: 'across the UAE.',
+      intro: 'Real words from the businesses we look after, from one-person offices to multi-site teams.',
+      rating_label: 'Google rating',
+      count_label: '{reviews} Google reviews',
+      google_label: 'Read all reviews on Google',
+    },
+    lists: {},
+  },
   home_process: {
     fields: {
       eyebrow: 'Our process',

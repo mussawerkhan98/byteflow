@@ -158,6 +158,7 @@ h1 {
 .home-promise :focus-visible,
 .home-tech :focus-visible,
 .home-insights :focus-visible,
+.home-reviews :focus-visible,
 .needs-band :focus-visible,
 .home-help :focus-visible,
 .home-process :focus-visible {
@@ -245,6 +246,29 @@ h1 {
   .needs-art .art-float,
   .group:hover .needs-art .art-draw {
     animation: none;
+  }
+}
+
+/* ---- Home reviews wall (app/components/Reviews.tsx) ----
+   The row holds its cards twice, so moving it by half its width loops with
+   no seam. Paused under the pointer; with reduced motion it stands still and
+   scrolls sideways instead. */
+.review-wall-track {
+  animation: review-wall var(--wall-speed, 60s) linear infinite;
+}
+.review-wall-row:hover .review-wall-track,
+.review-wall-row:focus-within .review-wall-track {
+  animation-play-state: paused;
+}
+@keyframes review-wall {
+  to { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .review-wall-track {
+    animation: none;
+  }
+  .review-wall-row {
+    overflow-x: auto;
   }
 }
 
