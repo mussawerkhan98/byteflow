@@ -270,6 +270,10 @@ export async function getHomeProjects(limit = 4): Promise<DbProject[]> {
       sql: "SELECT * FROM projects WHERE published = 1 AND home_featured = 1 ORDER BY home_order ASC, sort_order ASC LIMIT ?",
       args: [limit],
     });
+    // None ticked "Feature on homepage" yet (a database where the column was
+    // only just added starts with all off): the first published projects, so
+    // the section never disappears.
+    if (!result.rows.length) return (await getProjects()).slice(0, limit);
     return result.rows.map(toProject);
   } catch (error) {
     if (/no such column/i.test(String(error))) return (await getProjects()).slice(0, limit);
