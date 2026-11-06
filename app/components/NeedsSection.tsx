@@ -24,7 +24,7 @@ export default async function NeedsSection() {
   const steps = lines(copy.steps)
 
   return (
-    <section aria-labelledby="needs-title" className="needs-band relative isolate overflow-hidden py-20 sm:py-24 lg:py-32">
+    <section aria-labelledby="needs-title" className="needs-band relative isolate overflow-hidden py-14 sm:py-16">
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute -right-48 -top-48 h-[38rem] w-[38rem] rounded-full bg-[radial-gradient(closest-side,rgba(44,205,222,0.22),transparent)]" />
         <div className="absolute -bottom-56 -left-40 h-[34rem] w-[34rem] rounded-full bg-[radial-gradient(closest-side,rgba(70,163,225,0.14),transparent)]" />
@@ -32,15 +32,15 @@ export default async function NeedsSection() {
       </div>
 
       <div className="page-container">
-        <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between lg:gap-16">
-          <div className="max-w-3xl">
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between lg:gap-16">
+          <div className="max-w-3xl xl:max-w-none">
             <p className="flex items-center gap-3 text-[12px] font-semibold uppercase tracking-[0.18em] text-[var(--needs-accent)]">
               <span aria-hidden="true" className="h-px w-10 bg-current" />
               {copy.eyebrow}
             </p>
             <h2
               id="needs-title"
-              className="mt-5 text-balance text-[2.25rem] font-semibold leading-[1.05] tracking-[-0.04em] text-[var(--text-primary)] sm:text-5xl lg:text-[3.5rem]"
+              className="mt-4 text-balance text-[2rem] font-semibold leading-[1.05] tracking-[-0.04em] text-[var(--text-primary)] sm:text-[2.75rem] lg:text-[3rem]"
             >
               {copy.heading}
             </h2>
@@ -58,10 +58,11 @@ export default async function NeedsSection() {
           )}
         </div>
 
-        <ol className="mt-12 grid gap-5 sm:mt-16 md:grid-cols-3 lg:gap-6">
+        {/* On phones the cards are a row you swipe through, not a tall stack. */}
+        <ol className="-mx-4 mt-8 flex snap-x snap-mandatory scroll-px-4 gap-4 overflow-x-auto px-4 pb-3 pt-1 [scrollbar-width:none] sm:mt-10 md:mx-0 md:grid md:grid-cols-3 md:overflow-visible md:px-0 md:pb-0 lg:gap-5 [&::-webkit-scrollbar]:hidden">
           {scenarios.map((scenario) => (
-            <li key={scenario.number}>
-              <article className="group relative flex h-full flex-col overflow-hidden rounded-[1.75rem] border border-[var(--border-default)] bg-white p-7 shadow-[0_1px_2px_rgba(15,27,39,0.04),0_24px_48px_-32px_rgba(15,27,39,0.25)] transition-[transform,box-shadow,border-color] duration-300 hover:-translate-y-1 hover:border-[rgba(14,116,144,0.3)] hover:shadow-[0_40px_70px_-36px_rgba(15,27,39,0.4)] motion-reduce:transition-none sm:p-8">
+            <li key={scenario.number} className="w-[82%] shrink-0 snap-start sm:w-[60%] md:w-auto">
+              <article className="group relative flex h-full flex-col overflow-hidden rounded-[1.5rem] border border-[var(--border-default)] bg-white p-5 shadow-[0_1px_2px_rgba(15,27,39,0.04),0_24px_48px_-32px_rgba(15,27,39,0.25)] transition-[transform,box-shadow,border-color] duration-300 hover:-translate-y-1 hover:border-[rgba(14,116,144,0.3)] hover:shadow-[0_40px_70px_-36px_rgba(15,27,39,0.4)] motion-reduce:transition-none sm:p-6">
                 {/* A cyan line runs along the top on hover. */}
                 <span
                   aria-hidden="true"
@@ -69,7 +70,7 @@ export default async function NeedsSection() {
                 />
 
                 {/* The scene for this need, from the service it links to. */}
-                <div className="relative -mx-3 -mt-3 aspect-[16/10] overflow-hidden rounded-[1.25rem] border border-[var(--border-default)] bg-[linear-gradient(160deg,#e9f7f9_0%,#f7fbfc_60%,#eef6f8_100%)] sm:-mx-4 sm:-mt-4">
+                <div className="relative -mx-2 -mt-2 aspect-[2/1] overflow-hidden lg:aspect-[5/2] rounded-[1.1rem] border border-[var(--border-default)] bg-[linear-gradient(160deg,#e9f7f9_0%,#f7fbfc_60%,#eef6f8_100%)] sm:-mx-3 sm:-mt-3">
                   <div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(rgba(14,116,144,0.12)_1px,transparent_1px)] bg-[size:16px_16px]" />
                   <div className="relative h-full w-full transition-transform duration-500 group-hover:scale-[1.04] motion-reduce:transition-none">
                     <NeedsArt service={scenario.link?.href ?? ''} />
@@ -79,19 +80,19 @@ export default async function NeedsSection() {
                   </span>
                 </div>
 
-                <p className="mt-8 text-[11.5px] font-semibold uppercase tracking-[0.18em] text-[var(--needs-accent)]">
+                <p className="mt-5 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--needs-accent)]">
                   {scenario.label}
                 </p>
-                <h3 className="mt-3 text-balance font-display text-[1.5rem] font-semibold leading-[1.15] tracking-[-0.02em] text-[var(--text-primary)] sm:text-[1.625rem]">
+                <h3 className="mt-2 text-balance font-display text-[1.25rem] font-semibold leading-[1.2] tracking-[-0.02em] text-[var(--text-primary)] sm:text-[1.375rem]">
                   {scenario.title}
                 </h3>
-                {scenario.description && <p className="mt-4 text-[15.5px] leading-relaxed text-[var(--text-body)]">{scenario.description}</p>}
+                {scenario.description && <p className="mt-2.5 text-[14.5px] leading-relaxed text-[var(--text-body)]">{scenario.description}</p>}
 
                 {scenario.link && (
-                  <div className="mt-auto pt-8">
+                  <div className="mt-auto pt-5">
                     <Link
                       href={scenario.link.href}
-                      className="flex items-center justify-between gap-4 border-t border-[var(--border-default)] pt-5 text-[14.5px] font-semibold text-[var(--text-primary)] after:absolute after:inset-0 after:content-['']"
+                      className="flex items-center justify-between gap-4 border-t border-[var(--border-default)] pt-4 text-[14px] font-semibold text-[var(--text-primary)] after:absolute after:inset-0 after:content-['']"
                     >
                       <span className="flex items-center gap-2.5">
                         <span aria-hidden="true" className="grid h-8 w-8 place-items-center rounded-lg bg-[var(--needs-tint)] text-[var(--needs-accent)]">
@@ -111,15 +112,15 @@ export default async function NeedsSection() {
         </ol>
 
         {(steps.length > 0 || copy.steps_link_label) && (
-          <div className="mt-6 flex flex-col gap-5 rounded-[1.75rem] border border-[var(--border-default)] bg-white/70 p-5 backdrop-blur sm:p-6 lg:flex-row lg:items-center lg:justify-between lg:rounded-full lg:py-4 lg:pl-8 lg:pr-4">
-            <ol aria-label="How a project runs" className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-4">
+          <div className="mt-5 flex flex-col gap-4 rounded-[1.5rem] border border-[var(--border-default)] bg-white/70 p-4 backdrop-blur sm:p-5 lg:flex-row lg:items-center lg:justify-between lg:rounded-full lg:py-3 lg:pl-7 lg:pr-3">
+            <ol aria-label="How a project runs" className="grid grid-cols-2 gap-x-4 gap-y-3 sm:flex sm:flex-wrap sm:items-center">
               {steps.map((step, index) => (
-                <li key={step} className="flex items-center gap-3 sm:gap-4">
+                <li key={step} className="flex items-center gap-2.5 sm:gap-3">
                   {index > 0 && <span aria-hidden="true" className="hidden h-px w-8 bg-[var(--border-strong)] sm:block lg:w-12" />}
-                  <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-[var(--needs-tint)] font-display text-[13px] font-semibold text-[var(--needs-accent)]">
+                  <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-[var(--needs-tint)] font-display text-[12px] font-semibold text-[var(--needs-accent)]">
                     {index + 1}
                   </span>
-                  <span className="text-[13px] font-semibold uppercase tracking-[0.12em] text-[var(--text-primary)]">{step}</span>
+                  <span className="text-[11.5px] font-semibold uppercase tracking-[0.1em] text-[var(--text-primary)] sm:text-[12.5px]">{step}</span>
                 </li>
               ))}
             </ol>
