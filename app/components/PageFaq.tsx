@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import FAQ from "./FAQ";
+import FAQ, { type FaqContact, type FaqCopy } from "./FAQ";
 import { services } from "../lib/services-data";
 
 type FaqItem = {
@@ -21,6 +21,8 @@ const SERVICE_PAGE_PATHS = new Set(services.map((s) => `/${s.slug}`));
 export default function PageFaq() {
   const pathname = usePathname();
   const [items, setItems] = useState<FaqItem[]>([]);
+  const [copy, setCopy] = useState<FaqCopy | null>(null);
+  const [contact, setContact] = useState<FaqContact | null>(null);
   const skip = SERVICE_PAGE_PATHS.has(pathname);
 
   useEffect(() => {
@@ -33,7 +35,10 @@ export default function PageFaq() {
     void fetch(`/api/page-faqs?path=${encodeURIComponent(pathname)}`)
       .then((response) => response.json())
       .then((data) => {
-        if (active) setItems(data.faqs ?? []);
+        if (!active) return;
+        setItems(data.faqs ?? []);
+        setCopy(data.copy ?? null);
+        setContact(data.contact ?? null);
       })
       .catch(() => {
         if (active) setItems([]);
@@ -45,5 +50,6 @@ export default function PageFaq() {
 
   if (skip) return null;
 
-  return <FAQ items={items} fallback={false} />;
+  if (!copy || !contact) return null;
+  return <FAQ items={items} copy={copy} contact={contact} />;
 }
