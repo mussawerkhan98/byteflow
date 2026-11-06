@@ -160,6 +160,7 @@ h1 {
 .home-insights :focus-visible,
 .home-reviews :focus-visible,
 .home-contact :focus-visible,
+.faq-section :focus-visible,
 .needs-band :focus-visible,
 .home-help :focus-visible,
 .home-process :focus-visible {

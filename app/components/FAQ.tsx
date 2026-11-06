@@ -1,291 +1,289 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
+import { highlight, matchesFaq } from "../lib/faq-search";
 
-const faqs = [
-  {
-    category: "IT Support",
-    q: "What is an IT AMC and why does my business need one?",
-    a: "An Annual Maintenance Contract (AMC) means we manage all your IT — computers, servers, network, printers and software — for a fixed monthly fee. You get predictable costs, faster issue resolution and a dedicated team that knows your setup. No surprise invoices, no chasing vendors.",
-  },
-  {
-    category: "IT Support",
-    q: "How quickly do your engineers respond to IT issues?",
-    a: "We guarantee on-site or remote support within 2 hours across Dubai, Sharjah and Abu Dhabi. For critical outages, our team is on it immediately. Most issues are resolved remotely within 30 minutes of being reported.",
-  },
-  {
-    category: "IT Support",
-    q: "Do you support businesses outside Dubai?",
-    a: "Yes — we cover Dubai, Sharjah and Abu Dhabi with on-site engineers. For other emirates and GCC countries, we provide full remote support and can arrange on-site visits for larger projects.",
-  },
-  {
-    category: "Cloud & Microsoft",
-    q: "Can you migrate our team to Microsoft 365?",
-    a: "Absolutely. We handle the full migration — email, files, Teams, SharePoint and licensing. We move everything with zero data loss, train your staff and manage your Microsoft 365 environment on an ongoing basis so you never have to deal with Microsoft support yourself.",
-  },
-  {
-    category: "Cloud & Microsoft",
-    q: "What cloud services do you offer?",
-    a: "We cover Microsoft 365, Azure, cloud backup, cloud servers and hybrid setups. Whether you need to move a single application or your entire infrastructure to the cloud, we design, migrate and manage it end-to-end.",
-  },
-  {
-    category: "Security",
-    q: "How do you protect businesses from ransomware and cyber attacks?",
-    a: "We deploy layered protection: enterprise firewalls, endpoint antivirus, email filtering, network monitoring and automated cloud backups with instant recovery. If an attack does happen, our backup system means we can restore your data and have you operational within hours — not days.",
-  },
-  {
-    category: "Security",
-    q: "What happens if we get hacked or lose our data?",
-    a: "With our backup and recovery service, your data is automatically backed up multiple times daily. In the event of a ransomware attack, hardware failure or accidental deletion, we restore everything quickly — often within hours. Our clients have recovered from full ransomware attacks without paying a ransom.",
-  },
-  {
-    category: "Pricing",
-    q: "How much does IT support cost for a small business?",
-    a: "Our packages start from a fixed monthly fee based on your number of users and devices. There are no hidden charges or per-call fees. We offer flexible plans for businesses from 5 to 500+ users. Contact us for a free consultation and a tailored quote within 24 hours.",
-  },
-  {
-    category: "Pricing",
-    q: "Do you require long-term contracts?",
-    a: "We offer both monthly and annual plans. Annual plans come with better pricing and priority SLAs. We are confident enough in our service that we do not lock you into punishing contracts — most of our clients have been with us for years because they want to be, not because they have to be.",
-  },
-  {
-    category: "Services",
-    q: "Can you build a website and handle our digital marketing too?",
-    a: "Yes — this is one of our biggest strengths. We offer website development, SEO, Google Ads, social media marketing and graphic design all under one roof. You get a single point of contact, consistent strategy and no blame-shifting between vendors.",
-  },
-];
+/** The words around the questions: the "FAQ section (all pages)" home block. */
+export type FaqCopy = {
+  eyebrow: string;
+  heading: string;
+  heading_soft: string;
+  intro: string;
+  all_label: string;
+  help_title: string;
+  help_text: string;
+  call_label: string;
+  whatsapp_label: string;
+  search_label: string;
+  empty_text: string;
+};
 
-export default function FAQ({
-  items,
-  fallback = true,
-}: {
-  items?: { category: string; question: string; answer: string }[];
-  fallback?: boolean;
-}) {
-  const shownFaqs = items?.length
-    ? items.map((item) => ({
-        category: item.category,
-        q: item.question,
-        a: item.answer,
-      }))
-    : fallback
-      ? faqs
-      : [];
-  const [open, setOpen] = useState<number | null>(0);
-  const [activeCategory, setActiveCategory] = useState("All");
+/** tel: and WhatsApp links and the business hours, from Contact details & logo. */
+export type FaqContact = { phone: string; whatsapp: string; hours?: string };
 
-  const dynamicCategories = [
-    "All",
-    ...Array.from(new Set(shownFaqs.map((f) => f.category))),
-  ];
-  const filtered =
-    activeCategory === "All"
-      ? shownFaqs
-      : shownFaqs.filter((f) => f.category === activeCategory);
+type Faq = { category: string; question: string; answer: string };
 
-  if (!shownFaqs.length) return null;
+const PhoneIcon = () => (
+  <svg aria-hidden="true" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z"
+    />
+  </svg>
+);
+
+const WhatsAppIcon = () => (
+  <svg aria-hidden="true" className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+    <path d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.61-.92-2.21-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.21 3.08c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.63.71.23 1.36.2 1.87.12.57-.09 1.76-.72 2.01-1.41.25-.69.25-1.29.17-1.41-.07-.12-.27-.2-.57-.35M12.05 21.8h-.01a9.8 9.8 0 01-5-1.37l-.36-.21-3.72.98 1-3.63-.24-.37a9.77 9.77 0 01-1.5-5.21c0-5.42 4.41-9.83 9.84-9.83 2.63 0 5.1 1.03 6.95 2.88a9.77 9.77 0 012.88 6.96c0 5.42-4.41 9.83-9.83 9.83m8.37-18.2A11.76 11.76 0 0012.05 0C5.5 0 .17 5.33.17 11.88c0 2.09.55 4.14 1.59 5.94L.07 24l6.33-1.66a11.85 11.85 0 005.65 1.44h.01c6.55 0 11.88-5.33 11.88-11.88 0-3.17-1.24-6.16-3.48-8.4" />
+  </svg>
+);
+
+/** Text with the words searched for picked out in cyan. */
+function Marked({ text, query }: { text: string; query: string }) {
+  return (
+    <>
+      {highlight(text, query).map((piece, i) =>
+        piece.match ? (
+          <mark key={i} className="rounded-[4px] bg-[rgba(44,205,222,0.22)] px-0.5 text-inherit">
+            {piece.text}
+          </mark>
+        ) : (
+          piece.text
+        ),
+      )}
+    </>
+  );
+}
+
+const QUESTION_ICON = (
+  <svg aria-hidden="true" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6M12 17h.01" />
+    <circle cx="12" cy="12" r="9.5" />
+  </svg>
+);
+
+type Item = Faq & { number: number };
+
+/** One question: a card that opens to show its answer at full height. */
+function Question({ faq, open, onToggle, query, baseId }: { faq: Item; open: boolean; onToggle: () => void; query: string; baseId: string }) {
+  return (
+    <li
+      className={`relative overflow-hidden rounded-[1.25rem] border transition-[border-color,background-color,box-shadow] duration-300 ${
+        open
+          ? "border-[#2CCDDE]/45 bg-[linear-gradient(160deg,rgba(44,205,222,0.09),var(--bg-surface)_60%)] shadow-[0_24px_50px_-30px_rgba(44,205,222,0.45)]"
+          : "border-[var(--border-default)] bg-[var(--bg-surface)] hover:border-[#2CCDDE]/30"
+      }`}
+    >
+      <h3>
+        <button
+          type="button"
+          id={`${baseId}-q`}
+          aria-expanded={open}
+          aria-controls={`${baseId}-a`}
+          onClick={onToggle}
+          className="group flex w-full items-start gap-4 p-5 text-left"
+        >
+          <span
+            className={`mt-px grid h-7 w-7 shrink-0 place-items-center rounded-lg font-mono text-[11px] font-semibold tabular-nums transition-colors ${
+              open ? "bg-[#2CCDDE] text-[#04121A]" : "bg-[var(--overlay-hover)] text-[var(--text-dim)] group-hover:text-[#2CCDDE]"
+            }`}
+          >
+            {String(faq.number).padStart(2, "0")}
+          </span>
+          <span className={`flex-1 pt-0.5 text-[15.5px] font-semibold leading-snug transition-colors ${open ? "text-[var(--text-primary)]" : "text-[var(--text-nav)] group-hover:text-[var(--text-primary)]"}`}>
+            <Marked text={faq.question} query={query} />
+          </span>
+          <span
+            aria-hidden="true"
+            className={`grid h-7 w-7 shrink-0 place-items-center rounded-full transition-all duration-300 motion-reduce:transition-none ${
+              open ? "rotate-45 bg-[linear-gradient(135deg,#2CCDDE,#46A3E1)] text-[#04121A]" : "border border-[var(--border-strong)] text-[var(--text-nav)] group-hover:border-[#2CCDDE] group-hover:text-[#2CCDDE]"
+            }`}
+          >
+            <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.6}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+          </span>
+        </button>
+      </h3>
+      {/* Grows to the answer's own height, so long answers are never cut off. */}
+      <div
+        id={`${baseId}-a`}
+        role="region"
+        aria-labelledby={`${baseId}-q`}
+        className={`grid transition-[grid-template-rows] duration-300 ease-out motion-reduce:transition-none ${open ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
+      >
+        <div className="overflow-hidden">
+          <div className="px-5 pb-5 pl-16">
+            {faq.category && <p className="mb-1.5 text-[10.5px] font-semibold uppercase tracking-[0.16em] text-[#2CCDDE]">{faq.category}</p>}
+            <p className="whitespace-pre-line text-[14.5px] leading-relaxed text-[var(--text-muted)]">
+              <Marked text={faq.answer} query={query} />
+            </p>
+          </div>
+        </div>
+      </div>
+    </li>
+  );
+}
+
+/**
+ * The FAQ section on every page that has questions (PageFaq), laid out like a
+ * help centre: the heading, a search box and topic tabs centred on top, the
+ * questions below in two columns (one on phones), and a "Still have
+ * questions?" bar along the bottom. Nothing is sticky, so the columns always
+ * line up. Questions come from FAQs in the admin; the words around them from
+ * the "FAQ section (all pages)" home block.
+ */
+export default function FAQ({ items, copy, contact }: { items: Faq[]; copy: FaqCopy; contact: FaqContact }) {
+  const id = useId();
+  // All closed to start, so the two columns sit level.
+  const [open, setOpen] = useState<string | null>(null);
+  const [active, setActive] = useState<string | null>(null);
+  const [query, setQuery] = useState("");
+
+  const categories = Array.from(new Set(items.map((faq) => faq.category.trim()).filter(Boolean)));
+  const inTopic = active ? items.filter((faq) => faq.category.trim() === active) : items;
+  const shown: Item[] = inTopic.filter((faq) => matchesFaq(faq, query)).map((faq, i) => ({ ...faq, number: i + 1 }));
+  // Two columns read top to bottom: the first half on the left, the rest on the right.
+  const half = Math.ceil(shown.length / 2);
+  const columns = shown.length > 3 ? [shown.slice(0, half), shown.slice(half)] : [shown];
+  const autoOpen = query.trim() !== "" && shown.length === 1;
+
+  if (!items.length) return null;
+
+  const tab = (label: string, value: string | null, count: number) => {
+    const on = active === value;
+    return (
+      <button
+        key={label}
+        type="button"
+        aria-pressed={on}
+        onClick={() => {
+          setActive(value);
+          setOpen(null);
+        }}
+        className={`inline-flex shrink-0 items-center gap-2 rounded-full py-2 pl-4 pr-2 text-[13.5px] font-semibold transition-colors duration-200 ${
+          on ? "bg-[linear-gradient(135deg,#2CCDDE,#46A3E1)] text-[#04121A]" : "border border-[var(--border-default)] bg-[var(--bg-surface)] text-[var(--text-nav)] hover:border-[#2CCDDE]/50 hover:text-[var(--text-primary)]"
+        }`}
+      >
+        {label}
+        <span className={`min-w-6 rounded-full px-1.5 py-0.5 text-center text-[11px] tabular-nums ${on ? "bg-[#04121A]/15" : "bg-[var(--overlay-hover)]"}`}>{count}</span>
+      </button>
+    );
+  };
 
   return (
-    <section className="relative py-28 overflow-hidden">
-      <div
-        className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[700px] h-[500px] pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(ellipse, rgba(44,205,222,0.06) 0%, transparent 70%)",
-          filter: "blur(60px)",
-        }}
-      />
+    <section aria-labelledby={`${id}-title`} className="faq-section relative overflow-hidden py-16 sm:py-20">
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+        <div className="absolute left-1/2 top-0 h-[26rem] w-[56rem] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(44,205,222,0.12),transparent)]" />
+        <div className="absolute inset-x-0 top-0 h-[22rem] bg-[radial-gradient(rgba(44,205,222,0.12)_1px,transparent_1px)] bg-[size:22px_22px] [mask-image:radial-gradient(ellipse_at_top,black,transparent_70%)]" />
+      </div>
 
       <div className="page-container relative">
-        {/* Header */}
-        <div className="text-center mb-14">
-          <div
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold mb-6 uppercase tracking-widest"
-            style={{
-              background: "rgba(44,205,222,0.07)",
-              border: "1px solid rgba(44,205,222,0.25)",
-              color: "#2CCDDE",
-            }}
-          >
-            FAQ
-          </div>
-          <h2 className="text-4xl sm:text-5xl font-bold leading-tight mb-4">
-            <span className="text-[var(--text-primary)]">Questions We Get</span>
-            <br />
-            <span
-              style={{
-                background: "linear-gradient(135deg, #2CCDDE, #46A3E1)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-              }}
-            >
-              Asked All the Time
-            </span>
-          </h2>
-          <p className="text-[var(--text-muted)] text-base max-w-xl mx-auto">
-            Everything you need to know about working with Byteflow. Can not
-            find what you are looking for? Just call us.
+        {/* Heading, search and topics, centred. */}
+        <div className="mx-auto max-w-3xl text-center">
+          <p className="inline-flex items-center gap-2 rounded-full border border-[rgba(44,205,222,0.3)] bg-[var(--bg-surface)] py-1.5 pl-1.5 pr-4 text-[12px] font-semibold uppercase tracking-[0.16em] text-[var(--text-primary)] shadow-[0_8px_24px_-12px_rgba(44,205,222,0.5)]">
+            <span className="grid h-6 w-6 place-items-center rounded-full bg-[linear-gradient(135deg,#2CCDDE,#46A3E1)] text-[#04121A]">{QUESTION_ICON}</span>
+            {copy.eyebrow}
           </p>
-        </div>
+          <h2 id={`${id}-title`} className="mt-6 text-balance text-[2.25rem] font-semibold leading-[1.05] tracking-[-0.04em] text-[var(--text-primary)] sm:text-[3rem]">
+            {copy.heading} <span className="bg-[linear-gradient(100deg,#2CCDDE,#46A3E1)] bg-clip-text text-transparent">{copy.heading_soft}</span>
+          </h2>
+          {copy.intro && <p className="mx-auto mt-4 max-w-xl text-[15.5px] leading-relaxed text-[var(--text-muted)]">{copy.intro}</p>}
 
-        {/* Category filter */}
-        <div className="flex items-center justify-center gap-2 flex-wrap mb-12">
-          {dynamicCategories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => {
-                setActiveCategory(cat);
+          <label className="relative mx-auto mt-8 block max-w-2xl">
+            <span className="sr-only">{copy.search_label}</span>
+            <svg aria-hidden="true" className="pointer-events-none absolute left-5 top-1/2 h-5 w-5 -translate-y-1/2 text-[#2CCDDE]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <circle cx="11" cy="11" r="7" />
+              <path strokeLinecap="round" d="m20 20-3.5-3.5" />
+            </svg>
+            <input
+              type="search"
+              value={query}
+              onChange={(event) => {
+                setQuery(event.target.value);
                 setOpen(null);
               }}
-              className="px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-200"
-              style={
-                activeCategory === cat
-                  ? {
-                      background: "linear-gradient(135deg, #2CCDDE, #46A3E1)",
-                      color: "#000",
-                    }
-                  : {
-                      background: "rgba(44,205,222,0.06)",
-                      border: "1px solid rgba(44,205,222,0.18)",
-                      color: "var(--text-muted)",
-                    }
-              }
-            >
-              {cat}
-            </button>
-          ))}
+              placeholder={`${copy.search_label}…`}
+              className="w-full rounded-full border border-[var(--border-strong)] bg-[var(--bg-surface)] py-4 pl-14 pr-20 text-[15.5px] text-[var(--input-text)] shadow-[0_20px_50px_-30px_rgba(4,13,18,0.6)] outline-none transition-colors placeholder:text-[var(--text-dim)] focus:border-[#2CCDDE]/70"
+            />
+            <span aria-live="polite" className="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2 text-[12.5px] font-medium tabular-nums text-[var(--text-dim)]">
+              {shown.length}/{inTopic.length}
+            </span>
+          </label>
+
+          {categories.length > 1 && (
+            <div role="group" aria-label="Filter questions by topic" className="-mx-4 mt-5 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:justify-center sm:overflow-visible sm:px-0 [&::-webkit-scrollbar]:hidden">
+              {tab(copy.all_label, null, items.length)}
+              {categories.map((category) => tab(category, category, items.filter((faq) => faq.category.trim() === category).length))}
+            </div>
+          )}
         </div>
 
-        {/* Accordion */}
-        <div className="flex flex-col gap-3">
-          {filtered.map((faq, i) => {
-            const isOpen = open === i;
-            return (
-              <div
-                key={faq.q}
-                className="card-hover rounded-2xl overflow-hidden transition-all duration-300"
-                style={{
-                  background: isOpen
-                    ? "linear-gradient(160deg, rgba(44,205,222,0.08) 0%, rgba(70,163,225,0.03) 40%, var(--bg-surface) 100%)"
-                    : "linear-gradient(160deg, rgba(44,205,222,0.04) 0%, var(--bg-page) 100%)",
-                  border: isOpen
-                    ? "1px solid rgba(44,205,222,0.3)"
-                    : "1px solid rgba(44,205,222,0.1)",
-                }}
-              >
-                <button
-                  className="w-full flex items-center justify-between gap-4 px-6 py-5 text-left"
-                  onClick={() => setOpen(isOpen ? null : i)}
-                >
-                  <span
-                    className={`text-sm font-semibold leading-snug transition-colors duration-200 flex-1 min-w-0 ${isOpen ? "text-[var(--text-primary)]" : "text-[var(--text-nav)]"}`}
-                  >
-                    {faq.q}
-                  </span>
-                  <div
-                    className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300"
-                    style={{
-                      background: isOpen
-                        ? "linear-gradient(135deg, #2CCDDE, #46A3E1)"
-                        : "rgba(44,205,222,0.08)",
-                      border: isOpen
-                        ? "none"
-                        : "1px solid rgba(44,205,222,0.2)",
-                    }}
-                  >
-                    <svg
-                      className="w-3.5 h-3.5 transition-transform duration-300"
-                      style={{
-                        color: isOpen ? "#000" : "#2CCDDE",
-                        transform: isOpen ? "rotate(45deg)" : "rotate(0deg)",
-                      }}
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth={3}
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M12 4.5v15m7.5-7.5h-15"
-                      />
-                    </svg>
-                  </div>
-                </button>
+        {/* The questions, in two columns on wide screens. */}
+        {shown.length ? (
+          <div className={`mt-10 grid items-start gap-3 ${columns.length > 1 ? "lg:grid-cols-2 lg:gap-4" : "mx-auto max-w-3xl"}`}>
+            {columns.map((column, c) => (
+              <ol key={c} className="grid gap-3 lg:gap-4">
+                {column.map((faq) => (
+                  <Question
+                    key={faq.question}
+                    faq={faq}
+                    open={autoOpen || open === faq.question}
+                    onToggle={() => setOpen(open === faq.question ? null : faq.question)}
+                    query={query}
+                    baseId={`${id}-${faq.number}`}
+                  />
+                ))}
+              </ol>
+            ))}
+          </div>
+        ) : (
+          <div className="mx-auto mt-10 flex max-w-xl flex-col items-center gap-3 rounded-[1.5rem] border border-dashed border-[var(--border-strong)] px-6 py-12 text-center">
+            <span aria-hidden="true" className="grid h-12 w-12 place-items-center rounded-full bg-[rgba(44,205,222,0.1)] text-[#2CCDDE] [&_svg]:h-6 [&_svg]:w-6">
+              {QUESTION_ICON}
+            </span>
+            <p className="max-w-sm text-[14.5px] leading-relaxed text-[var(--text-muted)]">{copy.empty_text}</p>
+          </div>
+        )}
 
-                <div
-                  className="overflow-hidden transition-all duration-300"
-                  style={{
-                    maxHeight: isOpen ? "300px" : "0px",
-                    opacity: isOpen ? 1 : 0,
-                  }}
-                >
-                  <div
-                    className="px-6 pb-6"
-                    style={{ borderTop: "1px solid rgba(44,205,222,0.08)" }}
-                  >
-                    <p className="text-[var(--text-muted)] text-sm leading-relaxed pt-5">
-                      {faq.a}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Bottom CTA */}
-        <div
-          className="mt-14 p-8 rounded-2xl text-center"
-          style={{
-            background:
-              "linear-gradient(160deg, rgba(44,205,222,0.07) 0%, var(--bg-surface) 100%)",
-            border: "1px solid rgba(44,205,222,0.15)",
-          }}
-        >
-          <p className="text-[var(--text-primary)] font-semibold text-base mb-1">
-            Still have questions?
-          </p>
-          <p className="text-[var(--text-muted)] text-sm mb-6">
-            Our team is available 24/7 — reach out and get answers fast.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-            <a
-              href="tel:+971543282042"
-              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-black font-bold text-sm transition-all duration-300 hover:scale-[1.04] hover:shadow-[0_0_28px_rgba(44,205,222,0.45)]"
-              style={{
-                background: "linear-gradient(135deg, #2CCDDE, #46A3E1)",
-              }}
-            >
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2.5}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z"
-                />
-              </svg>
-              Call Us Now
+        {/* Still have questions? Always dark, so it stands out on either theme. */}
+        <div className="relative mt-10 overflow-hidden rounded-[1.75rem] border border-white/10 bg-[#0b1520] p-6 text-white sm:p-7 lg:flex lg:items-center lg:justify-between lg:gap-8 lg:px-9">
+          <div aria-hidden="true" className="absolute -left-16 -top-20 h-56 w-56 rounded-full bg-[radial-gradient(closest-side,rgba(44,205,222,0.3),transparent)]" />
+          <div className="relative flex items-start gap-4">
+            <span aria-hidden="true" className="hidden h-12 w-12 shrink-0 place-items-center rounded-2xl bg-[linear-gradient(135deg,#2CCDDE,#46A3E1)] text-[#04121A] sm:grid [&_svg]:h-6 [&_svg]:w-6">
+              {QUESTION_ICON}
+            </span>
+            <div>
+              <p className="font-display text-[1.25rem] font-semibold">{copy.help_title}</p>
+              {copy.help_text && <p className="mt-1 text-[14px] leading-relaxed text-white/65">{copy.help_text}</p>}
+              {/* A plain clock, not a "live" light: the bar can't tell whether it is open right now. */}
+              {contact.hours && (
+                <p className="mt-2 flex items-center gap-2 text-[12.5px] text-white/60">
+                  <svg aria-hidden="true" className="h-3.5 w-3.5 text-[#2CCDDE]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <circle cx="12" cy="12" r="9" />
+                    <path strokeLinecap="round" d="M12 7v5l3 2" />
+                  </svg>
+                  {contact.hours}
+                </p>
+              )}
+            </div>
+          </div>
+          <div className="relative mt-5 flex shrink-0 flex-wrap gap-2 lg:mt-0">
+            <a href={contact.phone} className="inline-flex items-center gap-2 rounded-full bg-[linear-gradient(135deg,#2CCDDE,#46A3E1)] px-5 py-2.5 text-[14px] font-semibold text-[#04121A] transition-transform hover:-translate-y-0.5">
+              <PhoneIcon />
+              {copy.call_label}
             </a>
             <a
-              href="https://wa.me/971543282042"
+              href={contact.whatsapp}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-[#2CCDDE] font-bold text-sm transition-all duration-300 hover:text-[var(--text-primary)]"
-              style={{
-                background: "rgba(44,205,222,0.07)",
-                border: "1px solid rgba(44,205,222,0.25)",
-              }}
+              className="inline-flex items-center gap-2 rounded-full border border-white/15 px-5 py-2.5 text-[14px] font-semibold transition-colors hover:border-[#25D366] hover:bg-[rgba(37,211,102,0.1)]"
             >
-              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-              </svg>
-              WhatsApp Us
+              <span className="text-[#25D366]">
+                <WhatsAppIcon />
+              </span>
+              {copy.whatsapp_label}
             </a>
           </div>
         </div>

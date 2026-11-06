@@ -218,6 +218,24 @@ export const homeDefaults = {
     },
     lists: {},
   },
+  // Not only the home page: the words around the FAQ section on every page
+  // that has questions (PageFaq). The questions are under FAQs in the admin.
+  home_faq: {
+    fields: {
+      eyebrow: 'FAQ',
+      heading: 'Questions we get',
+      heading_soft: 'asked all the time.',
+      intro: "Everything you need to know about working with Byteflow. Can't find what you're looking for? Just call us.",
+      all_label: 'All questions',
+      help_title: 'Still have questions?',
+      help_text: 'Talk to a real engineer: call us or send a WhatsApp message.',
+      call_label: 'Call us',
+      whatsapp_label: 'WhatsApp us',
+      search_label: 'Search questions',
+      empty_text: 'No questions match your search. Call or message us and we will answer it directly.',
+    },
+    lists: {},
+  },
   home_process: {
     fields: {
       eyebrow: 'Our process',
