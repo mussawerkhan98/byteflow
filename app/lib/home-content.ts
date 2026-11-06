@@ -174,6 +174,9 @@ export const homeDefaults = {
       list_label: 'More articles',
       read_label: 'Read article',
       topics_label: 'Browse by topic',
+      // The featured card's badge: picked in the admin, or simply the newest.
+      picked_badge: "Editor's pick",
+      latest_badge: 'Latest',
     },
     lists: {
       topics: [
