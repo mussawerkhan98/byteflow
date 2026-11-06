@@ -13,7 +13,8 @@ export const MIN_LIST = 1
 export const MAX_LIST = 5
 const DEFAULT_LIST = 3
 
-export type InsightTopic = { label: string; category: string; href: string }
+/** count: the published posts in the topic's category. */
+export type InsightTopic = { label: string; category: string; href: string; count: number }
 
 /** The blog, opened on one category's filter. */
 export const categoryHref = (category: string) => `/blog?category=${encodeURIComponent(category.trim())}`
@@ -25,16 +26,22 @@ export const categoryHref = (category: string) => `/blog?category=${encodeURICom
  */
 export function insightPicks<P extends PostLike>(block: HomeBlock, posts: P[]) {
   const choice = block.fields.featured?.trim()
-  const featured = (choice && choice !== 'latest' && posts.find((post) => post.slug === choice)) || posts[0] || null
+  const pickedPost = (choice && choice !== 'latest' && posts.find((post) => post.slug === choice)) || null
+  const featured = pickedPost || posts[0] || null
+  // Whether the admin chose it, so the badge can say so rather than "Latest".
+  const picked = Boolean(pickedPost)
   const wanted = Number.parseInt(block.fields.list_count ?? '', 10)
   const count = Number.isFinite(wanted) ? Math.min(MAX_LIST, Math.max(MIN_LIST, wanted)) : DEFAULT_LIST
   const list = posts.filter((post) => post !== featured).slice(0, count)
 
   const topics: InsightTopic[] = (block.lists.topics ?? [])
     .filter((topic) => topic.show !== 'no' && topic.title)
-    .map((topic) => ({ label: topic.title, category: topic.category || topic.title }))
-    .filter((topic) => posts.some((post) => sameCategory(post.category, topic.category)))
-    .map((topic) => ({ label: topic.label, category: topic.category, href: categoryHref(topic.category) }))
+    .map((topic) => {
+      const category = topic.category || topic.title
+      const count = posts.filter((post) => sameCategory(post.category, category)).length
+      return { label: topic.title, category, href: categoryHref(category), count }
+    })
+    .filter((topic) => topic.count > 0)
 
-  return { featured, list, topics }
+  return { featured, picked, list, topics }
 }

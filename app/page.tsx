@@ -9,8 +9,6 @@ import Insights from "./components/Insights";
 import Reviews from "./components/Reviews";
 import HowItWorks from "./components/HowItWorks";
 import HelpPanel from "./components/HelpPanel";
-import Blog from "./components/Blog";
-import CTA from "./components/CTA";
 import Contact from "./components/Contact";
 import {
   getPageHero,
@@ -22,6 +20,7 @@ import {
 } from "./lib/cms";
 import { getPosts } from "./lib/db";
 import { getHomeBlock } from "./lib/home-blocks";
+import { lines } from "./lib/home-content";
 import JsonLd from "./components/JsonLd";
 import { faqPageSchema, graph } from "./lib/structured-data";
 
@@ -31,7 +30,7 @@ export const metadata = {
 };
 
 export default async function Home() {
-  const [sectionHero, pageHero, testimonials, settings, posts, faqs, process, figures] =
+  const [sectionHero, pageHero, testimonials, settings, posts, faqs, process, figures, contact] =
     await Promise.all([
       getSection("home", "hero"),
       getPageHero("home"),
@@ -46,6 +45,8 @@ export default async function Home() {
       // How it works runs in the browser, so its admin content is read here.
       getHomeBlock("home_process"),
       getSiteFigures(),
+      // The contact form runs in the browser too.
+      getHomeBlock("home_contact"),
     ]);
   const hero = {
     ...(sectionHero ?? {}),
@@ -103,10 +104,20 @@ export default async function Home() {
       <Insights posts={posts} />
       <HowItWorks content={process} />
       <HelpPanel />
-      <Blog posts={posts.slice(0, 4)} />
       <Reviews items={testimonials} figures={figures} />
-      <CTA />
-      <Contact settings={(settings ?? {}) as never} />
+      {/* "Ready to upgrade your IT setup?" and the contact form, as one section. */}
+      <Contact
+        settings={(settings ?? {}) as never}
+        cta={{
+          eyebrow: contact.fields.eyebrow,
+          heading: contact.fields.heading,
+          heading_soft: contact.fields.heading_soft,
+          intro: contact.fields.intro,
+          call_label: contact.fields.call_label,
+          whatsapp_label: contact.fields.whatsapp_label,
+          promises: lines(contact.fields.promises),
+        }}
+      />
     </>
   );
 }

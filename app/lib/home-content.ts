@@ -174,6 +174,9 @@ export const homeDefaults = {
       list_label: 'More articles',
       read_label: 'Read article',
       topics_label: 'Browse by topic',
+      // The featured card's badge: picked in the admin, or simply the newest.
+      picked_badge: "Editor's pick",
+      latest_badge: 'Latest',
     },
     lists: {
       topics: [
@@ -184,6 +187,36 @@ export const homeDefaults = {
         { title: 'Marketing', category: 'Digital Marketing', show: 'yes' },
       ],
     },
+  },
+  // Client reviews: the words around the reviews, which come from Customer
+  // reviews in the admin. The rating and count quote the site-wide figures.
+  home_reviews: {
+    fields: {
+      eyebrow: 'Client reviews',
+      heading: 'Trusted by businesses',
+      heading_soft: 'across the UAE.',
+      intro: 'Real words from the businesses we look after, from one-person offices to multi-site teams.',
+      rating_label: 'Google rating',
+      count_label: '{reviews} Google reviews',
+      google_label: 'Read all reviews on Google',
+    },
+    lists: {},
+  },
+  // The home page's closing section: the old "Ready to upgrade your IT
+  // setup?" banner and "Let's talk about your IT needs" merged into one. The
+  // phone and WhatsApp buttons use Contact details & logo.
+  home_contact: {
+    fields: {
+      eyebrow: 'Get started today',
+      heading: 'Ready to upgrade your IT setup?',
+      heading_soft: "Let's talk.",
+      intro: 'Let our certified engineers handle everything, from network setup to cloud migration and cybersecurity. Send a message or call: one call is all it takes.',
+      call_label: 'Call us now',
+      whatsapp_label: 'WhatsApp us',
+      // One per line, shown with a check mark.
+      promises: 'No contracts required\nFree consultation\nResponse within 2 hours',
+    },
+    lists: {},
   },
   home_process: {
     fields: {

@@ -1,46 +1,9 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import type { CmsReview } from '../lib/cms'
+import { toWallReview } from '../lib/review-wall'
 import { figuresFrom, type SiteFigures } from '../lib/site-figures'
-
-const reviews = [
-  {
-    name: 'Ahmed Al Mansouri',
-    role: 'CEO, Al Mansouri Trading',
-    text: 'Byteflow completely transformed our IT setup. They connected our offices across Dubai and handled everything from servers to Microsoft 365. Response time is incredible — issues get fixed before we even notice them.',
-    rating: 5,
-  },
-  {
-    name: 'Sarah Thompson',
-    role: 'Operations Manager, Gulf Logistics',
-    text: 'We had a ransomware scare and Byteflow restored everything within hours. Their backup system saved us completely. Highly professional team — they know exactly what they are doing.',
-    rating: 5,
-  },
-  {
-    name: 'Mohammed Al Rashidi',
-    role: 'Director, Rashidi Group',
-    text: 'Best IT AMC service in Dubai. Fixed monthly cost, no hidden charges, and their engineers are always available. We have been with Byteflow for 3 years and never had a major downtime.',
-    rating: 5,
-  },
-  {
-    name: 'Priya Nair',
-    role: 'Marketing Head, TechBridge UAE',
-    text: 'The digital marketing team at Byteflow doubled our website traffic in 4 months. Their SEO and Google Ads work is exceptional. They also built our new website which looks amazing.',
-    rating: 5,
-  },
-  {
-    name: 'Khalid Al Zaabi',
-    role: 'Owner, Al Zaabi Consultancy',
-    text: 'Switched to Byteflow after a bad experience with another IT company. The difference is night and day. They set up our entire cloud infrastructure and the support is always fast and friendly.',
-    rating: 5,
-  },
-  {
-    name: 'Jennifer Cruz',
-    role: 'Finance Director, Emirates Solutions',
-    text: 'Byteflow handles all our cybersecurity, backups and IT support. Peace of mind is priceless. Their team explains everything clearly and the pricing is very fair for what you get.',
-    rating: 5,
-  },
-]
 
 const CARDS_PER_PAGE = 3
 function Stars({ count }: { count: number }) {
@@ -55,8 +18,13 @@ function Stars({ count }: { count: number }) {
   )
 }
 
-export default function AboutReviews({ items, figures = figuresFrom(null) }: { items?: { customer_name:string; customer_role:string; review_text:string; rating:number }[]; figures?: SiteFigures }) {
-  const shownReviews = items?.length ? items.map(item=>({name:item.customer_name,role:item.customer_role,text:item.review_text,rating:item.rating})) : reviews
+/**
+ * The About page's reviews, three at a time. Only published reviews from the
+ * admin's Customer reviews are shown (none: the section is left out), and a
+ * review carries the Google mark only when its source is Google.
+ */
+export default function AboutReviews({ items = [], figures = figuresFrom(null) }: { items?: CmsReview[]; figures?: SiteFigures }) {
+  const shownReviews = items.filter((item) => item.customer_name?.trim() && item.review_text?.trim()).map(toWallReview)
   const totalPages = Math.ceil(shownReviews.length / CARDS_PER_PAGE)
   const [page, setPage] = useState(0)
   const [animating, setAnimating] = useState(false)
@@ -76,11 +44,13 @@ export default function AboutReviews({ items, figures = figuresFrom(null) }: { i
   const next = () => go((page + 1) % totalPages, 'right')
 
   useEffect(() => {
+    if (totalPages < 2) return
     const id = setInterval(next, 6000)
     return () => clearInterval(id)
   }, [page])
 
   const visible = shownReviews.slice(page * CARDS_PER_PAGE, page * CARDS_PER_PAGE + CARDS_PER_PAGE)
+  if (!shownReviews.length) return null
 
   return (
     <section className="relative py-24 overflow-hidden">
@@ -141,7 +111,7 @@ export default function AboutReviews({ items, figures = figuresFrom(null) }: { i
         >
           {visible.map((r) => (
             <div
-              key={r.name}
+              key={r.id}
               className="card-hover group relative flex flex-col gap-4 p-6 rounded-2xl"
               style={{
                 background: 'linear-gradient(160deg, rgba(44,205,222,0.06) 0%, rgba(70,163,225,0.02) 30%, var(--bg-surface) 100%)',
@@ -169,22 +139,16 @@ export default function AboutReviews({ items, figures = figuresFrom(null) }: { i
               >
                 <div className="flex items-center gap-2">
                   <div>
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-[var(--text-primary)] text-sm font-bold">{r.name}</span>
-                      <div
-                        className="w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0"
-                        style={{ background: '#1D9BF0' }}
-                        title="Verified Google Review"
-                      >
-                        <svg className="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="white" strokeWidth={3.5}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                        </svg>
-                      </div>
-                    </div>
-                    <p className="text-[var(--text-muted)] text-xs mt-0.5">{r.role}</p>
+                    <span className="text-[var(--text-primary)] text-sm font-bold capitalize">{r.name}</span>
+                    {r.role && <p className="text-[var(--text-muted)] text-xs mt-0.5">{r.role}</p>}
                   </div>
                 </div>
-                <img src="/google.svg" alt="Google" width={20} height={20} loading="lazy" className="w-5 h-5 object-contain opacity-50" />
+                {/* Where it was posted: the Google mark only for Google reviews. */}
+                {r.google ? (
+                  <img src="/google.svg" alt="Google review" width={20} height={20} loading="lazy" className="w-5 h-5 object-contain opacity-60" />
+                ) : (
+                  r.source && <span className="text-[11px] font-medium text-[var(--text-muted)]">{r.source}</span>
+                )}
               </div>
             </div>
           ))}
