@@ -202,6 +202,22 @@ export const homeDefaults = {
     },
     lists: {},
   },
+  // The home page's closing section: the old "Ready to upgrade your IT
+  // setup?" banner and "Let's talk about your IT needs" merged into one. The
+  // phone and WhatsApp buttons use Contact details & logo.
+  home_contact: {
+    fields: {
+      eyebrow: 'Get started today',
+      heading: 'Ready to upgrade your IT setup?',
+      heading_soft: "Let's talk.",
+      intro: 'Let our certified engineers handle everything, from network setup to cloud migration and cybersecurity. Send a message or call: one call is all it takes.',
+      call_label: 'Call us now',
+      whatsapp_label: 'WhatsApp us',
+      // One per line, shown with a check mark.
+      promises: 'No contracts required\nFree consultation\nResponse within 2 hours',
+    },
+    lists: {},
+  },
   home_process: {
     fields: {
       eyebrow: 'Our process',

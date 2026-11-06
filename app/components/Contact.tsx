@@ -113,12 +113,177 @@ type ContactSettings = { header_phone?: string; primary_email?: string; physical
 type ContactHero = { hero_label?:string; hero_heading?:string; hero_description?:string; hero_background_image?:string }
 function safeMapUrl(value?: string) { try { if (!value) return ''; const url = new URL(value); return url.protocol === 'https:' && /(^|\.)google\.(com|ae)$/.test(url.hostname) && url.pathname.startsWith('/maps/embed') ? url.toString() : '' } catch { return '' } }
 
+/** The home page's "get started" words (home_contact), shown above the form. */
+export type ContactCta = {
+  eyebrow: string
+  heading: string
+  heading_soft: string
+  intro: string
+  call_label: string
+  whatsapp_label: string
+  promises: string[]
+}
+
+const CheckIcon = () => (
+  <svg aria-hidden="true" className="h-3 w-3" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={2.5}>
+    <path d="M4.5 10.5l3.5 3.5 7.5-8" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+)
+
+type ContactItem = { label: string; value: string; href: string | null; icon: React.ReactNode }
+type SocialItem = { label: string; href: string; icon: React.ReactNode }
+
+/**
+ * The home page's closing section: "Ready to upgrade your IT setup?" and the
+ * contact form as one dark panel (contact-panel in globals.css sets the dark
+ * colours, so the form reads the same in both themes). The call to action
+ * and the contact details on the left, the form on the right, the map along
+ * the bottom.
+ */
+function HomeContact({
+  cta,
+  contactInfo,
+  socials,
+  whatsapp,
+  formCard,
+  map,
+}: {
+  cta: ContactCta
+  contactInfo: ContactItem[]
+  socials: SocialItem[]
+  whatsapp: string
+  formCard: React.ReactNode
+  map: React.ReactNode
+}) {
+  const phone = contactInfo.find((item) => item.label === 'Phone')
+  const details = contactInfo.filter((item) => item.label !== 'Phone')
+
+  return (
+    <section aria-labelledby="contact-title" className="home-contact relative py-16 sm:py-20">
+      <div className="page-container">
+        <div className="contact-panel relative isolate overflow-hidden rounded-[2.25rem] border border-white/10 bg-[#08121b] text-white shadow-[0_60px_120px_-60px_rgba(4,13,18,0.9)]">
+          <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
+            <div className="cta-aurora absolute inset-0" style={{ background: 'radial-gradient(ellipse 50% 50% at 10% 10%, rgba(44,205,222,0.22) 0%, transparent 62%), radial-gradient(ellipse 45% 50% at 95% 90%, rgba(70,163,225,0.16) 0%, transparent 62%)' }} />
+            <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.035)_1px,transparent_1px)] bg-[size:44px_44px] [mask-image:radial-gradient(ellipse_at_top_left,black,transparent_70%)]" />
+            <div className="absolute inset-x-0 top-0 h-px bg-[linear-gradient(90deg,transparent,rgba(44,205,222,0.6),transparent)]" />
+          </div>
+
+          <div className="grid lg:grid-cols-12">
+            <div className="flex flex-col p-7 sm:p-10 lg:col-span-5 lg:p-12">
+              <p className="inline-flex items-center gap-2 self-start rounded-full border border-white/15 bg-white/[0.06] px-4 py-1.5 text-[11.5px] font-semibold uppercase tracking-[0.16em] text-[#7fe3ec]">
+                <span aria-hidden="true" className="relative flex h-2 w-2">
+                  <span className="absolute inset-0 animate-ping rounded-full bg-[#2CCDDE] opacity-60 motion-reduce:animate-none" />
+                  <span className="relative h-2 w-2 rounded-full bg-[#2CCDDE]" />
+                </span>
+                {cta.eyebrow}
+              </p>
+              <h2 id="contact-title" className="mt-6 text-balance text-[2.25rem] font-semibold leading-[1.05] tracking-[-0.04em] sm:text-[2.75rem]">
+                {cta.heading} <span className="bg-[linear-gradient(100deg,#2CCDDE,#46A3E1)] bg-clip-text text-transparent">{cta.heading_soft}</span>
+              </h2>
+              {cta.intro && <p className="mt-5 text-[15.5px] leading-relaxed text-[#a9b6c4]">{cta.intro}</p>}
+
+              <div className="mt-7 flex flex-wrap gap-3">
+                {cta.call_label && phone?.href && (
+                  <a
+                    href={phone.href}
+                    className="group inline-flex items-center gap-3 rounded-full bg-[linear-gradient(135deg,#2CCDDE,#46A3E1)] py-2 pl-5 pr-2 text-[15px] font-semibold text-[#04121A] shadow-[0_18px_40px_-18px_rgba(44,205,222,0.8)] transition-transform duration-200 hover:-translate-y-0.5"
+                  >
+                    {cta.call_label}
+                    <span className="sr-only">: {phone.value}</span>
+                    <span aria-hidden="true" className="grid h-9 w-9 place-items-center rounded-full bg-[#04121A] text-[#2CCDDE] [&_svg]:h-4 [&_svg]:w-4">
+                      {phone.icon}
+                    </span>
+                  </a>
+                )}
+                {cta.whatsapp_label && (
+                  <a
+                    href={whatsapp}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2.5 rounded-full border border-white/15 bg-white/[0.04] px-5 py-3 text-[15px] font-semibold transition-colors duration-200 hover:border-[#25D366] hover:bg-[rgba(37,211,102,0.1)]"
+                  >
+                    <span aria-hidden="true" className="text-[#25D366] [&_svg]:h-4 [&_svg]:w-4">
+                      {socials.find((s) => s.label === 'WhatsApp')?.icon}
+                    </span>
+                    {cta.whatsapp_label}
+                  </a>
+                )}
+              </div>
+
+              {cta.promises.length > 0 && (
+                <ul className="mt-7 space-y-2.5">
+                  {cta.promises.map((promise) => (
+                    <li key={promise} className="flex items-center gap-3 text-[14.5px] text-white/80">
+                      <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-[#2CCDDE] text-[#04121A]">
+                        <CheckIcon />
+                      </span>
+                      {promise}
+                    </li>
+                  ))}
+                </ul>
+              )}
+
+              {socials.length > 0 && (
+                <ul className="mt-9 flex flex-wrap gap-2 lg:mt-auto lg:pt-9" aria-label="Follow us">
+                  {socials.map((s) => (
+                    <li key={s.label}>
+                      <a
+                        href={s.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={s.label}
+                        className="grid h-10 w-10 place-items-center rounded-xl border border-white/10 bg-white/[0.04] text-white/70 transition-colors duration-200 hover:border-transparent hover:bg-[#2CCDDE] hover:text-[#04121A] [&_svg]:h-4 [&_svg]:w-4"
+                      >
+                        {s.icon}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+
+            <div className="flex flex-col gap-3 p-3 sm:p-4 lg:col-span-7 lg:p-5 lg:pl-0">
+              {formCard}
+
+              {/* The other ways to reach us, from Contact details & logo. */}
+              <dl className="grid gap-3 sm:grid-cols-3">
+                {details.map((item) => (
+                  <div key={item.label} className="flex min-w-0 items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.04] p-3">
+                    <span aria-hidden="true" className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-[rgba(44,205,222,0.12)] text-[#2CCDDE] [&_svg]:h-4 [&_svg]:w-4">
+                      {item.icon}
+                    </span>
+                    <div className="min-w-0">
+                      <dt className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-white/45">{item.label}</dt>
+                      <dd className="text-[13.5px] font-medium leading-snug">{/* Wraps rather than cutting the address or hours short. */}
+                        {item.href ? (
+                          <a href={item.href} target={item.href.startsWith('http') ? '_blank' : undefined} rel="noopener noreferrer" className="transition-colors hover:text-[#2CCDDE]">
+                            {item.value}
+                          </a>
+                        ) : (
+                          item.value
+                        )}
+                      </dd>
+                    </div>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          </div>
+
+          {map && <div className="h-56 border-t border-white/10 sm:h-64">{map}</div>}
+        </div>
+      </div>
+    </section>
+  )
+}
+
 /**
  * `asPage` is set by /contact-us, where this section is the whole page: its
  * heading becomes the page's only h1. On the home page it stays an h2 under
- * the hero's h1.
+ * the hero's h1, and `cta` gives it the "Ready to upgrade your IT setup?"
+ * heading with call and WhatsApp buttons (it used to be a separate banner).
  */
-export default function Contact({ settings = {}, hero, asPage = false }: { settings?: ContactSettings; hero?: ContactHero | null; asPage?: boolean }) {
+export default function Contact({ settings = {}, hero, asPage = false, cta }: { settings?: ContactSettings; hero?: ContactHero | null; asPage?: boolean; cta?: ContactCta }) {
   const Heading = asPage ? 'h1' : 'h2'
   const shownContactInfo = contactInfo.map((item) => item.label === 'Phone' ? { ...item, value: settings.header_phone || item.value, href: `tel:${(settings.header_phone || item.value).replace(/[^+\d]/g, '')}` } : item.label === 'Email' ? { ...item, value: settings.primary_email || item.value, href: `mailto:${settings.primary_email || item.value}` } : item.label === 'Location' ? { ...item, value: settings.physical_address || item.value } : item.label === 'Support Hours' ? { ...item, value: settings.business_hours || item.value } : item)
   const socialValues: Record<string, string | undefined> = { Facebook: settings.facebook_url, LinkedIn: settings.linkedin_url, Instagram: settings.instagram_url, TikTok: settings.tiktok_url, WhatsApp: settings.whatsapp_link }
@@ -183,6 +348,192 @@ export default function Contact({ settings = {}, hero, asPage = false }: { setti
     color: 'var(--input-text)',
   })
 
+  // The enquiry form, and the map, shared by both layouts below.
+  const formCard = (
+    <div
+      className="relative rounded-2xl overflow-hidden"
+      style={{
+        background: 'linear-gradient(160deg, rgba(44,205,222,0.07) 0%, rgba(70,163,225,0.02) 40%, var(--bg-surface) 100%)',
+        border: '1px solid rgba(44,205,222,0.18)',
+      }}
+    >
+      {/* Top gradient line */}
+      <div className="h-[2px] w-full" style={{ background: 'linear-gradient(90deg, #2CCDDE, #46A3E1)' }} />
+
+      <div className="p-8">
+        {submitted ? (
+          <div className="flex flex-col items-center justify-center py-16 text-center gap-5">
+            <div
+              className="w-16 h-16 rounded-full flex items-center justify-center"
+              style={{ background: 'linear-gradient(135deg, #2CCDDE, #46A3E1)' }}
+            >
+              <svg className="w-8 h-8 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+              </svg>
+            </div>
+            <div>
+              <p className="text-[var(--text-primary)] text-xl font-bold mb-2">Message Sent!</p>
+              <p className="text-[var(--text-muted)] text-sm">{successMessage}</p>
+            </div>
+            <button
+              onClick={() => { setSubmitted(false); setForm({ name: '', company: '', email: '', phone: '', service: '', message: '' }) }}
+              className="mt-2 text-xs font-semibold text-[#2CCDDE] underline underline-offset-4"
+            >
+              Send another message
+            </button>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
+
+            {/* Name + Company */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div className="flex flex-col gap-2">
+                <label className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">Full Name <span style={{ color: '#2CCDDE' }}>*</span></label>
+                <input
+                  name="name"
+                  type="text"
+                  required
+                  placeholder="Your name"
+                  value={form.name}
+                  onChange={handleChange}
+                  onFocus={() => setFocused('name')}
+                  onBlur={() => setFocused(null)}
+                  className="px-4 py-3 rounded-xl text-sm placeholder-[var(--text-dim)] w-full"
+                  style={inputStyle('name')}
+                />
+                {fieldErrors.name && <p className="text-xs text-red-400">{fieldErrors.name}</p>}
+              </div>
+              <div className="flex flex-col gap-2">
+                <label className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">Company Name</label>
+                <input
+                  name="company"
+                  type="text"
+                  placeholder="Your Company LLC"
+                  value={form.company}
+                  onChange={handleChange}
+                  onFocus={() => setFocused('company')}
+                  onBlur={() => setFocused(null)}
+                  className="px-4 py-3 rounded-xl text-sm placeholder-[var(--text-dim)] w-full"
+                  style={inputStyle('company')}
+                />
+              </div>
+            </div>
+
+            {/* Email + Phone */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div className="flex flex-col gap-2">
+                <label className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">Email Address <span style={{ color: '#2CCDDE' }}>*</span></label>
+                <input
+                  name="email"
+                  type="email"
+                  required
+                  placeholder="you@company.com"
+                  value={form.email}
+                  onChange={handleChange}
+                  onFocus={() => setFocused('email')}
+                  onBlur={() => setFocused(null)}
+                  className="px-4 py-3 rounded-xl text-sm placeholder-[var(--text-dim)] w-full"
+                  style={inputStyle('email')}
+                />
+                {fieldErrors.email && <p className="text-xs text-red-400">{fieldErrors.email}</p>}
+              </div>
+              <div className="flex flex-col gap-2">
+                <label className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">Phone Number</label>
+                <input
+                  name="phone"
+                  type="tel"
+                  placeholder="+971 50 000 0000"
+                  value={form.phone}
+                  onChange={handleChange}
+                  onFocus={() => setFocused('phone')}
+                  onBlur={() => setFocused(null)}
+                  className="px-4 py-3 rounded-xl text-sm placeholder-[var(--text-dim)] w-full"
+                  style={inputStyle('phone')}
+                />
+                {fieldErrors.phone && <p className="text-xs text-red-400">{fieldErrors.phone}</p>}
+              </div>
+            </div>
+
+            {/* Service */}
+            <div className="flex flex-col gap-2">
+              <label className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">Service Required</label>
+              <select
+                name="service"
+                value={form.service}
+                onChange={handleChange}
+                onFocus={() => setFocused('service')}
+                onBlur={() => setFocused(null)}
+                className="px-4 py-3 rounded-xl text-sm w-full appearance-none"
+                style={{ ...inputStyle('service'), color: form.service ? 'var(--input-text)' : 'var(--text-dim)' }}
+              >
+                <option value="" disabled>Select a service...</option>
+                {services.map((s) => (
+                  <option key={s} value={s} style={{ background: 'var(--option-bg)', color: 'var(--input-text)' }}>{s}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Message */}
+            <div className="flex flex-col gap-2">
+              <label className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">Message <span style={{ color: '#2CCDDE' }}>*</span></label>
+              <textarea
+                name="message"
+                required
+                rows={4}
+                placeholder="Tell us about your IT setup, team size and what you need help with..."
+                value={form.message}
+                onChange={handleChange}
+                onFocus={() => setFocused('message')}
+                onBlur={() => setFocused(null)}
+                className="px-4 py-3 rounded-xl text-sm placeholder-[var(--text-dim)] w-full resize-none"
+                style={inputStyle('message')}
+              />
+              {fieldErrors.message && <p className="text-xs text-red-400">{fieldErrors.message}</p>}
+            </div>
+
+            {/* Submit */}
+            <button
+              type="submit"
+              disabled={submitting}
+              className="group w-full flex items-center justify-center gap-2.5 py-4 rounded-full text-black font-bold text-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_40px_rgba(44,205,222,0.5)] mt-1"
+              style={{ background: 'linear-gradient(135deg, #2CCDDE, #46A3E1)' }}
+            >
+              {submitting ? 'Sending…' : 'Send Message'}
+              <svg className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </button>
+
+            {submitError && <p role="alert" className="text-center text-sm text-red-400">{submitError}</p>}
+
+            <p className="text-center text-xs text-[var(--text-dim)]">
+              We respond within 2 hours &nbsp;·&nbsp; No spam, ever
+            </p>
+            <p className="text-center text-xs leading-relaxed text-[var(--text-dim)]">
+              By sending this you agree we may email you occasional offers and
+              IT tips. Every one has a one-click unsubscribe.
+            </p>
+
+          </form>
+        )}
+      </div>
+    </div>
+  )
+  const showMap = settings.map_enabled === undefined || Boolean(settings.map_enabled)
+  const mapFrame = (
+    <iframe
+      src={mapUrl || "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d230964.06209009685!2d55.13766789915716!3d25.24320683637232!2m3!1f0!2f0!3f0!3m2!1i1024!1i768!4f13.1!3m3!1m2!1s0x3e5f43a9923d5979%3A0x36f7a80cba19b9eb!2sByteflow%20information%20Technology%20%26%20CO%20LLC!5e0!3m2!1sen!2sae!4v1779350571004!5m2!1sen!2sae"}
+      width="100%"
+      height="100%"
+      style={{ border: 0, display: 'block', filter: 'grayscale(20%) invert(5%)' }}
+      allowFullScreen
+      loading="lazy"
+      referrerPolicy="no-referrer-when-downgrade"
+    />
+  )
+
+  if (cta && !asPage) return <HomeContact cta={cta} contactInfo={shownContactInfo} socials={configuredSocials} whatsapp={settings.whatsapp_link || 'https://wa.me/971543282042'} formCard={formCard} map={showMap ? mapFrame : null} />
+
   return (
     <section className={`relative overflow-hidden ${asPage ? 'pt-12 pb-28' : 'py-28'}`} style={hero?.hero_background_image?{backgroundImage:`linear-gradient(rgba(4,13,18,.82),rgba(4,13,18,.95)),url(${hero.hero_background_image})`,backgroundSize:'cover',backgroundPosition:'top center'}:undefined}>
 
@@ -191,6 +542,7 @@ export default function Contact({ settings = {}, hero, asPage = false }: { setti
         style={{ background: 'radial-gradient(circle, rgba(44,205,222,0.06) 0%, transparent 65%)', filter: 'blur(80px)' }} />
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] pointer-events-none"
         style={{ background: 'radial-gradient(circle, rgba(70,163,225,0.05) 0%, transparent 65%)', filter: 'blur(80px)' }} />
+
 
       <div className="page-container relative">
 
@@ -303,193 +655,13 @@ export default function Contact({ settings = {}, hero, asPage = false }: { setti
 
           {/* Right — form */}
           <div className="lg:col-span-3">
-            <div
-              className="relative rounded-2xl overflow-hidden"
-              style={{
-                background: 'linear-gradient(160deg, rgba(44,205,222,0.07) 0%, rgba(70,163,225,0.02) 40%, var(--bg-surface) 100%)',
-                border: '1px solid rgba(44,205,222,0.18)',
-              }}
-            >
-              {/* Top gradient line */}
-              <div className="h-[2px] w-full" style={{ background: 'linear-gradient(90deg, #2CCDDE, #46A3E1)' }} />
-
-              <div className="p-8">
-                {submitted ? (
-                  <div className="flex flex-col items-center justify-center py-16 text-center gap-5">
-                    <div
-                      className="w-16 h-16 rounded-full flex items-center justify-center"
-                      style={{ background: 'linear-gradient(135deg, #2CCDDE, #46A3E1)' }}
-                    >
-                      <svg className="w-8 h-8 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                      </svg>
-                    </div>
-                    <div>
-                      <p className="text-[var(--text-primary)] text-xl font-bold mb-2">Message Sent!</p>
-                      <p className="text-[var(--text-muted)] text-sm">{successMessage}</p>
-                    </div>
-                    <button
-                      onClick={() => { setSubmitted(false); setForm({ name: '', company: '', email: '', phone: '', service: '', message: '' }) }}
-                      className="mt-2 text-xs font-semibold text-[#2CCDDE] underline underline-offset-4"
-                    >
-                      Send another message
-                    </button>
-                  </div>
-                ) : (
-                  <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
-
-                    {/* Name + Company */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                      <div className="flex flex-col gap-2">
-                        <label className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">Full Name <span style={{ color: '#2CCDDE' }}>*</span></label>
-                        <input
-                          name="name"
-                          type="text"
-                          required
-                          placeholder="Your name"
-                          value={form.name}
-                          onChange={handleChange}
-                          onFocus={() => setFocused('name')}
-                          onBlur={() => setFocused(null)}
-                          className="px-4 py-3 rounded-xl text-sm placeholder-[var(--text-dim)] w-full"
-                          style={inputStyle('name')}
-                        />
-                        {fieldErrors.name && <p className="text-xs text-red-400">{fieldErrors.name}</p>}
-                      </div>
-                      <div className="flex flex-col gap-2">
-                        <label className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">Company Name</label>
-                        <input
-                          name="company"
-                          type="text"
-                          placeholder="Your Company LLC"
-                          value={form.company}
-                          onChange={handleChange}
-                          onFocus={() => setFocused('company')}
-                          onBlur={() => setFocused(null)}
-                          className="px-4 py-3 rounded-xl text-sm placeholder-[var(--text-dim)] w-full"
-                          style={inputStyle('company')}
-                        />
-                      </div>
-                    </div>
-
-                    {/* Email + Phone */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                      <div className="flex flex-col gap-2">
-                        <label className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">Email Address <span style={{ color: '#2CCDDE' }}>*</span></label>
-                        <input
-                          name="email"
-                          type="email"
-                          required
-                          placeholder="you@company.com"
-                          value={form.email}
-                          onChange={handleChange}
-                          onFocus={() => setFocused('email')}
-                          onBlur={() => setFocused(null)}
-                          className="px-4 py-3 rounded-xl text-sm placeholder-[var(--text-dim)] w-full"
-                          style={inputStyle('email')}
-                        />
-                        {fieldErrors.email && <p className="text-xs text-red-400">{fieldErrors.email}</p>}
-                      </div>
-                      <div className="flex flex-col gap-2">
-                        <label className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">Phone Number</label>
-                        <input
-                          name="phone"
-                          type="tel"
-                          placeholder="+971 50 000 0000"
-                          value={form.phone}
-                          onChange={handleChange}
-                          onFocus={() => setFocused('phone')}
-                          onBlur={() => setFocused(null)}
-                          className="px-4 py-3 rounded-xl text-sm placeholder-[var(--text-dim)] w-full"
-                          style={inputStyle('phone')}
-                        />
-                        {fieldErrors.phone && <p className="text-xs text-red-400">{fieldErrors.phone}</p>}
-                      </div>
-                    </div>
-
-                    {/* Service */}
-                    <div className="flex flex-col gap-2">
-                      <label className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">Service Required</label>
-                      <select
-                        name="service"
-                        value={form.service}
-                        onChange={handleChange}
-                        onFocus={() => setFocused('service')}
-                        onBlur={() => setFocused(null)}
-                        className="px-4 py-3 rounded-xl text-sm w-full appearance-none"
-                        style={{ ...inputStyle('service'), color: form.service ? 'var(--input-text)' : 'var(--text-dim)' }}
-                      >
-                        <option value="" disabled>Select a service...</option>
-                        {services.map((s) => (
-                          <option key={s} value={s} style={{ background: 'var(--option-bg)', color: 'var(--input-text)' }}>{s}</option>
-                        ))}
-                      </select>
-                    </div>
-
-                    {/* Message */}
-                    <div className="flex flex-col gap-2">
-                      <label className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">Message <span style={{ color: '#2CCDDE' }}>*</span></label>
-                      <textarea
-                        name="message"
-                        required
-                        rows={4}
-                        placeholder="Tell us about your IT setup, team size and what you need help with..."
-                        value={form.message}
-                        onChange={handleChange}
-                        onFocus={() => setFocused('message')}
-                        onBlur={() => setFocused(null)}
-                        className="px-4 py-3 rounded-xl text-sm placeholder-[var(--text-dim)] w-full resize-none"
-                        style={inputStyle('message')}
-                      />
-                      {fieldErrors.message && <p className="text-xs text-red-400">{fieldErrors.message}</p>}
-                    </div>
-
-                    {/* Submit */}
-                    <button
-                      type="submit"
-                      disabled={submitting}
-                      className="group w-full flex items-center justify-center gap-2.5 py-4 rounded-full text-black font-bold text-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_40px_rgba(44,205,222,0.5)] mt-1"
-                      style={{ background: 'linear-gradient(135deg, #2CCDDE, #46A3E1)' }}
-                    >
-                      {submitting ? 'Sending…' : 'Send Message'}
-                      <svg className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                      </svg>
-                    </button>
-
-                    {submitError && <p role="alert" className="text-center text-sm text-red-400">{submitError}</p>}
-
-                    <p className="text-center text-xs text-[var(--text-dim)]">
-                      We respond within 2 hours &nbsp;·&nbsp; No spam, ever
-                    </p>
-                    <p className="text-center text-xs leading-relaxed text-[var(--text-dim)]">
-                      By sending this you agree we may email you occasional offers and
-                      IT tips. Every one has a one-click unsubscribe.
-                    </p>
-
-                  </form>
-                )}
-              </div>
-            </div>
+            {formCard}
           </div>
 
         </div>
 
         {/* Map */}
-        {(settings.map_enabled === undefined || Boolean(settings.map_enabled)) && <div
-          className="mt-10 rounded-2xl overflow-hidden"
-          style={{ border: '1px solid rgba(44,205,222,0.18)', height: '420px' }}
-        >
-          <iframe
-            src={mapUrl || "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d230964.06209009685!2d55.13766789915716!3d25.24320683637232!2m3!1f0!2f0!3f0!3m2!1i1024!1i768!4f13.1!3m3!1m2!1s0x3e5f43a9923d5979%3A0x36f7a80cba19b9eb!2sByteflow%20information%20Technology%20%26%20CO%20LLC!5e0!3m2!1sen!2sae!4v1779350571004!5m2!1sen!2sae"}
-            width="100%"
-            height="100%"
-            style={{ border: 0, display: 'block', filter: 'grayscale(20%) invert(5%)' }}
-            allowFullScreen
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-          />
-        </div>}
+        {showMap && <div className="mt-10 overflow-hidden rounded-2xl" style={{ border: '1px solid rgba(44,205,222,0.18)', height: '420px' }}>{mapFrame}</div>}
 
       </div>
     </section>

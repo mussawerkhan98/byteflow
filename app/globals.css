@@ -159,6 +159,7 @@ h1 {
 .home-tech :focus-visible,
 .home-insights :focus-visible,
 .home-reviews :focus-visible,
+.home-contact :focus-visible,
 .needs-band :focus-visible,
 .home-help :focus-visible,
 .home-process :focus-visible {
@@ -247,6 +248,20 @@ h1 {
   .group:hover .needs-art .art-draw {
     animation: none;
   }
+}
+
+/* ---- Home contact panel (app/components/Contact.tsx, HomeContact) ----
+   Always dark: the dark theme's colours are set here so the shared form
+   reads the same whichever theme the visitor uses. */
+.contact-panel {
+  --text-primary: #ffffff;
+  --text-muted: #a9b6c4;
+  --text-dim: #7a8794;
+  --bg-surface: rgba(255, 255, 255, 0.03);
+  --overlay-hover-soft: rgba(255, 255, 255, 0.04);
+  --overlay-strong: rgba(255, 255, 255, 0.12);
+  --input-text: #ffffff;
+  --option-bg: #0b1520;
 }
 
 /* ---- Home reviews wall (app/components/Reviews.tsx) ----
