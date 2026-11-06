@@ -1,19 +1,6 @@
 import Link from 'next/link'
 import { getHomeBlock } from '../lib/home-blocks'
-import { ArrowIcon } from './InlineIcons'
-
-/** Round button whose arrow points up and right, and swaps for a fresh one on hover. */
-function ArrowButton() {
-  return (
-    <span
-      aria-hidden="true"
-      className="relative grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-full border border-[var(--border-strong)] text-[var(--text-primary)] transition-colors duration-300 group-hover:border-[#2CCDDE] group-hover:bg-[#2CCDDE] group-hover:text-[#04121A] sm:h-14 sm:w-14"
-    >
-      <ArrowIcon className="h-4 w-4 -rotate-45 transition-transform duration-300 ease-out group-hover:translate-x-7 group-hover:-translate-y-7 motion-reduce:transition-none" />
-      <ArrowIcon className="absolute h-4 w-4 -translate-x-7 translate-y-7 -rotate-45 transition-transform duration-300 ease-out group-hover:translate-x-0 group-hover:translate-y-0 motion-reduce:transition-none" />
-    </span>
-  )
-}
+import { ArrowUpRightIcon } from './InlineIcons'
 
 // Service promise icons, by row position. The words come from the admin panel
 // ("Home page sections" → Service promise); a fifth row reuses the first icon.
@@ -59,117 +46,110 @@ function PromiseSeal({ text }: { text: string }) {
   )
 }
 
+/** The grid's columns for however many commitments there are (up to six). */
+const columns: Record<number, string> = {
+  1: '',
+  2: 'sm:grid-cols-2',
+  3: 'sm:grid-cols-2 lg:grid-cols-3',
+  4: 'sm:grid-cols-2 lg:grid-cols-4',
+}
+
 /**
  * The service promise ("Home page sections" → Service promise): a tinted
- * panel under the About section, set out like an agreement.
+ * panel set out like a service-level agreement. Each commitment is a cell of
+ * a spec sheet with its standard in large type, and the AMC link runs along
+ * the bottom.
  */
 export default async function ServicePromise() {
   const promise = await getHomeBlock('home_promise')
   const promiseCopy = promise.fields
+  const rows = promise.lists.rows
 
   return (
-    <div className="home-promise bg-[var(--bg-page)] py-16 lg:py-24">
+    <div className="home-promise bg-[var(--bg-page)] py-14 lg:py-20">
       <div className="page-container">
-        {/* Why choose us: the service promise, set out like an agreement, on
-            a tinted panel so it reads as its own band under the About section. */}
         <section
           aria-labelledby="about-commitments-title"
-          className="tint-panel relative isolate overflow-hidden rounded-3xl border border-[var(--border-default)] bg-[var(--bg-surface)]"
+          className="tint-panel relative isolate overflow-hidden rounded-[2rem] border border-[var(--border-default)] bg-[var(--bg-surface)]"
         >
-          <span
-            aria-hidden="true"
-            className="pointer-events-none absolute -right-40 -top-40 -z-10 h-[32rem] w-[32rem] rounded-full bg-[radial-gradient(closest-side,rgba(44,205,222,0.14),transparent)]"
-          />
+          <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
+            <div className="absolute -right-40 -top-40 h-[32rem] w-[32rem] rounded-full bg-[radial-gradient(closest-side,rgba(44,205,222,0.16),transparent)]" />
+            <div className="absolute inset-0 bg-[linear-gradient(var(--border-default)_1px,transparent_1px),linear-gradient(90deg,var(--border-default)_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:linear-gradient(180deg,black,transparent_45%)]" />
+          </div>
 
-          <span
-            aria-hidden="true"
-            className="pointer-events-none absolute -bottom-48 -left-32 -z-10 h-[28rem] w-[28rem] rounded-full bg-[radial-gradient(closest-side,rgba(70,163,225,0.08),transparent)]"
-          />
-
-          <div className="grid gap-6 px-6 py-8 sm:px-8 lg:grid-cols-12 lg:items-center lg:gap-10 lg:px-10 lg:py-9">
-            <div className="lg:col-span-7">
-              <p className="flex items-center gap-3 text-[13px] font-medium text-[var(--text-body)]">
-                <span aria-hidden="true" className="h-px w-10 bg-[#2CCDDE]" />
+          <div className="grid gap-6 px-6 pb-8 pt-9 sm:px-9 lg:grid-cols-12 lg:items-center lg:gap-10 lg:px-11 lg:pt-11">
+            <div className="lg:col-span-8">
+              <p className="flex items-center gap-3 font-mono text-[11.5px] font-medium uppercase tracking-[0.14em] text-[var(--promise-accent)]">
+                <span aria-hidden="true" className="relative flex h-2 w-2">
+                  <span className="absolute inset-0 animate-ping rounded-full bg-[#2CCDDE] opacity-60 motion-reduce:animate-none" />
+                  <span className="relative h-2 w-2 rounded-full bg-[#2CCDDE]" />
+                </span>
                 {promiseCopy.eyebrow}
               </p>
-              <h3
+              <h2
                 id="about-commitments-title"
-                className="mt-4 font-display text-[1.75rem] font-semibold leading-[1.1] tracking-[-0.035em] text-[var(--text-primary)] sm:text-[2.125rem] lg:text-[2.375rem]"
+                className="mt-4 text-balance font-display text-[2rem] font-semibold leading-[1.05] tracking-[-0.04em] text-[var(--text-primary)] sm:text-[2.5rem] lg:text-[3rem]"
               >
-                {promiseCopy.heading}{' '}
-                <span className="text-[var(--ink-soft)]">{promiseCopy.heading_soft}</span>
-              </h3>
+                {promiseCopy.heading} <span className="text-[var(--ink-soft)]">{promiseCopy.heading_soft}</span>
+              </h2>
+              {promiseCopy.intro && <p className="mt-4 max-w-xl text-pretty text-[15.5px] leading-relaxed text-[var(--text-body)]">{promiseCopy.intro}</p>}
             </div>
-            <p className="max-w-sm text-pretty text-[15px] leading-relaxed text-[var(--text-body)] lg:col-span-3">
-              {promiseCopy.intro}
-            </p>
-            <div className="lg:col-span-2 lg:justify-self-end">
+            <div className="hidden lg:col-span-4 lg:flex lg:justify-end">
               <PromiseSeal text={promiseCopy.seal_text} />
             </div>
           </div>
 
-          {/* Column headings, shown once the rows lay out as a table. */}
-          <div
-            aria-hidden="true"
-            className="hidden grid-cols-12 gap-6 border-t border-[var(--border-default)] px-10 py-3 text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--text-nav)] lg:grid"
+          {/* The commitments: one cell each, divided by hairlines like a spec
+              sheet. On phones they are a row you swipe through. */}
+          <ol
+            className={`flex snap-x snap-mandatory gap-px overflow-x-auto border-y border-[var(--border-default)] bg-[var(--border-default)] [scrollbar-width:none] sm:grid sm:overflow-visible [&::-webkit-scrollbar]:hidden ${columns[Math.min(rows.length, 4)] ?? columns[4]} ${rows.length > 4 ? 'lg:grid-cols-3' : ''}`}
           >
-            <span className="col-span-4">Commitment</span>
-            <span className="col-span-3">Standard</span>
-            <span className="col-span-5">What it means for you</span>
-          </div>
-
-          <ol className="border-t border-[var(--border-default)]">
-            {promise.lists.rows.map((v, i) => (
-              <li
-                key={v.title}
-                className="reveal group relative grid gap-4 border-b border-[var(--border-default)] px-6 py-6 transition-colors duration-300 hover:bg-[var(--promise-row-hover)] sm:px-8 lg:grid-cols-12 lg:items-center lg:gap-6 lg:px-10 lg:py-5"
-              >
-                {/* Lights the row's edge on hover. */}
+            {rows.map((v, i) => (
+              <li key={v.title} className="group relative flex w-[80%] shrink-0 snap-start flex-col bg-[var(--bg-surface)] px-6 py-7 transition-colors duration-300 hover:bg-[var(--promise-tile)] sm:w-auto sm:px-7 lg:py-8">
+                {/* A cyan line runs along the top of the cell on hover. */}
                 <span
                   aria-hidden="true"
-                  className="absolute inset-y-0 left-0 w-[3px] origin-top scale-y-0 bg-[#2CCDDE] transition-transform duration-300 group-hover:scale-y-100 motion-reduce:transition-none"
+                  className="absolute inset-x-0 top-0 h-0.5 origin-left scale-x-0 bg-[linear-gradient(90deg,#2CCDDE,#46A3E1)] transition-transform duration-500 group-hover:scale-x-100 motion-reduce:transition-none"
                 />
 
-                <div className="flex items-center gap-4 lg:col-span-4">
+                <div className="flex items-center justify-between gap-3">
                   <span
                     aria-hidden="true"
-                    className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-[var(--border-default)] bg-[var(--promise-tile)] text-[var(--promise-accent)] transition-colors duration-300 group-hover:border-[#2CCDDE] group-hover:bg-[#2CCDDE] group-hover:text-[#04121A]"
+                    className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-[var(--border-default)] bg-[var(--promise-tile)] text-[var(--promise-accent)] transition-colors duration-300 group-hover:border-[#2CCDDE] group-hover:bg-[#2CCDDE] group-hover:text-[#04121A] [&_svg]:h-5 [&_svg]:w-5"
                   >
                     {promiseIcons[i % promiseIcons.length]}
                   </span>
-                  <div>
-                    <span className="block text-[12px] font-medium tabular-nums text-[var(--text-nav)]">
-                      {String(i + 1).padStart(2, '0')}
-                    </span>
-                    <h4 className="font-display text-[1.0625rem] font-semibold tracking-[-0.015em] text-[var(--text-primary)]">
-                      {v.title}
-                    </h4>
-                  </div>
+                  <span className="flex items-center gap-2 font-mono text-[10.5px] font-medium uppercase tracking-[0.12em] text-[var(--text-nav)]">
+                    SLA {String(i + 1).padStart(2, '0')}
+                    <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_0_3px_rgba(52,211,153,0.18)]" />
+                  </span>
                 </div>
 
-                <p className="flex flex-wrap items-baseline gap-x-2.5 lg:col-span-3">
-                  <span className="font-display text-[1.875rem] font-semibold leading-none tracking-[-0.04em] tabular-nums text-[var(--text-primary)] transition-colors duration-300 group-hover:text-[var(--promise-accent)] sm:text-[2rem]">
+                <p className="mt-7 flex flex-wrap items-baseline gap-x-2">
+                  <span className="font-display text-[3rem] font-semibold leading-none tracking-[-0.05em] tabular-nums text-[var(--text-primary)] transition-colors duration-300 group-hover:text-[var(--promise-accent)] sm:text-[3.25rem]">
                     {v.value}
                   </span>
-                  <span className="text-[14px] font-medium text-[var(--promise-accent)]">{v.unit}</span>
+                  <span className="text-[14px] font-semibold text-[var(--promise-accent)]">{v.unit}</span>
                 </p>
 
-                <p className="max-w-xl text-[14px] leading-relaxed text-[var(--text-body)] lg:col-span-5">{v.description}</p>
+                <h3 className="mt-5 font-display text-[1.125rem] font-semibold tracking-[-0.015em] text-[var(--text-primary)]">{v.title}</h3>
+                <p className="mt-2 text-[14px] leading-relaxed text-[var(--text-body)]">{v.description}</p>
               </li>
             ))}
           </ol>
 
           <Link
             href={promiseCopy.link_href}
-            className="group flex flex-col gap-4 px-6 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-8 lg:px-10"
+            className="group flex flex-col gap-4 bg-[#0f1b27] px-6 py-5 text-white sm:flex-row sm:items-center sm:justify-between sm:px-9 lg:px-11"
           >
-            <span className="text-[15px] text-[var(--text-body)]">
-              {promiseCopy.footer_text}{' '}
-              <span className="font-medium text-[var(--text-primary)]">{promiseCopy.footer_strong}</span>
+            <span className="text-[15px] text-[#a9b6c4]">
+              {promiseCopy.footer_text} <span className="font-semibold text-white">{promiseCopy.footer_strong}</span>
             </span>
-            <span className="inline-flex items-center gap-4 text-[15px] font-semibold text-[var(--text-primary)]">
+            <span className="inline-flex shrink-0 items-center gap-3 rounded-full bg-[#2CCDDE] py-1.5 pl-5 pr-1.5 text-[14.5px] font-semibold text-[#04121A] transition-transform duration-200 group-hover:-translate-y-0.5">
               {promiseCopy.link_label}
-              <ArrowButton />
+              <span aria-hidden="true" className="grid h-8 w-8 place-items-center rounded-full bg-[#04121A] text-[#2CCDDE] transition-transform duration-300 group-hover:rotate-45 motion-reduce:transition-none">
+                <ArrowUpRightIcon className="h-3.5 w-3.5" />
+              </span>
             </span>
           </Link>
         </section>
