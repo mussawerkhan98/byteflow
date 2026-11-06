@@ -5,6 +5,7 @@ import { lines } from '../lib/home-content'
 import { needScenarios } from '../lib/need-scenarios'
 import { ArrowUpRightIcon } from './InlineIcons'
 import { ServiceIcon } from './ServiceIcon'
+import NeedsArt from './NeedsArt'
 
 const arrowClass = 'h-3.5 w-3.5 transition-transform duration-200 group-hover:-translate-y-px group-hover:translate-x-px'
 
@@ -67,16 +68,18 @@ export default async function NeedsSection() {
                   className="absolute inset-x-0 top-0 h-1 origin-left scale-x-0 bg-[linear-gradient(90deg,#2CCDDE,#46A3E1)] transition-transform duration-500 group-hover:scale-x-100 motion-reduce:transition-none"
                 />
 
-                <div className="flex items-start justify-between gap-4">
-                  <span className="grid h-14 w-14 place-items-center rounded-2xl bg-[var(--needs-tint)] text-[var(--needs-accent)] transition-colors duration-300 group-hover:bg-[#2CCDDE] group-hover:text-[#04121A]">
-                    <ServiceIcon link={scenario.link?.href ?? ''} className="h-6 w-6" />
-                  </span>
-                  <span aria-hidden="true" className="font-display text-[3.25rem] font-semibold leading-none tracking-[-0.05em] text-[#e3ebef] transition-colors duration-300 group-hover:text-[#c4eef3]">
+                {/* The scene for this need, from the service it links to. */}
+                <div className="relative -mx-3 -mt-3 aspect-[16/10] overflow-hidden rounded-[1.25rem] border border-[var(--border-default)] bg-[linear-gradient(160deg,#e9f7f9_0%,#f7fbfc_60%,#eef6f8_100%)] sm:-mx-4 sm:-mt-4">
+                  <div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(rgba(14,116,144,0.12)_1px,transparent_1px)] bg-[size:16px_16px]" />
+                  <div className="relative h-full w-full transition-transform duration-500 group-hover:scale-[1.04] motion-reduce:transition-none">
+                    <NeedsArt service={scenario.link?.href ?? ''} />
+                  </div>
+                  <span aria-hidden="true" className="absolute left-3 top-3 rounded-full bg-white/90 px-2.5 py-1 font-display text-[12px] font-semibold tabular-nums text-[#0f1b27] shadow-sm backdrop-blur">
                     {scenario.number}
                   </span>
                 </div>
 
-                <p className="mt-7 text-[11.5px] font-semibold uppercase tracking-[0.18em] text-[var(--needs-accent)]">
+                <p className="mt-8 text-[11.5px] font-semibold uppercase tracking-[0.18em] text-[var(--needs-accent)]">
                   {scenario.label}
                 </p>
                 <h3 className="mt-3 text-balance font-display text-[1.5rem] font-semibold leading-[1.15] tracking-[-0.02em] text-[var(--text-primary)] sm:text-[1.625rem]">
@@ -90,7 +93,12 @@ export default async function NeedsSection() {
                       href={scenario.link.href}
                       className="flex items-center justify-between gap-4 border-t border-[var(--border-default)] pt-5 text-[14.5px] font-semibold text-[var(--text-primary)] after:absolute after:inset-0 after:content-['']"
                     >
-                      {scenario.link.label}
+                      <span className="flex items-center gap-2.5">
+                        <span aria-hidden="true" className="grid h-8 w-8 place-items-center rounded-lg bg-[var(--needs-tint)] text-[var(--needs-accent)]">
+                          <ServiceIcon link={scenario.link.href} className="h-4 w-4" />
+                        </span>
+                        {scenario.link.label}
+                      </span>
                       <span aria-hidden="true" className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-[var(--border-strong)] transition-colors duration-300 group-hover:border-[#0f1b27] group-hover:bg-[#0f1b27] group-hover:text-white">
                         <ArrowUpRightIcon className={arrowClass} />
                       </span>
