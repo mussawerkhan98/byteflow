@@ -183,7 +183,6 @@ export default function FAQ({ items, copy, contact }: { items: Faq[]; copy: FaqC
         <div className="grid gap-8 lg:grid-cols-12 lg:items-end lg:gap-16">
           <div className="lg:col-span-7">
             <p className="accent-ink flex items-center gap-3 text-[12px] font-semibold uppercase tracking-[0.18em]">
-              <span aria-hidden="true" className="h-px w-10 bg-current" />
               {copy.eyebrow}
             </p>
             <h2 id={`${id}-title`} className="mt-5 text-balance text-[2.25rem] font-semibold leading-[1.05] tracking-[-0.04em] text-[var(--text-primary)] sm:text-5xl lg:text-[3.5rem]">

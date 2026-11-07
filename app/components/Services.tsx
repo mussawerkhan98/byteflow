@@ -41,7 +41,6 @@ export default async function Services() {
         <div className="grid gap-8 lg:grid-cols-12 lg:items-end lg:gap-10">
           <div className="lg:col-span-7">
             <p className="mb-6 flex items-center gap-3 text-[13px] font-medium text-[var(--text-body)]">
-              <span aria-hidden="true" className="h-px w-10 bg-[#2CCDDE]" />
               {copy.eyebrow}
             </p>
             <h2 className="text-balance text-[2.25rem] font-semibold leading-[1.05] tracking-[-0.04em] text-[var(--text-primary)] sm:text-5xl lg:text-[3.5rem]">

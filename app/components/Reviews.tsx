@@ -2,42 +2,19 @@ import type { CmsReview } from '../lib/cms'
 import { getHomeBlock } from '../lib/home-blocks'
 import { fillRow, reviewerInitials, reviewWall, type WallReview } from '../lib/review-wall'
 import { figuresFrom, type SiteFigures } from '../lib/site-figures'
-import { ArrowUpRightIcon } from './InlineIcons'
 
 const STAR = 'M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z'
 const QUOTE = 'M0 36V22.5C0 9.9 6.3 2.4 18.9 0l2.1 5.1C14.4 7.2 11.1 11.4 11.1 17.4H19.5V36H0zm28.5 0V22.5C28.5 9.9 34.8 2.4 47.4 0l.6 5.1c-6.6 2.1-9.9 6.3-9.9 12.3H48V36H28.5z'
 
-function Stars({ count, className = 'h-4 w-4' }: { count: number; className?: string }) {
+function Stars({ count, className = 'h-4 w-4', on = 'url(#reviews-gold)', off = 'rgba(255,255,255,0.18)' }: { count: number; className?: string; on?: string; off?: string }) {
   return (
     <span role="img" aria-label={`${count} out of 5 stars`} className="flex items-center gap-0.5">
       {Array.from({ length: 5 }, (_, i) => (
-        <svg key={i} aria-hidden="true" className={className} viewBox="0 0 24 24" fill={i < count ? 'url(#reviews-gold)' : 'rgba(255,255,255,0.18)'}>
+        <svg key={i} aria-hidden="true" className={className} viewBox="0 0 24 24" fill={i < count ? on : off}>
           <path d={STAR} />
         </svg>
       ))}
     </span>
-  )
-}
-
-/** One laurel branch: a curved stem with leaves along it. Mirrored for the right side. */
-function Laurel({ flip }: { flip?: boolean }) {
-  const leaves = [
-    { x: 22, y: 60, r: -50 },
-    { x: 15, y: 48, r: -35 },
-    { x: 12, y: 35, r: -18 },
-    { x: 13, y: 22, r: 0 },
-    { x: 18, y: 10, r: 20 },
-  ]
-  return (
-    <svg aria-hidden="true" viewBox="0 0 44 76" className={`h-16 w-9 shrink-0 ${flip ? '-scale-x-100' : ''}`}>
-      <path d="M36 72C16 62 6 42 18 4" fill="none" stroke="url(#reviews-gold)" strokeWidth="1.6" strokeLinecap="round" />
-      {leaves.map((leaf) => (
-        <g key={leaf.y}>
-          <ellipse cx={leaf.x} cy={leaf.y} rx="4" ry="8.5" transform={`rotate(${leaf.r} ${leaf.x} ${leaf.y})`} fill="url(#reviews-gold)" opacity="0.9" />
-          <ellipse cx={leaf.x + 10} cy={leaf.y + 4} rx="3.2" ry="7" transform={`rotate(${leaf.r + 70} ${leaf.x + 10} ${leaf.y + 4})`} fill="url(#reviews-gold)" opacity="0.6" />
-        </g>
-      ))}
-    </svg>
   )
 }
 
@@ -166,38 +143,29 @@ export default async function Reviews({ items = [], figures = figuresFrom(null) 
             </h2>
             {copy.intro && <p className="mt-4 max-w-md text-[15px] leading-relaxed text-[#a9b6c4]">{copy.intro}</p>}
 
-            {/* The Google rating as an award, from Contact details & logo. */}
-            <div className="mt-6 rounded-[1.4rem] border border-white/10 bg-[linear-gradient(160deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))] p-4 backdrop-blur-md lg:mt-auto">
-              <div className="flex items-center gap-4">
-                <div className="flex items-center">
-                  <Laurel />
-                  <div className="px-1 text-center">
-                    <p className="bg-[linear-gradient(180deg,#ffffff,#fde68a)] bg-clip-text font-display text-[2.75rem] font-semibold leading-none tracking-[-0.04em] text-transparent">{figures.rating}</p>
-                    <div className="mt-1.5 flex justify-center">
-                      <Stars count={5} className="h-3.5 w-3.5" />
-                    </div>
-                  </div>
-                  <Laurel flip />
-                </div>
-                <div className="min-w-0 border-l border-white/10 pl-4">
-                  <p className="flex items-center gap-2 text-[14px] font-semibold">
-                    {/* eslint-disable-next-line @next/next/no-img-element -- the Google mark, a small static SVG */}
-                    <img src="/google.svg" alt="" width={16} height={16} loading="lazy" className="h-4 w-4" />
-                    {copy.rating_label}
-                  </p>
-                  <p className="mt-1 text-[13px] text-white/60">{copy.count_label}</p>
+            {/* The Google rating, from Contact details & logo, set out like
+                Google's own rating badge: white card, the G, the score and
+                Google-yellow stars. */}
+            <div className="mt-6 flex items-center gap-4 self-start rounded-2xl bg-white p-4 pr-6 text-[#202124] shadow-[0_18px_40px_-20px_rgba(0,0,0,0.6)] lg:mt-auto">
+              {/* eslint-disable-next-line @next/next/no-img-element -- the Google mark, a small static SVG */}
+              <img src="/google.svg" alt="" width={40} height={40} loading="lazy" className="h-10 w-10 shrink-0" />
+              <div className="min-w-0">
+                <p className="text-[14px] font-semibold leading-tight">{copy.rating_label}</p>
+                <p className="mt-1 flex items-center gap-2">
+                  <span className="text-[1.375rem] font-semibold leading-none tabular-nums">{figures.rating}</span>
+                  <Stars count={5} className="h-4 w-4" on="#FBBC04" off="#dadce0" />
+                </p>
+                <p className="mt-1 text-[12.5px] text-[#5f6368]">
+                  {copy.count_label}
                   {figures.googleUrl && copy.google_label && (
-                    <a
-                      href={figures.googleUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group mt-3 inline-flex items-center gap-1.5 text-[13.5px] font-semibold text-[#7fe3ec] hover:text-white"
-                    >
-                      {copy.google_label}
-                      <ArrowUpRightIcon className="h-3.5 w-3.5 transition-transform duration-200 group-hover:-translate-y-px group-hover:translate-x-px" />
-                    </a>
+                    <>
+                      {' · '}
+                      <a href={figures.googleUrl} target="_blank" rel="noopener noreferrer" className="font-medium text-[#1a73e8] hover:underline">
+                        {copy.google_label}
+                      </a>
+                    </>
                   )}
-                </div>
+                </p>
               </div>
             </div>
           </div>

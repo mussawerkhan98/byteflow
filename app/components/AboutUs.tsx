@@ -25,7 +25,6 @@ export default async function AboutUs() {
         <div className="grid gap-8 lg:grid-cols-12 lg:items-end lg:gap-16">
           <div className="lg:col-span-7">
             <p className="mb-6 flex items-center gap-3 text-[12px] font-semibold uppercase tracking-[0.2em] text-[#2CCDDE]">
-              <span aria-hidden="true" className="h-px w-10 bg-[#2CCDDE]" />
               {copy.eyebrow}
             </p>
             <h2 id="about-title" className="text-balance text-[2.25rem] font-semibold leading-[1.05] tracking-[-0.04em] sm:text-5xl lg:text-[3.5rem]">
