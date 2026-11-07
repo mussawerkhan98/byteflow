@@ -149,6 +149,7 @@ export default function Hero({
                 fill
                 preload
                 fetchPriority="high"
+                quality={70}
                 sizes="(min-width: 1840px) 1760px, 100vw"
                 className="-z-20 object-cover object-center"
               />
@@ -221,6 +222,7 @@ export default function Hero({
                   height={1200}
                   preload
                   fetchPriority="high"
+                  quality={70}
                   sizes="(min-width: 1280px) 50vw, 100vw"
                   className="absolute inset-0 h-full w-full object-cover"
                 />

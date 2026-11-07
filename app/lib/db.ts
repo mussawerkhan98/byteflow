@@ -1,4 +1,5 @@
-import { createClient } from "@libsql/client";
+import { createClient, type InArgs } from "@libsql/client";
+import { unstable_cache } from "next/cache";
 
 export type Post = {
   id: string;
@@ -78,6 +79,47 @@ export const db = createClient({
   authToken: process.env.TURSO_AUTH_TOKEN!,
 });
 
+/** The tag the admin clears (through /api/revalidate) when it saves page content. */
+export const SITE_CONTENT_TAG = "site-content";
+
+/**
+ * Without a save from the admin, a change reaches the pages within this many
+ * seconds: the first view after that still gets the old copy while it
+ * refreshes in the background.
+ */
+const CONTENT_REFRESH_SECONDS = 60;
+
+type ContentRow = Record<string, string | number | null>;
+
+const cachedRows = unstable_cache(
+  async (sql: string, args: InArgs): Promise<ContentRow[]> => {
+    const result = await db.execute({ sql, args });
+    // Plain objects, so the rows can be stored and read back as JSON.
+    return result.rows.map((row) =>
+      Object.fromEntries(
+        result.columns.map((column, i) => {
+          const value = row[i];
+          return [column, typeof value === "bigint" ? Number(value) : (value as string | number | null)];
+        }),
+      ),
+    );
+  },
+  ["site-content-rows"],
+  { tags: [SITE_CONTENT_TAG], revalidate: CONTENT_REFRESH_SECONDS },
+);
+
+/**
+ * A SELECT for what the pages show, read from the cache. Every page used to
+ * wait on several round trips to the database (in another region) before a
+ * byte was sent; now those reads come from memory, and the admin clears them
+ * when it saves. Only for text columns: binary data does not survive the cache.
+ * A database error still throws, and nothing is cached.
+ */
+export async function readContent(statement: string | { sql: string; args?: InArgs }): Promise<{ rows: ContentRow[] }> {
+  const { sql, args = [] } = typeof statement === "string" ? { sql: statement } : statement;
+  return { rows: await cachedRows(sql, args) };
+}
+
 import { postDisplay } from "./post-display";
 
 function safeJsonParse<T>(value: unknown, fallback: T): T {
@@ -140,7 +182,7 @@ function isOn(value: unknown): boolean {
 
 export async function getPosts(): Promise<Post[]> {
   try {
-    const result = await db.execute(
+    const result = await readContent(
       "SELECT * FROM posts WHERE published = 1 ORDER BY created_at DESC",
     );
     return result.rows.map(toPost);
@@ -155,7 +197,7 @@ export async function getPosts(): Promise<Post[]> {
 
 export async function getPostBySlug(slug: string): Promise<Post | null> {
   try {
-    const result = await db.execute({
+    const result = await readContent({
       sql: "SELECT * FROM posts WHERE slug = ? AND published = 1 LIMIT 1",
       args: [slug],
     });
@@ -197,7 +239,7 @@ function toService(row: Record<string, unknown>): DbService {
 
 export async function getServices(): Promise<DbService[]> {
   try {
-    const result = await db.execute(
+    const result = await readContent(
       "SELECT * FROM services WHERE status = 'published' ORDER BY sort_order ASC",
     );
     return result.rows.map(toService);
@@ -214,7 +256,7 @@ export async function getServiceBySlug(
   slug: string,
 ): Promise<DbService | null> {
   try {
-    const result = await db.execute({
+    const result = await readContent({
       sql: "SELECT * FROM services WHERE slug = ? AND status = 'published' LIMIT 1",
       args: [slug],
     });
@@ -266,7 +308,7 @@ function toProject(row: Record<string, unknown>): DbProject {
  */
 export async function getHomeProjects(limit = 4): Promise<DbProject[]> {
   try {
-    const result = await db.execute({
+    const result = await readContent({
       sql: "SELECT * FROM projects WHERE published = 1 AND home_featured = 1 ORDER BY home_order ASC, sort_order ASC LIMIT ?",
       args: [limit],
     });
@@ -284,7 +326,7 @@ export async function getHomeProjects(limit = 4): Promise<DbProject[]> {
 
 export async function getProjects(): Promise<DbProject[]> {
   try {
-    const result = await db.execute(
+    const result = await readContent(
       "SELECT * FROM projects WHERE published = 1 ORDER BY sort_order ASC",
     );
     return result.rows.map(toProject);
@@ -301,7 +343,7 @@ export async function getProjectBySlug(
   slug: string,
 ): Promise<DbProject | null> {
   try {
-    const result = await db.execute({
+    const result = await readContent({
       sql: "SELECT * FROM projects WHERE slug = ? AND published = 1 LIMIT 1",
       args: [slug],
     });
