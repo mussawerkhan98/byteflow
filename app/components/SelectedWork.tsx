@@ -223,7 +223,6 @@ export default async function SelectedWork() {
         <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between lg:gap-16">
           <div className="max-w-3xl">
             <p className="accent-ink mb-5 flex items-center gap-3 text-[12px] font-semibold uppercase tracking-[0.18em]">
-              <span aria-hidden="true" className="h-px w-10 bg-current" />
               {copy.eyebrow}
             </p>
             <h2
