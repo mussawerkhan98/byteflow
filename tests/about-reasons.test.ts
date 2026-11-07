@@ -42,3 +42,12 @@ test('links that are not a service page get plain wording', () => {
   assert.equal(linkLabel('/about-us', services), 'Find out more')
   assert.equal(linkLabel('/cloud-services-dubai?ref=home', services), 'Explore Cloud Services')
 })
+
+test('an uploaded picture replaces the preview illustration; none keeps it', () => {
+  const [one, two] = homeDefaults.home_about.lists.highlights
+  const block = mergeHomeBlock('home_about', { highlights: [{ ...one, image: '/api/media/8/team.webp', image_alt: 'Byteflow team at a client site' }, two] })
+  const [withPicture, without] = aboutReasons(block, services)
+  assert.deepEqual(withPicture.image, { src: '/api/media/8/team.webp', alt: 'Byteflow team at a client site' })
+  assert.equal(without.image, null)
+  assert.equal(without.kind, 'receipt')
+})

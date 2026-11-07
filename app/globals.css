@@ -342,7 +342,8 @@ h1 {
   --promise-row-hover: rgba(44, 205, 222, 0.05);
 }
 
-/* How it works: step icons in the brand cyan, darkened on white so they stay legible. */
+/* How it works: the timeline numbers, "when" labels and ticks in the brand cyan,
+   darkened on white so they stay legible. */
 .process-accent {
   color: #0e7490;
 }
@@ -351,43 +352,36 @@ h1 {
   color: #2ccdde;
 }
 
-/* The active step's rail fills while it waits, then the explorer moves on
-   (HowItWorks listens for animationend). With reduced motion the rail is
-   simply full and nothing advances on its own. */
-.process-fill {
-  height: 0;
-  animation: process-fill 7s linear forwards;
-}
+/* The timeline's line fills in as the section scrolls into view: downward on
+   phones, across from xl. Browsers without scroll-driven animations, and
+   reduced motion, show it full. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .process-line {
+      transform-origin: top;
+      animation: process-line-down linear both;
+      animation-timeline: view();
+      animation-range: entry 10% cover 40%;
+    }
 
-@keyframes process-fill {
-  to {
-    height: 100%;
+    @media (width >= 80rem) {
+      .process-line {
+        transform-origin: left;
+        animation-name: process-line-across;
+      }
+    }
   }
 }
 
-.process-panel-in {
-  animation: process-panel-in 0.45s ease both;
-}
-
-@keyframes process-panel-in {
+@keyframes process-line-down {
   from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
+    transform: scaleY(0);
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .process-fill {
-    height: 100%;
-    animation: none;
-  }
-
-  .process-panel-in {
-    animation: none;
+@keyframes process-line-across {
+  from {
+    transform: scaleX(0);
   }
 }
 

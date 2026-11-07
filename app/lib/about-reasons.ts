@@ -5,7 +5,7 @@
  *
  * No database access or React here, so the rules can be tested directly.
  */
-import type { HomeBlock } from './home-content'
+import { pictureOf, type HomeBlock } from './home-content'
 
 /** The pictures a preview card can show; the admin's "Icon" choice picks one. */
 export const PREVIEW_KINDS = ['layers', 'receipt', 'clock', 'cloud', 'shield', 'chat'] as const
@@ -16,6 +16,8 @@ export type AboutReason = {
   title: string
   description: string
   kind: PreviewKind
+  /** An uploaded picture, in place of the preview card's illustration. */
+  image: { src: string; alt: string } | null
   link: { href: string; label: string }
 }
 
@@ -41,6 +43,7 @@ export function aboutReasons(block: HomeBlock, services: { slug: string; title: 
         title: item.title,
         description: item.description,
         kind: (PREVIEW_KINDS as readonly string[]).includes(item.icon) ? (item.icon as PreviewKind) : DEFAULT_KINDS[index % DEFAULT_KINDS.length],
+        image: pictureOf(item),
         link: { href, label: linkLabel(href, services) },
       }
     })

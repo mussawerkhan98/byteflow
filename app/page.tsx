@@ -42,7 +42,7 @@ export default async function Home() {
       // HTML a crawler receives — the markup still only describes what a
       // visitor sees on the page.
       getFaqsForSlug("home"),
-      // How it works runs in the browser, so its admin content is read here.
+      // How it works (the process timeline).
       getHomeBlock("home_process"),
       getSiteFigures(),
       // The contact form runs in the browser too.

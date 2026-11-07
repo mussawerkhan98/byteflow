@@ -60,9 +60,9 @@ export const homeDefaults = {
     },
     lists: {
       scenarios: [
-        { label: 'A new office', title: 'Moving or opening an office.', description: 'Cabling, Wi-Fi, CCTV and access control planned and installed together, so your team works from day one.', service: 'system-integration', show: 'yes' },
-        { label: 'A safer business', title: 'Worried about ransomware or data loss.', description: 'Firewall, endpoint and email protection with tested backups, so one bad click does not stop the business.', service: 'cyber-security', show: 'yes' },
-        { label: 'More customers', title: 'Need a better website or more leads.', description: 'A fast, mobile-first website, landing pages and chatbots built to turn visitors into enquiries.', service: 'website-development', show: 'yes' },
+        { label: 'A new office', title: 'Moving or opening an office.', description: 'Cabling, Wi-Fi, CCTV and access control planned and installed together, so your team works from day one.', service: 'system-integration', show: 'yes', image: '', image_alt: '' },
+        { label: 'A safer business', title: 'Worried about ransomware or data loss.', description: 'Firewall, endpoint and email protection with tested backups, so one bad click does not stop the business.', service: 'cyber-security', show: 'yes', image: '', image_alt: '' },
+        { label: 'More customers', title: 'Need a better website or more leads.', description: 'A fast, mobile-first website, landing pages and chatbots built to turn visitors into enquiries.', service: 'website-development', show: 'yes', image: '', image_alt: '' },
       ],
     },
   },
@@ -78,10 +78,10 @@ export const homeDefaults = {
     },
     lists: {
       highlights: [
-        { title: 'Full IT under one roof', description: 'Infrastructure, cloud, security, design and marketing, all managed by one expert team with full accountability.', link: '/#services', icon: 'layers', show: 'yes' },
-        { title: 'Zero hidden costs', description: 'Fixed monthly or annual packages so you always know what you pay. No surprises, no extra invoices.', link: '/it-amc-services-dubai', icon: 'receipt', show: 'yes' },
-        { title: 'Rapid on-site response', description: 'Certified engineers on-site or remote within 2 hours across Dubai, Sharjah and Abu Dhabi.', link: '/it-amc-services-dubai', icon: 'clock', show: 'yes' },
-        { title: 'Microsoft & cloud ready', description: 'Official Microsoft 365 setup, cloud migrations and ongoing management for UAE businesses of every size.', link: '/cloud-services-dubai', icon: 'cloud', show: 'yes' },
+        { title: 'Full IT under one roof', description: 'Infrastructure, cloud, security, design and marketing, all managed by one expert team with full accountability.', link: '/#services', icon: 'layers', show: 'yes', image: '', image_alt: '' },
+        { title: 'Zero hidden costs', description: 'Fixed monthly or annual packages so you always know what you pay. No surprises, no extra invoices.', link: '/it-amc-services-dubai', icon: 'receipt', show: 'yes', image: '', image_alt: '' },
+        { title: 'Rapid on-site response', description: 'Certified engineers on-site or remote within 2 hours across Dubai, Sharjah and Abu Dhabi.', link: '/it-amc-services-dubai', icon: 'clock', show: 'yes', image: '', image_alt: '' },
+        { title: 'Microsoft & cloud ready', description: 'Official Microsoft 365 setup, cloud migrations and ongoing management for UAE businesses of every size.', link: '/cloud-services-dubai', icon: 'cloud', show: 'yes', image: '', image_alt: '' },
       ],
     },
   },
@@ -245,11 +245,11 @@ export const homeDefaults = {
     },
     lists: {
       steps: [
-        { title: 'Free consultation', when: 'Your first call', description: 'Reach out by phone, WhatsApp or the contact form. We listen to your setup, team size and pain points — no jargon, no sales pressure.', points: 'Phone, WhatsApp or form\nYour setup and team size\nNo sales pressure' },
-        { title: 'Custom proposal', when: 'Within 24 hours', description: 'Within 24 hours you receive a clear, itemised proposal — scope, timeline and fixed pricing. No hidden costs, no vague estimates.', points: 'Itemised scope\nClear timeline\nFixed pricing' },
-        { title: 'Onboarding & setup', when: 'On-site or remote', description: 'Our certified engineers arrive on-site or connect remotely. We configure your network, servers, cloud or software with zero disruption to your workday.', points: 'Network & servers\nCloud & software\nNo disruption to your day' },
-        { title: 'Testing & handover', when: 'Before sign-off', description: 'Everything is tested end-to-end before we hand over. We walk your team through what was done, answer every question and make sure you are 100% comfortable.', points: 'End-to-end testing\nTeam walkthrough\nEvery question answered' },
-        { title: 'Ongoing support', when: '24/7, for as long as you need', description: 'We monitor your systems 24/7 and fix issues before they affect your business. One call or message and our engineers are on it — on-site within 2 hours.', points: '24/7 monitoring\nIssues fixed early\nOn-site within 2 hours' },
+        { title: 'Free consultation', when: 'Your first call', description: 'Reach out by phone, WhatsApp or the contact form. We listen to your setup, team size and pain points — no jargon, no sales pressure.', points: 'Phone, WhatsApp or form\nYour setup and team size\nNo sales pressure', image: '', image_alt: '' },
+        { title: 'Custom proposal', when: 'Within 24 hours', description: 'Within 24 hours you receive a clear, itemised proposal — scope, timeline and fixed pricing. No hidden costs, no vague estimates.', points: 'Itemised scope\nClear timeline\nFixed pricing', image: '', image_alt: '' },
+        { title: 'Onboarding & setup', when: 'On-site or remote', description: 'Our certified engineers arrive on-site or connect remotely. We configure your network, servers, cloud or software with zero disruption to your workday.', points: 'Network & servers\nCloud & software\nNo disruption to your day', image: '', image_alt: '' },
+        { title: 'Testing & handover', when: 'Before sign-off', description: 'Everything is tested end-to-end before we hand over. We walk your team through what was done, answer every question and make sure you are 100% comfortable.', points: 'End-to-end testing\nTeam walkthrough\nEvery question answered', image: '', image_alt: '' },
+        { title: 'Ongoing support', when: '24/7, for as long as you need', description: 'We monitor your systems 24/7 and fix issues before they affect your business. One call or message and our engineers are on it — on-site within 2 hours.', points: '24/7 monitoring\nIssues fixed early\nOn-site within 2 hours', image: '', image_alt: '' },
       ],
     },
   },
@@ -336,6 +336,16 @@ export function mergeHomeBlock(key: HomeBlockKey, saved: Record<string, unknown>
     }),
   )
   return { fields, lists }
+}
+
+/**
+ * A list item's uploaded picture (`image`, described by `image_alt`), or
+ * null when it has none, so the section shows its built-in artwork instead.
+ * The admin won't save a picture without its description; the title is only
+ * a safety net for rows written some other way.
+ */
+export function pictureOf(item: Item): { src: string; alt: string } | null {
+  return item.image ? { src: item.image, alt: item.image_alt || item.title || '' } : null
 }
 
 /** "points" are typed one per line in the admin. */
