@@ -1,4 +1,4 @@
-import { db } from "@/app/lib/db";
+import { readContent } from "@/app/lib/db";
 import { getSiteFigures, getSiteSettings } from "@/app/lib/cms";
 import { getHomeBlock } from "@/app/lib/home-blocks";
 import { fillDeep } from "@/app/lib/site-figures";
@@ -43,7 +43,7 @@ export async function GET(request: Request) {
 
   try {
     const [result, figures] = await Promise.all([
-      db.execute({
+      readContent({
         sql: `SELECT f.id,f.category,f.question,f.answer
               FROM faqs f JOIN pages p ON p.id=f.page_id
               WHERE f.active=1 AND p.slug=? ORDER BY f.sort_order,f.id`,

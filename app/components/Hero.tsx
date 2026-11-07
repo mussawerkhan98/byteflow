@@ -149,7 +149,9 @@ export default function Hero({
                 fill
                 preload
                 fetchPriority="high"
-                quality={70}
+                // Seen through a 70-96% dark overlay, so a lighter file looks
+                // the same; it is the first picture a phone downloads.
+                quality={50}
                 sizes="(min-width: 1840px) 1760px, 100vw"
                 className="-z-20 object-cover object-center"
               />
