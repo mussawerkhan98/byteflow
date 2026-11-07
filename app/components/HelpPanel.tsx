@@ -8,11 +8,13 @@ const DEFAULT_PHONE = '+971 54 328 2042'
 /**
  * "Not sure which service you need?" prompt, shown on the home page after the
  * How it works steps. Same tinted surface as the service promise in AboutUs.
+ * Shown only when switched on in the admin (Home page sections → Help panel).
  */
 export default async function HelpPanel() {
   const [settings, block] = await Promise.all([getSiteSettings(), getHomeBlock('home_help')])
   const phone = String(settings?.header_phone || '') || DEFAULT_PHONE
   const copy = block.fields
+  if (copy.show === 'no') return null
 
   return (
     <section className="home-help pb-20 sm:pb-24 lg:-mt-8 lg:pb-28">

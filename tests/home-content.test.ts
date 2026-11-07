@@ -32,3 +32,9 @@ test('an emptied list keeps the default, so the section never goes blank', () =>
 test('points are typed one per line', () => {
   assert.deepEqual(lines(' A \r\n\nB\n  '), ['A', 'B'])
 })
+
+test('the help panel stays hidden unless switched on in the admin', () => {
+  assert.equal(mergeHomeBlock('home_help', null).fields.show, 'no')
+  assert.equal(mergeHomeBlock('home_help', { heading: 'Saved before the switch existed' }).fields.show, 'no')
+  assert.equal(mergeHomeBlock('home_help', { show: 'yes' }).fields.show, 'yes')
+})

@@ -255,6 +255,10 @@ export const homeDefaults = {
   },
   home_help: {
     fields: {
+      // Hidden unless switched on in the admin: the FAQ's "Still have
+      // questions?" bar and the Contact section already offer the same
+      // call / WhatsApp prompt further down the home page.
+      show: 'no',
       heading: 'Not sure which service you need?',
       description: "Our team will guide you. Tell us what's slowing your business down and we'll point you to the right fit.",
       button_label: 'Talk to our team',
