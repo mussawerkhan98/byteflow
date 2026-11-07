@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useId } from 'react'
 import { getRecaptchaToken } from '../lib/recaptcha'
 import { LEAD_EVENT, trackEvent } from '../lib/analytics'
 
@@ -38,6 +38,8 @@ export default function InquiryForm({
   description = 'Free consultation, no commitment. We reply within 2 hours.',
   layout = 'grid',
 }: InquiryFormProps) {
+  // Ties each label to its field, for screen readers and a bigger tap target.
+  const fieldId = useId()
   const [form, setForm] = useState({ name: '', email: '', phone: '', service: '', message: '' })
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
@@ -145,10 +147,11 @@ export default function InquiryForm({
       <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
         <div className={pairClass}>
           <div className="flex flex-col gap-2">
-            <label className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
+            <label htmlFor={`${fieldId}-name`} className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
               Full Name <span style={{ color: '#2CCDDE' }}>*</span>
             </label>
             <input
+              id={`${fieldId}-name`}
               name="name"
               type="text"
               required
@@ -163,10 +166,11 @@ export default function InquiryForm({
             {fieldErrors.name && <p className="text-xs text-red-400">{fieldErrors.name}</p>}
           </div>
           <div className="flex flex-col gap-2">
-            <label className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
+            <label htmlFor={`${fieldId}-email`} className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
               Email Address <span style={{ color: '#2CCDDE' }}>*</span>
             </label>
             <input
+              id={`${fieldId}-email`}
               name="email"
               type="email"
               required
@@ -184,8 +188,9 @@ export default function InquiryForm({
 
         <div className={pairClass}>
           <div className="flex flex-col gap-2">
-            <label className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">Phone Number</label>
+            <label htmlFor={`${fieldId}-phone`} className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">Phone Number</label>
             <input
+              id={`${fieldId}-phone`}
               name="phone"
               type="tel"
               placeholder="+971 50 000 0000"
@@ -198,8 +203,9 @@ export default function InquiryForm({
             />
           </div>
           <div className="flex flex-col gap-2">
-            <label className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">Service Required</label>
+            <label htmlFor={`${fieldId}-service`} className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">Service Required</label>
             <select
+              id={`${fieldId}-service`}
               name="service"
               value={form.service}
               onChange={handleChange}
@@ -221,10 +227,11 @@ export default function InquiryForm({
         </div>
 
         <div className="flex flex-col gap-2">
-          <label className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
+          <label htmlFor={`${fieldId}-message`} className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
             Message <span style={{ color: '#2CCDDE' }}>*</span>
           </label>
           <textarea
+            id={`${fieldId}-message`}
             name="message"
             required
             rows={layout === 'stacked' ? 4 : 3}

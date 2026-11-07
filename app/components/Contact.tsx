@@ -1,7 +1,6 @@
 'use client'
 
-import { useState } from 'react'
-import Link from 'next/link'
+import { useState, useId } from 'react'
 import { getRecaptchaToken } from '../lib/recaptcha'
 import { LEAD_EVENT, trackEvent } from '../lib/analytics'
 
@@ -246,24 +245,26 @@ function HomeContact({
               {formCard}
 
               {/* The other ways to reach us, from Contact details & logo. */}
+              {/* Each card holds just its <dt> and <dd>, as a <dl> requires: the
+                  icon sits inside the <dt>, placed in the card's left padding. */}
               <dl className="grid gap-3 sm:grid-cols-3">
                 {details.map((item) => (
-                  <div key={item.label} className="flex min-w-0 items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.04] p-3">
-                    <span aria-hidden="true" className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-[rgba(44,205,222,0.12)] text-[#2CCDDE] [&_svg]:h-4 [&_svg]:w-4">
-                      {item.icon}
-                    </span>
-                    <div className="min-w-0">
-                      <dt className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-white/45">{item.label}</dt>
-                      <dd className="text-[13.5px] font-medium leading-snug">{/* Wraps rather than cutting the address or hours short. */}
-                        {item.href ? (
-                          <a href={item.href} target={item.href.startsWith('http') ? '_blank' : undefined} rel="noopener noreferrer" className="transition-colors hover:text-[#2CCDDE]">
-                            {item.value}
-                          </a>
-                        ) : (
-                          item.value
-                        )}
-                      </dd>
-                    </div>
+                  <div key={item.label} className="relative flex min-h-[3.875rem] min-w-0 flex-col justify-center rounded-2xl border border-white/10 bg-white/[0.04] py-3 pl-[3.75rem] pr-3">
+                    <dt className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-white/70">
+                      <span aria-hidden="true" className="absolute left-3 top-1/2 grid h-9 w-9 -translate-y-1/2 place-items-center rounded-xl bg-[rgba(44,205,222,0.12)] text-[#2CCDDE] [&_svg]:h-4 [&_svg]:w-4">
+                        {item.icon}
+                      </span>
+                      {item.label}
+                    </dt>
+                    <dd className="text-[13.5px] font-medium leading-snug">{/* Wraps rather than cutting the address or hours short. */}
+                      {item.href ? (
+                        <a href={item.href} target={item.href.startsWith('http') ? '_blank' : undefined} rel="noopener noreferrer" className="transition-colors hover:text-[#2CCDDE]">
+                          {item.value}
+                        </a>
+                      ) : (
+                        item.value
+                      )}
+                    </dd>
                   </div>
                 ))}
               </dl>
@@ -289,6 +290,8 @@ export default function Contact({ settings = {}, hero, asPage = false, cta }: { 
   const socialValues: Record<string, string | undefined> = { Facebook: settings.facebook_url, LinkedIn: settings.linkedin_url, Instagram: settings.instagram_url, TikTok: settings.tiktok_url, WhatsApp: settings.whatsapp_link }
   const configuredSocials = socials.map((item) => ({ ...item, href: socialValues[item.label] || item.href })).filter((item) => item.href)
   const mapUrl = safeMapUrl(settings.map_embed_url)
+  // Ties each label to its field, for screen readers and a bigger tap target.
+  const fieldId = useId()
   const [form, setForm] = useState({ name: '', company: '', email: '', phone: '', service: '', message: '' })
   const [submitted, setSubmitted] = useState(false)
   const [submitting, setSubmitting] = useState(false)
@@ -388,8 +391,9 @@ export default function Contact({ settings = {}, hero, asPage = false, cta }: { 
             {/* Name + Company */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div className="flex flex-col gap-2">
-                <label className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">Full Name <span style={{ color: '#2CCDDE' }}>*</span></label>
+                <label htmlFor={`${fieldId}-name`} className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">Full Name <span style={{ color: '#2CCDDE' }}>*</span></label>
                 <input
+                  id={`${fieldId}-name`}
                   name="name"
                   type="text"
                   required
@@ -404,8 +408,9 @@ export default function Contact({ settings = {}, hero, asPage = false, cta }: { 
                 {fieldErrors.name && <p className="text-xs text-red-400">{fieldErrors.name}</p>}
               </div>
               <div className="flex flex-col gap-2">
-                <label className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">Company Name</label>
+                <label htmlFor={`${fieldId}-company`} className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">Company Name</label>
                 <input
+                  id={`${fieldId}-company`}
                   name="company"
                   type="text"
                   placeholder="Your Company LLC"
@@ -422,8 +427,9 @@ export default function Contact({ settings = {}, hero, asPage = false, cta }: { 
             {/* Email + Phone */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div className="flex flex-col gap-2">
-                <label className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">Email Address <span style={{ color: '#2CCDDE' }}>*</span></label>
+                <label htmlFor={`${fieldId}-email`} className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">Email Address <span style={{ color: '#2CCDDE' }}>*</span></label>
                 <input
+                  id={`${fieldId}-email`}
                   name="email"
                   type="email"
                   required
@@ -438,8 +444,9 @@ export default function Contact({ settings = {}, hero, asPage = false, cta }: { 
                 {fieldErrors.email && <p className="text-xs text-red-400">{fieldErrors.email}</p>}
               </div>
               <div className="flex flex-col gap-2">
-                <label className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">Phone Number</label>
+                <label htmlFor={`${fieldId}-phone`} className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">Phone Number</label>
                 <input
+                  id={`${fieldId}-phone`}
                   name="phone"
                   type="tel"
                   placeholder="+971 50 000 0000"
@@ -456,8 +463,9 @@ export default function Contact({ settings = {}, hero, asPage = false, cta }: { 
 
             {/* Service */}
             <div className="flex flex-col gap-2">
-              <label className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">Service Required</label>
+              <label htmlFor={`${fieldId}-service`} className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">Service Required</label>
               <select
+                id={`${fieldId}-service`}
                 name="service"
                 value={form.service}
                 onChange={handleChange}
@@ -475,8 +483,9 @@ export default function Contact({ settings = {}, hero, asPage = false, cta }: { 
 
             {/* Message */}
             <div className="flex flex-col gap-2">
-              <label className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">Message <span style={{ color: '#2CCDDE' }}>*</span></label>
+              <label htmlFor={`${fieldId}-message`} className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">Message <span style={{ color: '#2CCDDE' }}>*</span></label>
               <textarea
+                id={`${fieldId}-message`}
                 name="message"
                 required
                 rows={4}
@@ -523,6 +532,7 @@ export default function Contact({ settings = {}, hero, asPage = false, cta }: { 
   const mapFrame = (
     <iframe
       src={mapUrl || "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d230964.06209009685!2d55.13766789915716!3d25.24320683637232!2m3!1f0!2f0!3f0!3m2!1i1024!1i768!4f13.1!3m3!1m2!1s0x3e5f43a9923d5979%3A0x36f7a80cba19b9eb!2sByteflow%20information%20Technology%20%26%20CO%20LLC!5e0!3m2!1sen!2sae!4v1779350571004!5m2!1sen!2sae"}
+      title="Byteflow office location on Google Maps"
       width="100%"
       height="100%"
       style={{ border: 0, display: 'block', filter: 'grayscale(20%) invert(5%)' }}

@@ -74,9 +74,11 @@
   --bg-surface: #050F18;
   --bg-surface-alt: #080F18;
   --text-primary: #ffffff;
-  --text-muted: #5A6272;
-  --text-dim: #374151;
-  --text-footer-link: #4B5563;
+  /* Muted, dim and footer-link text all pass WCAG AA (4.5:1) on the page
+     background; the same values as the always-dark contact panel. */
+  --text-muted: #a9b6c4;
+  --text-dim: #7a8794;
+  --text-footer-link: #7a8794;
   --text-nav: #9CA3AF;
   --text-quiet: #6B7280;
   --text-body: #9AA3B2;
@@ -105,7 +107,8 @@
   --bg-surface-alt: #f1f5f9;
   --text-primary: #0b1220;
   --text-muted: #64748b;
-  --text-dim: #94a3b8;
+  /* Passes WCAG AA (4.5:1) on white and on the light grey chips and panels. */
+  --text-dim: #5f6b7a;
   --text-footer-link: #64748b;
   --text-nav: #64748b;
   --text-quiet: #94a3b8;
@@ -343,12 +346,15 @@ h1 {
 }
 
 /* How it works: the timeline numbers, "when" labels and ticks in the brand cyan,
-   darkened on white so they stay legible. */
-.process-accent {
+   darkened on white so they stay legible. accent-ink is the same for small
+   cyan labels (section eyebrows) on the page background: 4.5:1 or better. */
+.process-accent,
+.accent-ink {
   color: #0e7490;
 }
 
-:root:not([data-theme='light']) .process-accent {
+:root:not([data-theme='light']) .process-accent,
+:root:not([data-theme='light']) .accent-ink {
   color: #2ccdde;
 }
 

@@ -1,13 +1,20 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import dynamic from 'next/dynamic'
 import { faEnvelopeOpenText, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { Icon } from './Icon'
-import InquiryForm from './InquiryForm'
 import { markInquiryClosed, markInquiryOpen } from '../lib/inquiry-state'
+
+// The form's code is fetched when the visitor reaches for the tab (or opens
+// the drawer), not with every page: most visitors never open it.
+const loadForm = () => import('./InquiryForm')
+const InquiryForm = dynamic(loadForm, { ssr: false })
 
 export default function InquiryDrawer() {
   const [open, setOpen] = useState(false)
+  // Kept once opened, so closing the drawer does not throw away what was typed.
+  const [opened, setOpened] = useState(false)
   const panelRef = useRef<HTMLDivElement>(null)
   const tabRef = useRef<HTMLButtonElement>(null)
 
@@ -46,7 +53,12 @@ export default function InquiryDrawer() {
       <button
         ref={tabRef}
         type="button"
-        onClick={() => setOpen(true)}
+        onClick={() => {
+          setOpened(true)
+          setOpen(true)
+        }}
+        onPointerEnter={loadForm}
+        onFocus={loadForm}
         aria-label="Open the inquiry form"
         aria-expanded={open}
         className={`inquiry-tab${open ? ' is-hidden' : ''}`}
@@ -86,13 +98,15 @@ export default function InquiryDrawer() {
         </button>
 
         <div className="p-6 sm:p-8 overflow-y-auto">
-          <InquiryForm
-            onClose={close}
-            badge="Quick Inquiry"
-            heading="Tell us what you need"
-            description="Send it over and our team replies within 2 hours on business days."
-            layout="stacked"
-          />
+          {opened && (
+            <InquiryForm
+              onClose={close}
+              badge="Quick Inquiry"
+              heading="Tell us what you need"
+              description="Send it over and our team replies within 2 hours on business days."
+              layout="stacked"
+            />
+          )}
         </div>
       </div>
     </>

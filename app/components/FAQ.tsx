@@ -115,7 +115,7 @@ function Question({ faq, open, onToggle, query, baseId }: { faq: Item; open: boo
       >
         <div className="overflow-hidden">
           <div className="px-5 pb-5 pl-16">
-            {faq.category && <p className="mb-1.5 text-[10.5px] font-semibold uppercase tracking-[0.16em] text-[#2CCDDE]">{faq.category}</p>}
+            {faq.category && <p className="accent-ink mb-1.5 text-[10.5px] font-semibold uppercase tracking-[0.16em]">{faq.category}</p>}
             <p className="whitespace-pre-line text-[14.5px] leading-relaxed text-[var(--text-muted)]">
               <Marked text={faq.answer} query={query} />
             </p>
@@ -182,7 +182,7 @@ export default function FAQ({ items, copy, contact }: { items: Faq[]; copy: FaqC
         {/* Heading on the left, intro and search on the right, as the other sections. */}
         <div className="grid gap-8 lg:grid-cols-12 lg:items-end lg:gap-16">
           <div className="lg:col-span-7">
-            <p className="flex items-center gap-3 text-[12px] font-semibold uppercase tracking-[0.18em] text-[#2CCDDE]">
+            <p className="accent-ink flex items-center gap-3 text-[12px] font-semibold uppercase tracking-[0.18em]">
               <span aria-hidden="true" className="h-px w-10 bg-current" />
               {copy.eyebrow}
             </p>

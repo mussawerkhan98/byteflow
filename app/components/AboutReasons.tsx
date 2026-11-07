@@ -53,7 +53,7 @@ export default function AboutReasons({ reasons }: { reasons: AboutReason[] }) {
                   className="group flex w-full items-center gap-5 py-6 text-left sm:gap-8 lg:py-8"
                 >
                   <span
-                    className={`font-display text-[14px] font-semibold tabular-nums transition-colors duration-300 ${open ? 'text-[#2CCDDE]' : 'text-white/45 group-hover:text-white/70'}`}
+                    className={`font-display text-[14px] font-semibold tabular-nums transition-colors duration-300 ${open ? 'text-[#2CCDDE]' : 'text-white/70 group-hover:text-white/90'}`}
                   >
                     {reason.number}
                   </span>

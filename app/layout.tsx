@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import { Sora, Plus_Jakarta_Sans, Outfit } from "next/font/google";
-import { GoogleAnalytics } from "@next/third-parties/google";
+import GoogleAnalytics from "./components/GoogleAnalytics";
 import { connection } from "next/server";
-// Ship Font Awesome's CSS in the bundle; app/components/Icon.tsx turns off
-// the library's own runtime injection so the two never race.
+// Font Awesome's CSS sizes the icons app/components/Icon.tsx draws (it ships
+// none of the library's JavaScript).
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import "./globals.css";
 import Header from "./components/Header";
@@ -37,12 +37,14 @@ const sora = Sora({
 });
 
 // Only the footer wordmark uses this, so just the weight it is set in is
-// pulled down rather than the whole axis.
+// pulled down rather than the whole axis. Not preloaded: it is at the very
+// bottom of the page and would otherwise compete with the hero for bandwidth.
 const outfit = Outfit({
   subsets: ["latin"],
   weight: "800",
   variable: "--font-wordmark",
   display: "swap",
+  preload: false,
 });
 
 
