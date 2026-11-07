@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import Link from 'next/link'
 import { getServices } from '../lib/db'
 import { getHomeBlock } from '../lib/home-blocks'
@@ -69,12 +70,25 @@ export default async function NeedsSection() {
                   className="absolute inset-x-0 top-0 h-1 origin-left scale-x-0 bg-[linear-gradient(90deg,#2CCDDE,#46A3E1)] transition-transform duration-500 group-hover:scale-x-100 motion-reduce:transition-none"
                 />
 
-                {/* The scene for this need, from the service it links to. */}
+                {/* The uploaded picture, or the scene for this need from the service it links to. */}
                 <div className="relative -mx-2 -mt-2 aspect-[2/1] overflow-hidden lg:aspect-[5/2] rounded-[1.1rem] border border-[var(--border-default)] bg-[linear-gradient(160deg,#e9f7f9_0%,#f7fbfc_60%,#eef6f8_100%)] sm:-mx-3 sm:-mt-3">
-                  <div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(rgba(14,116,144,0.12)_1px,transparent_1px)] bg-[size:16px_16px]" />
-                  <div className="relative h-full w-full transition-transform duration-500 group-hover:scale-[1.04] motion-reduce:transition-none">
-                    <NeedsArt service={scenario.link?.href ?? ''} />
-                  </div>
+                  {scenario.image ? (
+                    <Image
+                      src={scenario.image.src}
+                      alt={scenario.image.alt}
+                      fill
+                      sizes="(min-width: 768px) 30vw, 82vw"
+                      unoptimized={!scenario.image.src.startsWith('/')}
+                      className="object-cover transition-transform duration-500 group-hover:scale-[1.04] motion-reduce:transition-none"
+                    />
+                  ) : (
+                    <>
+                      <div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(rgba(14,116,144,0.12)_1px,transparent_1px)] bg-[size:16px_16px]" />
+                      <div className="relative h-full w-full transition-transform duration-500 group-hover:scale-[1.04] motion-reduce:transition-none">
+                        <NeedsArt service={scenario.link?.href ?? ''} />
+                      </div>
+                    </>
+                  )}
                   <span aria-hidden="true" className="absolute left-3 top-3 rounded-full bg-white/90 px-2.5 py-1 font-display text-[12px] font-semibold tabular-nums text-[#0f1b27] shadow-sm backdrop-blur">
                     {scenario.number}
                   </span>

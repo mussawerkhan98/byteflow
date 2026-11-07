@@ -38,3 +38,11 @@ test('no more than three columns', () => {
   const extra = homeDefaults.home_needs.lists.scenarios
   assert.equal(needScenarios(mergeHomeBlock('home_needs', { scenarios: [...extra, ...extra] }), services).length, 3)
 })
+
+test('an uploaded picture replaces the drawing; none keeps it', () => {
+  const [office, safer] = homeDefaults.home_needs.lists.scenarios
+  const block = mergeHomeBlock('home_needs', { scenarios: [{ ...office, image: '/api/media/7/office.webp', image_alt: 'Engineers cabling a new office' }, safer] })
+  const [withPicture, without] = needScenarios(block, services)
+  assert.deepEqual(withPicture.image, { src: '/api/media/7/office.webp', alt: 'Engineers cabling a new office' })
+  assert.equal(without.image, null)
+})

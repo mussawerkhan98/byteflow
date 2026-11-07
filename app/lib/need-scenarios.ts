@@ -7,7 +7,7 @@
  *
  * No database access or React here, so the rules can be tested directly.
  */
-import type { HomeBlock } from './home-content'
+import { pictureOf, type HomeBlock } from './home-content'
 
 export type NeedScenario = {
   number: string
@@ -15,6 +15,8 @@ export type NeedScenario = {
   title: string
   description: string
   link: { href: string; label: string } | null
+  /** An uploaded picture, in place of the card's built-in drawing. */
+  image: { src: string; alt: string } | null
 }
 
 export const MAX_SCENARIOS = 3
@@ -31,6 +33,7 @@ export function needScenarios(block: HomeBlock, services: { slug: string; title:
         title: item.title,
         description: item.description,
         link: service ? { href: `/${service.slug}`, label: service.title } : null,
+        image: pictureOf(item),
       }
     })
 }

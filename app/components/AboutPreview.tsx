@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import Link from 'next/link'
 import type { ReactNode } from 'react'
 import type { AboutReason, PreviewKind } from '../lib/about-reasons'
@@ -131,9 +132,21 @@ export default function AboutPreview({ reason, compact = false }: { reason: Abou
         </>
       )}
       {reason.description && <p className={`${compact ? '' : 'mt-3'} text-[15px] leading-relaxed text-[#475569]`}>{reason.description}</p>}
-      <div aria-hidden="true" className="mt-6">
-        {mockups[reason.kind]}
-      </div>
+      {reason.image ? (
+        <Image
+          src={reason.image.src}
+          alt={reason.image.alt}
+          width={1200}
+          height={800}
+          sizes="(min-width: 1024px) 34vw, 90vw"
+          unoptimized={!reason.image.src.startsWith('/')}
+          className="mt-6 aspect-[3/2] w-full rounded-2xl border border-[rgba(11,23,36,0.08)] object-cover"
+        />
+      ) : (
+        <div aria-hidden="true" className="mt-6">
+          {mockups[reason.kind]}
+        </div>
+      )}
       <Link
         href={reason.link.href}
         className="group mt-6 inline-flex items-center gap-2 rounded-full bg-[#0b1724] px-5 py-2.5 text-[14px] font-semibold text-white transition-colors duration-200 hover:bg-[#0e7490] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0e7490]"
