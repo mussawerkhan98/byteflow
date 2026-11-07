@@ -730,8 +730,10 @@ export default function Header({
 
           <LogoLink
             src={logoUrl}
-            width={56}
-            height={72}
+            // Its largest size (lg:h-9, 28 x 36), so phones are not sent a
+            // logo twice as big as they show; the same shape as the file.
+            width={28}
+            height={36}
             className="flex shrink-0 items-center gap-2.5"
             imageClassName="h-7 w-auto object-contain sm:h-8 lg:h-9"
             preload

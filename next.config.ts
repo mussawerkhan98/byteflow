@@ -31,15 +31,22 @@ function loadParentDatabaseEnvironment() {
 loadParentDatabaseEnvironment();
 
 const nextConfig: NextConfig = {
+  // Next.js gzips each page as it streams, a piece at a time, which sends the
+  // home page as ~130 KB where one pass gives ~80 KB. With
+  // NGINX_COMPRESSION=on (in .env.production) it leaves that to nginx in
+  // front of it. Switch it on only once nginx compresses HTML, CSS and
+  // JavaScript, or those are sent uncompressed.
+  compress: process.env.NGINX_COMPRESSION !== "on",
   images: {
     // The responsive widths every image is offered at (srcset). The admin's
     // uploads are capped at 2400px wide, so nothing larger is ever needed.
     // 828 is what a typical phone asks for (412px at 2x); without it a phone
     // downloads the 1024px file.
     deviceSizes: [640, 828, 1024, 1600, 2400],
-    // 75 is the default; the home hero's pictures use 70: they are the first
-    // thing a phone downloads, and the difference cannot be seen.
-    qualities: [70, 75],
+    // 75 is the default. The home hero's pictures are the first thing a phone
+    // downloads: its picture uses 70, its background (under a dark overlay)
+    // 50, and the difference cannot be seen.
+    qualities: [50, 70, 75],
     remotePatterns: [
       {
         protocol: "https",

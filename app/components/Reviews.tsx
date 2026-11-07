@@ -68,7 +68,7 @@ function Source({ review }: { review: WallReview }) {
     <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1 text-[11px] font-medium text-white/65">
       {review.google && (
         // eslint-disable-next-line @next/next/no-img-element -- the Google mark, a small static SVG
-        <img src="/google.svg" alt="" width={12} height={12} className="h-3 w-3" />
+        <img src="/google.svg" alt="" width={12} height={12} loading="lazy" className="h-3 w-3" />
       )}
       {review.google ? 'Google review' : review.source}
     </span>
@@ -182,7 +182,7 @@ export default async function Reviews({ items = [], figures = figuresFrom(null) 
                 <div className="min-w-0 border-l border-white/10 pl-4">
                   <p className="flex items-center gap-2 text-[14px] font-semibold">
                     {/* eslint-disable-next-line @next/next/no-img-element -- the Google mark, a small static SVG */}
-                    <img src="/google.svg" alt="" width={16} height={16} className="h-4 w-4" />
+                    <img src="/google.svg" alt="" width={16} height={16} loading="lazy" className="h-4 w-4" />
                     {copy.rating_label}
                   </p>
                   <p className="mt-1 text-[13px] text-white/60">{copy.count_label}</p>

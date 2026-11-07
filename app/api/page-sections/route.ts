@@ -1,4 +1,4 @@
-import { db } from "@/app/lib/db";
+import { readContent } from "@/app/lib/db";
 import { getSiteFigures } from "@/app/lib/cms";
 import { fillDeep } from "@/app/lib/site-figures";
 
@@ -29,7 +29,7 @@ export async function GET(request: Request) {
 
   try {
     const [result, figures] = await Promise.all([
-      db.execute({
+      readContent({
         sql: `SELECT s.id, s.name, s.content
               FROM page_sections s JOIN pages p ON p.id = s.page_id
               WHERE p.slug = ? AND s.section_type = 'custom'

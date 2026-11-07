@@ -88,7 +88,7 @@ export default function AboutReviews({ items = [], figures = figuresFrom(null) }
               border: '1px solid rgba(44,205,222,0.18)',
             }}
           >
-            <img src="/google.svg" alt="Google" width={32} height={32} className="w-8 h-8 object-contain flex-shrink-0" />
+            <img src="/google.svg" alt="Google" width={32} height={32} loading="lazy" className="w-8 h-8 object-contain flex-shrink-0" />
             <div>
               <div className="flex items-center gap-2 mb-0.5">
                 <span className="text-2xl font-black text-[var(--text-primary)] leading-none">{figures.rating}</span>
