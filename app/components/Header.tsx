@@ -14,7 +14,6 @@ import { usePathname } from "next/navigation";
 import LogoLink from "./LogoLink";
 import { ArrowIcon, ArrowUpRightIcon, ChevronIcon, PhoneIcon, WhatsAppIcon } from "./InlineIcons";
 import { ServiceIcon } from "./ServiceIcon";
-import ThemeToggle from "./ThemeToggle";
 import { isCurrent, type NavItem } from "../lib/header-menu";
 import { fallbackHeader, type HeaderModel, type MenuLink } from "../lib/header-model";
 
@@ -33,7 +32,7 @@ const telHref = (phone: string) => `tel:${phone.replace(/[^\d+]/g, "")}`;
 
 /** Top-level links and dropdown buttons: a cyan pill marks hover, an open menu and the current page. */
 const pillClass = (active: boolean) =>
-  `inline-flex items-center gap-1.5 whitespace-nowrap rounded-[10px] px-[13px] py-[9px] text-[14.5px] font-medium leading-5 transition-colors duration-200 ${
+  `site-pill ${active ? "is-active " : ""}inline-flex items-center gap-1.5 whitespace-nowrap rounded-[10px] px-[13px] py-[9px] text-[14.5px] font-medium leading-5 transition-colors duration-200 ${
     active
       ? "bg-[rgba(44,205,222,0.12)] text-[#2CCDDE]"
       : "text-[#e2e8f0] hover:bg-[rgba(44,205,222,0.12)] hover:text-[#2CCDDE]"
@@ -720,12 +719,14 @@ export default function Header({
           fills it exactly, padded by --panel-px like the hero panel, so the
           two share their edges and the logo lines up with the hero heading. */}
       <header className="site-header hero-container pointer-events-none sticky top-0 z-[65] pt-3 lg:pt-4">
-        <div className="panel-px pointer-events-auto relative isolate flex h-16 items-center gap-1.5 rounded-[20px] sm:gap-2 lg:h-[72px]">
+        {/* site-bar* classes are hooks only: the home page (home.css) turns
+            the bar light to match its hero. Elsewhere they change nothing. */}
+        <div className="site-bar panel-px pointer-events-auto relative isolate flex h-16 items-center gap-1.5 rounded-[20px] sm:gap-2 lg:h-[72px]">
           {/* The frosted backing lives on its own layer, so the blur never
               becomes the containing block of anything inside the bar. */}
           <span
             aria-hidden="true"
-            className="absolute inset-0 -z-10 rounded-[20px] border border-white/[0.07] bg-[linear-gradient(180deg,rgba(19,33,47,0.97),rgba(15,27,39,0.97))] shadow-[0_12px_40px_rgba(4,13,18,0.35)] backdrop-blur-[10px]"
+            className="site-bar-bg absolute inset-0 -z-10 rounded-[20px] border border-white/[0.07] bg-[linear-gradient(180deg,rgba(19,33,47,0.97),rgba(15,27,39,0.97))] shadow-[0_12px_40px_rgba(4,13,18,0.35)] backdrop-blur-[10px]"
           />
 
           <LogoLink
@@ -738,7 +739,7 @@ export default function Header({
             imageClassName="h-7 w-auto object-contain sm:h-8 lg:h-9"
             preload
           >
-            <span className="font-brand text-[17px] font-extrabold uppercase leading-none tracking-[-0.01em] text-white sm:text-[19px] lg:text-xl">
+            <span className="site-bar-brand font-brand text-[17px] font-extrabold uppercase leading-none tracking-[-0.01em] text-white sm:text-[19px] lg:text-xl">
               Byteflo<span className="brand-accent">w</span>
             </span>
           </LogoLink>
@@ -803,10 +804,10 @@ export default function Header({
 
           {model.showPhone && (
             <>
-              <span aria-hidden="true" className="mx-3 hidden h-6 w-px bg-white/15 xl:block" />
+              <span aria-hidden="true" className="site-bar-divider mx-3 hidden h-6 w-px bg-white/15 xl:block" />
               <a
                 href={telHref(phone)}
-                className="hidden items-center gap-2 whitespace-nowrap text-[13.5px] tabular-nums text-[#cbd5e1] transition-colors duration-200 hover:text-white xl:inline-flex"
+                className="site-bar-phone hidden items-center gap-2 whitespace-nowrap text-[13.5px] tabular-nums text-[#cbd5e1] transition-colors duration-200 hover:text-white xl:inline-flex"
               >
                 <PhoneIcon className="h-4 w-4 text-[#2CCDDE]" />
                 {phone}
@@ -814,16 +815,13 @@ export default function Header({
             </>
           )}
 
-          {/* On phones it lives in the menu instead, where there is room. */}
-          {model.showThemeToggle && <ThemeToggle className="ml-3 hidden lg:grid xl:ml-5" />}
-
           <Link
             href={cta.href}
-            className="group inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full bg-[#2CCDDE] pl-3.5 pr-1 text-[13px] sm:ml-1 sm:gap-2 sm:pl-4 font-bold text-[#04121A] transition-colors duration-200 hover:bg-[#5BDCE9] lg:ml-3 lg:h-12 lg:gap-3 lg:pl-5 lg:pr-1.5 lg:text-[14.5px] xl:ml-5"
+            className="site-bar-cta group inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full bg-[#2CCDDE] pl-3.5 pr-1 text-[13px] sm:ml-1 sm:gap-2 sm:pl-4 font-bold text-[#04121A] transition-colors duration-200 hover:bg-[#5BDCE9] lg:ml-3 lg:h-12 lg:gap-3 lg:pl-5 lg:pr-1.5 lg:text-[14.5px] xl:ml-5"
           >
             <span className="lg:hidden">{cta.shortLabel}</span>
             <span className="hidden lg:inline">{cta.label}</span>
-            <span className="grid h-7 w-7 place-items-center rounded-full bg-[#04121A] text-[#2CCDDE] sm:h-8 sm:w-8">
+            <span className="site-bar-cta-arrow grid h-7 w-7 place-items-center rounded-full bg-[#04121A] text-[#2CCDDE] sm:h-8 sm:w-8">
               <ArrowUpRightIcon className="h-3.5 w-3.5 transition-transform duration-200 group-hover:-translate-y-px group-hover:translate-x-px" />
             </span>
           </Link>
@@ -834,7 +832,7 @@ export default function Header({
             aria-expanded={mobileOpen}
             aria-controls="site-menu"
             aria-label={mobileOpen ? "Close menu" : "Open menu"}
-            className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-white/15 text-white transition-colors duration-200 hover:bg-white/[0.08] sm:h-10 sm:w-10 lg:hidden"
+            className="site-bar-burger grid h-9 w-9 shrink-0 place-items-center rounded-full border border-white/15 text-white transition-colors duration-200 hover:bg-white/[0.08] sm:h-10 sm:w-10 lg:hidden"
           >
             <span aria-hidden="true" className="relative block h-3 w-[18px]">
               <span
@@ -1010,12 +1008,6 @@ export default function Header({
           </ul>
 
           <div className="mt-auto space-y-3 pt-10">
-            {model.showThemeToggle && (
-              <div className="flex items-center justify-between border-t border-white/10 pb-2 pt-5">
-                <span className="text-[14px] font-medium text-[#cbd5e1]">Appearance</span>
-                <ThemeToggle />
-              </div>
-            )}
             <div className="grid grid-cols-2 gap-3">
               <a
                 href={telHref(phone)}

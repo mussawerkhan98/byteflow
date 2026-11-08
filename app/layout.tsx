@@ -87,7 +87,6 @@ export default async function RootLayout({
     scripts.filter((script) => script.placement === "head").map((script) => script.code).join("\n"),
   );
   const footerScripts = scripts.filter((script) => script.placement === "body_end").map((script) => script.code).join("\n");
-  const themeScript = `(function(){try{var t=localStorage.getItem('theme');if(!t){t='light'}document.documentElement.setAttribute('data-theme',t)}catch(e){}})();`;
   const footerNavigation = footerMenu.length
     ? footerMenu
         .filter((item) => item.parent_id === null)
@@ -98,18 +97,17 @@ export default async function RootLayout({
         }))
     : undefined;
   return (
-    // The theme script sets data-theme before React hydrates, so the server
-    // HTML never carries it; that one difference is expected.
+    // The site has one theme, light. data-theme stays on <html> because the
+    // stylesheets key their light colours off it.
     <html
       lang="en"
+      data-theme="light"
       className={`${jakarta.variable} ${sora.variable} ${outfit.variable} h-full antialiased`}
-      suppressHydrationWarning
     >
       {/* React and Next add stylesheets and metadata to <head>, so it must stay
           a normal element. Setting its innerHTML wiped those tags, and React
           then crashed removing them ("reading 'removeChild'"). */}
       <head>
-        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         {headTags.map(({ tag, attrs }, i) =>
           tag === "meta" ? <meta key={i} {...attrs} /> : <link key={i} {...attrs} />,
         )}

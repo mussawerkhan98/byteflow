@@ -134,10 +134,9 @@ type SocialItem = { label: string; href: string; icon: React.ReactNode }
 
 /**
  * The home page's closing section: "Ready to upgrade your IT setup?" and the
- * contact form as one dark panel (contact-panel in globals.css sets the dark
- * colours, so the form reads the same in both themes). The call to action
- * and the contact details on the left, the form on the right, the map along
- * the bottom.
+ * contact form, on the page's light background. The call to action, the
+ * map and the contact details on the left, the form in a raised card on the
+ * right.
  */
 function HomeContact({
   cta,
@@ -158,121 +157,104 @@ function HomeContact({
   const details = contactInfo.filter((item) => item.label !== 'Phone')
 
   return (
-    <section aria-labelledby="contact-title" className="home-contact relative py-16 sm:py-20">
+    <section aria-labelledby="contact-title" className="home-contact hp-section hp-tinted relative">
       <div className="page-container">
-        <div className="contact-panel relative isolate overflow-hidden rounded-[2.25rem] border border-white/10 bg-[#08121b] text-white shadow-[0_60px_120px_-60px_rgba(4,13,18,0.9)]">
-          <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
-            <div className="cta-aurora absolute inset-0" style={{ background: 'radial-gradient(ellipse 50% 50% at 10% 10%, rgba(44,205,222,0.22) 0%, transparent 62%), radial-gradient(ellipse 45% 50% at 95% 90%, rgba(70,163,225,0.16) 0%, transparent 62%)' }} />
-            <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.035)_1px,transparent_1px)] bg-[size:44px_44px] [mask-image:radial-gradient(ellipse_at_top_left,black,transparent_70%)]" />
-            <div className="absolute inset-x-0 top-0 h-px bg-[linear-gradient(90deg,transparent,rgba(44,205,222,0.6),transparent)]" />
-          </div>
+        <div className="grid gap-12 lg:grid-cols-12 lg:gap-14 xl:gap-20">
+          <div data-reveal className="flex flex-col lg:col-span-5">
+            <p className="hp-badge self-start">
+              <span aria-hidden="true" className="hp-dot" />
+              {cta.eyebrow}
+            </p>
+            <h2 id="contact-title" className="hp-h2 mt-6">
+              {cta.heading} <span className="hp-h1-accent">{cta.heading_soft}</span>
+            </h2>
+            {cta.intro && <p className="hp-lead mt-6">{cta.intro}</p>}
 
-          <div className="grid lg:grid-cols-12">
-            <div className="flex flex-col p-7 sm:p-10 lg:col-span-5 lg:p-12">
-              <p className="inline-flex items-center gap-2 self-start rounded-full border border-white/15 bg-white/[0.06] px-4 py-1.5 text-[11.5px] font-semibold uppercase tracking-[0.16em] text-[#7fe3ec]">
-                <span aria-hidden="true" className="relative flex h-2 w-2">
-                  <span className="absolute inset-0 animate-ping rounded-full bg-[#2CCDDE] opacity-60 motion-reduce:animate-none" />
-                  <span className="relative h-2 w-2 rounded-full bg-[#2CCDDE]" />
-                </span>
-                {cta.eyebrow}
-              </p>
-              <h2 id="contact-title" className="mt-6 text-balance text-[2.25rem] font-semibold leading-[1.05] tracking-[-0.04em] sm:text-[2.75rem]">
-                {cta.heading} <span className="bg-[linear-gradient(100deg,#2CCDDE,#46A3E1)] bg-clip-text text-transparent">{cta.heading_soft}</span>
-              </h2>
-              {cta.intro && <p className="mt-5 text-[15.5px] leading-relaxed text-[#a9b6c4]">{cta.intro}</p>}
-
-              <div className="mt-7 flex flex-wrap gap-3">
-                {cta.call_label && phone?.href && (
-                  <a
-                    href={phone.href}
-                    className="group inline-flex items-center gap-3 rounded-full bg-[linear-gradient(135deg,#2CCDDE,#46A3E1)] py-2 pl-5 pr-2 text-[15px] font-semibold text-[#04121A] shadow-[0_18px_40px_-18px_rgba(44,205,222,0.8)] transition-transform duration-200 hover:-translate-y-0.5"
-                  >
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+              {cta.call_label && phone?.href && (
+                <a href={phone.href} className="hp-btn hp-btn-primary group">
+                  <span>
                     {cta.call_label}
                     <span className="sr-only">: {phone.value}</span>
-                    <span aria-hidden="true" className="grid h-9 w-9 place-items-center rounded-full bg-[#04121A] text-[#2CCDDE] [&_svg]:h-4 [&_svg]:w-4">
-                      {phone.icon}
-                    </span>
-                  </a>
-                )}
-                {cta.whatsapp_label && (
-                  <a
-                    href={whatsapp}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2.5 rounded-full border border-white/15 bg-white/[0.04] px-5 py-3 text-[15px] font-semibold transition-colors duration-200 hover:border-[#25D366] hover:bg-[rgba(37,211,102,0.1)]"
-                  >
-                    <span aria-hidden="true" className="text-[#25D366] [&_svg]:h-4 [&_svg]:w-4">
-                      {socials.find((s) => s.label === 'WhatsApp')?.icon}
-                    </span>
-                    {cta.whatsapp_label}
-                  </a>
-                )}
-              </div>
-
-              {cta.promises.length > 0 && (
-                <ul className="mt-7 space-y-2.5">
-                  {cta.promises.map((promise) => (
-                    <li key={promise} className="flex items-center gap-3 text-[14.5px] text-white/80">
-                      <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-[#2CCDDE] text-[#04121A]">
-                        <CheckIcon />
-                      </span>
-                      {promise}
-                    </li>
-                  ))}
-                </ul>
+                  </span>
+                  <span aria-hidden="true" className="hp-btn-arrow [&_svg]:h-4 [&_svg]:w-4">
+                    {phone.icon}
+                  </span>
+                </a>
               )}
-
-              {socials.length > 0 && (
-                <ul className="mt-9 flex flex-wrap gap-2 lg:mt-auto lg:pt-9" aria-label="Follow us">
-                  {socials.map((s) => (
-                    <li key={s.label}>
-                      <a
-                        href={s.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label={s.label}
-                        className="grid h-10 w-10 place-items-center rounded-xl border border-white/10 bg-white/[0.04] text-white/70 transition-colors duration-200 hover:border-transparent hover:bg-[#2CCDDE] hover:text-[#04121A] [&_svg]:h-4 [&_svg]:w-4"
-                      >
-                        {s.icon}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
+              {cta.whatsapp_label && (
+                <a href={whatsapp} target="_blank" rel="noopener noreferrer" className="hp-btn hp-btn-ghost">
+                  <span aria-hidden="true" className="text-[#1fa855] [&_svg]:h-[18px] [&_svg]:w-[18px]">
+                    {socials.find((s) => s.label === 'WhatsApp')?.icon}
+                  </span>
+                  <span>{cta.whatsapp_label}</span>
+                </a>
               )}
             </div>
 
-            <div className="flex flex-col gap-3 p-3 sm:p-4 lg:col-span-7 lg:p-5 lg:pl-0">
-              {formCard}
+            {cta.promises.length > 0 && (
+              <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-3">
+                {cta.promises.map((promise) => (
+                  <li key={promise} className="flex items-center gap-2.5 text-[15px] font-medium text-[var(--hp-ink)]">
+                    <span className="hp-tick">
+                      <CheckIcon />
+                    </span>
+                    {promise}
+                  </li>
+                ))}
+              </ul>
+            )}
 
-              {/* The other ways to reach us, from Contact details & logo. */}
-              {/* Each card holds just its <dt> and <dd>, as a <dl> requires: the
-                  icon sits inside the <dt>, placed in the card's left padding. */}
-              <dl className="grid gap-3 sm:grid-cols-3">
-                {details.map((item) => (
-                  <div key={item.label} className="relative flex min-h-[3.875rem] min-w-0 flex-col justify-center rounded-2xl border border-white/10 bg-white/[0.04] py-3 pl-[3.75rem] pr-3">
-                    <dt className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-white/70">
-                      <span aria-hidden="true" className="absolute left-3 top-1/2 grid h-9 w-9 -translate-y-1/2 place-items-center rounded-xl bg-[rgba(44,205,222,0.12)] text-[#2CCDDE] [&_svg]:h-4 [&_svg]:w-4">
-                        {item.icon}
-                      </span>
+            {/* The office on Google Maps (Contact details & logo), where the
+                photograph used to be. Left out when the map is switched off. */}
+            {map && <div className="hp-frame relative mt-10 aspect-[16/10] overflow-hidden rounded-[1rem]">{map}</div>}
+
+            {/* The other ways to reach us, from Contact details & logo. */}
+            <dl className="mt-8 grid gap-x-6 gap-y-5 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+              {details.map((item) => (
+                <div key={item.label} className="flex min-w-0 items-start gap-3.5">
+                  <dt className="contents">
+                    <span aria-hidden="true" className="hp-icon-tile h-10 w-10 shrink-0 rounded-xl [&_svg]:h-[18px] [&_svg]:w-[18px]">
+                      {item.icon}
+                    </span>
+                    <span className="sr-only">{item.label}</span>
+                  </dt>
+                  <dd className="min-w-0">
+                    <span aria-hidden="true" className="block text-[11.5px] font-semibold uppercase tracking-[0.14em] text-[var(--hp-muted)]">
                       {item.label}
-                    </dt>
-                    <dd className="text-[13.5px] font-medium leading-snug">{/* Wraps rather than cutting the address or hours short. */}
+                    </span>
+                    <span className="mt-1 block text-[15px] font-medium leading-snug text-[var(--hp-ink)]">
                       {item.href ? (
-                        <a href={item.href} target={item.href.startsWith('http') ? '_blank' : undefined} rel="noopener noreferrer" className="transition-colors hover:text-[#2CCDDE]">
+                        <a href={item.href} target={item.href.startsWith('http') ? '_blank' : undefined} rel="noopener noreferrer" className="transition-colors hover:text-[var(--hp-accent)]">
                           {item.value}
                         </a>
                       ) : (
                         item.value
                       )}
-                    </dd>
-                  </div>
+                    </span>
+                  </dd>
+                </div>
+              ))}
+            </dl>
+
+            {socials.length > 0 && (
+              <ul className="mt-8 flex flex-wrap gap-2" aria-label="Follow us">
+                {socials.map((s) => (
+                  <li key={s.label}>
+                    <a href={s.href} target="_blank" rel="noopener noreferrer" aria-label={s.label} className="hp-social [&_svg]:h-4 [&_svg]:w-4">
+                      {s.icon}
+                    </a>
+                  </li>
                 ))}
-              </dl>
-            </div>
+              </ul>
+            )}
           </div>
 
-          {map && <div className="h-56 border-t border-white/10 sm:h-64">{map}</div>}
+          <div data-reveal style={{ '--d': '120ms' } as React.CSSProperties} className="lg:col-span-7">
+            <div className="lg:sticky lg:top-28">{formCard}</div>
+          </div>
         </div>
+
       </div>
     </section>
   )
@@ -343,7 +325,9 @@ export default function Contact({ settings = {}, hero, asPage = false, cta }: { 
     }
   }
 
-  const inputStyle = (name: string) => ({
+  // The home page's form is styled in home.css (hp-form); /contact-us keeps these.
+  const home = Boolean(cta && !asPage)
+  const inputStyle = (name: string): React.CSSProperties => home ? {} : ({
     background: focused === name ? 'rgba(44,205,222,0.05)' : 'var(--overlay-hover-soft)',
     border: focused === name ? '1px solid rgba(44,205,222,0.5)' : '1px solid var(--overlay-strong)',
     outline: 'none',
@@ -351,19 +335,24 @@ export default function Contact({ settings = {}, hero, asPage = false, cta }: { 
     color: 'var(--input-text)',
   })
 
-  // The enquiry form, and the map, shared by both layouts below.
+  // The enquiry form, and the map, shared by both layouts below. On the home
+  // page the card takes the home page's raised white style (hp-form-card).
   const formCard = (
     <div
-      className="relative rounded-2xl overflow-hidden"
-      style={{
-        background: 'linear-gradient(160deg, rgba(44,205,222,0.07) 0%, rgba(70,163,225,0.02) 40%, var(--bg-surface) 100%)',
-        border: '1px solid rgba(44,205,222,0.18)',
-      }}
+      className={`relative overflow-hidden ${home ? 'hp-form-card hp-form rounded-[1rem]' : 'rounded-2xl'}`}
+      style={
+        home
+          ? undefined
+          : {
+              background: 'linear-gradient(160deg, rgba(44,205,222,0.07) 0%, rgba(70,163,225,0.02) 40%, var(--bg-surface) 100%)',
+              border: '1px solid rgba(44,205,222,0.18)',
+            }
+      }
     >
       {/* Top gradient line */}
       <div className="h-[2px] w-full" style={{ background: 'linear-gradient(90deg, #2CCDDE, #46A3E1)' }} />
 
-      <div className="p-8">
+      <div className={home ? 'p-6 sm:p-9' : 'p-8'}>
         {submitted ? (
           <div className="flex flex-col items-center justify-center py-16 text-center gap-5">
             <div
@@ -504,8 +493,8 @@ export default function Contact({ settings = {}, hero, asPage = false, cta }: { 
             <button
               type="submit"
               disabled={submitting}
-              className="group w-full flex items-center justify-center gap-2.5 py-4 rounded-full text-black font-bold text-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_40px_rgba(44,205,222,0.5)] mt-1"
-              style={{ background: 'linear-gradient(135deg, #2CCDDE, #46A3E1)' }}
+              className={home ? 'hp-form-submit group mt-1' : 'group w-full flex items-center justify-center gap-2.5 py-4 rounded-full text-black font-bold text-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_40px_rgba(44,205,222,0.5)] mt-1'}
+              style={home ? undefined : { background: 'linear-gradient(135deg, #2CCDDE, #46A3E1)' }}
             >
               {submitting ? 'Sending…' : 'Send Message'}
               <svg className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>

@@ -1,13 +1,15 @@
-import Hero from "./components/Hero";
-import Services from "./components/Services";
-import SelectedWork from "./components/SelectedWork";
-import NeedsSection from "./components/NeedsSection";
-import AboutUs from "./components/AboutUs";
-import ServicePromise from "./components/ServicePromise";
-import TechStack from "./components/TechStack";
-import Insights from "./components/Insights";
-import Reviews from "./components/Reviews";
-import HowItWorks from "./components/HowItWorks";
+import "./home.css";
+import HomeHero from "./components/home/HomeHero";
+import HomeServices from "./components/home/HomeServices";
+import HomeWork from "./components/home/HomeWork";
+import HomeNeeds from "./components/home/HomeNeeds";
+import HomeAbout from "./components/home/HomeAbout";
+import HomePromise from "./components/home/HomePromise";
+import HomeTech from "./components/home/HomeTech";
+import HomeInsights from "./components/home/HomeInsights";
+import HomeReviews from "./components/home/HomeReviews";
+import HomeProcess from "./components/home/HomeProcess";
+import HomeMotion from "./components/home/HomeMotion";
 import HelpPanel from "./components/HelpPanel";
 import Contact from "./components/Contact";
 import {
@@ -55,9 +57,8 @@ export default async function Home() {
     ...(pageHero?.hero_description
       ? { description: pageHero.hero_description }
       : {}),
-    ...(pageHero?.hero_background_image
-      ? { backgroundImage: pageHero.hero_background_image }
-      : {}),
+    // The admin's hero pictures (hero_background_image, hero_image) are not
+    // used: the redesign takes its photographs from lib/home-photos.ts.
     ...(pageHero?.hero_primary_label
       ? { primaryButtonLabel: pageHero.hero_primary_label }
       : {}),
@@ -77,8 +78,6 @@ export default async function Home() {
         [
           ["highlight", pageHero?.hero_highlight],
           ["trustLine", pageHero?.hero_trust_line],
-          ["image", pageHero?.hero_image],
-          ["imageAlt", pageHero?.hero_image_alt],
           ["stripText", pageHero?.hero_strip_text],
           ["stripLinkLabel", pageHero?.hero_strip_link_label],
           ["stripLink", pageHero?.hero_strip_link],
@@ -87,24 +86,26 @@ export default async function Home() {
     ),
   };
   return (
-    <>
+    // .hp scopes the home page's design system (globals.css, "Home page").
+    <div className="hp">
       <JsonLd data={graph(faqPageSchema(faqs))} />
-      <Hero
+      <HomeMotion />
+      <HomeHero
         content={(hero ?? {}) as never}
         phone={String(settings?.header_phone || "") || undefined}
         whatsappUrl={String(settings?.whatsapp_link || "") || undefined}
         figures={figures}
       />
-      <Services />
-      <SelectedWork />
-      <NeedsSection />
-      <AboutUs />
-      <ServicePromise />
-      <TechStack />
-      <Insights posts={posts} />
-      <HowItWorks content={process} />
+      <HomeServices />
+      <HomeWork />
+      <HomeNeeds />
+      <HomeAbout />
+      <HomePromise />
+      <HomeTech />
+      <HomeInsights posts={posts} />
+      <HomeProcess content={process} />
       <HelpPanel />
-      <Reviews items={testimonials} figures={figures} />
+      <HomeReviews items={testimonials} figures={figures} />
       {/* "Ready to upgrade your IT setup?" and the contact form, as one section. */}
       <Contact
         settings={(settings ?? {}) as never}
@@ -118,6 +119,6 @@ export default async function Home() {
           promises: lines(contact.fields.promises),
         }}
       />
-    </>
+    </div>
   );
 }

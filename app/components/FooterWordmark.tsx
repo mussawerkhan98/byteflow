@@ -4,7 +4,7 @@
  * The oversized BYTEFLOW wordmark that closes the footer.
  *
  * Each letter can be picked up and thrown, and springs back to its place when
- * released. The whole thing is decoration, so it is hidden from assistive
+ * released. It stays inside the footer: never dragged or flung over the page. The whole thing is decoration, so it is hidden from assistive
  * technology and replaced by a plain text name; nothing here is the only way
  * to reach anything.
  *
@@ -46,6 +46,37 @@ type Letter = {
   grabY: number
   originX: number
   originY: number
+  /**
+   * How far the letter may travel from home on each side, measured when it is
+   * picked up so it never leaves the footer.
+   */
+  minX: number
+  maxX: number
+  minY: number
+  maxY: number
+}
+
+/** Keep a letter inside its footer: no further than its bounds, and stopped there. */
+function confine(l: Letter) {
+  if (l.x < l.minX) { l.x = l.minX; l.vx = 0 }
+  else if (l.x > l.maxX) { l.x = l.maxX; l.vx = 0 }
+  if (l.y < l.minY) { l.y = l.minY; l.vy = 0 }
+  else if (l.y > l.maxY) { l.y = l.maxY; l.vy = 0 }
+}
+
+/**
+ * The room a letter has to move in: the footer's box, less the letter's own
+ * size, as offsets from where the letter rests.
+ */
+function measureBounds(l: Letter) {
+  const area = (l.el.closest('footer') ?? document.body).getBoundingClientRect()
+  const box = l.el.getBoundingClientRect()
+  const homeLeft = box.left - l.x
+  const homeTop = box.top - l.y
+  l.minX = area.left - homeLeft
+  l.maxX = area.right - (homeLeft + box.width)
+  l.minY = area.top - homeTop
+  l.maxY = area.bottom - (homeTop + box.height)
 }
 
 type Loop = { current: number | null }
@@ -92,6 +123,8 @@ function step(letters: Letter[], frame: Loop) {
       l.vy = (l.vy - l.y * STIFFNESS) * DAMPING
       l.x += l.vx
       l.y += l.vy
+      // A flick away from home still stops at the footer's edge.
+      confine(l)
       moving = true
     } else if (l.x !== 0 || l.y !== 0) {
       // Settle exactly on zero rather than leaving a fractional offset
@@ -142,6 +175,7 @@ function createDragController(wake: () => void): DragController {
     l.vy = ny - l.y
     l.x = nx
     l.y = ny
+    confine(l)
     paint(l)
   }
 
@@ -178,6 +212,7 @@ function createDragController(wake: () => void): DragController {
     letter.grabY = event.clientY
     letter.originX = letter.x
     letter.originY = letter.y
+    measureBounds(letter)
     letter.vx = 0
     letter.vy = 0
     paint(letter)
@@ -203,6 +238,7 @@ export default function FooterWordmark() {
     reduced.current = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     letters.current = Array.from(root.querySelectorAll<HTMLSpanElement>('[data-letter]')).map((el) => ({
       el, x: 0, y: 0, vx: 0, vy: 0, dragging: false, grabX: 0, grabY: 0, originX: 0, originY: 0,
+      minX: 0, maxX: 0, minY: 0, maxY: 0,
     }))
 
     const controller = createDragController(() => {

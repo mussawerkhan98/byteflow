@@ -102,7 +102,7 @@ export default function Footer({ navigation = fallbackUsefulLinks, settings = {}
                   className="flex items-center gap-3 text-[var(--text-footer-link)] hover:text-[#2CCDDE] transition-colors duration-200"
                 >
                   <span
-                    className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
+                    className="w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0"
                     style={{ background: 'var(--border-subtle)', border: '1px solid #2CCDDE20' }}
                   >
                     <Icon icon={faPhone} className="w-3.5 h-3.5" style={{ color: '#2CCDDE' }} />
@@ -116,7 +116,7 @@ export default function Footer({ navigation = fallbackUsefulLinks, settings = {}
                   className="flex items-center gap-3 text-[var(--text-footer-link)] hover:text-[#2CCDDE] transition-colors duration-200"
                 >
                   <span
-                    className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
+                    className="w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0"
                     style={{ background: 'var(--border-subtle)', border: '1px solid #2CCDDE20' }}
                   >
                     <Icon icon={faEnvelope} className="w-3.5 h-3.5" style={{ color: '#2CCDDE' }} />
@@ -126,7 +126,7 @@ export default function Footer({ navigation = fallbackUsefulLinks, settings = {}
               </li>
               <li className="flex items-center gap-3 text-[var(--text-footer-link)]">
                 <span
-                  className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
+                  className="w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0"
                   style={{ background: 'var(--border-subtle)', border: '1px solid #2CCDDE20' }}
                 >
                   <Icon icon={faLocationDot} className="w-3.5 h-3.5" style={{ color: '#2CCDDE' }} />
@@ -206,7 +206,7 @@ export default function Footer({ navigation = fallbackUsefulLinks, settings = {}
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={s.label}
-                  className="w-9 h-9 flex items-center justify-center rounded-lg text-[var(--text-footer-link)] hover:text-black transition-all duration-200 hover:scale-110 hover:shadow-[0_0_16px_rgba(44,205,222,0.4)]"
+                  className="w-9 h-9 flex items-center justify-center rounded-md text-[var(--text-footer-link)] hover:text-black transition-all duration-200 hover:scale-110 hover:shadow-[0_0_16px_rgba(44,205,222,0.4)]"
                   style={{ background: 'var(--border-subtle)', border: '1px solid #2CCDDE20' }}
                   onMouseEnter={(e) => {
                     const el = e.currentTarget as HTMLAnchorElement
