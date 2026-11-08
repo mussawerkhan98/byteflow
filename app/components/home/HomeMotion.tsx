@@ -53,10 +53,21 @@ export default function HomeMotion() {
     })
     watchNew.observe(root, { childList: true, subtree: true })
 
+    // A safety net beside the observer: on each scroll, anything still hidden
+    // that has reached the screen is shown, so nothing can stay invisible.
+    const showVisible = () => {
+      const height = window.innerHeight
+      root.querySelectorAll<HTMLElement>('[data-reveal]:not([data-shown])').forEach((el) => {
+        const box = el.getBoundingClientRect()
+        if (box.top < height * 0.95 && box.bottom > 0) el.setAttribute('data-shown', '')
+      })
+    }
+
     let frame = 0
     const onScroll = () => {
       cancelAnimationFrame(frame)
       frame = requestAnimationFrame(() => {
+        showVisible()
         const max = document.documentElement.scrollHeight - window.innerHeight
         const progress = max > 0 ? Math.min(1, window.scrollY / max) : 0
         bar.current?.style.setProperty('--p', String(progress))

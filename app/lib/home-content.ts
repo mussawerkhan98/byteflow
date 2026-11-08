@@ -170,7 +170,7 @@ export const homeDefaults = {
       link_label: 'View all articles',
       link: '/blog',
       featured: 'latest',
-      list_count: '3',
+      list_count: '5',
       list_label: 'More articles',
       read_label: 'Read article',
       topics_label: 'Browse by topic',
