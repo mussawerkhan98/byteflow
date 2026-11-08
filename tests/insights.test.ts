@@ -9,11 +9,11 @@ const posts = ['a', 'b', 'c', 'd', 'e', 'f', 'g'].map((slug, i) => ({
   category: ['Cloud', 'IT Support', 'cyber  security', 'Cloud', 'Web Development', 'Cloud', 'Cloud'][i],
 }))
 
-test('by default the newest post is featured and the next three are listed', () => {
+test('by default the newest post is featured and the next five are listed', () => {
   const { featured, picked, list } = insightPicks(mergeHomeBlock('home_insights', null), posts)
   assert.equal(featured?.slug, 'a')
   assert.equal(picked, false)
-  assert.deepEqual(list.map((p) => p.slug), ['b', 'c', 'd'])
+  assert.deepEqual(list.map((p) => p.slug), ['b', 'c', 'd', 'e', 'f'])
 })
 
 test('a picked post is featured, marked as picked and left out of the list', () => {

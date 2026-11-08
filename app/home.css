@@ -1,0 +1,1490 @@
+/* ==== Home page (app/page.tsx, app/components/home) ====
+   Loaded by the home page only. Everything is scoped under .hp, the wrapper
+   around the page's sections, so the header, footer and other pages keep
+   their own styles. The site has one theme, light. */
+
+.hp {
+  /* A very light business blue rather than pure white; cards stay white so
+     they lift off it without heavy shadows. */
+  --hp-bg: #f3f7fc;
+  --hp-soft: #e9f0f8;
+  --hp-card: #ffffff;
+  --hp-ink: #0c1d33;
+  --hp-body: #4b5b70;
+  --hp-muted: #66778c;
+  --hp-soft-ink: #7a8aa0;
+  --hp-line: rgba(16, 42, 76, 0.09);
+  --hp-line-strong: rgba(16, 42, 76, 0.17);
+  --hp-accent: #0e7490;
+  --hp-accent-bg: rgba(30, 140, 190, 0.1);
+  --hp-navy: #0c1d33;
+  --hp-navy-hover: #17345a;
+  --hp-shadow-sm: 0 1px 2px rgba(16, 42, 76, 0.04);
+  --hp-shadow: 0 1px 2px rgba(16, 42, 76, 0.04), 0 18px 40px -30px rgba(16, 42, 76, 0.22);
+  --hp-shadow-lg: 0 1px 2px rgba(16, 42, 76, 0.04), 0 30px 60px -38px rgba(16, 42, 76, 0.3);
+  --hp-ph-a: #e3ecf6;
+  --hp-ph-b: #edf3fa;
+  --hp-ph-ink: #5a6e80;
+  --hp-ph-tile: rgba(255, 255, 255, 0.8);
+  --hp-glass: rgba(255, 255, 255, 0.8);
+  --hp-glass-line: rgba(255, 255, 255, 0.7);
+  --hp-h1-accent: linear-gradient(100deg, #0a8a9e 0%, #2378bd 100%);
+  --hp-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  /* Slower to settle, for reveals. */
+  --hp-ease-soft: cubic-bezier(0.16, 1, 0.3, 1);
+  /* Eases in and out, for the photo curtains. */
+  --hp-ease-curtain: cubic-bezier(0.77, 0, 0.175, 1);
+
+  /* The shared contact form inside reads these. */
+  --bg-surface: #ffffff;
+
+  background: var(--hp-bg);
+  color: var(--hp-ink);
+}
+
+/* The strip above and around the header takes the same blue, so there is no
+   white seam between the header and the hero. */
+:root[data-theme='light']:has(.hp) {
+  --bg-page: #f3f7fc;
+}
+
+.hp :focus-visible {
+  outline: 2px solid var(--hp-accent);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html:has(.hp) {
+    scroll-behavior: smooth;
+  }
+}
+
+/* ---- Header bar on the home page ----
+   The shared header (components/Header.tsx) is a dark navy bar. On the home
+   page in the light theme it turns light to match the hero: white frosted
+   glass, navy type, the hero's navy button. Only the bar changes; its
+   dropdown panels and the phone menu stay as they are. The selectors start
+   from body:has(.hp) because this stylesheet stays loaded after the visitor
+   moves on to another page. */
+
+/* Squarer corners, to match the hero panel below it. */
+body:has(.hp) .site-bar,
+body:has(.hp) .site-bar-bg {
+  border-radius: 0.75rem;
+}
+
+:root[data-theme='light'] body:has(.hp) .site-bar-bg {
+  border-color: rgba(11, 26, 43, 0.08);
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: 0 1px 2px rgba(11, 26, 43, 0.04), 0 16px 40px -20px rgba(11, 26, 43, 0.28);
+  -webkit-backdrop-filter: blur(16px) saturate(1.5);
+  backdrop-filter: blur(16px) saturate(1.5);
+}
+
+:root[data-theme='light'] body:has(.hp) .site-bar-brand {
+  color: #0b1a2b;
+}
+
+:root[data-theme='light'] body:has(.hp) .site-bar .site-pill {
+  color: #334155;
+}
+
+:root[data-theme='light'] body:has(.hp) .site-bar .site-pill:hover,
+:root[data-theme='light'] body:has(.hp) .site-bar .site-pill.is-active {
+  background: rgba(44, 205, 222, 0.13);
+  color: #0e7490;
+}
+
+:root[data-theme='light'] body:has(.hp) .site-bar-divider {
+  background: rgba(11, 26, 43, 0.12);
+}
+
+:root[data-theme='light'] body:has(.hp) .site-bar-phone {
+  color: #475569;
+}
+
+:root[data-theme='light'] body:has(.hp) .site-bar-phone:hover {
+  color: #0b1a2b;
+}
+
+:root[data-theme='light'] body:has(.hp) .site-bar-phone svg {
+  color: #0e7490;
+}
+
+:root[data-theme='light'] body:has(.hp) .site-bar-burger {
+  border-color: rgba(11, 26, 43, 0.16);
+  color: #0b1a2b;
+}
+
+:root[data-theme='light'] body:has(.hp) .site-bar-burger:hover {
+  background: rgba(11, 26, 43, 0.05);
+}
+
+:root[data-theme='light'] body:has(.hp) .site-bar-cta {
+  background: #0b1a2b;
+  color: #ffffff;
+}
+
+:root[data-theme='light'] body:has(.hp) .site-bar-cta:hover {
+  background: #15324b;
+}
+
+:root[data-theme='light'] body:has(.hp) .site-bar-cta-arrow {
+  background: #2ccdde;
+  color: #04121a;
+}
+
+/* With the phone menu open the bar sits on the menu's dark navy, so it goes
+   back to its dark look there. */
+@media (width < 64rem) {
+  :root[data-theme='light'] body:has(.hp):has(#site-menu:not([inert])) .site-bar-bg {
+    border-color: rgba(255, 255, 255, 0.07);
+    background: linear-gradient(180deg, rgba(19, 33, 47, 0.97), rgba(15, 27, 39, 0.97));
+  }
+
+  :root[data-theme='light'] body:has(.hp):has(#site-menu:not([inert])) .site-bar-brand,
+  :root[data-theme='light'] body:has(.hp):has(#site-menu:not([inert])) .site-bar-burger {
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.15);
+  }
+}
+
+/* ---- Layout ---- */
+
+.hp-section {
+  padding-block: clamp(4rem, 2.5rem + 4vw, 6.75rem);
+}
+
+.hp-section-tight {
+  padding-block: clamp(1.5rem, 1rem + 2vw, 3rem);
+}
+
+.hp-tinted {
+  background: var(--hp-soft);
+}
+
+.hp-divided {
+  border-top: 1px solid var(--hp-line);
+}
+
+/* ---- Type ---- */
+
+.hp-eyebrow {
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  line-height: 1.4;
+  text-transform: uppercase;
+  color: var(--hp-accent);
+}
+
+.hp-h1 {
+  font-family: var(--font-heading), 'Sora', system-ui, sans-serif;
+  font-size: clamp(2.375rem, 1.2rem + 3.2vw, 3.875rem);
+  font-weight: 600;
+  line-height: 1.04;
+  letter-spacing: -0.042em;
+  color: var(--hp-ink);
+  text-wrap: balance;
+}
+
+.hp-h1-accent {
+  background: var(--hp-h1-accent);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.hp-h2 {
+  font-family: var(--font-heading), 'Sora', system-ui, sans-serif;
+  font-size: clamp(2.125rem, 1.3rem + 2.2vw, 3rem);
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+  color: var(--hp-ink);
+  text-wrap: balance;
+}
+
+.hp-h2-soft {
+  color: var(--hp-soft-ink);
+}
+
+.hp-h3 {
+  font-family: var(--font-heading), 'Sora', system-ui, sans-serif;
+  font-size: clamp(1.375rem, 1.2rem + 0.5vw, 1.625rem);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.022em;
+  color: var(--hp-ink);
+  text-wrap: balance;
+}
+
+.hp-h3-lg {
+  font-family: var(--font-heading), 'Sora', system-ui, sans-serif;
+  font-size: clamp(1.75rem, 1.3rem + 1.3vw, 2.375rem);
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -0.03em;
+  color: var(--hp-ink);
+  text-wrap: balance;
+}
+
+.hp-lead {
+  font-size: clamp(1.0625rem, 1rem + 0.2vw, 1.1875rem);
+  line-height: 1.65;
+  color: var(--hp-body);
+  text-wrap: pretty;
+}
+
+.hp-stat {
+  font-family: var(--font-heading), 'Sora', system-ui, sans-serif;
+  font-size: clamp(2.5rem, 2rem + 1.6vw, 3.5rem);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.045em;
+  font-variant-numeric: tabular-nums;
+  color: var(--hp-ink);
+}
+
+.hp-quote {
+  font-family: var(--font-heading), 'Sora', system-ui, sans-serif;
+  font-size: clamp(1.375rem, 1rem + 1.3vw, 2.125rem);
+  font-weight: 500;
+  line-height: 1.38;
+  letter-spacing: -0.02em;
+  color: var(--hp-ink);
+  text-wrap: pretty;
+}
+
+.hp-reason-num {
+  font-family: var(--font-heading), 'Sora', system-ui, sans-serif;
+  font-size: 2.25rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  background: var(--hp-h1-accent);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ---- Small parts ---- */
+
+.hp-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.45rem 0.95rem;
+  border: 1px solid var(--hp-line);
+  border-radius: 999px;
+  background: var(--hp-card);
+  box-shadow: var(--hp-shadow-sm);
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--hp-ink);
+}
+
+.hp-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: #2ccdde;
+  box-shadow: 0 0 0 4px rgba(44, 205, 222, 0.2);
+}
+
+.hp-icon-tile {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  background: var(--hp-accent-bg);
+  color: var(--hp-accent);
+}
+
+.hp-tick {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 999px;
+  background: var(--hp-accent-bg);
+  color: var(--hp-accent);
+}
+
+.hp-num-dot {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 999px;
+  background: var(--hp-accent-bg);
+  color: var(--hp-accent);
+  font-family: var(--font-heading), 'Sora', system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.hp-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3rem 0.8rem;
+  border: 1px solid var(--hp-line);
+  border-radius: 999px;
+  background: var(--hp-soft);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--hp-body);
+  transition: border-color 0.25s ease, color 0.25s ease;
+}
+
+.hp-tinted .hp-pill {
+  background: var(--hp-card);
+}
+
+.hp-caption {
+  padding: 0.5rem 0.9rem;
+  border-radius: 999px;
+  background: rgba(11, 26, 43, 0.78);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.hp-glass {
+  background: var(--hp-glass);
+  border: 1px solid var(--hp-glass-line);
+  -webkit-backdrop-filter: blur(14px) saturate(1.4);
+  backdrop-filter: blur(14px) saturate(1.4);
+  box-shadow: 0 12px 32px -14px rgba(11, 26, 43, 0.3);
+}
+
+.hp-avatar {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  border-radius: 999px;
+  background: linear-gradient(140deg, #e0f6f9, #dcebf8);
+  color: #0e7490;
+  font-weight: 700;
+}
+
+/* ---- Buttons and links ---- */
+
+.hp-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.9rem;
+  min-height: 3.25rem;
+  padding: 0.375rem 0.375rem 0.375rem 1.5rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+  transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s var(--hp-ease);
+}
+
+.hp-btn:not(:has(.hp-btn-arrow)) {
+  justify-content: center;
+  padding-right: 1.5rem;
+}
+
+.hp-btn-arrow {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 999px;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+.hp-btn-arrow svg,
+.hp-arrow {
+  transition: transform 0.25s var(--hp-ease);
+}
+
+.hp-btn-primary {
+  background: var(--hp-navy);
+  color: #ffffff;
+}
+
+.hp-btn-primary .hp-btn-arrow {
+  background: #2ccdde;
+  color: #04121a;
+}
+
+.hp-btn-ghost {
+  border-color: var(--hp-line-strong);
+  background: transparent;
+  color: var(--hp-ink);
+}
+
+.hp-btn-ghost .hp-btn-arrow {
+  background: var(--hp-accent-bg);
+  color: var(--hp-accent);
+}
+
+.hp-btn-light {
+  background: #2ccdde;
+  color: #04121a;
+}
+
+.hp-btn-light .hp-btn-arrow {
+  background: #04121a;
+  color: #2ccdde;
+}
+
+.hp-textlink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: var(--hp-ink);
+  transition: color 0.25s ease;
+}
+
+.hp-chip-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 2.75rem;
+  padding-inline: 1rem;
+  border: 1px solid var(--hp-line-strong);
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  color: var(--hp-ink);
+  transition: border-color 0.25s ease, background-color 0.25s ease;
+}
+
+.hp-round-arrow {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 1px solid var(--hp-line-strong);
+  border-radius: 999px;
+  color: var(--hp-ink);
+  transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
+
+.hp-chip-icon {
+  width: 2.75rem;
+  padding-inline: 0;
+}
+
+.hp-social {
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 1px solid var(--hp-line);
+  border-radius: 0.75rem;
+  background: var(--hp-card);
+  color: var(--hp-body);
+  transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+}
+
+.hp-topic {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.4rem 0.45rem 0.4rem 0.85rem;
+  border: 1px solid var(--hp-line);
+  border-radius: 999px;
+  background: var(--hp-card);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--hp-ink);
+  transition: border-color 0.25s ease;
+}
+
+.hp-topic-count {
+  min-width: 1.75rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  background: var(--hp-soft);
+  font-size: 12px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  color: var(--hp-muted);
+}
+
+/* ---- Surfaces ---- */
+
+.hp-frame {
+  isolation: isolate;
+  border: 1px solid var(--hp-line);
+  background: var(--hp-soft);
+}
+
+.hp-card {
+  border: 1px solid var(--hp-line);
+  background: var(--hp-card);
+  box-shadow: var(--hp-shadow-sm);
+  transition: border-color 0.5s ease, box-shadow 0.6s ease, transform 0.6s var(--hp-ease);
+}
+
+.hp-panel {
+  border: 1px solid var(--hp-line);
+  background: var(--hp-card);
+  box-shadow: var(--hp-shadow-sm);
+}
+
+.hp-list-row + .hp-list-row {
+  border-top: 1px solid var(--hp-line);
+}
+
+.hp-list-row > div {
+  transition: background-color 0.25s ease;
+}
+
+.hp-band {
+  border: 1px solid var(--hp-line);
+  background: var(--hp-card);
+  box-shadow: var(--hp-shadow);
+}
+
+.hp-band-cell {
+  border-top: 1px solid var(--hp-line);
+}
+
+@media (width >= 64rem) {
+  .hp-band-cell {
+    border-top: 0;
+    border-left: 1px solid var(--hp-line);
+  }
+}
+
+/* A row of figures that stays a row on every screen. */
+.hp-band-inline > .hp-band-cell {
+  border-top: 0;
+  border-left: 0;
+}
+
+.hp-band-inline > .hp-band-cell + .hp-band-cell {
+  border-left: 1px solid var(--hp-line);
+}
+
+.hp-reason {
+  border-top: 1px solid var(--hp-line-strong);
+}
+
+.hp-reason:last-child {
+  border-bottom: 1px solid var(--hp-line-strong);
+}
+
+.hp-navy {
+  background: #0b1a2b;
+  color: #ffffff;
+}
+
+.hp-navy-cell + .hp-navy-cell {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@media (width >= 40rem) {
+  .hp-navy-cell:nth-child(2) {
+    border-top: 0;
+  }
+
+  .hp-navy-cell:nth-child(2n) {
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+  }
+}
+
+@media (width >= 64rem) {
+  .hp-navy-cell + .hp-navy-cell {
+    border-top: 0;
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+  }
+}
+
+.hp-form-card {
+  border: 1px solid var(--hp-line);
+  background: var(--hp-card);
+  box-shadow: var(--hp-shadow-lg);
+}
+
+.hp-scroller {
+  scrollbar-width: thin;
+  scrollbar-color: var(--hp-line-strong) transparent;
+}
+
+/* ---- Hero ---- */
+
+/* The hero's white panel: a hairline edge, a soft long shadow and a faint
+   blue light in its top corner. */
+.hp-hero-panel {
+  border: 1px solid var(--hp-line);
+  background:
+    radial-gradient(60% 70% at 0% 0%, rgba(70, 140, 210, 0.07), transparent 70%),
+    var(--hp-card);
+  box-shadow: 0 1px 2px rgba(16, 42, 76, 0.04), 0 50px 100px -70px rgba(16, 42, 76, 0.45);
+}
+
+/* Smaller type in the hero than in the page's other headings, so the first
+   screen stays compact. */
+.hp-h1-hero {
+  font-size: clamp(2.125rem, 1.25rem + 2.4vw, 3.25rem);
+  line-height: 1.06;
+}
+
+.hp-stat-hero {
+  font-size: clamp(2.25rem, 1.9rem + 1vw, 2.75rem);
+}
+
+/* From lg the hero photo fills the panel's right side with a straight
+   diagonal left edge: narrow at the foot, wide at the top. The placeholder's
+   words shift right so they sit in the part that shows. */
+@media (width >= 64rem) {
+  .hp-hero-cut {
+    clip-path: polygon(30% 0, 100% 0, 100% 100%, 0 100%);
+  }
+
+  .hp-hero-cut .hp-ph {
+    padding-left: 22%;
+  }
+}
+
+.hp-hero .hp-badge {
+  border-radius: 0.375rem;
+}
+
+/* ---- Services (components/home/HomeServices.tsx) ----
+   The hero's language: white surfaces, hairlines, 1rem corners, the same
+   diagonal edge, icons in place of photographs. */
+
+.hp-svc-feature {
+  border: 1px solid var(--hp-line);
+  background: var(--hp-card);
+  box-shadow: 0 1px 2px rgba(16, 42, 76, 0.04), 0 40px 80px -64px rgba(16, 42, 76, 0.4);
+}
+
+.hp-svc-feature-side {
+  border-top: 1px solid var(--hp-line);
+  background: var(--hp-soft);
+}
+
+@media (width >= 64rem) {
+  .hp-svc-feature-side {
+    border-top: 0;
+    clip-path: polygon(12% 0, 100% 0, 100% 100%, 0 100%);
+  }
+}
+
+.hp-svc-icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 1px solid rgba(14, 116, 144, 0.14);
+  border-radius: 0.625rem;
+  background: linear-gradient(145deg, #e5f5f9, #e4edf9);
+  color: var(--hp-accent);
+  transition: background 0.45s ease, color 0.45s ease, border-color 0.45s ease;
+}
+
+.hp-svc-icon-lg {
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 0.75rem;
+}
+
+/* ---- Contact form on the home page (components/Contact.tsx, hp-form) ----
+   The shared form's fields, restyled here for the home page only; the
+   /contact-us page keeps its own look. */
+
+.hp-form label {
+  font-size: 13.5px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--hp-ink);
+}
+
+.hp-form input,
+.hp-form select,
+.hp-form textarea {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--hp-line-strong);
+  border-radius: 0.625rem;
+  background: var(--hp-card);
+  font-size: 15px;
+  color: var(--hp-ink);
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hp-form input::placeholder,
+.hp-form textarea::placeholder {
+  color: var(--hp-muted);
+}
+
+.hp-form select {
+  padding-right: 2.75rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%2366778c' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m4 6 4 4 4-4'/%3E%3C/svg%3E");
+  background-position: right 1rem center;
+  background-repeat: no-repeat;
+  background-size: 1rem;
+}
+
+.hp-form input:hover,
+.hp-form select:hover,
+.hp-form textarea:hover {
+  border-color: rgba(14, 116, 144, 0.4);
+}
+
+.hp-form input:focus,
+.hp-form select:focus,
+.hp-form textarea:focus {
+  border-color: #0e7490;
+  box-shadow: 0 0 0 4px rgba(44, 205, 222, 0.18);
+}
+
+.hp-form-submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  width: 100%;
+  min-height: 3.25rem;
+  border-radius: 999px;
+  background: var(--hp-navy);
+  font-size: 15px;
+  font-weight: 600;
+  color: #ffffff;
+  transition: background-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.hp-form-submit svg {
+  color: #2ccdde;
+  transition: transform 0.25s var(--hp-ease);
+}
+
+.hp-form-submit:disabled {
+  opacity: 0.7;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .hp-form-submit:hover {
+    background: var(--hp-navy-hover);
+    box-shadow: 0 16px 32px -16px rgba(11, 26, 43, 0.6);
+  }
+
+  .hp-form-submit:hover svg {
+    transform: translateX(4px);
+  }
+}
+
+/* ---- Technologies (components/home/HomeTech.tsx) ----
+   Sharp cards with the brand line along the top; the platforms sit on a
+   soft-blue base cut on the hero's diagonal. The first area is navy. */
+
+.hp-tech-card {
+  border: 1px solid var(--hp-line);
+  background: var(--hp-card);
+  box-shadow: var(--hp-shadow-sm);
+  transition: border-color 0.5s ease, box-shadow 0.6s ease;
+}
+
+.hp-tech-card::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 2;
+  height: 3px;
+  background: linear-gradient(90deg, #2ccdde, #46a3e1);
+}
+
+.hp-tech-icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 3rem;
+  height: 3rem;
+  border: 1px solid rgba(14, 116, 144, 0.14);
+  border-radius: 0.625rem;
+  background: linear-gradient(145deg, #e5f5f9, #e4edf9);
+  color: var(--hp-accent);
+  transition: background 0.45s ease, color 0.45s ease, border-color 0.45s ease;
+}
+
+.hp-tech-title {
+  color: var(--hp-ink);
+}
+
+.hp-tech-desc {
+  color: var(--hp-body);
+}
+
+.hp-tech-base {
+  background: var(--hp-soft);
+  clip-path: polygon(0 1.5rem, 100% 0, 100% 100%, 0 100%);
+}
+
+.hp-tech-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.8rem;
+  border: 1px solid var(--hp-line);
+  border-radius: 0.375rem;
+  background: var(--hp-card);
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--hp-ink);
+  transition: border-color 0.25s ease;
+}
+
+/* A small brand diamond in place of a logo. */
+.hp-tech-dot {
+  width: 0.4rem;
+  height: 0.4rem;
+  background: linear-gradient(135deg, #2ccdde, #46a3e1);
+  transform: rotate(45deg);
+}
+
+.hp-tech-card.is-lead {
+  border-color: var(--hp-navy);
+  background:
+    radial-gradient(70% 90% at 100% 0%, rgba(44, 205, 222, 0.2), transparent 70%),
+    var(--hp-navy);
+  box-shadow: 0 30px 60px -36px rgba(12, 29, 51, 0.7);
+}
+
+.hp-tech-card.is-lead .hp-tech-icon {
+  border-color: rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.08);
+  color: #2ccdde;
+}
+
+.hp-tech-card.is-lead .hp-tech-title {
+  color: #ffffff;
+}
+
+.hp-tech-card.is-lead .hp-tech-desc {
+  color: #b4c0cc;
+}
+
+.hp-tech-card.is-lead .hp-tech-base {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.hp-tech-card.is-lead .hp-tech-chip {
+  border-color: rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.07);
+  color: #ffffff;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .hp-tech-card:not(.is-lead):hover {
+    border-color: rgba(14, 116, 144, 0.3);
+    box-shadow: var(--hp-shadow);
+  }
+
+  .hp-tech-card:not(.is-lead):hover .hp-tech-icon {
+    border-color: var(--hp-navy);
+    background: var(--hp-navy);
+    color: #2ccdde;
+  }
+
+  .hp-tech-chip:hover {
+    border-color: #2ccdde;
+  }
+}
+
+/* ---- Reviews (components/home/HomeReviews.tsx) ---- */
+
+.hp-review-card {
+  border: 1px solid var(--hp-line);
+  background: var(--hp-card);
+  box-shadow: var(--hp-shadow-sm);
+}
+
+.hp-review-feature {
+  border: 1px solid var(--hp-line);
+  background: var(--hp-card);
+  box-shadow: 0 1px 2px rgba(16, 42, 76, 0.04), 0 40px 80px -64px rgba(16, 42, 76, 0.4);
+}
+
+.hp-review-band {
+  border: 1px solid var(--hp-line);
+  background: var(--hp-card);
+  box-shadow: var(--hp-shadow-sm);
+}
+
+.hp-review-band-cell + .hp-review-band-cell {
+  border-top: 1px solid var(--hp-line);
+}
+
+@media (width >= 40rem) {
+  .hp-review-band-cell:nth-child(2) {
+    border-top: 0;
+  }
+
+  .hp-review-band-cell:nth-child(2n) {
+    border-left: 1px solid var(--hp-line);
+  }
+}
+
+@media (width >= 64rem) {
+  .hp-review-band-cell + .hp-review-band-cell {
+    border-top: 0;
+    border-left: 1px solid var(--hp-line);
+  }
+}
+
+/* The hero's soft-blue diagonal, tucked into a featured review's corner. */
+.hp-review-corner {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 42%;
+  height: 7rem;
+  background: var(--hp-soft);
+  clip-path: polygon(28% 0, 100% 0, 100% 100%);
+}
+
+.hp-review-quick {
+  border: 1px solid var(--hp-line);
+  background: var(--hp-card);
+  box-shadow: var(--hp-shadow-sm);
+}
+
+/* Reviews are shown in the customer's own words; only the first letter is
+   set as a capital, for display. */
+.hp-review-text::first-letter {
+  text-transform: uppercase;
+}
+
+/* ---- Photo placeholders (components/home/ui.tsx, Photo) ---- */
+
+.hp-ph {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 1.5rem;
+  text-align: center;
+  color: var(--hp-ph-ink);
+  background: linear-gradient(160deg, var(--hp-ph-a), var(--hp-ph-b));
+}
+
+.hp-ph > * {
+  position: relative;
+}
+
+.hp-ph-icon {
+  display: grid;
+  place-items: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  border: 1px solid var(--hp-line);
+  border-radius: 1rem;
+  background: var(--hp-ph-tile);
+  color: var(--hp-accent);
+}
+
+.hp-ph-label {
+  margin-top: 0.25rem;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--hp-accent);
+}
+
+.hp-ph-brief {
+  max-width: 24rem;
+  font-size: 13px;
+  line-height: 1.5;
+  text-wrap: balance;
+}
+
+.hp-ph-mini {
+  padding: 0.5rem;
+}
+
+.hp-ph-mini .hp-ph-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.75rem;
+}
+
+/* ---- Timeline (components/home/HomeProcess.tsx) ----
+   Each step draws the line on to the next: down beside the steps on phones,
+   across above them from xl. */
+
+.hp-step-num {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  border: 1px solid var(--hp-line-strong);
+  border-radius: 0.625rem;
+  background: var(--hp-card);
+  font-family: var(--font-heading), 'Sora', system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--hp-ink);
+}
+
+.hp-step-num.is-last {
+  border-color: #2ccdde;
+  background: #2ccdde;
+  color: #04121a;
+}
+
+.hp-step:not(:last-child)::before,
+.hp-step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: calc(1.5rem - 0.5px);
+  top: 3.5rem;
+  bottom: 0.5rem;
+  width: 1px;
+}
+
+.hp-step:not(:last-child)::before {
+  background: var(--hp-line-strong);
+}
+
+.hp-step:not(:last-child)::after {
+  background: linear-gradient(#2ccdde, #46a3e1);
+  transform-origin: top;
+}
+
+@media (width >= 80rem) {
+  .hp-step-num {
+    position: relative;
+  }
+
+  .hp-step:not(:last-child)::before,
+  .hp-step:not(:last-child)::after {
+    left: 3.75rem;
+    right: -1rem;
+    top: calc(1.5rem - 0.5px);
+    bottom: auto;
+    width: auto;
+    height: 1px;
+  }
+
+  .hp-step:not(:last-child)::after {
+    background: linear-gradient(90deg, #2ccdde, #46a3e1);
+    transform-origin: left;
+  }
+}
+
+/* The step cards: crisp white, a brand line across the top on hover; the
+   last step (ongoing support) is navy. */
+.hp-step-card {
+  overflow: hidden;
+  border: 1px solid var(--hp-line);
+  background: var(--hp-card);
+  box-shadow: var(--hp-shadow-sm);
+  transition: border-color 0.5s ease, box-shadow 0.6s ease;
+}
+
+.hp-step-card::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 2px;
+  background: linear-gradient(90deg, #2ccdde, #46a3e1);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.8s var(--hp-ease);
+}
+
+.hp-step-when {
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  line-height: 1.4;
+  text-transform: uppercase;
+  color: var(--hp-accent);
+}
+
+.hp-step-icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 1px solid rgba(14, 116, 144, 0.14);
+  border-radius: 0.5rem;
+  background: linear-gradient(145deg, #e5f5f9, #e4edf9);
+  color: var(--hp-accent);
+  transition: background 0.45s ease, color 0.45s ease, border-color 0.45s ease;
+}
+
+.hp-step-title {
+  color: var(--hp-ink);
+}
+
+.hp-step-desc {
+  color: var(--hp-body);
+}
+
+.hp-step-points {
+  border-color: var(--hp-line);
+  color: var(--hp-ink);
+}
+
+.hp-step-card.is-last {
+  border-color: var(--hp-navy);
+  background:
+    radial-gradient(80% 60% at 100% 0%, rgba(44, 205, 222, 0.22), transparent 70%),
+    var(--hp-navy);
+  box-shadow: 0 30px 60px -36px rgba(12, 29, 51, 0.7);
+}
+
+.hp-step-card.is-last .hp-step-when {
+  color: #7fe3ec;
+}
+
+.hp-step-card.is-last .hp-step-icon {
+  border-color: rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.08);
+  color: #2ccdde;
+}
+
+.hp-step-card.is-last .hp-step-title {
+  color: #ffffff;
+}
+
+.hp-step-card.is-last .hp-step-desc {
+  color: #b4c0cc;
+}
+
+.hp-step-card.is-last .hp-step-points {
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+}
+
+.hp-step-card.is-last .hp-tick {
+  background: rgba(44, 205, 222, 0.18);
+  color: #7fe3ec;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .hp-step-card:not(.is-last):hover {
+    border-color: rgba(14, 116, 144, 0.3);
+    box-shadow: var(--hp-shadow);
+  }
+
+  .hp-step-card:not(.is-last):hover::before {
+    transform: scaleX(1);
+  }
+
+  .hp-step-card:not(.is-last):hover .hp-step-icon {
+    border-color: var(--hp-navy);
+    background: var(--hp-navy);
+    color: #2ccdde;
+  }
+}
+
+/* ---- Hover (mouse only: on touch a hover style makes the first tap a hover) ---- */
+
+@media (hover: hover) and (pointer: fine) {
+  .hp-btn-primary:hover {
+    background: var(--hp-navy-hover);
+    box-shadow: 0 16px 32px -16px rgba(11, 26, 43, 0.6);
+    transform: translateY(-1px);
+  }
+
+  .hp-btn-ghost:hover {
+    border-color: var(--hp-accent);
+    background: var(--hp-card);
+  }
+
+  .hp-btn-light:hover {
+    background: #5bdce9;
+    transform: translateY(-1px);
+  }
+
+  .hp-btn:hover .hp-btn-arrow svg,
+  .hp-textlink:hover .hp-arrow,
+  .group:hover .hp-arrow {
+    transform: translateX(4px);
+  }
+
+  .hp-textlink:hover {
+    color: var(--hp-accent);
+  }
+
+  .hp-chip-btn:hover {
+    border-color: var(--hp-accent);
+    background: var(--hp-accent-bg);
+  }
+
+  .hp-card:hover {
+    border-color: rgba(14, 116, 144, 0.3);
+    box-shadow: var(--hp-shadow);
+  }
+
+  .hp-list-row:hover > div {
+    background: var(--hp-soft);
+  }
+
+  .group:hover .hp-round-arrow {
+    border-color: var(--hp-navy);
+    background: var(--hp-navy);
+    color: #ffffff;
+  }
+
+  .group:hover .hp-zoom {
+    transform: scale(1.04);
+  }
+
+  .hp-social:hover {
+    border-color: var(--hp-navy);
+    background: var(--hp-navy);
+    color: #ffffff;
+  }
+
+  .hp-topic:hover {
+    border-color: var(--hp-accent);
+  }
+
+  .hp-totop:hover {
+    background: var(--hp-navy);
+    color: #ffffff;
+  }
+}
+
+.hp-zoom {
+  transition: transform 1.2s var(--hp-ease);
+}
+
+/* ---- Scroll progress and back to top (components/home/HomeMotion.tsx) ---- */
+
+.hp-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 70;
+  height: 2px;
+  background: linear-gradient(90deg, #2ccdde, #46a3e1);
+  transform: scaleX(var(--p, 0));
+  transform-origin: left;
+  pointer-events: none;
+}
+
+.hp-totop {
+  position: fixed;
+  left: 1.5rem;
+  bottom: 1.5rem;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  width: 2.875rem;
+  height: 2.875rem;
+  border: 1px solid var(--hp-line);
+  border-radius: 999px;
+  background: var(--hp-card);
+  color: var(--hp-ink);
+  box-shadow: var(--hp-shadow);
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s var(--hp-ease), background-color 0.25s ease, color 0.25s ease;
+}
+
+.hp-totop.is-on {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+
+/* ---- Motion ----
+   The hero animates in with CSS alone. Everything below it glides up as it
+   scrolls into view, and photos are revealed behind a lifting curtain; HomeMotion adds hp-js before anything is hidden, so
+   without JavaScript nothing is. Reduced motion turns all of it off. */
+
+@keyframes hp-rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes hp-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* The hero photo opens from its diagonal edge across to the right. */
+@keyframes hp-image {
+  from {
+    opacity: 0;
+    clip-path: inset(0 0 0 30%);
+  }
+  to {
+    opacity: 1;
+    clip-path: inset(0);
+  }
+}
+
+/* A photo settles from a slight zoom as it is revealed. */
+@keyframes hp-settle {
+  from {
+    scale: 1.12;
+  }
+  to {
+    scale: 1;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hp-enter {
+    animation: hp-rise 1.2s var(--hp-ease-soft) both;
+    animation-delay: var(--d, 0ms);
+  }
+
+  .hp-enter-fade {
+    animation: hp-fade 1.2s ease both;
+    animation-delay: var(--d, 0ms);
+  }
+
+  .hp-enter-image {
+    animation: hp-image 1.6s var(--hp-ease-curtain) both;
+    animation-delay: var(--d, 0ms);
+  }
+
+  .hp-enter-image .hp-hero-cut img {
+    animation: hp-settle 2.4s var(--hp-ease-soft) both;
+    animation-delay: var(--d, 0ms);
+  }
+
+  /* Text and cards: a long, soft glide up into place. */
+  .hp-js [data-reveal] {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 1.2s var(--hp-ease-soft), transform 1.4s var(--hp-ease-soft);
+    transition-delay: var(--d, 0ms);
+  }
+
+  .hp-js [data-reveal][data-shown] {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Photos: a curtain lifts from the bottom of the picture while it settles
+     from a slight zoom. The curtain is on the picture, never on the frame:
+     the frame is what the page watches to know when to reveal it, and a
+     clipped frame can read as "not on screen", so it would never open. */
+  .hp-js [data-reveal='image'] {
+    opacity: 1;
+    transform: none;
+  }
+
+  .hp-js [data-reveal='image'] img {
+    clip-path: inset(100% 0 0 0);
+    scale: 1.15;
+    transition: clip-path 1.5s var(--hp-ease-curtain), scale 2.2s var(--hp-ease-soft), transform 1.2s var(--hp-ease);
+    transition-delay: var(--d, 0ms), var(--d, 0ms), 0ms;
+  }
+
+  .hp-js [data-reveal='image'][data-shown] img {
+    clip-path: inset(0);
+    scale: 1;
+  }
+
+  /* The timeline list itself stays put; its steps rise one by one and the
+     line draws on behind them. */
+  .hp-js .hp-timeline[data-reveal] {
+    opacity: 1;
+    transform: none;
+  }
+
+  .hp-js .hp-timeline .hp-step {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 1.2s var(--hp-ease-soft), transform 1.4s var(--hp-ease-soft);
+    transition-delay: var(--d, 0ms);
+  }
+
+  .hp-js .hp-timeline .hp-step::after {
+    scale: 1 0;
+    transition: scale 1.4s var(--hp-ease);
+    transition-delay: calc(var(--d, 0ms) + 450ms);
+  }
+
+  .hp-js .hp-timeline[data-shown] .hp-step {
+    opacity: 1;
+    transform: none;
+  }
+
+  .hp-js .hp-timeline[data-shown] .hp-step::after {
+    scale: 1 1;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) and (width >= 80rem) {
+  .hp-js .hp-timeline .hp-step::after {
+    scale: 0 1;
+  }
+
+  .hp-js .hp-timeline[data-shown] .hp-step::after {
+    scale: 1 1;
+  }
+}
+
+/* Shorter travel on phones. */
+@media (prefers-reduced-motion: no-preference) and (width < 40rem) {
+  .hp-js [data-reveal]:not([data-reveal='image']) {
+    transform: translateY(16px);
+  }
+
+  .hp-js [data-reveal][data-shown] {
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hp-zoom,
+  .hp-totop,
+  .hp-card {
+    transition: none;
+  }
+
+  .hp-card:hover,
+  .hp-btn:hover {
+    transform: none !important;
+  }
+}

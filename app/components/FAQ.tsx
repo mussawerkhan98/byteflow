@@ -69,7 +69,7 @@ type Item = Faq & { number: number };
 function Question({ faq, open, onToggle, query, baseId }: { faq: Item; open: boolean; onToggle: () => void; query: string; baseId: string }) {
   return (
     <li
-      className={`relative overflow-hidden rounded-[1.25rem] border transition-[border-color,background-color,box-shadow] duration-300 ${
+      className={`relative overflow-hidden rounded-[0.625rem] border transition-[border-color,background-color,box-shadow] duration-300 ${
         open
           ? "border-[#2CCDDE]/45 bg-[linear-gradient(160deg,rgba(44,205,222,0.09),var(--bg-surface)_60%)] shadow-[0_24px_50px_-30px_rgba(44,205,222,0.45)]"
           : "border-[var(--border-default)] bg-[var(--bg-surface)] hover:border-[#2CCDDE]/30"
@@ -245,7 +245,7 @@ export default function FAQ({ items, copy, contact }: { items: Faq[]; copy: FaqC
             ))}
           </div>
         ) : (
-          <div className="mx-auto mt-10 flex max-w-xl flex-col items-center gap-3 rounded-[1.5rem] border border-dashed border-[var(--border-strong)] px-6 py-12 text-center">
+          <div className="mx-auto mt-10 flex max-w-xl flex-col items-center gap-3 rounded-[0.75rem] border border-dashed border-[var(--border-strong)] px-6 py-12 text-center">
             <span aria-hidden="true" className="grid h-12 w-12 place-items-center rounded-full bg-[rgba(44,205,222,0.1)] text-[#2CCDDE] [&_svg]:h-6 [&_svg]:w-6">
               {QUESTION_ICON}
             </span>
@@ -254,10 +254,10 @@ export default function FAQ({ items, copy, contact }: { items: Faq[]; copy: FaqC
         )}
 
         {/* Still have questions? Always dark, so it stands out on either theme. */}
-        <div className="relative mt-10 overflow-hidden rounded-[1.75rem] border border-white/10 bg-[#0b1520] p-6 text-white sm:p-7 lg:flex lg:items-center lg:justify-between lg:gap-8 lg:px-9">
+        <div className="relative mt-10 overflow-hidden rounded-[0.75rem] border border-white/10 bg-[#0b1520] p-6 text-white sm:p-7 lg:flex lg:items-center lg:justify-between lg:gap-8 lg:px-9">
           <div aria-hidden="true" className="absolute -left-16 -top-20 h-56 w-56 rounded-full bg-[radial-gradient(closest-side,rgba(44,205,222,0.3),transparent)]" />
           <div className="relative flex items-start gap-4">
-            <span aria-hidden="true" className="hidden h-12 w-12 shrink-0 place-items-center rounded-2xl bg-[linear-gradient(135deg,#2CCDDE,#46A3E1)] text-[#04121A] sm:grid [&_svg]:h-6 [&_svg]:w-6">
+            <span aria-hidden="true" className="hidden h-12 w-12 shrink-0 place-items-center rounded-lg bg-[linear-gradient(135deg,#2CCDDE,#46A3E1)] text-[#04121A] sm:grid [&_svg]:h-6 [&_svg]:w-6">
               {QUESTION_ICON}
             </span>
             <div>
