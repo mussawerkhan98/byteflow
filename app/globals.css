@@ -136,6 +136,22 @@ body {
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
+/* A phone never pans the page sideways, even if something reaches past the
+   edge. clip, not hidden: it makes no scroll box, so sticky still works. */
+html {
+  overflow-x: clip;
+}
+
+/* iPhones zoom in on a form field whose text is under 16px and stay zoomed,
+   so the page no longer fits the screen. Touch screens get 16px fields. */
+@media (hover: none) and (pointer: coarse) {
+  input:not([type='checkbox']):not([type='radio']),
+  select,
+  textarea {
+    font-size: max(16px, 1em) !important;
+  }
+}
+
 h1, h2, h3, h4 {
   font-family: var(--font-heading), 'Sora', system-ui, sans-serif;
   font-weight: 700;
