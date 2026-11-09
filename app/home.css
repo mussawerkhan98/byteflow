@@ -705,6 +705,138 @@ body:has(.hp) .site-bar-bg {
   border-radius: 0.75rem;
 }
 
+/* The other services: compact cards under the wide one, with the brand line
+   along the top like the Technologies cards. */
+.hp-svc-card {
+  border: 1px solid var(--hp-line);
+  background: var(--hp-card);
+  box-shadow: var(--hp-shadow-sm);
+  transition: border-color 0.5s ease, box-shadow 0.6s ease, translate 0.6s var(--hp-ease);
+}
+
+/* The card's number, quiet until the card is pointed at. */
+.hp-svc-num {
+  font-size: 1.75rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--hp-line-strong);
+  transition: color 0.45s ease;
+}
+
+/* Highlights and caption on the wide card's soft blue, its top edge the
+   hero's diagonal. */
+.hp-svc-base {
+  background: var(--hp-soft);
+  clip-path: polygon(0 1.5rem, 100% 0, 100% 100%, 0 100%);
+}
+
+.hp-svc-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  height: 2.625rem;
+  padding-inline: 1.1rem 0.5rem;
+  border: 1px solid var(--hp-line-strong);
+  border-radius: 999px;
+  background: var(--hp-card);
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  color: var(--hp-ink);
+  transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
+
+.hp-svc-tab-count {
+  display: grid;
+  place-items: center;
+  min-width: 1.75rem;
+  height: 1.75rem;
+  padding-inline: 0.4rem;
+  border-radius: 999px;
+  background: var(--hp-accent-bg);
+  font-size: 12.5px;
+  color: var(--hp-accent);
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+.hp-svc-tab[aria-pressed='true'] {
+  border-color: var(--hp-navy);
+  background: var(--hp-navy);
+  color: #ffffff;
+}
+
+.hp-svc-tab[aria-pressed='true'] .hp-svc-tab-count {
+  background: rgba(44, 205, 222, 0.18);
+  color: #2ccdde;
+}
+
+.hp-svc-tab:focus-visible {
+  outline: 2px solid var(--hp-accent);
+  outline-offset: 2px;
+}
+
+/* A card the tabs filter out. */
+li[data-group][hidden] {
+  display: none;
+}
+
+.hp-svc-card::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 3px;
+  background: linear-gradient(90deg, #2ccdde, #46a3e1);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.6s var(--hp-ease);
+}
+
+.hp-svc-go {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 1px solid var(--hp-line-strong);
+  border-radius: 999px;
+  color: var(--hp-ink);
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+.hp-svc-go:focus-visible {
+  outline: 2px solid var(--hp-accent);
+  outline-offset: 2px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .hp-svc-card:hover {
+    border-color: rgba(14, 116, 144, 0.3);
+    box-shadow: var(--hp-shadow-lg);
+    translate: 0 -4px;
+  }
+
+  .hp-svc-card:hover .hp-svc-num {
+    color: var(--hp-accent);
+  }
+
+  .hp-svc-tab[aria-pressed='false']:hover {
+    border-color: var(--hp-accent);
+    background: var(--hp-accent-bg);
+  }
+
+  .hp-svc-card:hover::before {
+    transform: scaleX(1);
+  }
+
+  .hp-svc-card:hover .hp-svc-icon,
+  .hp-svc-card:hover .hp-svc-go {
+    border-color: var(--hp-navy);
+    background: var(--hp-navy);
+    color: #2ccdde;
+  }
+}
+
 /* ---- Contact form on the home page (components/Contact.tsx, hp-form) ----
    The shared form's fields, restyled here for the home page only; the
    /contact-us page keeps its own look. */

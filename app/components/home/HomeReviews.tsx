@@ -62,7 +62,7 @@ function Reviewer({ review, large = false }: { review: WallReview; large?: boole
 /** One of the longest reviews, large, with the hero's soft-blue diagonal in its corner. */
 function FeaturedReview({ review, index }: { review: WallReview; index: number }) {
   return (
-    <li data-reveal style={delay(index * 120)}>
+    <li data-reveal style={delay(index * 120)} className="min-w-0">
       <figure className="hp-review-feature relative flex h-full flex-col overflow-hidden rounded-[0.75rem] p-7 sm:p-9">
         <span aria-hidden="true" className="hp-review-corner" />
         <div className="relative flex items-center justify-between gap-4">

@@ -1,10 +1,12 @@
+import Link from 'next/link'
 import { getServices } from '../../lib/db'
 import { getHeaderModel } from '../../lib/header-data'
 import { getHomeBlock } from '../../lib/home-blocks'
 import { orderedTabs, type ServiceTab } from '../../lib/service-tabs'
 import { services as servicePages } from '../../lib/services-data'
 import { ServiceIcon } from '../ServiceIcon'
-import { Button, Check, Eyebrow, SectionTitle, TextLink } from './ui'
+import ServiceFilter from './ServiceFilter'
+import { ArrowRight, Button, Check, Eyebrow, SectionTitle, TextLink, delay } from './ui'
 
 // With no published services in the database, each service page's own
 // wording (services-data.ts) fills the section, so it never goes empty.
@@ -73,10 +75,69 @@ function ServiceCard({ tab, heading: Heading = 'h4' }: { tab: ServiceTab; headin
 }
 
 /**
+ * One of the other services, compact: icon and its number (the wide card is
+ * 01), title, tagline and the whole description, then the first three
+ * highlights and the caption on a soft-blue base cut on the hero's diagonal,
+ * like the wide card's side. The bases sit on the cards' bottoms, so they line
+ * up across a row whatever the wording above them. `group` is the header menu
+ * group the tabs filter by.
+ */
+function ServiceTile({ tab, number, group }: { tab: ServiceTab; number: number; group: string }) {
+  return (
+    <li data-reveal data-group={group} style={delay(((number - 2) % 4) * 90)} className="w-[82%] shrink-0 snap-start sm:w-auto">
+      <article className="hp-svc-card group relative flex h-full flex-col overflow-hidden rounded-[0.75rem]">
+        <div className="p-6 pb-7 sm:p-7 sm:pb-8">
+          <div className="flex items-start justify-between gap-3">
+            <span aria-hidden="true" className="hp-svc-icon">
+              <ServiceIcon link={tab.href} className="h-5 w-5" />
+            </span>
+            <span aria-hidden="true" className="hp-svc-num font-display">
+              {String(number).padStart(2, '0')}
+            </span>
+          </div>
+          <h3 className="mt-6 font-display text-[1.3125rem] font-semibold leading-snug tracking-[-0.02em] text-[var(--hp-ink)]">{tab.title}</h3>
+          {tab.subtitle && <p className="mt-1.5 text-[14.5px] font-semibold leading-snug text-[var(--hp-accent)]">{tab.subtitle}</p>}
+          {tab.text && <p className="mt-3 text-[14.5px] leading-relaxed text-[var(--hp-body)]">{tab.text}</p>}
+        </div>
+
+        <div className="hp-svc-base mt-auto flex flex-col px-6 pb-6 pt-9 sm:px-7 sm:pb-7">
+          {tab.bullets.length > 0 && (
+            <ul className="grid gap-2.5">
+              {tab.bullets.slice(0, 3).map((bullet) => (
+                <li key={bullet} className="flex items-center gap-2.5 text-[14px] font-medium text-[var(--hp-ink)]">
+                  <span className="hp-tick">
+                    <Check />
+                  </span>
+                  <span className="truncate">{bullet}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+          <div className="mt-6 flex items-center justify-between gap-4">
+            <span className="flex min-w-0 items-center gap-2 text-[13px] font-semibold text-[var(--hp-accent)]">
+              {tab.caption && (
+                <>
+                  <span aria-hidden="true" className="hp-dot" />
+                  <span className="truncate">{tab.caption}</span>
+                </>
+              )}
+            </span>
+            {/* The whole card opens the service page. */}
+            <Link href={tab.href} aria-label={`Explore ${tab.title}`} className="hp-svc-go after:absolute after:inset-0">
+              <ArrowRight />
+            </Link>
+          </div>
+        </div>
+      </article>
+    </li>
+  )
+}
+
+/**
  * Services: every published service in the header menu's order, each with its
- * own words from the admin, as the same wide card. The first stands on its
- * own; the rest sit under the header menu's groups. Icons only, no
- * photographs.
+ * own words from the admin. The first is the wide card; the rest are compact,
+ * numbered cards in one grid, with tabs above to filter them by header menu
+ * group. Icons only, no photographs.
  */
 export default async function HomeServices() {
   const [dbServices, intro, header] = await Promise.all([getServices(), getHomeBlock('home_services_intro'), getHeaderModel()])
@@ -86,21 +147,17 @@ export default async function HomeServices() {
   if (!tabs.length) return null
   const [featured, ...rest] = tabs
 
-  // The rest under the header menu's own groups ("IT Support &
-  // Infrastructure", "Cloud & Security"…); anything the menu doesn't group
-  // goes in a last, untitled group.
+  // The tabs are the header menu's groups ("IT Support & Infrastructure",
+  // "Cloud & Security"…) that hold at least one of these cards. A card the
+  // menu doesn't group shows under the first tab only.
   const path = (href: string) => href.split(/[?#]/)[0].replace(/\/$/, '')
-  const placed = new Set<string>()
+  const groupOf = new Map<string, string>()
+  header.services.groups.forEach((group, i) => {
+    for (const item of group.items) if (!groupOf.has(path(item.href))) groupOf.set(path(item.href), `g${i}`)
+  })
   const groups = header.services.groups
-    .map((group) => {
-      const hrefs = new Set(group.items.map((item) => path(item.href)))
-      const items = rest.filter((tab) => hrefs.has(tab.href) && !placed.has(tab.slug))
-      items.forEach((tab) => placed.add(tab.slug))
-      return { title: group.title, items }
-    })
-    .filter((group) => group.items.length)
-  const loose = rest.filter((tab) => !placed.has(tab.slug))
-  if (loose.length) groups.push({ title: '', items: loose })
+    .map((group, i) => ({ id: `g${i}`, title: group.title, count: rest.filter((tab) => groupOf.get(tab.href) === `g${i}`).length }))
+    .filter((group) => group.count)
 
   return (
     <section id="services" aria-labelledby="services-title" className="hp-section scroll-mt-28">
@@ -117,22 +174,16 @@ export default async function HomeServices() {
           <ServiceCard tab={featured} heading="h3" />
         </div>
 
-        {groups.map((group) => (
-          <div key={group.title || 'more'} className="mt-12 lg:mt-14">
-            <div data-reveal className="flex items-center gap-4">
-              {group.title && <h3 className="shrink-0 font-display text-[1.125rem] font-semibold tracking-[-0.015em] text-[var(--hp-ink)]">{group.title}</h3>}
-              <span aria-hidden="true" className="h-px flex-1 bg-[var(--hp-line-strong)]" />
-              <span className="shrink-0 text-[13px] font-medium text-[var(--hp-muted)]">
-                {group.items.length} {group.items.length === 1 ? 'service' : 'services'}
-              </span>
-            </div>
-            <div className="mt-5 grid gap-4">
-              {group.items.map((tab) => (
-                <ServiceCard key={tab.slug} tab={tab} />
+        {rest.length > 0 && (
+          <ServiceFilter allLabel={copy.all_label || 'All services'} groups={groups} total={rest.length}>
+            {/* Phones swipe through the cards; from tablets up they sit in a grid. */}
+            <ul className={`-mx-4 flex items-start snap-x snap-mandatory sm:items-stretch scroll-px-4 gap-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 sm:pb-0 xl:grid-cols-4 ${groups.length > 1 ? 'mt-5' : 'mt-4'}`}>
+              {rest.map((tab, index) => (
+                <ServiceTile key={tab.slug} tab={tab} number={index + 2} group={groupOf.get(tab.href) ?? ''} />
               ))}
-            </div>
-          </div>
-        ))}
+            </ul>
+          </ServiceFilter>
+        )}
       </div>
     </section>
   )
