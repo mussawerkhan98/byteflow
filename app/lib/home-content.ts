@@ -28,6 +28,7 @@ export const homeDefaults = {
       heading: 'Services built for',
       heading_soft: 'real business growth.',
       intro: 'End-to-end technology and creative services, all under one roof so you never have to chase multiple vendors again.',
+      all_label: 'All services',
     },
     lists: {},
   },

@@ -14,9 +14,9 @@
    sections can never drift apart.
    --container-max / --container-px  the one container every section and the
                                       header bar share: at most 2000px
-                                      including its side padding, 0.2% of the
-                                      window each side (12px on phones, 4px to
-                                      6px above). The navbar's outer edges
+                                      including its side padding, 6% of the
+                                      window each side (16px on phones, at
+                                      most 120px). The navbar's outer edges
                                       are its edges.
    --panel-px                         inside padding of a rounded panel sitting
                                       in that container: the header bar, the
@@ -26,14 +26,14 @@
    the bar's last button with the panel's right-hand content. */
 :root {
   --container-max: 2000px;
-  /* Phones keep a slim 12px edge; from 640px it is 0.2% of the window, 4px to 6px. */
-  --container-px: 12px;
+  /* Phones keep a slim 16px edge; from 640px it is 6% of the window. */
+  --container-px: 16px;
   --panel-px: 1rem;
 }
 
 @media (width >= 40rem) {
   :root {
-    --container-px: clamp(4px, 0.2vw, 6px);
+    --container-px: clamp(16px, 6vw, 120px);
     --panel-px: 1.5rem;
   }
 }
