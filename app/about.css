@@ -1,0 +1,251 @@
+/* ==== About Us page (app/about-us, app/components/about) ====
+   Loaded by the About page after home.css: it shares the home page's colours,
+   type and motion (.hp, --hp-*), and adds the layouts that are its own: the
+   editorial banner, the founder's letter, the centre-line timeline, the
+   pillars, the services index, the review wall and the registration card. */
+
+/* ---- Banner ---- */
+
+/* A faint blueprint grid behind the banner, fading out downwards. */
+.ab-hero-bg {
+  background:
+    radial-gradient(50% 60% at 85% 0%, rgba(44, 205, 222, 0.14), transparent 70%),
+    radial-gradient(40% 50% at 0% 10%, rgba(70, 140, 210, 0.1), transparent 70%),
+    linear-gradient(var(--hp-line) 1px, transparent 1px) 0 0 / 56px 56px,
+    linear-gradient(90deg, var(--hp-line) 1px, transparent 1px) 0 0 / 56px 56px;
+  -webkit-mask-image: linear-gradient(to bottom, #000 30%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 30%, transparent 100%);
+}
+
+.ab-h1 {
+  font-size: clamp(2.5rem, 1.1rem + 4.4vw, 4.75rem);
+  line-height: 1.02;
+}
+
+/* The photograph's soft lower edge, so the figures card sits on it cleanly. */
+.ab-hero-shade {
+  background: linear-gradient(to top, rgba(12, 29, 51, 0.28), transparent 45%);
+}
+
+/* ---- Founder's letter ---- */
+
+.ab-letter {
+  border: 1px solid var(--hp-line);
+  background: var(--hp-card);
+  box-shadow: var(--hp-shadow-lg);
+}
+
+.ab-letter-side {
+  background:
+    radial-gradient(90% 60% at 0% 0%, rgba(44, 205, 222, 0.16), transparent 70%),
+    var(--hp-soft);
+}
+
+.ab-quote-mark {
+  font-family: var(--font-heading), 'Sora', system-ui, sans-serif;
+  font-size: 7rem;
+  line-height: 0.7;
+  background: var(--hp-h1-accent);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  opacity: 0.35;
+}
+
+.ab-signature {
+  font-family: var(--font-heading), 'Sora', system-ui, sans-serif;
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--hp-ink);
+}
+
+/* ---- Timeline: one line down the middle, milestones either side ---- */
+
+.ab-tl::before {
+  content: '';
+  position: absolute;
+  top: 0.5rem;
+  bottom: 0.5rem;
+  left: calc(0.75rem - 0.5px);
+  width: 1px;
+  background: linear-gradient(var(--hp-line-strong), #2ccdde 50%, var(--hp-line-strong));
+}
+
+@media (width >= 64rem) {
+  .ab-tl::before {
+    left: calc(50% - 0.5px);
+  }
+}
+
+.ab-tl-dot {
+  position: absolute;
+  top: 0.55rem;
+  left: 0.25rem;
+  z-index: 1;
+  width: 1rem;
+  height: 1rem;
+  border: 3px solid var(--hp-card);
+  border-radius: 999px;
+  background: var(--hp-line-strong);
+  box-shadow: 0 0 0 1px var(--hp-line-strong);
+  transition: background-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+@media (width >= 64rem) {
+  .ab-tl-dot {
+    left: calc(50% - 0.5rem);
+  }
+}
+
+.ab-tl-dot.is-last,
+.ab-tl-item:hover .ab-tl-dot {
+  background: #2ccdde;
+  box-shadow: 0 0 0 1px #2ccdde, 0 0 0 7px rgba(44, 205, 222, 0.18);
+}
+
+.ab-year {
+  font-family: var(--font-heading), 'Sora', system-ui, sans-serif;
+  font-size: clamp(2.25rem, 1.6rem + 2vw, 3.5rem);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.045em;
+  font-variant-numeric: tabular-nums;
+  background: var(--hp-h1-accent);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.ab-tl-card {
+  border: 1px solid var(--hp-line);
+  background: var(--hp-card);
+  box-shadow: var(--hp-shadow-sm);
+  transition: border-color 0.5s ease, box-shadow 0.6s ease;
+}
+
+/* ---- Pillars (How we work) ---- */
+
+.ab-pillars-top {
+  background:
+    radial-gradient(60% 120% at 100% 0%, rgba(44, 205, 222, 0.12), transparent 70%),
+    var(--hp-card);
+}
+
+/* The number in outline, filling in with the brand gradient on hover. */
+.ab-pillar-num {
+  font-family: var(--font-heading), 'Sora', system-ui, sans-serif;
+  font-size: clamp(3.5rem, 2.8rem + 2vw, 4.75rem);
+  font-weight: 700;
+  line-height: 0.9;
+  letter-spacing: -0.05em;
+  color: transparent;
+  -webkit-text-stroke: 1.25px rgba(14, 116, 144, 0.45);
+  background: var(--hp-h1-accent);
+  -webkit-background-clip: text;
+  background-clip: text;
+  background-size: 100% 0%;
+  background-repeat: no-repeat;
+  background-position: bottom;
+  transition: background-size 0.7s var(--hp-ease);
+}
+
+/* ---- Services index ---- */
+
+.ab-index-row {
+  border-bottom: 1px solid var(--hp-line-strong);
+  transition: background-color 0.35s ease, padding 0.5s var(--hp-ease);
+}
+
+.ab-index-num {
+  font-family: var(--font-heading), 'Sora', system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--hp-muted);
+}
+
+/* ---- Reviews ---- */
+
+.ab-rating {
+  border: 1px solid var(--hp-line);
+  background:
+    radial-gradient(80% 80% at 100% 0%, rgba(245, 179, 1, 0.12), transparent 70%),
+    var(--hp-card);
+  box-shadow: var(--hp-shadow);
+}
+
+.ab-review {
+  break-inside: avoid;
+  border: 1px solid var(--hp-line);
+  background: var(--hp-card);
+  box-shadow: var(--hp-shadow-sm);
+  transition: border-color 0.5s ease, box-shadow 0.6s ease;
+}
+
+/* ---- Registration card (Company information) ---- */
+
+.ab-cert {
+  border: 1px solid var(--hp-line);
+  background: var(--hp-card);
+  box-shadow: var(--hp-shadow-lg);
+}
+
+.ab-cert-head {
+  background:
+    repeating-linear-gradient(135deg, rgba(14, 116, 144, 0.06) 0 1px, transparent 1px 10px),
+    linear-gradient(100deg, #e5f5f9, #e4edf9);
+  border-bottom: 1px solid var(--hp-line);
+}
+
+/* ---- Closing panel ---- */
+
+.ab-cta {
+  border: 1px solid rgba(14, 116, 144, 0.16);
+  background:
+    radial-gradient(60% 90% at 0% 0%, rgba(44, 205, 222, 0.2), transparent 70%),
+    radial-gradient(50% 80% at 100% 100%, rgba(70, 140, 210, 0.16), transparent 70%),
+    linear-gradient(120deg, #eef8fb, #eef3fb);
+  box-shadow: var(--hp-shadow-lg);
+}
+
+.ab-cta-row {
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.72);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  transition: border-color 0.3s ease, background-color 0.3s ease, translate 0.4s var(--hp-ease);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .ab-tl-item:hover .ab-tl-card,
+  .ab-review:hover {
+    border-color: rgba(14, 116, 144, 0.3);
+    box-shadow: var(--hp-shadow);
+  }
+
+  .ab-pillar:hover .ab-pillar-num {
+    background-size: 100% 100%;
+  }
+
+  .ab-index-row:hover {
+    background: var(--hp-card);
+    padding-inline: 1.25rem;
+  }
+
+  .ab-index-row:hover .ab-index-title {
+    color: var(--hp-accent);
+  }
+
+  .ab-index-row:hover .hp-svc-go {
+    border-color: var(--hp-navy);
+    background: var(--hp-navy);
+    color: #2ccdde;
+  }
+
+  a.ab-cta-row:hover {
+    border-color: rgba(14, 116, 144, 0.35);
+    background: #ffffff;
+    translate: 4px 0;
+  }
+}

@@ -1192,6 +1192,12 @@ li[data-group][hidden] {
   color: #04121a;
 }
 
+/* A year in the marker (About Us, Our story): four digits in the same box. */
+.hp-step-year {
+  font-size: 12.5px;
+  letter-spacing: -0.01em;
+}
+
 .hp-step:not(:last-child)::before,
 .hp-step:not(:last-child)::after {
   content: '';
