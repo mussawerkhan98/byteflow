@@ -49,7 +49,10 @@ export default function InquiryDrawer() {
 
   return (
     <>
-      {/* Side tab */}
+      {/* Side tab, in its own screen-sized clipping layer: Safari sizes its
+          sideways text as if it were horizontal, which reached past the
+          right edge and let the page slide sideways on iPhones. */}
+      <div className="inquiry-tab-layer">
       <button
         ref={tabRef}
         type="button"
@@ -66,6 +69,7 @@ export default function InquiryDrawer() {
         <Icon icon={faEnvelopeOpenText} className="w-3.5 h-3.5" />
         <span>Inquiry</span>
       </button>
+      </div>
 
       {/* Overlay */}
       <div

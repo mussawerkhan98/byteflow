@@ -137,8 +137,18 @@ body {
 }
 
 /* A phone never pans the page sideways, even if something reaches past the
-   edge. clip, not hidden: it makes no scroll box, so sticky still works. */
+   edge. clip, not hidden: it makes no scroll box, so sticky still works.
+   On html, hidden is the fallback for browsers without clip (it applies to
+   the window, so sticky still works there too); body and the content under
+   the header (layout.tsx) only clip. Fixed elements escape all of these, so
+   any that waits off-screen sits in its own clipping layer (InquiryDrawer). */
 html {
+  overflow-x: hidden;
+  overflow-x: clip;
+}
+
+body,
+.page-clip {
   overflow-x: clip;
 }
 
@@ -1184,11 +1194,22 @@ h1 {
 }
 
 /* ---- Side inquiry tab + drawer ---- */
-.inquiry-tab {
+/* The screen-sized layer the tab sits in. Safari sizes the tab's sideways
+   text as if it were horizontal, so its box reached past the right edge and
+   the page could slide sideways on iPhones; the layer clips that. */
+.inquiry-tab-layer {
   position: fixed;
+  inset: 0;
+  z-index: 60;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.inquiry-tab {
+  position: absolute;
   top: 50%;
   right: 0;
-  z-index: 60;
+  pointer-events: auto;
   transform: translateY(-50%);
   display: flex;
   align-items: center;
