@@ -74,7 +74,11 @@ export default function InquiryDrawer() {
         aria-hidden="true"
       />
 
-      {/* Drawer */}
+      {/* Drawer, inside a screen-sized layer that clips it: parked past the
+          right edge, it would otherwise widen the page on iPhones, which
+          (unlike Chrome) count fixed elements, and the page would slide
+          sideways. */}
+      <div className="inquiry-layer">
       <div
         ref={panelRef}
         className={`inquiry-drawer${open ? ' is-open' : ''}`}
@@ -108,6 +112,7 @@ export default function InquiryDrawer() {
             />
           )}
         </div>
+      </div>
       </div>
     </>
   )

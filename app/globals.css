@@ -1231,11 +1231,22 @@ h1 {
   visibility: visible;
 }
 
-.inquiry-drawer {
+/* The screen-sized layer the drawer slides in within. It clips the drawer
+   while it is parked past the right edge, so the page never gets wider than
+   the screen (iPhones count fixed elements in the page's width). */
+.inquiry-layer {
   position: fixed;
+  inset: 0;
+  z-index: 100;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.inquiry-drawer {
+  position: absolute;
   top: 0;
   right: 0;
-  z-index: 100;
+  pointer-events: auto;
   display: flex;
   flex-direction: column;
   width: min(440px, 100vw);
