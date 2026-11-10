@@ -137,17 +137,23 @@ export default async function RootLayout({
           phone={String(settings?.header_phone || "") || undefined}
           whatsappUrl={String(settings?.whatsapp_link || "") || undefined}
         />
-        <main className="flex-1">{children}</main>
-        <PageSections placement="before_faq" />
-        <PageCta />
-        <PageFaq />
-        <PageSections placement="after_faq" />
-        <Footer
-          navigation={footerNavigation}
-          settings={(settings ?? {}) as never}
-          serviceNames={Object.fromEntries(serviceNames)}
-          year={new Date().getFullYear()}
-        />
+        {/* Everything under the header clips what reaches past the sides, so
+            no section can ever make the page wider than the screen and let it
+            slide sideways on a phone. clip, not hidden: no scroll box, so
+            sticky elements inside still stick. */}
+        <div className="page-clip flex flex-1 flex-col">
+          <main className="flex-1">{children}</main>
+          <PageSections placement="before_faq" />
+          <PageCta />
+          <PageFaq />
+          <PageSections placement="after_faq" />
+          <Footer
+            navigation={footerNavigation}
+            settings={(settings ?? {}) as never}
+            serviceNames={Object.fromEntries(serviceNames)}
+            year={new Date().getFullYear()}
+          />
+        </div>
         <StickyContactButtons />
         <InquiryDrawer />
         {process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY && (
