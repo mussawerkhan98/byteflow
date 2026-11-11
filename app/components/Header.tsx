@@ -15,7 +15,7 @@ import LogoLink from "./LogoLink";
 import { ArrowIcon, ArrowUpRightIcon, ChevronIcon, PhoneIcon, WhatsAppIcon } from "./InlineIcons";
 import { ServiceIcon } from "./ServiceIcon";
 import { isCurrent, type NavItem } from "../lib/header-menu";
-import { fallbackHeader, type HeaderModel, type MenuLink } from "../lib/header-model";
+import { fallbackHeader, type HeaderModel, type MenuGroup, type MenuLink, type PostCard } from "../lib/header-model";
 
 export type { NavItem };
 
@@ -105,21 +105,166 @@ function FooterStrip({ children }: { children: ReactNode }) {
   );
 }
 
+// How long the pointer must rest on a row before the preview follows it, so
+// cutting across other rows on the way to the preview leaves it alone.
+const PICK_DELAY = 110;
+
+/**
+ * Which row of a panel is being previewed: the one pointed at (after
+ * PICK_DELAY) or focused. Back to none when the panel closes.
+ */
+function usePick(open: boolean) {
+  const [picked, setPicked] = useState<string | null>(null);
+  const [wasOpen, setWasOpen] = useState(open);
+  if (wasOpen !== open) {
+    setWasOpen(open);
+    if (!open) setPicked(null);
+  }
+  const timer = useRef<number | undefined>(undefined);
+  useEffect(() => () => clearTimeout(timer.current), []);
+  const cancel = () => clearTimeout(timer.current);
+  const pick = (key: string) => ({
+    onPointerEnter: (event: PointerEvent) => {
+      if (event.pointerType !== "mouse") return;
+      cancel();
+      timer.current = window.setTimeout(() => setPicked(key), PICK_DELAY);
+    },
+    onPointerLeave: cancel,
+    onFocus: () => {
+      cancel();
+      setPicked(key);
+    },
+  });
+  return { picked, pick, cancel };
+}
+
+/**
+ * Every preview picture stacked in one frame, the current one faded in, so
+ * moving between rows swaps at once instead of waiting for a download.
+ */
+function PictureStack({
+  pictures,
+  current,
+  show,
+  sizes,
+}: {
+  pictures: { src: string; alt: string }[];
+  current: string | null;
+  /** Pictures load once the menu has been opened, not on every page view. */
+  show: boolean;
+  sizes: string;
+}) {
+  return (
+    <>
+      {show &&
+        pictures.map((picture) => (
+          <Image
+            key={picture.src}
+            src={picture.src}
+            alt={picture.src === current ? picture.alt : ""}
+            fill
+            sizes={sizes}
+            unoptimized={!picture.src.startsWith("/")}
+            className={`object-cover transition-opacity duration-300 ${picture.src === current ? "opacity-100" : "opacity-0"}`}
+          />
+        ))}
+    </>
+  );
+}
+
+/** One copy of each picture, in order. */
+const uniquePictures = (pictures: { src: string | null; alt: string }[]) =>
+  [...new Map(pictures.flatMap((p) => (p.src ? [[p.src, { src: p.src, alt: p.alt }] as const] : []))).values()];
+
+/** The Services menu's right column while a service is pointed at. */
+function ServicePreviewCard({
+  item,
+  group,
+  button,
+  pictures,
+  showImages,
+  onNavigate,
+}: {
+  item: MenuGroup["items"][number];
+  group: string;
+  button: string;
+  pictures: { src: string; alt: string }[];
+  showImages: boolean;
+  onNavigate: () => void;
+}) {
+  const preview = item.preview;
+  return (
+    <div className="relative isolate flex h-full flex-col overflow-hidden rounded-2xl bg-[#0b1724] p-3 text-white">
+      <div className="relative h-[112px] shrink-0 overflow-hidden rounded-xl bg-[#11263a]">
+        {/* No picture yet: the service's icon on a fine grid. */}
+        <span
+          aria-hidden="true"
+          className="absolute inset-0 bg-[linear-gradient(rgba(44,205,222,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(44,205,222,0.08)_1px,transparent_1px)] bg-[size:18px_18px]"
+        />
+        <span
+          aria-hidden="true"
+          className="absolute -right-10 -top-12 h-40 w-40 rounded-full bg-[radial-gradient(circle,rgba(44,205,222,0.35),transparent_68%)]"
+        />
+        <span
+          aria-hidden="true"
+          className="absolute left-4 top-1/2 grid h-12 w-12 -translate-y-1/2 place-items-center rounded-xl bg-[#2CCDDE] text-[#04121A] shadow-[0_0_32px_rgba(44,205,222,0.45)]"
+        >
+          <ServiceIcon link={item.href} className="h-6 w-6" />
+        </span>
+        <PictureStack pictures={pictures} current={preview?.image ?? null} show={showImages} sizes="290px" />
+      </div>
+      <div key={item.href} className="menu-preview-in flex flex-1 flex-col px-3 pb-2 pt-4">
+        {group && <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#2CCDDE]">{group}</p>}
+        <p className="mt-1.5 font-display text-[18px] font-semibold leading-tight tracking-[-0.02em]">{item.label}</p>
+        {preview?.subtitle && (
+          <p className="mt-1.5 line-clamp-2 text-[12.5px] leading-relaxed text-[#cbd5e1]">{preview.subtitle}</p>
+        )}
+        <div className="mt-auto pt-4">
+          <Link
+            href={item.href}
+            onClick={onNavigate}
+            className="group/plans inline-flex h-10 items-center gap-2.5 rounded-full bg-[#2CCDDE] pl-4 pr-1 text-[13.5px] font-bold text-[#04121A] transition-colors hover:bg-[#5BDCE9]"
+          >
+            {button}
+            <span className="grid h-8 w-8 place-items-center rounded-full bg-[#04121A] text-[#2CCDDE]">
+              <ArrowUpRightIcon className="h-3.5 w-3.5 transition-transform duration-200 group-hover/plans:-translate-y-px group-hover/plans:translate-x-px" />
+            </span>
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function ServicesPanel({
   services,
   whatsapp,
+  open,
+  showImages,
   onNavigate,
 }: {
   services: HeaderModel["services"];
   whatsapp: string;
+  open: boolean;
+  showImages: boolean;
   onNavigate: () => void;
 }) {
-  const { intro, groups, featured, footer } = services;
+  const { intro, groups, featured, preview, footer } = services;
+  const { picked, pick, cancel } = usePick(open);
+  const rows = preview ? groups.flatMap((group) => group.items.map((item) => ({ item, group: group.title }))) : [];
+  // With no featured card, the first service stands in until one is pointed at.
+  const shown = rows.find((row) => row.item.href === picked) ?? (featured ? null : rows[0]) ?? null;
+  // The card keeps the last service while it fades back to the featured card.
+  const [lastHref, setLastHref] = useState<string | null>(null);
+  if (shown && shown.item.href !== lastHref) setLastHref(shown.item.href);
+  const card = shown ?? rows.find((row) => row.item.href === lastHref) ?? rows[0];
+  const pictures = uniquePictures(rows.map((row) => ({ src: row.item.preview?.image ?? null, alt: row.item.preview?.alt ?? "" })));
+  const side = Boolean(featured || shown);
   return (
     <div className={panelSurface}>
       <div
         className={`grid ${
-          featured
+          side
             ? "lg:grid-cols-[minmax(0,1fr)_260px] xl:grid-cols-[250px_minmax(0,1fr)_290px]"
             : "xl:grid-cols-[250px_minmax(0,1fr)]"
         }`}
@@ -136,7 +281,10 @@ function ServicesPanel({
                     <Link
                       href={item.href}
                       onClick={onNavigate}
-                      className="group/item flex items-start gap-2.5 rounded-xl p-2 transition-colors duration-150 hover:bg-[#ecfbfd]"
+                      {...(preview ? pick(item.href) : {})}
+                      className={`group/item flex items-start gap-2.5 rounded-xl p-2 transition-colors duration-150 hover:bg-[#ecfbfd] ${
+                        shown?.item === item ? "bg-[#ecfbfd]" : ""
+                      }`}
                     >
                       <span
                         aria-hidden="true"
@@ -162,41 +310,67 @@ function ServicesPanel({
           ))}
         </div>
 
-        {featured && (
-          <div className="p-3 lg:pl-0">
-            <div className="relative isolate flex h-full flex-col overflow-hidden rounded-2xl bg-[#0b1724] p-6 text-white">
-              <span
-                aria-hidden="true"
-                className="pointer-events-none absolute -right-20 -top-20 -z-10 h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(44,205,222,0.32),transparent_68%)]"
-              />
-              <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#2CCDDE]">{featured.eyebrow}</p>
-              <p className="mt-2 font-display text-[22px] font-semibold leading-tight tracking-[-0.02em]">
-                {featured.title}
-              </p>
-              {featured.text && <p className="mt-2 text-[13px] leading-relaxed text-[#cbd5e1]">{featured.text}</p>}
-              {featured.stats.length > 0 && (
-                <div className="mt-5 grid grid-cols-2 gap-2.5">
-                  {featured.stats.map((stat) => (
-                    <p key={stat.value + stat.label} className="rounded-xl border border-white/10 bg-white/[0.05] px-3 py-3">
-                      <span className="block font-display text-[20px] font-semibold leading-none text-[#2CCDDE]">{stat.value}</span>
-                      <span className="mt-1.5 block text-[12px] leading-snug text-[#cbd5e1]">{stat.label}</span>
-                    </p>
-                  ))}
+        {side && (
+          // Resting on the card keeps the service it shows.
+          <div className="relative p-3 lg:pl-0" onPointerEnter={cancel}>
+            {featured && (
+              <div
+                inert={Boolean(shown)}
+                className={`relative isolate flex h-full flex-col overflow-hidden rounded-2xl bg-[#0b1724] p-6 text-white transition-opacity duration-200 ${
+                  shown ? "opacity-0" : "opacity-100"
+                }`}
+              >
+                <span
+                  aria-hidden="true"
+                  className="pointer-events-none absolute -right-20 -top-20 -z-10 h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(44,205,222,0.32),transparent_68%)]"
+                />
+                <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#2CCDDE]">{featured.eyebrow}</p>
+                <p className="mt-2 font-display text-[22px] font-semibold leading-tight tracking-[-0.02em]">
+                  {featured.title}
+                </p>
+                {featured.text && <p className="mt-2 text-[13px] leading-relaxed text-[#cbd5e1]">{featured.text}</p>}
+                {featured.stats.length > 0 && (
+                  <div className="mt-5 grid grid-cols-2 gap-2.5">
+                    {featured.stats.map((stat) => (
+                      <p key={stat.value + stat.label} className="rounded-xl border border-white/10 bg-white/[0.05] px-3 py-3">
+                        <span className="block font-display text-[20px] font-semibold leading-none text-[#2CCDDE]">{stat.value}</span>
+                        <span className="mt-1.5 block text-[12px] leading-snug text-[#cbd5e1]">{stat.label}</span>
+                      </p>
+                    ))}
+                  </div>
+                )}
+                <div className="mt-auto pt-6">
+                  <Link
+                    href={featured.button.href}
+                    onClick={onNavigate}
+                    className="group/plans inline-flex h-10 items-center gap-2.5 rounded-full bg-[#2CCDDE] pl-4 pr-1 text-[13.5px] font-bold text-[#04121A] transition-colors hover:bg-[#5BDCE9]"
+                  >
+                    {featured.button.label}
+                    <span className="grid h-8 w-8 place-items-center rounded-full bg-[#04121A] text-[#2CCDDE]">
+                      <ArrowUpRightIcon className="h-3.5 w-3.5 transition-transform duration-200 group-hover/plans:-translate-y-px group-hover/plans:translate-x-px" />
+                    </span>
+                  </Link>
                 </div>
-              )}
-              <div className="mt-auto pt-6">
-                <Link
-                  href={featured.button.href}
-                  onClick={onNavigate}
-                  className="group/plans inline-flex h-10 items-center gap-2.5 rounded-full bg-[#2CCDDE] pl-4 pr-1 text-[13.5px] font-bold text-[#04121A] transition-colors hover:bg-[#5BDCE9]"
-                >
-                  {featured.button.label}
-                  <span className="grid h-8 w-8 place-items-center rounded-full bg-[#04121A] text-[#2CCDDE]">
-                    <ArrowUpRightIcon className="h-3.5 w-3.5 transition-transform duration-200 group-hover/plans:-translate-y-px group-hover/plans:translate-x-px" />
-                  </span>
-                </Link>
               </div>
-            </div>
+            )}
+            {/* Over the featured card, at its size; on its own without one. */}
+            {preview && rows.length > 0 && (
+              <div
+                inert={!shown}
+                className={`${featured ? "absolute inset-3 lg:left-0" : "h-full min-h-[280px]"} transition-opacity duration-200 ${
+                  shown ? "opacity-100" : "pointer-events-none opacity-0"
+                }`}
+              >
+                <ServicePreviewCard
+                  item={card.item}
+                  group={card.group}
+                  button={preview.button}
+                  pictures={pictures}
+                  showImages={showImages}
+                  onNavigate={onNavigate}
+                />
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -324,24 +498,79 @@ function IndustriesPanel({
   );
 }
 
+/** The Insights menu's right column: the article pointed at, large. */
+function PostPreview({
+  post,
+  button,
+  pictures,
+  showImages,
+  onRest,
+  onNavigate,
+}: {
+  post: PostCard;
+  button: string;
+  pictures: { src: string; alt: string }[];
+  showImages: boolean;
+  /** Resting on the preview keeps the article it shows. */
+  onRest: () => void;
+  onNavigate: () => void;
+}) {
+  return (
+    <div className="hidden min-w-0 flex-col border-l border-[#e2e8f0] p-5 xl:flex" onPointerEnter={onRest}>
+      <div className="relative aspect-[16/10] shrink-0 overflow-hidden rounded-xl bg-[#e2e8f0]">
+        <PictureStack pictures={pictures} current={post.image} show={showImages} sizes="260px" />
+      </div>
+      <div key={post.href} className="menu-preview-in flex flex-1 flex-col pt-4">
+        {post.category && (
+          <span className="self-start rounded-full bg-[rgba(44,205,222,0.12)] px-2 py-0.5 text-[10.5px] font-semibold uppercase tracking-[0.08em] text-[#0e7490]">
+            {post.category}
+          </span>
+        )}
+        <p className="mt-2 line-clamp-3 text-[15px] font-semibold leading-snug text-[#0b1724]">{post.title}</p>
+        <p className="mt-1.5 text-[12px] text-[#64748b]">{[post.date, post.readTime].filter(Boolean).join(" · ")}</p>
+        <Link
+          href={post.href}
+          onClick={onNavigate}
+          className="group/read mt-auto inline-flex items-center gap-1.5 self-start pt-4 text-[13.5px] font-semibold text-[#0b1724] transition-colors hover:text-[#0e7490]"
+        >
+          {button}
+          <ArrowIcon className="h-3.5 w-3.5 transition-transform duration-200 group-hover/read:translate-x-0.5" />
+        </Link>
+      </div>
+    </div>
+  );
+}
+
 function InsightsPanel({
   insights,
+  open,
   showImages,
   onNavigate,
 }: {
   insights: HeaderModel["insights"];
+  open: boolean;
   /** Thumbnails load once the menu has been opened, not on every page view. */
   showImages: boolean;
   onNavigate: () => void;
 }) {
-  const { topics, posts, footer } = insights;
+  const { topics, posts, preview, footer } = insights;
+  const { picked, pick, cancel } = usePick(open);
+  const pickedTopic = topics.find((topic) => `topic:${topic.label}` === picked);
+  // A topic shows its newest article; with nothing pointed at, the newest of all.
+  const previewed = preview
+    ? (pickedTopic?.latest ?? posts.find((post) => `post:${post.href}` === picked) ?? posts[0] ?? null)
+    : null;
+  const pictures = uniquePictures([...posts, ...topics.flatMap((topic) => (topic.latest ? [topic.latest] : []))].map((post) => ({ src: post.image, alt: post.alt })));
+  const pickFor = (key: string) => (previewed ? pick(key) : {});
   return (
     <div className={panelSurface}>
       <div
         className={`grid ${
           topics.length
-            ? "lg:grid-cols-[270px_minmax(0,1fr)] xl:grid-cols-[250px_270px_minmax(0,1fr)]"
-            : "xl:grid-cols-[250px_minmax(0,1fr)]"
+            ? `lg:grid-cols-[270px_minmax(0,1fr)] ${previewed ? "xl:grid-cols-[250px_250px_minmax(0,1fr)_300px]" : "xl:grid-cols-[250px_270px_minmax(0,1fr)]"}`
+            : previewed
+              ? "xl:grid-cols-[250px_minmax(0,1fr)_300px]"
+              : "xl:grid-cols-[250px_minmax(0,1fr)]"
         }`}
       >
         <IntroZone
@@ -362,7 +591,10 @@ function InsightsPanel({
                   <Link
                     href={topic.href}
                     onClick={onNavigate}
-                    className="group/topic flex items-center gap-2 rounded-xl px-2 py-2 text-[13.5px] font-medium leading-snug text-[#0b1724] transition-colors duration-150 hover:bg-[#ecfbfd] hover:text-[#0e7490]"
+                    {...pickFor(`topic:${topic.label}`)}
+                    className={`group/topic flex items-center gap-2 rounded-xl px-2 py-2 text-[13.5px] font-medium leading-snug transition-colors duration-150 hover:bg-[#ecfbfd] hover:text-[#0e7490] ${
+                      pickedTopic === topic ? "bg-[#ecfbfd] text-[#0e7490]" : "text-[#0b1724]"
+                    }`}
                   >
                     <span className="min-w-0 flex-1">{topic.label}</span>
                     <span className="rounded-full bg-[#f1f5f9] px-2 py-0.5 text-[11.5px] font-semibold tabular-nums text-[#64748b]">
@@ -385,7 +617,10 @@ function InsightsPanel({
                   <Link
                     href={post.href}
                     onClick={onNavigate}
-                    className="group/post flex items-start gap-3.5 rounded-xl p-2 transition-colors duration-150 hover:bg-[#ecfbfd]"
+                    {...pickFor(`post:${post.href}`)}
+                    className={`group/post flex items-start gap-3.5 rounded-xl p-2 transition-colors duration-150 hover:bg-[#ecfbfd] ${
+                      picked === `post:${post.href}` ? "bg-[#ecfbfd]" : ""
+                    }`}
                   >
                     {/* Fixed size whether or not the image has loaded, so nothing shifts. */}
                     <span className="relative block h-[60px] w-[84px] shrink-0 overflow-hidden rounded-lg bg-[#e2e8f0]">
@@ -427,6 +662,17 @@ function InsightsPanel({
             </p>
           )}
         </div>
+
+        {previewed && preview && (
+          <PostPreview
+            post={previewed}
+            button={preview.button}
+            pictures={pictures}
+            showImages={showImages}
+            onRest={cancel}
+            onNavigate={onNavigate}
+          />
+        )}
       </div>
 
       <FooterStrip>
@@ -601,8 +847,9 @@ export default function Header({
     clearTimeout(timer.current);
     setOpenMenu(null);
   };
-  const [insightsSeen, setInsightsSeen] = useState(false);
-  if (openMenu === "insights" && !insightsSeen) setInsightsSeen(true);
+  // Menus opened so far: their pictures load from then on.
+  const [seen, setSeen] = useState<string[]>([]);
+  if (openMenu && !seen.includes(openMenu)) setSeen([...seen, openMenu]);
   const later = (next: string | null, delay: number) => {
     clearTimeout(timer.current);
     timer.current = window.setTimeout(() => setOpenMenu(next), delay);
@@ -789,9 +1036,15 @@ export default function Header({
                   }}
                 >
                   {entry.kind === "services" ? (
-                    <ServicesPanel services={services} whatsapp={whatsapp} onNavigate={closeMenu} />
+                    <ServicesPanel
+                      services={services}
+                      whatsapp={whatsapp}
+                      open={open}
+                      showImages={seen.includes(entry.key)}
+                      onNavigate={closeMenu}
+                    />
                   ) : entry.kind === "insights" ? (
-                    <InsightsPanel insights={insights} showImages={insightsSeen} onNavigate={closeMenu} />
+                    <InsightsPanel insights={insights} open={open} showImages={seen.includes(entry.key)} onNavigate={closeMenu} />
                   ) : entry.kind === "industries" ? (
                     <IndustriesPanel industries={industries} pathname={pathname} onNavigate={closeMenu} />
                   ) : (

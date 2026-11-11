@@ -1,6 +1,7 @@
 import 'server-only'
 import { unstable_cache } from 'next/cache'
-import { db } from './db'
+import { categoryKey } from './blog-categories'
+import { db, getServices } from './db'
 import { getMenu, getSection, getServiceNames } from './cms'
 import { headerBarFrom } from './header-bar'
 import type { NavItem } from './header-menu'
@@ -10,12 +11,16 @@ import {
   MAX_LATEST_POSTS,
   modelFromLegacy,
   modelFromTables,
+  servicePreview,
   withServiceNames,
+  withServicePreviews,
   type HeaderModel,
   type PostCard,
+  type ServicePreview,
 } from './header-model'
 import { mergeHomeBlock } from './home-content'
 import { postDisplay } from './post-display'
+import { services as servicePages } from './services-data'
 
 /** The tag the admin clears (through /api/revalidate) when it saves the header. */
 export const HEADER_CACHE_TAG = 'header-menu'
@@ -25,37 +30,61 @@ const REFRESH_SECONDS = 900
 
 const missingTable = (error: unknown) => /no such table/i.test(String(error))
 
-async function readPosts(): Promise<{ categories: string[]; posts: PostCard[] }> {
-  const [categories, latest] = await Promise.all([
-    db.execute('SELECT category FROM posts WHERE published = 1'),
+function postCard(row: Record<string, unknown>): PostCard {
+  const shown = postDisplay({
+    date: row.date as string | null,
+    read_time: row.read_time as string | null,
+    excerpt: '',
+    content: (row.content as string | null | undefined) ?? null,
+    created_at: row.created_at as string | null,
+  })
+  const title = String(row.title ?? '')
+  return {
+    title,
+    href: `/${String(row.slug)}`,
+    category: String(row.category ?? '').trim(),
+    date: shown.date,
+    readTime: shown.read_time,
+    image: row.image_url ? String(row.image_url) : null,
+    alt: String(row.image_alt ?? '').trim() || title,
+  }
+}
+
+async function readPosts(): Promise<{ categories: string[]; posts: PostCard[]; topicPosts: PostCard[] }> {
+  const [all, latest] = await Promise.all([
+    // Every published post without its text: the topics' counts and newest posts.
+    db.execute(`SELECT slug, title, category, date, read_time, created_at, image_url, image_alt
+                FROM posts WHERE published = 1 ORDER BY created_at DESC`),
     db.execute({
       sql: `SELECT slug, title, category, date, read_time, content, created_at, image_url, image_alt
             FROM posts WHERE published = 1 ORDER BY created_at DESC LIMIT ?`,
       args: [MAX_LATEST_POSTS],
     }),
   ])
+  // The newest post in each category, which is all the topics' previews need.
+  const seen = new Set<string>()
+  const topicPosts = all.rows.map(postCard).filter((post) => {
+    const key = categoryKey(post.category)
+    if (!key || seen.has(key)) return false
+    seen.add(key)
+    return true
+  })
   return {
-    categories: categories.rows.map((row) => String(row.category ?? '')),
-    posts: latest.rows.map((row) => {
-      const shown = postDisplay({
-        date: row.date as string | null,
-        read_time: row.read_time as string | null,
-        excerpt: '',
-        content: row.content as string | null,
-        created_at: row.created_at as string | null,
-      })
-      const title = String(row.title ?? '')
-      return {
-        title,
-        href: `/${String(row.slug)}`,
-        category: String(row.category ?? '').trim(),
-        date: shown.date,
-        readTime: shown.read_time,
-        image: row.image_url ? String(row.image_url) : null,
-        alt: String(row.image_alt ?? '').trim() || title,
-      }
-    }),
+    categories: all.rows.map((row) => String(row.category ?? '')),
+    posts: latest.rows.map(postCard),
+    topicPosts,
   }
+}
+
+/**
+ * Each service's preview for the Services menu: every service page's own
+ * wording, then the admin's Services records over it.
+ */
+async function servicePreviews(): Promise<Map<string, ServicePreview>> {
+  const previews = new Map(servicePages.map((page) => [page.slug, servicePreview(page, page)]))
+  for (const service of await getServices())
+    previews.set(service.slug, servicePreview(service, servicePages.find((page) => page.slug === service.slug)))
+  return previews
 }
 
 /** The Header Menu tables, or null before their migration has run. */
@@ -109,26 +138,31 @@ async function legacyNavigation(): Promise<NavItem[]> {
 async function buildHeader(): Promise<HeaderModel> {
   // A database that cannot be reached throws here, so nothing is cached and
   // getHeaderModel falls back for this request only.
-  const [{ categories, posts }, tables, settingsRow, names] = await Promise.all([
+  const [{ categories, posts, topicPosts }, tables, settingsRow, names, previews] = await Promise.all([
     readPosts(),
     readTables(),
     db.execute('SELECT * FROM site_settings LIMIT 1'),
     getServiceNames(),
+    servicePreviews(),
   ])
   const bar = headerBarFrom(settingsRow.rows[0] as Record<string, unknown> | undefined)
-  const fromTables = tables && modelFromTables({ ...tables, bar, categories, posts })
-  if (fromTables) return withServiceNames(fromTables, names)
+  const fromTables = tables && modelFromTables({ ...tables, bar, categories, posts, topicPosts })
+  if (fromTables) return withServicePreviews(withServiceNames(fromTables, names), previews)
 
   const [navigation, saved] = await Promise.all([legacyNavigation(), getSection('home', 'header_menu')])
-  return withServiceNames(
-    modelFromLegacy({
-      navigation,
-      menu: mergeHomeBlock('header_menu', saved as Record<string, unknown> | null),
-      bar,
-      categories,
-      posts,
-    }),
-    names,
+  return withServicePreviews(
+    withServiceNames(
+      modelFromLegacy({
+        navigation,
+        menu: mergeHomeBlock('header_menu', saved as Record<string, unknown> | null),
+        bar,
+        categories,
+        posts,
+        topicPosts,
+      }),
+      names,
+    ),
+    previews,
   )
 }
 
@@ -143,6 +177,9 @@ export async function getHeaderModel(): Promise<HeaderModel> {
     return await cachedHeader()
   } catch (error) {
     console.error('Header menu error:', error instanceof Error ? error.message : error)
-    return fallbackHeader()
+    return withServicePreviews(
+      fallbackHeader(),
+      new Map(servicePages.map((page) => [page.slug, servicePreview(page, page)])),
+    )
   }
 }

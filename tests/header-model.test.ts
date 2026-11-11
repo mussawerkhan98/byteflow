@@ -8,7 +8,9 @@ import {
   modelFromLegacy,
   modelFromTables,
   pageSlug,
+  servicePreview,
   withServiceNames,
+  withServicePreviews,
   type GroupRow,
   type ItemRow,
   type NavRow,
@@ -168,4 +170,39 @@ test('a page slug is read from a site path, never from another site', () => {
   assert.equal(pageSlug('/cyber-security/?ref=menu#top'), 'cyber-security')
   assert.equal(pageSlug('https://example.com/cyber-security'), null)
   assert.equal(pageSlug('/projects/abc'), null)
+})
+
+test('a service preview takes the admin record, then the service page', () => {
+  const page = { tagline: 'Predictable IT costs.' }
+  assert.deepEqual(servicePreview({ title: 'IT AMC', tagline: '', image_url: '/api/media/9/amc.webp', image_alt: '' }, page), {
+    subtitle: 'Predictable IT costs.',
+    image: '/api/media/9/amc.webp',
+    alt: 'IT AMC by Byteflow in Dubai',
+  })
+  const own = servicePreview({ title: 'IT AMC', tagline: 'Fixed monthly support', image_url: 'https://cdn.example.com/a.webp', image_alt: 'Engineer at a rack' }, page)
+  assert.equal(own.subtitle, 'Fixed monthly support')
+  assert.equal(own.alt, 'Engineer at a rack')
+  // An inline picture would ride along with every page: it is left out.
+  assert.equal(servicePreview({ title: 'X', image_url: 'data:image/png;base64,AAAA' }).image, null)
+  assert.equal(servicePreview({ title: 'X', image_url: '//evil.example/a.png' }).image, null)
+})
+
+test('menu links to service pages are given their preview', () => {
+  const previews = new Map([['cyber-security', { subtitle: 'Protection', image: null, alt: 'Cyber' }]])
+  const model = withServicePreviews(tables()!, previews)
+  assert.equal(model.services.groups[0].items[0].preview?.subtitle, 'Protection')
+  assert.equal(model.services.preview?.button, 'View service')
+  const off = tables({ settings: { 'services.preview_show': '0', 'insights.preview_show': '0' } })!
+  assert.equal(off.services.preview, null)
+  assert.equal(off.insights.preview, null)
+})
+
+test('each topic carries its newest post for the preview', () => {
+  const cloud = { ...post(9), category: 'cloud' }
+  const model = tables({ topicPosts: [post(1), cloud] })!
+  const byLabel = new Map(model.insights.topics.map((topic) => [topic.label, topic.latest?.href]))
+  assert.equal(byLabel.get('IT Support'), '/post-1')
+  assert.equal(byLabel.get('Cloud'), '/post-9')
+  assert.equal(byLabel.get('Cyber Security'), undefined)
+  assert.equal(model.insights.preview?.button, 'Read article')
 })
