@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import type { ReactNode } from 'react'
 import { figuresFrom } from '../lib/site-figures'
 import type { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 import {
@@ -14,7 +15,6 @@ import {
 } from '@fortawesome/free-brands-svg-icons'
 import { faChevronRight, faClock, faEnvelope, faLocationDot, faPhone } from '@fortawesome/free-solid-svg-icons'
 import { Icon } from './Icon'
-import LogoLink from './LogoLink'
 import FooterWordmark from './FooterWordmark'
 
 const fallbackUsefulLinks = [
@@ -51,7 +51,19 @@ const fallbackSocials = [
   { label: 'TikTok', href: 'https://www.tiktok.com/@byteflow.ae' },
 ]
 
-type FooterSettings = { logo_url?: string; header_phone?: string; primary_email?: string; physical_address?: string; business_hours?: string; footer_text?: string; copyright_text?: string; facebook_url?: string; instagram_url?: string; linkedin_url?: string; x_url?: string; youtube_url?: string; tiktok_url?: string; github_url?: string }
+/** A column's heading, in the brand gradient. */
+function ColumnHeading({ children }: { children: ReactNode }) {
+  return (
+    <h3
+      className="text-xs font-bold uppercase tracking-widest mb-6"
+      style={{ background: 'linear-gradient(90deg, #2CCDDE, #46A3E1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}
+    >
+      {children}
+    </h3>
+  )
+}
+
+type FooterSettings = { header_phone?: string; primary_email?: string; physical_address?: string; business_hours?: string; footer_text?: string; copyright_text?: string; footer_about_heading?: string; footer_links_heading?: string; footer_services_heading?: string; footer_legal_heading?: string; footer_social_heading?: string; footer_social_text?: string; footer_caption?: string; facebook_url?: string; instagram_url?: string; linkedin_url?: string; x_url?: string; youtube_url?: string; tiktok_url?: string; github_url?: string }
 // `year` comes from the server: a client component reading the clock would
 // disagree with the server's HTML when the two straddle New Year.
 // `services` are the published services in the admin's order, so a new one
@@ -86,19 +98,15 @@ export default function Footer({ navigation = fallbackUsefulLinks, services = []
         style={{ background: 'linear-gradient(90deg, #2CCDDE, #46A3E1)' }}
       />
 
-      <div className="page-container py-16">
+      <div className="page-container pt-16 pb-12">
         {/* Wide screens: contact details, then four link columns. */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-x-10 gap-y-12">
 
-          <div className="space-y-6 sm:col-span-2 lg:col-span-3">
-            <LogoLink
-              src={settings.logo_url || '/images/logo.png'}
-              // The logo's own shape (portrait, as in the header), so the
-              // space kept for it matches before it loads.
-              width={56}
-              height={72}
-              imageClassName="h-10 w-auto object-contain"
-            />
+          {/* A heading like the other columns, not the logo: the header and
+              the large BYTEFLOW below already carry the brand. */}
+          <div className="sm:col-span-2 lg:col-span-3">
+            <ColumnHeading>{settings.footer_about_heading || 'About Byteflow'}</ColumnHeading>
+            <div className="space-y-6">
             <p className="text-[var(--text-footer-link)] text-sm leading-relaxed">
               {/* The clients and founding year are in the bottom bar. */}
               {settings.footer_text || 'Dubai IT company for managed IT support, cyber security, cloud and digital services.'}
@@ -151,15 +159,11 @@ export default function Footer({ navigation = fallbackUsefulLinks, services = []
                 <span className="leading-relaxed pt-1">{hours}</span>
               </li>
             </ul>
+            </div>
           </div>
 
           <div className="lg:col-span-2">
-            <h3
-              className="text-xs font-bold uppercase tracking-widest mb-6"
-              style={{ background: 'linear-gradient(90deg, #2CCDDE, #46A3E1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}
-            >
-              Useful Links
-            </h3>
+            <ColumnHeading>{settings.footer_links_heading || 'Useful Links'}</ColumnHeading>
             <ul className="space-y-3">
               {usefulLinks.map((link) => (
                 <li key={link.href}>
@@ -180,12 +184,7 @@ export default function Footer({ navigation = fallbackUsefulLinks, services = []
           </div>
 
           <div className="lg:col-span-3">
-            <h3
-              className="text-xs font-bold uppercase tracking-widest mb-6"
-              style={{ background: 'linear-gradient(90deg, #2CCDDE, #46A3E1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}
-            >
-              Our Services
-            </h3>
+            <ColumnHeading>{settings.footer_services_heading || 'Our Services'}</ColumnHeading>
             <ul className="space-y-3">
               {services.map((s) => (
                 <li key={s.href}>
@@ -206,12 +205,7 @@ export default function Footer({ navigation = fallbackUsefulLinks, services = []
           </div>
 
           <div className="lg:col-span-2">
-            <h3
-              className="text-xs font-bold uppercase tracking-widest mb-6"
-              style={{ background: 'linear-gradient(90deg, #2CCDDE, #46A3E1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}
-            >
-              Legal
-            </h3>
+            <ColumnHeading>{settings.footer_legal_heading || 'Legal'}</ColumnHeading>
             <ul className="space-y-3">
               {legalLinks.map((link) => (
                 <li key={link.href}>
@@ -232,14 +226,9 @@ export default function Footer({ navigation = fallbackUsefulLinks, services = []
           </div>
 
           <div className="lg:col-span-2">
-            <h3
-              className="text-xs font-bold uppercase tracking-widest mb-6"
-              style={{ background: 'linear-gradient(90deg, #2CCDDE, #46A3E1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}
-            >
-              Follow Us
-            </h3>
+            <ColumnHeading>{settings.footer_social_heading || 'Follow Us'}</ColumnHeading>
             <p className="text-[var(--text-footer-link)] text-sm mb-6 leading-relaxed">
-              Stay updated with our latest news and IT insights.
+              {settings.footer_social_text || 'Stay updated with our latest news and IT insights.'}
             </p>
             <div className="flex flex-wrap gap-2.5">
               {shownSocials.map((s) => (
@@ -270,7 +259,7 @@ export default function Footer({ navigation = fallbackUsefulLinks, services = []
         </div>
       </div>
 
-      <FooterWordmark />
+      <FooterWordmark caption={settings.footer_caption || 'IT Support · Cyber Security · Cloud · Dubai, UAE'} />
 
       <div style={{ borderTop: '1px solid var(--border-subtle)' }}>
         <div className="page-container py-5 flex flex-col sm:flex-row items-center justify-between gap-2">
