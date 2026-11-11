@@ -1,6 +1,6 @@
 import { strict as assert } from 'node:assert'
 import { test } from 'node:test'
-import { finderSituations, groupAnchors, introFor, serviceSlugOf, shown, withServiceCount } from '../app/lib/services-page'
+import { finderSituations, groupAnchors, introFor, namedServices, serviceSlugOf, shown, withServiceCount } from '../app/lib/services-page'
 
 const service = (slug: string) => ({ slug, href: `/${slug}`, title: slug, subtitle: '' })
 
@@ -40,6 +40,19 @@ test('each group gets its own address on the page', () => {
   ])
   // A repeated name takes its place instead, so no two groups share one.
   assert.deepEqual(groupAnchors(['Cloud', 'cloud']), ['cloud', 'services-group-2'])
+})
+
+test('another page names its unnamed or repeated anchors after itself', () => {
+  assert.deepEqual(groupAnchors(['Clinics & Healthcare', '', 'Clinics & Healthcare'], 'industry'), ['clinics-healthcare', 'industry-2', 'industry-3'])
+})
+
+test('an industry lists the published services it names, and none when it names none', () => {
+  const services = [service('cyber-security'), service('cloud-services-dubai')]
+  assert.deepEqual(
+    namedServices({ service1: 'cloud-services-dubai', service2: 'gone', service3: 'cyber-security' }, services).map((s) => s.slug),
+    ['cloud-services-dubai', 'cyber-security'],
+  )
+  assert.deepEqual(namedServices({ service1: '', service2: '', service3: '' }, services), [])
 })
 
 test('{services} is the number of services on the page', () => {

@@ -1,6 +1,7 @@
 /**
- * The Services page's small rules (app/services), apart from the page so
- * they can be tested directly. No database access or React here.
+ * The Services and Industries pages' small rules (app/services,
+ * app/industries), apart from the pages so they can be tested directly. No
+ * database access or React here.
  */
 
 type Item = Record<string, string>
@@ -14,16 +15,17 @@ export function introFor(intros: Item[], title: string): Item | undefined {
 
 /**
  * The address of each group on the page ("#cloud-security"), from its name;
- * a group with no name, or one whose name repeats, takes its place instead.
+ * a group with no name, or one whose name repeats, takes its place
+ * ("#services-group-3", or after another `fallback`) instead.
  */
-export function groupAnchors(titles: string[]): string[] {
+export function groupAnchors(titles: string[], fallback = 'services-group'): string[] {
   const used = new Set<string>()
   return titles.map((title, index) => {
     const slug = plain(title)
       .replace(/&/g, ' ')
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/^-|-$/g, '')
-    const anchor = slug && !used.has(slug) ? slug : `services-group-${index + 1}`
+    const anchor = slug && !used.has(slug) ? slug : `${fallback}-${index + 1}`
     used.add(anchor)
     return anchor
   })
@@ -41,21 +43,21 @@ export const serviceSlugOf = (href: string) => href.match(/^\/([a-z0-9]+(?:-[a-z
 type Situation = { title: string; description: string; services: Service[] }
 type Service = { slug: string; href: string; title: string; subtitle: string }
 
+/** The services an item names (service1–3) that are published, in that order and once each. */
+export function namedServices<S extends Service>(item: Item, services: S[]): S[] {
+  const bySlug = new Map(services.map((service) => [service.slug, service]))
+  return [...new Set([item.service1, item.service2, item.service3])]
+    .map((slug) => (slug ? bySlug.get(slug) : undefined))
+    .filter((service): service is S => Boolean(service))
+}
+
 /**
  * The finder's situations ("Services page sections" → Service finder), each
- * with the services it names (service1–3) that are on the page, in that
- * order and once each. A situation none of whose services is published is
- * left out, as it would point nowhere.
+ * with the services it names. A situation none of whose services is
+ * published is left out, as it would point nowhere.
  */
 export function finderSituations(items: Item[], services: Service[]): Situation[] {
-  const bySlug = new Map(services.map((service) => [service.slug, service]))
   return items
-    .map((item) => ({
-      title: item.title ?? '',
-      description: item.description ?? '',
-      services: [...new Set([item.service1, item.service2, item.service3])]
-        .map((slug) => (slug ? bySlug.get(slug) : undefined))
-        .filter((service): service is Service => Boolean(service)),
-    }))
+    .map((item) => ({ title: item.title ?? '', description: item.description ?? '', services: namedServices(item, services) }))
     .filter((situation) => situation.title && situation.services.length)
 }

@@ -23,7 +23,7 @@ function Lead({ project }: { project: ProjectCard }) {
   return (
     <article className="group relative grid gap-8 lg:grid-cols-12 lg:gap-12">
       <div data-reveal="image" className="lg:col-span-7">
-        <figure className="hp-frame relative aspect-[4/3] overflow-hidden rounded-[1.75rem] lg:aspect-[16/12]">
+        <figure className="hp-frame relative aspect-[4/3] overflow-hidden rounded-[1.75rem] lg:aspect-[16/10]">
           <Photo slot={nthPhoto(homePhotos.work, 0)} sizes="(min-width: 1024px) 56vw, 100vw" zoom />
         </figure>
         {project.metrics.length > 0 && (
@@ -38,7 +38,8 @@ function Lead({ project }: { project: ProjectCard }) {
         )}
       </div>
 
-      <div data-reveal style={delay(120)} className="flex flex-col justify-center lg:col-span-5">
+      {/* Starts level with the top of the photograph. */}
+      <div data-reveal style={delay(120)} className="flex flex-col lg:col-span-5 lg:pt-3">
         <Meta project={project} />
         <h3 className="hp-h3-lg mt-5">
           <Link href={project.href} className={stretched}>
@@ -134,9 +135,11 @@ export default async function HomeWork() {
             <Eyebrow>{copy.eyebrow}</Eyebrow>
             <SectionTitle id="work-title" heading={copy.heading} soft={copy.heading_soft} className="mt-5" />
           </div>
-          <div className="lg:max-w-sm lg:pb-1.5">
-            {copy.intro && <p className="hp-lead">{copy.intro}</p>}
-            <Button href={copy.link || '/projects'} variant="ghost" className="mt-6">
+          {/* The paragraph and the button side by side, so the column is
+              no taller than the heading and the two sit on one line. */}
+          <div className="lg:flex lg:max-w-2xl lg:items-end lg:gap-8 lg:pb-1.5">
+            {copy.intro && <p className="hp-lead lg:max-w-md">{copy.intro}</p>}
+            <Button href={copy.link || '/projects'} variant="ghost" className="mt-6 shrink-0 lg:mt-0">
               {copy.link_label}
             </Button>
           </div>
@@ -147,9 +150,17 @@ export default async function HomeWork() {
         </div>
 
         {rest.length > 0 && (
-          <ul className={`mt-14 grid gap-6 lg:mt-20 ${rest.length === 1 ? '' : rest.length === 2 ? 'md:grid-cols-2' : 'md:grid-cols-2 lg:grid-cols-3'}`}>
+          // Phones swipe through two or more, the next showing at the edge;
+          // from tablets up they sit in a grid.
+          <ul
+            className={`mt-14 lg:mt-20 ${
+              rest.length === 1
+                ? 'grid'
+                : `hp-scroller -mx-4 flex snap-x snap-mandatory scroll-px-4 gap-4 overflow-x-auto px-4 pb-2 md:mx-0 md:grid md:gap-6 md:overflow-visible md:px-0 md:pb-0 ${rest.length === 2 ? 'md:grid-cols-2' : 'md:grid-cols-2 lg:grid-cols-3'}`
+            }`}
+          >
             {rest.map((project, i) => (
-              <li key={project.slug}>
+              <li key={project.slug} className={rest.length === 1 ? '' : 'w-[82%] shrink-0 snap-start md:w-auto'}>
                 <Small project={project} index={i} />
               </li>
             ))}
