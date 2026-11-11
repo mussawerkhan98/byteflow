@@ -3,7 +3,9 @@
 /**
  * The oversized BYTEFLOW wordmark that closes the footer.
  *
- * Each letter can be picked up and thrown, and springs back to its place when
+ * The letters rise into place with a short spring, a scan line passes across
+ * them, and the ones near a mouse pointer lift and turn brand blue. Each
+ * letter can also be picked up and thrown, and springs back to its place when
  * released. It stays inside the footer: never dragged or flung over the page. The whole thing is decoration, so it is hidden from assistive
  * technology and replaced by a plain text name; nothing here is the only way
  * to reach anything.
@@ -33,6 +35,20 @@ const JELLY = 0.009
 const JELLY_MAX = 0.075
 /** A little give under the finger, so picking a letter up feels like pressing. */
 const PRESS = 0.022
+
+/** The entrance: how long one letter takes to rise, and the gap between letters. */
+const RISE_MS = 950
+const STAGGER_MS = 55
+/**
+ * The hover, at the letter nearest the pointer: how far it lifts (in em),
+ * how much it stretches, and how far it turns brand blue. Small on purpose,
+ * so the word stays composed.
+ */
+const LIFT = 0.045
+const STRETCH = 0.05
+const TINT = 0.85
+/** The scan line passes at most this often. */
+const SCAN_GAP = 2800
 
 type Letter = {
   el: HTMLSpanElement
@@ -225,7 +241,8 @@ function createDragController(wake: () => void): DragController {
   return { start, releaseAll }
 }
 
-export default function FooterWordmark() {
+/** `caption`: the small line under the word (Contact details & logo). */
+export default function FooterWordmark({ caption }: { caption?: string }) {
   const host = useRef<HTMLDivElement>(null)
   const letters = useRef<Letter[]>([])
   const frame = useRef<number | null>(null)
@@ -248,16 +265,34 @@ export default function FooterWordmark() {
     })
     drag.current = controller
 
-    // Letters rise into place the first time the footer is reached. Done with
-    // a class rather than inline styles so the transition can be turned off
+    // The scan line across the word (globals.css): restarted by taking the
+    // class off and putting it back, at most once every few seconds.
+    let lastScan = 0
+    const scan = () => {
+      const now = performance.now()
+      if (reduced.current || now - lastScan < SCAN_GAP) return
+      lastScan = now
+      root.classList.remove('wordmark-scan')
+      void root.offsetWidth
+      root.classList.add('wordmark-scan')
+    }
+
+    // Letters rise into place the first time the footer is reached, then go
+    // live: they answer the pointer, and the scan passes once. Done with
+    // classes rather than inline styles so all of it can be turned off
     // wholesale by the reduced-motion rules in globals.css.
     let io: IntersectionObserver | null = null
+    let liveTimer: number | undefined
     if (!reduced.current && 'IntersectionObserver' in window) {
       io = new IntersectionObserver(
         (entries) => {
           for (const entry of entries) {
             if (!entry.isIntersecting) continue
             root.classList.add('wordmark-in')
+            liveTimer = window.setTimeout(() => {
+              root.classList.add('wordmark-live')
+              scan()
+            }, RISE_MS + (WORD.length - 1) * STAGGER_MS)
             io?.disconnect()
           }
         },
@@ -265,11 +300,63 @@ export default function FooterWordmark() {
       )
       io.observe(root)
     } else {
-      root.classList.add('wordmark-in')
+      root.classList.add('wordmark-in', 'wordmark-live')
+    }
+
+    // The letters near a mouse pointer lift, stretch a little and take on
+    // the brand blue, the nearest most; leaving lets them settle back. Mouse
+    // only: on touch the letters are picked up instead.
+    const hover = window.matchMedia('(hover: hover) and (pointer: fine)').matches && !reduced.current
+    const inners = letters.current.map((l) => l.el.firstElementChild as HTMLElement)
+    let centres: number[] = []
+    let width = 1
+    let pending: number | null = null
+    let pointerX = 0
+    const setLetter = (el: HTMLElement, pull: number) => {
+      el.style.setProperty('--lift', (pull * LIFT).toFixed(4))
+      el.style.setProperty('--sy', (1 + pull * STRETCH).toFixed(4))
+      el.style.setProperty('--sx', (1 - pull * STRETCH * 0.5).toFixed(4))
+      el.style.setProperty('--tint', (pull * TINT).toFixed(3))
+    }
+    const follow = () => {
+      pending = null
+      inners.forEach((el, i) => {
+        // How close the pointer is, in letter widths, as a smooth bell.
+        const d = (pointerX - centres[i]) / width
+        setLetter(el, Math.exp(-(d * d) / 1.2))
+      })
+    }
+    const onEnter = (event: PointerEvent) => {
+      if (event.pointerType !== 'mouse' || !root.classList.contains('wordmark-live')) return
+      const boxes = letters.current.map((l) => l.el.getBoundingClientRect())
+      centres = boxes.map((box) => box.left + box.width / 2)
+      width = boxes.reduce((sum, box) => sum + box.width, 0) / Math.max(boxes.length, 1)
+      scan()
+    }
+    const onMove = (event: PointerEvent) => {
+      if (event.pointerType !== 'mouse' || !centres.length) return
+      pointerX = event.clientX
+      if (pending === null) pending = requestAnimationFrame(follow)
+    }
+    const onLeave = () => {
+      if (pending !== null) cancelAnimationFrame(pending)
+      pending = null
+      centres = []
+      inners.forEach((el) => setLetter(el, 0))
+    }
+    if (hover) {
+      root.addEventListener('pointerenter', onEnter)
+      root.addEventListener('pointermove', onMove)
+      root.addEventListener('pointerleave', onLeave)
     }
 
     return () => {
       io?.disconnect()
+      window.clearTimeout(liveTimer)
+      if (pending !== null) cancelAnimationFrame(pending)
+      root.removeEventListener('pointerenter', onEnter)
+      root.removeEventListener('pointermove', onMove)
+      root.removeEventListener('pointerleave', onLeave)
       controller.releaseAll()
       if (frame.current !== null) cancelAnimationFrame(frame.current)
       frame.current = null
@@ -283,7 +370,7 @@ export default function FooterWordmark() {
   }
 
   return (
-    <div className="page-container pt-10 pb-4 select-none">
+    <div className="page-container pt-2 pb-8 select-none">
       <div
         ref={host}
         aria-hidden="true"
@@ -299,13 +386,14 @@ export default function FooterWordmark() {
             // transition-property defaults to `all`, so a delay set here applies
             // to the transform the drag writes too: every frame of a drag was
             // held back by up to 385ms, and the letter lagged behind the pointer.
-            style={{ '--stagger': `${i * 55}ms` } as React.CSSProperties}
+            style={{ '--stagger': `${i * STAGGER_MS}ms` } as React.CSSProperties}
           >
             <span className={i >= ACCENT_FROM ? 'footer-wordmark-accent' : undefined}>{char}</span>
           </span>
         ))}
       </div>
       <span className="sr-only">Byteflow</span>
+      {caption && <p className="footer-wordmark-caption">{caption}</p>}
     </div>
   )
 }
