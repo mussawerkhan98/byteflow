@@ -7,8 +7,11 @@ import { needScenarios } from '../../lib/need-scenarios'
 import { ServiceIcon } from '../ServiceIcon'
 import { ArrowRight, Button, Eyebrow, Photo, delay } from './ui'
 
-/** Taller and shorter photos in turn, so the three columns don't read as a row of identical cards. */
-const shapes = ['aspect-[4/5]', 'aspect-[4/3]', 'aspect-[4/5]']
+/**
+ * Taller and shorter photos in turn, so the three columns don't read as a
+ * row of identical cards. Landscape both, so the section fits a screen.
+ */
+const shapes = ['aspect-[4/3]', 'aspect-[16/10]', 'aspect-[4/3]']
 
 /**
  * "Where does your IT need help?": the common starting points, each with a
@@ -40,9 +43,11 @@ export default async function HomeNeeds() {
           )}
         </header>
 
-        <ol className="mt-14 grid gap-10 md:grid-cols-3 md:gap-6 lg:mt-20 lg:gap-8">
+        {/* Phones swipe through the cards, the next one showing at the edge;
+            from tablets up they sit in three columns. */}
+        <ol className="hp-scroller -mx-4 mt-10 flex snap-x snap-mandatory scroll-px-4 items-start gap-4 overflow-x-auto px-4 pb-2 md:mx-0 md:mt-14 md:grid md:grid-cols-3 md:gap-6 md:overflow-visible md:px-0 md:pb-0 lg:mt-20 lg:gap-8">
           {scenarios.map((scenario, i) => (
-            <li key={scenario.number} data-reveal style={delay(i * 130)} className={i % 3 === 1 ? 'md:mt-20' : ''}>
+            <li key={scenario.number} data-reveal style={delay(i * 130)} className={`w-[82%] shrink-0 snap-start md:w-auto ${i % 3 === 1 ? 'md:mt-12' : ''}`}>
               <article className="group relative">
                 <figure data-reveal="image" className={`hp-frame relative overflow-hidden rounded-[1.5rem] ${shapes[i % shapes.length]}`}>
                   <Photo slot={nthPhoto(homePhotos.needs, i)} sizes="(min-width: 768px) 30vw, 100vw" zoom />
