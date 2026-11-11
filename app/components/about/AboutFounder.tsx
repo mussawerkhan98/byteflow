@@ -10,21 +10,14 @@ export type Founder = {
   name: string
   role: string
   company: string
+  /** Empty: no photo is shown. */
   imageUrl: string
   imageAlt: string
   linkedinUrl: string
   phoneLabel: string
+  /** A direct line only; empty when it would repeat the company number. */
   phoneUrl: string
 }
-
-/** "Byteflow Information Technology" → "BI": the tile shown when there's no photo. */
-const initials = (text: string) =>
-  text
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((word) => word[0]!.toUpperCase())
-    .join('')
 
 function LinkedInIcon({ className }: { className?: string }) {
   return (
@@ -36,79 +29,82 @@ function LinkedInIcon({ className }: { className?: string }) {
 
 /**
  * The founder, from the admin's "About Us — Founder" screen, as a signed
- * letter: who they are on a soft blue side panel (their photo once one is
- * set, otherwise their initials), and the story on the white page beside it,
- * opening large and closing with their name and role.
+ * letter: the heading on a soft blue side panel (under the founder's photo,
+ * once one is uploaded there), the story on the white page beside it,
+ * opening large, and one signature: name or role, company, and the LinkedIn
+ * and direct-line links.
  */
 export default function AboutFounder({ founder }: { founder: Founder }) {
   const [first, ...more] = founder.story
-  const who = founder.name || founder.role
 
   return (
     <section aria-labelledby="founder-title" className="hp-section">
       <div className="page-container">
-        <article data-reveal className="ab-letter grid overflow-hidden rounded-[2rem] lg:grid-cols-12">
-          <aside className="ab-letter-side order-2 flex flex-col gap-8 p-7 sm:p-10 lg:order-1 lg:col-span-4 lg:justify-between">
-            {founder.imageUrl ? (
-              <figure className="relative aspect-[4/5] overflow-hidden rounded-[1.25rem] border border-white/80 shadow-[var(--hp-shadow)] sm:aspect-[4/3] lg:aspect-[4/5]">
-                <Image src={founder.imageUrl} alt={founder.imageAlt} fill sizes="(min-width: 1024px) 28vw, 100vw" className="object-cover object-top" />
+        {/* Phones: heading, story, signature. Wide screens: the heading and
+            the signature share the soft panel on the left, the story fills
+            the right. */}
+        <article data-reveal className="ab-letter grid overflow-hidden rounded-[2rem] lg:grid-cols-12 lg:grid-rows-[1fr_auto]">
+          <header className="ab-letter-side flex flex-col gap-8 p-7 sm:p-10 lg:col-span-5 lg:col-start-1 lg:row-start-1 lg:p-12 lg:pb-8">
+            {founder.imageUrl && (
+              <figure className="relative aspect-[4/3] overflow-hidden rounded-[1.25rem] border border-white/80 shadow-[var(--hp-shadow)] lg:aspect-[4/5]">
+                <Image src={founder.imageUrl} alt={founder.imageAlt} fill sizes="(min-width: 1024px) 34vw, 100vw" className="object-cover object-top" />
               </figure>
-            ) : (
-              <span aria-hidden="true" className="grid h-24 w-24 place-items-center rounded-[1.5rem] border border-white bg-white font-display text-[2rem] font-semibold text-[var(--hp-accent)] shadow-[var(--hp-shadow)]">
-                {initials(founder.name || founder.company)}
-              </span>
             )}
-
             <div>
-              <p className="font-display text-[1.375rem] font-semibold tracking-[-0.02em] text-[var(--hp-ink)]">{who}</p>
-              {founder.name && <p className="mt-1 text-[15px] text-[var(--hp-body)]">{founder.role}</p>}
-              <p className="mt-1 text-[15px] font-medium text-[var(--hp-accent)]">{founder.company}</p>
-
-              <div className="mt-6 flex flex-wrap items-center gap-3">
-                {founder.linkedinUrl && (
-                  <Button href={founder.linkedinUrl} variant="ghost" className="!bg-white">
-                    <span className="inline-flex items-center gap-2">
-                      <LinkedInIcon className="h-4 w-4 text-[#0a66c2]" />
-                      LinkedIn
-                    </span>
-                  </Button>
-                )}
-                {founder.phoneUrl && (
-                  <a href={founder.phoneUrl} className="inline-flex items-center gap-2.5 text-[15px] font-semibold tabular-nums text-[var(--hp-ink)] transition-colors hover:text-[var(--hp-accent)]">
-                    <span aria-hidden="true" className="grid h-10 w-10 place-items-center rounded-full bg-white text-[var(--hp-accent)] shadow-[var(--hp-shadow-sm)]">
-                      <PhoneIcon className="h-4 w-4" />
-                    </span>
-                    {founder.phoneLabel}
-                  </a>
-                )}
-              </div>
+              <Eyebrow>{founder.eyebrow}</Eyebrow>
+              <h2 id="founder-title" className="hp-h3-lg mt-5">
+                {founder.heading}
+              </h2>
             </div>
-          </aside>
+          </header>
 
-          <div className="relative order-1 p-7 sm:p-10 lg:order-2 lg:col-span-8 lg:p-14">
+          <div className="relative p-7 sm:p-10 lg:col-span-7 lg:col-start-6 lg:row-span-2 lg:row-start-1 lg:p-14">
             <span aria-hidden="true" className="ab-quote-mark pointer-events-none absolute right-6 top-8 select-none sm:right-10 lg:right-14 lg:top-12">
               &ldquo;
             </span>
-            <Eyebrow>{founder.eyebrow}</Eyebrow>
-            <h2 id="founder-title" className="hp-h3-lg mt-5 max-w-2xl pr-12">
-              {founder.heading}
-            </h2>
+            {first && <p className="max-w-2xl pr-12 font-display text-[clamp(1.1875rem,1rem+0.6vw,1.5rem)] font-medium leading-[1.5] tracking-[-0.015em] text-[var(--hp-ink)]">{first}</p>}
+            {more.map((paragraph) => (
+              <p key={paragraph} className="mt-5 max-w-2xl text-[16.5px] leading-relaxed text-[var(--hp-body)]">
+                {paragraph}
+              </p>
+            ))}
+          </div>
 
-            <div className="mt-8 max-w-3xl border-t border-[var(--hp-line)] pt-8">
-              {first && <p className="font-display text-[clamp(1.1875rem,1rem+0.6vw,1.5rem)] font-medium leading-[1.5] tracking-[-0.015em] text-[var(--hp-ink)]">{first}</p>}
-              {more.map((paragraph) => (
-                <p key={paragraph} className="mt-5 text-[16.5px] leading-relaxed text-[var(--hp-body)]">
-                  {paragraph}
-                </p>
-              ))}
-              <p className="mt-8 flex items-center gap-3">
-                <span aria-hidden="true" className="h-px w-10 bg-[var(--hp-accent)]" />
-                <span className="ab-signature text-[17px]">
-                  {who}, {founder.company}
+          <footer className="bg-[var(--hp-soft)] px-7 pb-7 sm:px-10 sm:pb-10 lg:col-span-5 lg:col-start-1 lg:row-start-2 lg:px-12 lg:pb-12">
+            <div className="flex flex-wrap items-center justify-between gap-6 border-t border-[var(--hp-line-strong)] pt-7 lg:flex-col lg:items-start">
+              <p className="flex items-center gap-3">
+                <span aria-hidden="true" className="h-px w-10 shrink-0 bg-[var(--hp-accent)]" />
+                <span>
+                  <span className="ab-signature block text-[17px]">{founder.name || founder.role}</span>
+                  <span className="mt-0.5 block text-[14.5px] text-[var(--hp-body)]">
+                    {founder.name && `${founder.role}, `}
+                    {founder.company}
+                  </span>
                 </span>
               </p>
+
+              {(founder.linkedinUrl || founder.phoneUrl) && (
+                <div className="flex flex-wrap items-center gap-3">
+                  {founder.linkedinUrl && (
+                    <Button href={founder.linkedinUrl} variant="ghost">
+                      <span className="inline-flex items-center gap-2">
+                        <LinkedInIcon className="h-4 w-4 text-[#0a66c2]" />
+                        LinkedIn
+                      </span>
+                    </Button>
+                  )}
+                  {founder.phoneUrl && (
+                    <a href={founder.phoneUrl} className="inline-flex items-center gap-2.5 text-[15px] font-semibold tabular-nums text-[var(--hp-ink)] transition-colors hover:text-[var(--hp-accent)]">
+                      <span aria-hidden="true" className="grid h-10 w-10 place-items-center rounded-full bg-[var(--hp-soft)] text-[var(--hp-accent)]">
+                        <PhoneIcon className="h-4 w-4" />
+                      </span>
+                      {founder.phoneLabel}
+                    </a>
+                  )}
+                </div>
+              )}
             </div>
-          </div>
+          </footer>
         </article>
       </div>
     </section>

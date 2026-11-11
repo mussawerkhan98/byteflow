@@ -3,10 +3,12 @@ import { test } from 'node:test'
 import {
   ORG_ID,
   SITE_URL,
+  aboutPageSchema,
   absoluteUrl,
   blogPostingSchema,
   breadcrumbSchema,
   faqPageSchema,
+  founderSchema,
   graph,
   organizationSchema,
   plainText,
@@ -158,4 +160,32 @@ test('the stand-in is only needed when no admin script publishes the organizatio
   assert.ok(publishesOrganization(address.replace(/\//g, '\\/')))
   assert.ok(!publishesOrganization('<script>gtag("config", "G-1")</script>'))
   assert.ok(!publishesOrganization(''))
+})
+
+test('the About page is about the one organization, not a second description of it', () => {
+  const page = aboutPageSchema({ name: 'About Byteflow', description: '<p>Dubai IT company.</p>', path: '/about-us', image: '/images/home/about.png' }) as Record<string, unknown>
+  assert.equal(page['@type'], 'AboutPage')
+  assert.equal(page.url, 'https://www.byteflow.ae/about-us')
+  assert.equal(page.description, 'Dubai IT company.')
+  assert.equal(page.primaryImageOfPage, 'https://www.byteflow.ae/images/home/about.png')
+  assert.deepEqual(page.about, { '@id': ORG_ID })
+  assert.deepEqual(page.mainEntity, { '@id': ORG_ID })
+  assert.equal(aboutPageSchema({ name: '  ', path: '/about-us' }), null)
+})
+
+test('the founder is only published with a name, and only a personal LinkedIn counts as theirs', () => {
+  assert.equal(founderSchema({ name: '', jobTitle: 'Founder & CEO' }), null)
+  const person = founderSchema({
+    name: 'Jane Doe',
+    jobTitle: 'Founder & CEO',
+    image: 'data:image/png;base64,AAAA',
+    linkedinUrl: 'https://ae.linkedin.com/company/byteflow-techcascade',
+  }) as Record<string, unknown>
+  assert.equal(person['@type'], 'Person')
+  assert.deepEqual(person.worksFor, { '@id': ORG_ID })
+  // A company page is not the person's profile, and a pasted data: URL is not an image address.
+  assert.equal(person.sameAs, undefined)
+  assert.equal(person.image, undefined)
+  const linked = founderSchema({ name: 'Jane Doe', linkedinUrl: 'https://www.linkedin.com/in/jane-doe' }) as Record<string, unknown>
+  assert.deepEqual(linked.sameAs, ['https://www.linkedin.com/in/jane-doe'])
 })
