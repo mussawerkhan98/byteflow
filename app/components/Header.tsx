@@ -15,8 +15,9 @@ import { usePathname } from "next/navigation";
 import LogoLink from "./LogoLink";
 import { ArrowIcon, ArrowUpRightIcon, ChevronIcon, PhoneIcon, WhatsAppIcon } from "./InlineIcons";
 import { ServiceIcon } from "./ServiceIcon";
+import { IndustryIcon } from "./industries/IndustryIcon";
 import { isCurrent, type NavItem } from "../lib/header-menu";
-import { fallbackHeader, type HeaderModel, type MenuGroup, type MenuLink, type PostCard } from "../lib/header-model";
+import { fallbackHeader, menuGroups, type HeaderModel, type MenuGroup, type MenuLink, type PostCard } from "../lib/header-model";
 
 export type { NavItem };
 
@@ -458,46 +459,181 @@ function ListPanel({
   );
 }
 
+function CheckIcon({ className }: { className: string }) {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M3.5 8.5l3 3 6-7" />
+    </svg>
+  );
+}
+
+/** The Industries menu's right column: the industry pointed at, with its summary and first points. */
+function IndustryPreviewCard({
+  item,
+  button,
+  onNavigate,
+}: {
+  item: MenuGroup["items"][number];
+  button: string;
+  onNavigate: () => void;
+}) {
+  const industry = item.industry;
+  return (
+    <div className="relative isolate flex h-full flex-col overflow-hidden rounded-2xl bg-[#0b1724] p-3 text-white">
+      <div className="relative h-[96px] shrink-0 overflow-hidden rounded-xl bg-[#11263a]">
+        <span
+          aria-hidden="true"
+          className="absolute inset-0 bg-[linear-gradient(rgba(44,205,222,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(44,205,222,0.08)_1px,transparent_1px)] bg-[size:18px_18px]"
+        />
+        <span
+          aria-hidden="true"
+          className="absolute -right-10 -top-12 h-40 w-40 rounded-full bg-[radial-gradient(circle,rgba(44,205,222,0.35),transparent_68%)]"
+        />
+        <span
+          key={item.href}
+          aria-hidden="true"
+          className="menu-preview-in absolute left-4 top-1/2 grid h-12 w-12 -translate-y-1/2 place-items-center rounded-xl bg-[#2CCDDE] text-[#04121A] shadow-[0_0_32px_rgba(44,205,222,0.45)]"
+        >
+          <IndustryIcon icon={industry?.icon ?? "other"} className="h-6 w-6" />
+        </span>
+      </div>
+      <div key={item.href} className="menu-preview-in flex flex-1 flex-col px-3 pb-2 pt-4">
+        <p className="font-display text-[18px] font-semibold leading-tight tracking-[-0.02em]">{item.label}</p>
+        {industry?.summary && <p className="mt-1.5 line-clamp-2 text-[12.5px] leading-relaxed text-[#cbd5e1]">{industry.summary}</p>}
+        {industry && industry.points.length > 0 && (
+          <ul className="mt-3 space-y-1.5">
+            {industry.points.map((point) => (
+              <li key={point} className="flex items-start gap-2 text-[12.5px] leading-snug text-[#e2e8f0]">
+                <CheckIcon className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#2CCDDE]" />
+                {point}
+              </li>
+            ))}
+          </ul>
+        )}
+        <div className="mt-auto pt-4">
+          <Link
+            href={item.href}
+            onClick={onNavigate}
+            className="group/plans inline-flex h-10 items-center gap-2.5 rounded-full bg-[#2CCDDE] pl-4 pr-1 text-[13.5px] font-bold text-[#04121A] transition-colors hover:bg-[#5BDCE9]"
+          >
+            {button}
+            <span className="grid h-8 w-8 place-items-center rounded-full bg-[#04121A] text-[#2CCDDE]">
+              <ArrowUpRightIcon className="h-3.5 w-3.5 transition-transform duration-200 group-hover/plans:-translate-y-px group-hover/plans:translate-x-px" />
+            </span>
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * The Industries menu, laid out like the Services menu: the intro on the
+ * left, the industries with their icons in the middle (in columns when the
+ * admin groups them), and on the right the industry pointed at, the first
+ * one until then. The Services menu's footer line runs along the foot.
+ */
 function IndustriesPanel({
   industries,
-  pathname,
+  footer,
+  whatsapp,
+  open,
   onNavigate,
 }: {
   industries: HeaderModel["industries"];
-  pathname: string;
+  footer: HeaderModel["services"]["footer"];
+  whatsapp: string;
+  open: boolean;
   onNavigate: () => void;
 }) {
-  const { heading, viewAll, groups } = industries;
+  const { heading, intro, viewAll, groups, preview } = industries;
+  const { picked, pick, cancel } = usePick(open);
+  const rows = groups.flatMap((group) => group.items);
+  const shown = preview ? (rows.find((item) => item.href === picked) ?? rows[0]) : null;
   const columns = groups.length > 1;
   return (
-    <div className={`${panelSurface} ${columns ? "" : "w-[30rem]"}`}>
-      {heading && <p className={`${eyebrowClass} px-6 pt-5`}>{heading}</p>}
-      <div className={columns ? "grid grid-cols-3 gap-x-2 gap-y-5 p-5" : "p-3"}>
-        {groups.map((group) => (
-          <div key={group.title} className="min-w-0">
-            {columns && <ColumnTitle>{group.title}</ColumnTitle>}
-            <ul className={columns ? "space-y-0.5" : "grid grid-cols-2 gap-0.5"}>
-              {group.items.map((item) => (
-                <li key={`${item.label}-${item.href}`}>
-                  <ListLink item={item} pathname={pathname} onNavigate={onNavigate} />
-                </li>
-              ))}
-            </ul>
+    <div className={panelSurface}>
+      <div className={`grid ${shown ? "lg:grid-cols-[minmax(0,1fr)_270px] xl:grid-cols-[250px_minmax(0,1fr)_290px]" : "xl:grid-cols-[250px_minmax(0,1fr)]"}`}>
+        <IntroZone
+          eyebrow={heading}
+          heading={intro.heading}
+          text={intro.text}
+          link={viewAll ?? { label: heading, href: "/industries" }}
+          onNavigate={onNavigate}
+        />
+
+        <div className={columns ? "grid grid-cols-3 gap-x-2 gap-y-5 p-5" : "p-5"}>
+          {groups.map((group) => (
+            <div key={group.title} className="min-w-0">
+              {columns && <ColumnTitle>{group.title}</ColumnTitle>}
+              <ul className={columns ? "space-y-0.5" : "grid grid-cols-2 gap-x-2 gap-y-0.5"}>
+                {group.items.map((item) => (
+                  <li key={`${item.label}-${item.href}`}>
+                    <Link
+                      href={item.href}
+                      onClick={onNavigate}
+                      {...(preview ? pick(item.href) : {})}
+                      className={`group/item flex items-start gap-2.5 rounded-xl p-2 transition-colors duration-150 hover:bg-[#ecfbfd] ${
+                        shown === item ? "bg-[#ecfbfd]" : ""
+                      }`}
+                    >
+                      <span
+                        aria-hidden="true"
+                        className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-[rgba(44,205,222,0.12)] text-[#0e7490] transition-colors duration-150 group-hover/item:bg-[#2CCDDE] group-hover/item:text-[#04121A]"
+                      >
+                        <IndustryIcon icon={item.industry?.icon ?? "other"} className="h-4 w-4" />
+                      </span>
+                      <span className="min-w-0">
+                        <span className="block text-[13.5px] font-semibold leading-snug text-[#0b1724]">{item.label}</span>
+                        {/* The menu row's own line, or else its card's summary. */}
+                        {(item.description || item.industry?.summary) && (
+                          <span className="mt-0.5 line-clamp-2 text-[12.5px] leading-snug text-[#64748b]">
+                            {item.description || item.industry?.summary}
+                          </span>
+                        )}
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+
+        {shown && preview && (
+          // Resting on the card keeps the industry it shows.
+          <div className="relative p-3 lg:pl-0" onPointerEnter={cancel}>
+            <IndustryPreviewCard item={shown} button={preview.button} onNavigate={onNavigate} />
           </div>
-        ))}
+        )}
       </div>
-      {viewAll && (
-        <FooterStrip>
-          <Link
-            href={viewAll.href}
-            onClick={onNavigate}
-            className="group/all inline-flex items-center gap-1.5 font-semibold text-[#0b1724] transition-colors hover:text-[#0e7490]"
+
+      <FooterStrip>
+        <p className="text-[#64748b]">
+          {footer.text}{" "}
+          {footer.link && (
+            <Link
+              href={footer.link.href}
+              onClick={onNavigate}
+              className="font-semibold text-[#0b1724] underline-offset-4 transition-colors hover:text-[#0e7490] hover:underline"
+            >
+              {footer.link.label}
+            </Link>
+          )}
+        </p>
+        {footer.whatsappLabel && (
+          <a
+            href={whatsapp}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group/wa inline-flex items-center gap-2 font-semibold text-[#0b1724] transition-colors hover:text-[#0e7490]"
           >
-            {viewAll.label}
-            <ArrowIcon className="h-3.5 w-3.5 transition-transform duration-200 group-hover/all:translate-x-0.5" />
-          </Link>
-        </FooterStrip>
-      )}
+            <WhatsAppIcon className="h-4 w-4 text-[#25D366]" />
+            {footer.whatsappLabel}
+            <ArrowIcon className="h-3.5 w-3.5 transition-transform duration-200 group-hover/wa:translate-x-0.5" />
+          </a>
+        )}
+      </FooterStrip>
     </div>
   );
 }
@@ -855,7 +991,9 @@ export default function Header({
   phone?: string;
   whatsappUrl?: string;
 }) {
-  const { nav: entries, services, industries, insights, cta } = model;
+  const { nav: entries, industries, insights, cta } = model;
+  // The menu leaves out the services switched off "Show in the menu bar".
+  const services = { ...model.services, groups: menuGroups(model.services.groups) };
   const whatsapp = whatsappUrl || `https://wa.me/${phone.replace(/\D/g, "")}`;
   const pathname = usePathname();
   const baseId = useId();
@@ -1044,11 +1182,7 @@ export default function Header({
                   label={entry.label}
                   active={activeFor(entry)}
                   open={open}
-                  wide={
-                    entry.kind === "services" ||
-                    entry.kind === "insights" ||
-                    (entry.kind === "industries" && industries.groups.length > 1)
-                  }
+                  wide={entry.kind === "services" || entry.kind === "insights" || entry.kind === "industries"}
                   hover={hoverFor(entry.key)}
                   onToggle={toggleFor(entry.key)}
                   onKeyboardFocus={() => {
@@ -1063,7 +1197,9 @@ export default function Header({
                   link={
                     entry.kind === "services" || entry.kind === "insights"
                       ? { href: entry.href, current: isCurrent(pathname, entry.href) }
-                      : undefined
+                      : entry.kind === "industries" && industries.viewAll
+                        ? { href: industries.viewAll.href, current: isCurrent(pathname, industries.viewAll.href) }
+                        : undefined
                   }
                 >
                   {entry.kind === "services" ? (
@@ -1077,7 +1213,7 @@ export default function Header({
                   ) : entry.kind === "insights" ? (
                     <InsightsPanel insights={insights} open={open} showImages={seen.includes(entry.key)} onNavigate={closeMenu} />
                   ) : entry.kind === "industries" ? (
-                    <IndustriesPanel industries={industries} pathname={pathname} onNavigate={closeMenu} />
+                    <IndustriesPanel industries={industries} footer={services.footer} whatsapp={whatsapp} open={open} onNavigate={closeMenu} />
                   ) : (
                     <ListPanel items={entry.items} pathname={pathname} onNavigate={closeMenu} />
                   )}

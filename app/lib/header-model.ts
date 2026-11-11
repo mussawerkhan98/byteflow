@@ -25,9 +25,21 @@ export type MenuLink = { label: string; href: string; newTab?: boolean }
 /** What the Services menu shows for a service while it is pointed at. */
 export type ServicePreview = { subtitle: string; image: string | null; alt: string }
 
+/** What the Industries menu shows for an industry: its icon, and while pointed at its summary and first points. */
+export type IndustryPreview = { icon: string; summary: string; points: string[] }
+
 export type MenuGroup = {
   title: string
-  items: { label: string; href: string; description?: string; newTab?: boolean; preview?: ServicePreview }[]
+  items: {
+    label: string
+    href: string
+    description?: string
+    newTab?: boolean
+    preview?: ServicePreview
+    industry?: IndustryPreview
+    /** A service switched off "Show in the menu bar" (Services in the admin): kept for the Services page's grouping, not shown in the menu. */
+    offMenu?: true
+  }[]
 }
 
 export type PostCard = {
@@ -66,7 +78,14 @@ export type HeaderModel = {
     preview: { button: string } | null
     footer: { text: string; link: MenuLink | null; whatsappLabel: string | null }
   }
-  industries: { heading: string; viewAll: MenuLink | null; groups: MenuGroup[] }
+  industries: {
+    heading: string
+    intro: { heading: string; text: string }
+    viewAll: MenuLink | null
+    groups: MenuGroup[]
+    /** Pointing at an industry shows it in the right column; null when switched off. */
+    preview: { button: string } | null
+  }
   insights: {
     eyebrow: string
     heading: string
@@ -117,8 +136,12 @@ export const headerSettingDefaults = {
   'services.whatsapp_label': legacy.fields.whatsapp_label,
 
   'industries.heading': legacy.fields.industries_heading,
-  'industries.view_all_label': '',
-  'industries.view_all_link': '',
+  'industries.intro_heading': 'IT that fits the way your sector works.',
+  'industries.intro_text': 'Clinics, schools, shops, warehouses and offices each run on different systems. See what usually gets in the way in yours, and how we handle it.',
+  'industries.view_all_label': 'View all industries',
+  'industries.view_all_link': '/industries',
+  'industries.preview_show': '1',
+  'industries.preview_button_label': 'See how we help',
 
   'insights.eyebrow': 'Insights',
   'insights.heading': 'Practical IT advice for UAE businesses.',
@@ -236,6 +259,63 @@ function groupsFor(menu: string, groups: GroupRow[], items: ItemRow[], keep: (hr
     .filter((group) => group.items.length)
 }
 
+// ── Industries ──────────────────────────────────────────────────────────────
+
+/** An industry's card on the Industries page ("Industries page" in the admin), as the menu needs it. */
+export type IndustryPage = { title: string; anchor: string } & IndustryPreview
+
+/** How many of an industry's points its preview lists. */
+const PREVIEW_POINTS = 3
+
+const plainName = (value: string) => value.trim().replace(/\s+/g, ' ').toLowerCase()
+
+/** The Industries page's cards, from its saved list and each card's address on the page. */
+export function industryPagesFrom(items: Record<string, string>[], anchors: string[]): IndustryPage[] {
+  return items.map((item, i) => ({
+    title: item.title ?? '',
+    anchor: anchors[i],
+    icon: item.icon || 'other',
+    summary: item.summary ?? '',
+    points: (item.approach ?? '')
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter(Boolean)
+      .slice(0, PREVIEW_POINTS),
+  }))
+}
+
+/** A menu row with no page of its own opens the card of the same name on /industries, when there is one. */
+function industryHref(label: string, href: string, pages: IndustryPage[]) {
+  if (hasIndustryPage(href)) return href
+  const page = pages.find((p) => plainName(p.title) === plainName(label))
+  return page ? `/industries#${page.anchor}` : href
+}
+
+/** Each Industries menu row's card: the one its link opens, or else the one of the same name. */
+function withIndustryCards(groups: MenuGroup[], pages: IndustryPage[]): MenuGroup[] {
+  return groups.map((group) => ({
+    ...group,
+    items: group.items.map((item) => {
+      const anchor = /^\/industries\/?#(.+)$/.exec(item.href)?.[1]
+      const page = pages.find((p) => p.anchor === anchor) ?? pages.find((p) => plainName(p.title) === plainName(item.label))
+      return page ? { ...item, industry: { icon: page.icon, summary: page.summary, points: page.points } } : item
+    }),
+  }))
+}
+
+function industriesFrom(s: HeaderSettings, groups: MenuGroup[], isLink: (href: string) => boolean): HeaderModel['industries'] {
+  return {
+    heading: s['industries.heading'],
+    intro: { heading: s['industries.intro_heading'], text: s['industries.intro_text'] },
+    viewAll:
+      s['industries.view_all_label'] && isLink(s['industries.view_all_link'])
+        ? { label: s['industries.view_all_label'], href: s['industries.view_all_link'] }
+        : null,
+    groups,
+    preview: on(s['industries.preview_show']) ? { button: s['industries.preview_button_label'] } : null,
+  }
+}
+
 /** Rows are already in their saved order. Null when there is nothing saved yet. */
 export function modelFromTables(input: {
   nav: NavRow[]
@@ -247,12 +327,19 @@ export function modelFromTables(input: {
   posts: PostCard[]
   /** Every published post, newest first, for the topics' previews. */
   topicPosts?: PostCard[]
+  /** The Industries page's cards, which the Industries menu opens and previews. */
+  industryPages?: IndustryPage[]
 }): HeaderModel | null {
   if (!input.nav.length) return null
   const s = headerSettings(input.settings)
   const isLink = (href: string) => href.trim() !== '' && !/^\/?#/.test(href.trim())
   const services = groupsFor('services', input.groups, input.items, isLink)
-  const industries = groupsFor('industries', input.groups, input.items, hasIndustryPage)
+  const pages = input.industryPages ?? []
+  const industryGroups = new Set(input.groups.filter((group) => group.menu === 'industries').map((group) => group.id))
+  const industryItems = input.items.map((item) =>
+    industryGroups.has(item.group_id) ? { ...item, href: industryHref(item.label, item.href, pages) } : item,
+  )
+  const industries = withIndustryCards(groupsFor('industries', input.groups, industryItems, hasIndustryPage), pages)
 
   const nav: HeaderEntry[] = []
   input.nav.forEach((row, index) => {
@@ -312,14 +399,7 @@ export function modelFromTables(input: {
         whatsappLabel: on(s['services.whatsapp_show']) ? s['services.whatsapp_label'] : null,
       },
     },
-    industries: {
-      heading: s['industries.heading'],
-      viewAll:
-        s['industries.view_all_label'] && isLink(s['industries.view_all_link'])
-          ? { label: s['industries.view_all_label'], href: s['industries.view_all_link'] }
-          : null,
-      groups: industries,
-    },
+    industries: industriesFrom(s, industries, isLink),
     insights: insightsFrom(s, input.categories, input.posts, input.topicPosts),
   }
 }
@@ -340,8 +420,18 @@ export function modelFromLegacy(input: {
   categories: string[]
   posts: PostCard[]
   topicPosts?: PostCard[]
+  industryPages?: IndustryPage[]
 }): HeaderModel {
-  const { menu, bar } = input
+  const { bar } = input
+  const pages = input.industryPages ?? []
+  // Industries with no page of their own open their card on /industries.
+  const menu: HomeBlock = {
+    ...input.menu,
+    lists: {
+      ...input.menu.lists,
+      industries: (input.menu.lists.industries ?? []).map((item) => ({ ...item, link: industryHref(item.title ?? '', item.link ?? '', pages) })),
+    },
+  }
   const f = menu.fields
   const s = headerSettings(null)
   const nav: HeaderEntry[] = buildNav(input.navigation, menu, bar.ctaLink).map((entry) => {
@@ -389,16 +479,22 @@ export function modelFromLegacy(input: {
       },
     },
     industries: {
+      ...industriesFrom(
+        s,
+        withIndustryCards(
+          [
+            {
+              title: '',
+              items: (menu.lists.industries ?? [])
+                .filter((item) => item.title && hasIndustryPage(item.link))
+                .map((item) => ({ label: item.title, href: item.link.trim() })),
+            },
+          ].filter((group) => group.items.length),
+          pages,
+        ),
+        hasIndustryPage,
+      ),
       heading: f.industries_heading,
-      viewAll: null,
-      groups: [
-        {
-          title: '',
-          items: (menu.lists.industries ?? [])
-            .filter((item) => item.title && hasIndustryPage(item.link))
-            .map((item) => ({ label: item.title, href: item.link.trim() })),
-        },
-      ].filter((group) => group.items.length),
     },
     insights: insightsFrom(s, input.categories, input.posts, input.topicPosts),
   }
@@ -463,6 +559,25 @@ export function servicePreview(
     alt: service.image_alt?.trim() || `${service.title} by Byteflow in Dubai`,
   }
 }
+
+/** Marks the menu's links to services switched off "Show in the menu bar", by slug. */
+export function withServicesOffMenu(model: HeaderModel, slugs: Set<string>): HeaderModel {
+  if (!slugs.size) return model
+  return {
+    ...model,
+    services: {
+      ...model.services,
+      groups: model.services.groups.map((group) => ({
+        ...group,
+        items: group.items.map((item) => (slugs.has(pageSlug(item.href) ?? '') ? { ...item, offMenu: true as const } : item)),
+      })),
+    },
+  }
+}
+
+/** The groups as the menu shows them: without the services kept off it, and without groups left empty. */
+export const menuGroups = (groups: MenuGroup[]): MenuGroup[] =>
+  groups.map((group) => ({ ...group, items: group.items.filter((item) => !item.offMenu) })).filter((group) => group.items.length)
 
 /** Gives each menu link to a service page that service's preview, by slug. */
 export function withServicePreviews(model: HeaderModel, previews: Map<string, ServicePreview>): HeaderModel {

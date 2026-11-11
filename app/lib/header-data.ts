@@ -1,26 +1,31 @@
 import 'server-only'
 import { unstable_cache } from 'next/cache'
 import { categoryKey } from './blog-categories'
-import { db, getServices } from './db'
+import { db, getServices, SITE_CONTENT_TAG } from './db'
 import { getMenu, getSection, getServiceNames } from './cms'
 import { headerBarFrom } from './header-bar'
 import type { NavItem } from './header-menu'
 import {
   fallbackHeader,
   fallbackNavigation,
+  industryPagesFrom,
   MAX_LATEST_POSTS,
   modelFromLegacy,
   modelFromTables,
   servicePreview,
   withServiceNames,
   withServicePreviews,
+  withServicesOffMenu,
   type HeaderModel,
+  type IndustryPage,
   type PostCard,
   type ServicePreview,
 } from './header-model'
+import { getHomeBlock } from './home-blocks'
 import { mergeHomeBlock } from './home-content'
 import { postDisplay } from './post-display'
 import { services as servicePages } from './services-data'
+import { groupAnchors } from './services-page'
 
 /** The tag the admin clears (through /api/revalidate) when it saves the header. */
 export const HEADER_CACHE_TAG = 'header-menu'
@@ -87,6 +92,32 @@ async function servicePreviews(): Promise<Map<string, ServicePreview>> {
   return previews
 }
 
+/** The Industries page's cards (app/industries), at the same addresses the page gives them. */
+async function industryPages(): Promise<IndustryPage[]> {
+  const items = (await getHomeBlock('industries_list')).lists.industries
+  return industryPagesFrom(
+    items,
+    groupAnchors(
+      items.map((item) => item.title),
+      'industry',
+    ),
+  )
+}
+
+/**
+ * The services switched off "Show in the menu bar" (Services in the admin),
+ * by slug. None before the admin has added that switch to the table.
+ */
+async function servicesOffMenu(): Promise<Set<string>> {
+  try {
+    const result = await db.execute('SELECT slug FROM services WHERE show_in_menu = 0')
+    return new Set(result.rows.map((row) => String(row.slug)))
+  } catch (error) {
+    if (/no such column/i.test(String(error))) return new Set()
+    throw error
+  }
+}
+
 /** The Header Menu tables, or null before their migration has run. */
 async function readTables() {
   try {
@@ -138,38 +169,40 @@ async function legacyNavigation(): Promise<NavItem[]> {
 async function buildHeader(): Promise<HeaderModel> {
   // A database that cannot be reached throws here, so nothing is cached and
   // getHeaderModel falls back for this request only.
-  const [{ categories, posts, topicPosts }, tables, settingsRow, names, previews] = await Promise.all([
+  const [{ categories, posts, topicPosts }, tables, settingsRow, names, previews, industries, offMenu] = await Promise.all([
     readPosts(),
     readTables(),
     db.execute('SELECT * FROM site_settings LIMIT 1'),
     getServiceNames(),
     servicePreviews(),
+    industryPages(),
+    servicesOffMenu(),
   ])
   const bar = headerBarFrom(settingsRow.rows[0] as Record<string, unknown> | undefined)
-  const fromTables = tables && modelFromTables({ ...tables, bar, categories, posts, topicPosts })
-  if (fromTables) return withServicePreviews(withServiceNames(fromTables, names), previews)
+  const finish = (model: HeaderModel) => withServicesOffMenu(withServicePreviews(withServiceNames(model, names), previews), offMenu)
+  const fromTables = tables && modelFromTables({ ...tables, bar, categories, posts, topicPosts, industryPages: industries })
+  if (fromTables) return finish(fromTables)
 
   const [navigation, saved] = await Promise.all([legacyNavigation(), getSection('home', 'header_menu')])
-  return withServicePreviews(
-    withServiceNames(
-      modelFromLegacy({
-        navigation,
-        menu: mergeHomeBlock('header_menu', saved as Record<string, unknown> | null),
-        bar,
-        categories,
-        posts,
-        topicPosts,
-      }),
-      names,
-    ),
-    previews,
+  return finish(
+    modelFromLegacy({
+      navigation,
+      menu: mergeHomeBlock('header_menu', saved as Record<string, unknown> | null),
+      bar,
+      categories,
+      posts,
+      topicPosts,
+      industryPages: industries,
+    }),
   )
 }
 
 // The key names the model's shape: the cache outlives a deploy, so a change
 // to HeaderModel takes a new key rather than being served the old shape.
-const cachedHeader = unstable_cache(buildHeader, ['header-model-v2'], {
-  tags: [HEADER_CACHE_TAG],
+// It also uses services, posts and the Industries page, so saving any of
+// them in the admin (which clears the site-content tag) refreshes it too.
+const cachedHeader = unstable_cache(buildHeader, ['header-model-v3'], {
+  tags: [HEADER_CACHE_TAG, SITE_CONTENT_TAG],
   revalidate: REFRESH_SECONDS,
 })
 
