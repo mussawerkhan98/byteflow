@@ -12,7 +12,7 @@ import {
   faXTwitter,
   faYoutube,
 } from '@fortawesome/free-brands-svg-icons'
-import { faChevronRight, faEnvelope, faLocationDot, faPhone } from '@fortawesome/free-solid-svg-icons'
+import { faChevronRight, faClock, faEnvelope, faLocationDot, faPhone } from '@fortawesome/free-solid-svg-icons'
 import { Icon } from './Icon'
 import LogoLink from './LogoLink'
 import FooterWordmark from './FooterWordmark'
@@ -25,15 +25,13 @@ const fallbackUsefulLinks = [
   { label: 'Contact Us', href: '/contact-us' },
 ]
 
-// Which services the footer lists. Their names come from the admin's Services
-// list (serviceNames), so they match the menu and the pages.
-const services = [
-  { label: 'Digital Marketing', href: '/digital-marketing' },
-  { label: 'IT AMC', href: '/it-amc-services-dubai' },
-  { label: 'Website Development', href: '/website-development' },
-  { label: 'Landing Page Designing', href: '/landing-page-designing' },
-  { label: 'Graphics Designing', href: '/graphics-designing' },
+const fallbackLegalLinks = [
+  { label: 'Terms & Conditions', href: '/terms-and-conditions' },
+  { label: 'Privacy Policy', href: '/privacy-policy' },
 ]
+
+/** "+971 54 328 2042" → "tel:+971543282042". */
+const telLink = (phone: string) => `tel:${phone.replace(/[^\d+]/g, '')}`
 
 // Every platform we can render an icon for, in the order they should appear.
 const socialIcons: Record<string, IconDefinition> = {
@@ -53,11 +51,19 @@ const fallbackSocials = [
   { label: 'TikTok', href: 'https://www.tiktok.com/@byteflow.ae' },
 ]
 
-type FooterSettings = { logo_url?: string; header_phone?: string; primary_email?: string; physical_address?: string; footer_text?: string; copyright_text?: string; facebook_url?: string; instagram_url?: string; linkedin_url?: string; x_url?: string; youtube_url?: string; tiktok_url?: string; github_url?: string }
+type FooterSettings = { logo_url?: string; header_phone?: string; primary_email?: string; physical_address?: string; business_hours?: string; footer_text?: string; copyright_text?: string; facebook_url?: string; instagram_url?: string; linkedin_url?: string; x_url?: string; youtube_url?: string; tiktok_url?: string; github_url?: string }
 // `year` comes from the server: a client component reading the clock would
 // disagree with the server's HTML when the two straddle New Year.
-export default function Footer({ navigation = fallbackUsefulLinks, settings = {}, serviceNames = {}, year }: { navigation?: { label: string; href: string; new_tab?: boolean }[]; settings?: FooterSettings; serviceNames?: Record<string, string>; year: number }) {
+// `services` are the published services in the admin's order, so a new one
+// is listed here straight away; `legalLinks` are the legal pages, by title.
+type FooterLink = { label: string; href: string; new_tab?: boolean }
+export default function Footer({ navigation = fallbackUsefulLinks, services = [], legalLinks = fallbackLegalLinks, settings = {}, year }: { navigation?: FooterLink[]; services?: FooterLink[]; legalLinks?: FooterLink[]; settings?: FooterSettings; year: number }) {
   const usefulLinks = navigation
+  const phone = settings.header_phone || '+971 54 328 2042'
+  const email = settings.primary_email || 'info@byteflow.ae'
+  // The registered office, as in the organization markup: Google compares the two.
+  const address = settings.physical_address || 'Emaar Park 4, Greens, TECOM, Dubai, United Arab Emirates'
+  const hours = settings.business_hours || 'Monday to Saturday, 9:00am to 6:00pm'
   // The site-wide clients and founding year (Contact details & logo).
   const figures = figuresFrom(settings as Record<string, unknown>)
   const configuredSocials = [
@@ -81,9 +87,10 @@ export default function Footer({ navigation = fallbackUsefulLinks, settings = {}
       />
 
       <div className="page-container py-16">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
+        {/* Wide screens: contact details, then four link columns. */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-x-10 gap-y-12">
 
-          <div className="space-y-6">
+          <div className="space-y-6 sm:col-span-2 lg:col-span-3">
             <LogoLink
               src={settings.logo_url || '/images/logo.png'}
               // The logo's own shape (portrait, as in the header), so the
@@ -93,12 +100,13 @@ export default function Footer({ navigation = fallbackUsefulLinks, settings = {}
               imageClassName="h-10 w-auto object-contain"
             />
             <p className="text-[var(--text-footer-link)] text-sm leading-relaxed">
-              {settings.footer_text || `Leading IT solutions provider trusted by ${figures.clients} businesses across Dubai and UAE since ${figures.founded}.`}
+              {/* The clients and founding year are in the bottom bar. */}
+              {settings.footer_text || 'Dubai IT company for managed IT support, cyber security, cloud and digital services.'}
             </p>
             <ul className="space-y-3.5 text-sm">
               <li>
                 <a
-                  href="tel:+971543282042"
+                  href={telLink(phone)}
                   className="flex items-center gap-3 text-[var(--text-footer-link)] hover:text-[#2CCDDE] transition-colors duration-200"
                 >
                   <span
@@ -107,12 +115,12 @@ export default function Footer({ navigation = fallbackUsefulLinks, settings = {}
                   >
                     <Icon icon={faPhone} className="w-3.5 h-3.5" style={{ color: '#2CCDDE' }} />
                   </span>
-                  {settings.header_phone || '+971 54 328 2042'}
+                  {phone}
                 </a>
               </li>
               <li>
                 <a
-                  href="mailto:info@byteflow.ae"
+                  href={`mailto:${email}`}
                   className="flex items-center gap-3 text-[var(--text-footer-link)] hover:text-[#2CCDDE] transition-colors duration-200"
                 >
                   <span
@@ -121,22 +129,31 @@ export default function Footer({ navigation = fallbackUsefulLinks, settings = {}
                   >
                     <Icon icon={faEnvelope} className="w-3.5 h-3.5" style={{ color: '#2CCDDE' }} />
                   </span>
-                  {settings.primary_email || 'info@byteflow.ae'}
+                  {email}
                 </a>
               </li>
-              <li className="flex items-center gap-3 text-[var(--text-footer-link)]">
+              <li className="flex items-start gap-3 text-[var(--text-footer-link)]">
                 <span
                   className="w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0"
                   style={{ background: 'var(--border-subtle)', border: '1px solid #2CCDDE20' }}
                 >
                   <Icon icon={faLocationDot} className="w-3.5 h-3.5" style={{ color: '#2CCDDE' }} />
                 </span>
-                {settings.physical_address || 'Dubai, United Arab Emirates'}
+                <address className="not-italic leading-relaxed pt-1">{address}</address>
+              </li>
+              <li className="flex items-start gap-3 text-[var(--text-footer-link)]">
+                <span
+                  className="w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0"
+                  style={{ background: 'var(--border-subtle)', border: '1px solid #2CCDDE20' }}
+                >
+                  <Icon icon={faClock} className="w-3.5 h-3.5" style={{ color: '#2CCDDE' }} />
+                </span>
+                <span className="leading-relaxed pt-1">{hours}</span>
               </li>
             </ul>
           </div>
 
-          <div>
+          <div className="lg:col-span-2">
             <h3
               className="text-xs font-bold uppercase tracking-widest mb-6"
               style={{ background: 'linear-gradient(90deg, #2CCDDE, #46A3E1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}
@@ -162,7 +179,7 @@ export default function Footer({ navigation = fallbackUsefulLinks, settings = {}
             </ul>
           </div>
 
-          <div>
+          <div className="lg:col-span-3">
             <h3
               className="text-xs font-bold uppercase tracking-widest mb-6"
               style={{ background: 'linear-gradient(90deg, #2CCDDE, #46A3E1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}
@@ -181,14 +198,40 @@ export default function Footer({ navigation = fallbackUsefulLinks, settings = {}
                       className="w-2.5 h-2.5 transition-transform duration-200 group-hover:translate-x-0.5"
                       style={{ color: '#2CCDDE' }}
                     />
-                    {serviceNames[s.href.slice(1)] ?? s.label}
+                    {s.label}
                   </Link>
                 </li>
               ))}
             </ul>
           </div>
 
-          <div>
+          <div className="lg:col-span-2">
+            <h3
+              className="text-xs font-bold uppercase tracking-widest mb-6"
+              style={{ background: 'linear-gradient(90deg, #2CCDDE, #46A3E1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}
+            >
+              Legal
+            </h3>
+            <ul className="space-y-3">
+              {legalLinks.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="flex items-center gap-2.5 text-sm text-[var(--text-footer-link)] hover:text-[#2CCDDE] transition-all duration-200 group"
+                  >
+                    <Icon
+                      icon={faChevronRight}
+                      className="w-2.5 h-2.5 transition-transform duration-200 group-hover:translate-x-0.5"
+                      style={{ color: '#2CCDDE' }}
+                    />
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="lg:col-span-2">
             <h3
               className="text-xs font-bold uppercase tracking-widest mb-6"
               style={{ background: 'linear-gradient(90deg, #2CCDDE, #46A3E1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}
@@ -198,7 +241,7 @@ export default function Footer({ navigation = fallbackUsefulLinks, settings = {}
             <p className="text-[var(--text-footer-link)] text-sm mb-6 leading-relaxed">
               Stay updated with our latest news and IT insights.
             </p>
-            <div className="flex gap-2.5">
+            <div className="flex flex-wrap gap-2.5">
               {shownSocials.map((s) => (
                 <a
                   key={s.label}

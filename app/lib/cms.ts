@@ -89,6 +89,22 @@ export async function getCmsService(slug:string){try{const result=await readCont
  * service the same thing. A service not published there keeps its built-in
  * name from services-data.ts.
  */
+/**
+ * The published services in the admin's order, for the footer: a service
+ * added on the Services screen is listed straight away. If the list can't be
+ * read, the built-in services stand in.
+ */
+export const getPublishedServices = cache(async (): Promise<{ slug: string; title: string }[]> => {
+  try {
+    const result = await readContent("SELECT slug, title FROM services WHERE status = 'published' ORDER BY sort_order, id")
+    const services = result.rows
+      .map((row) => ({ slug: String(row.slug ?? '').trim(), title: String(row.title ?? '').trim() }))
+      .filter((service) => service.slug && service.title)
+    if (services.length) return services
+  } catch { /* the built-in services stand */ }
+  return builtInServices.map(({ slug, title }) => ({ slug, title }))
+})
+
 export const getServiceNames = cache(async (): Promise<Map<string, string>> => {
   const names = new Map(builtInServices.map((service) => [service.slug, service.title]))
   try {
