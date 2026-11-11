@@ -15,7 +15,8 @@ import InquiryDrawer from "./components/InquiryDrawer";
 import PageCta from "./components/PageCta";
 import PageSections from "./components/PageSections";
 import PageFaq from "./components/PageFaq";
-import { getMenu, getPageMetadata, getServiceNames, getSiteFigures, getSiteSettings, getWebsiteScripts } from "./lib/cms";
+import { getMenu, getPageMetadata, getPublishedServices, getSiteFigures, getSiteSettings, getWebsiteScripts } from "./lib/cms";
+import { getHomeBlock } from "./lib/home-blocks";
 import { splitHeadCode } from "./lib/head-code";
 import { getHeaderModel } from "./lib/header-data";
 import JsonLd from "./components/JsonLd";
@@ -75,12 +76,14 @@ export default async function RootLayout({
   // have to appear on the site straight away, which a cached page
   // cannot do. This opts every page out of static rendering.
   await connection();
-  const [settings, headerModel, footerMenu, scripts, serviceNames] = await Promise.all([
+  const [settings, headerModel, footerMenu, scripts, services, privacy, terms] = await Promise.all([
     getSiteSettings(),
     getHeaderModel(),
     getMenu("footer"),
     getWebsiteScripts(),
-    getServiceNames(),
+    getPublishedServices(),
+    getHomeBlock("legal_privacy"),
+    getHomeBlock("legal_terms"),
   ]);
   // Admin <meta>/<link> tags go in <head>; the scripts and JSON-LD go first in <body>.
   const { tags: headTags, rest: headScripts } = splitHeadCode(
@@ -150,7 +153,11 @@ export default async function RootLayout({
           <Footer
             navigation={footerNavigation}
             settings={(settings ?? {}) as never}
-            serviceNames={Object.fromEntries(serviceNames)}
+            services={services.map((service) => ({ label: service.title, href: `/${service.slug}` }))}
+            legalLinks={[
+              { label: terms.fields.title, href: "/terms-and-conditions" },
+              { label: privacy.fields.title, href: "/privacy-policy" },
+            ]}
             year={new Date().getFullYear()}
           />
         </div>

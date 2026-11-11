@@ -136,7 +136,7 @@ export default async function AboutPage() {
         contact={{
           phone: companyPhone,
           email: text(settings?.primary_email) || 'info@byteflow.ae',
-          address: text(settings?.physical_address) || 'Dubai, United Arab Emirates',
+          address: text(settings?.physical_address) || 'Emaar Park 4, Greens, TECOM, Dubai, United Arab Emirates',
         }}
       />
     </div>
