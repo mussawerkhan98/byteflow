@@ -276,7 +276,7 @@ export const homeDefaults = {
       heading: 'Everything IT, under one roof.',
       description: 'Support, cloud, security and creative work from one accountable team.',
       link_label: 'View all services',
-      link: '/#services',
+      link: '/services',
       featured_eyebrow: 'Most popular',
       featured_title: 'IT AMC plans',
       featured_label: 'See plans',
@@ -371,7 +371,7 @@ export const homeDefaults = {
       heading: 'IT, cloud and digital services,',
       heading_soft: 'under one roof.',
       link_label: 'See all services',
-      link: '/#services',
+      link: '/services',
     },
     lists: {
       services: [
@@ -451,6 +451,86 @@ export const homeDefaults = {
       support_label: 'Support',
       support_text: '24/7 — always available',
     },
+    lists: {},
+  },
+
+  // ---- Services page (app/services) ----
+  // Saved on the "services" page and edited on the admin's "Services page
+  // sections" screen. The banner is that page's hero (Heroes screen); the
+  // services are the Services records, grouped as in the Services menu.
+
+  // The banner's figures, under its buttons, and the heading of the index
+  // of every service beside it. {services} is the number of services.
+  services_stats: {
+    fields: { index_label: 'Every service at a glance' },
+    lists: {
+      stats: [
+        { title: '{clients}', description: 'Businesses served across the UAE' },
+        { title: '{rating}★', description: 'Google rating from {reviews} reviews' },
+        { title: '{years}+', description: 'Years operating in Dubai' },
+      ],
+    },
+  },
+  // "Not sure where to start?": pick a situation, see the services that
+  // answer it (up to three, by their slugs).
+  services_finder: {
+    fields: {
+      eyebrow: 'Not sure where to start?',
+      heading: 'Tell us what’s going on,',
+      heading_soft: 'we’ll point you to the right service.',
+      result_label: 'Where we’d start',
+    },
+    lists: {
+      situations: [
+        { title: 'Opening or moving an office', description: 'Cabling, Wi-Fi, CCTV and access control planned together, then looked after from the first day.', service1: 'system-integration', service2: 'it-amc-services-dubai', service3: 'cyber-security' },
+        { title: 'IT bills that are hard to predict', description: 'One fixed monthly fee for remote support, on-site visits and monitoring, with backups included in the plan.', service1: 'it-amc-services-dubai', service2: 'data-backup-recovery', service3: '' },
+        { title: 'Worried about ransomware or data loss', description: 'Firewall, endpoint and email protection, with tested backups behind them, so one bad click doesn’t stop the business.', service1: 'cyber-security', service2: 'data-backup-recovery', service3: '' },
+        { title: 'Moving email and files to the cloud', description: 'Microsoft 365 or Azure set up, your data moved across and your team protected once it’s there.', service1: 'cloud-services-dubai', service2: 'cyber-security', service3: '' },
+        { title: 'Not enough enquiries online', description: 'A fast website or landing page, with SEO and ads that bring the right visitors to it.', service1: 'website-development', service2: 'digital-marketing', service3: 'landing-page-designing' },
+        { title: 'A brand that looks out of date', description: 'A logo, brand identity and website that look as serious as the business behind them.', service1: 'graphics-designing', service2: 'website-development', service3: '' },
+      ],
+    },
+  },
+  // The heading above the groups, and beside each Services menu group,
+  // matched by the group's name: a few words about it and a photograph
+  // (wide screens only).
+  services_groups: {
+    fields: {
+      eyebrow: 'Browse by area',
+      heading: 'Every service,',
+      heading_soft: 'grouped by what it looks after.',
+    },
+    lists: {
+      groups: [
+        { title: 'IT Support & Infrastructure', description: 'Day-to-day IT support, the network and hardware behind it, and backups that keep your data safe.', image: '', image_alt: '' },
+        { title: 'Cloud & Security', description: 'Microsoft 365 and Azure set up and run for you, with the firewalls and email protection that keep threats out.', image: '', image_alt: '' },
+        { title: 'Digital & Creative', description: 'Websites, apps, design and marketing that bring in customers, from the team that already runs your IT.', image: '', image_alt: '' },
+      ],
+    },
+  },
+  // One team against separate vendors, row by row.
+  services_compare: {
+    fields: {
+      eyebrow: 'Why one team',
+      heading: 'One accountable team,',
+      heading_soft: 'instead of five vendors.',
+      us_label: 'With Byteflow',
+      them_label: 'With separate vendors',
+    },
+    lists: {
+      rows: [
+        { title: 'Who you call', us: 'One phone number and one account manager', them: 'A different company for each problem' },
+        { title: 'What you pay', us: 'One fixed monthly invoice, no call-out fees', them: 'Separate bills, with extras for urgent visits' },
+        { title: 'How fast help arrives', us: '2-hour response on every AMC plan', them: 'Whatever each contract allows' },
+        { title: 'When something breaks', us: 'We own the fix, whatever the cause', them: 'Each vendor points to another' },
+        { title: 'How it’s planned', us: 'IT, cloud, security and web planned together', them: 'Set up separately, rarely in step' },
+      ],
+    },
+  },
+  // Which of the page's sections show. The spotlight is the Services menu's
+  // "Most popular" card (Header menu).
+  services_sections: {
+    fields: { finder: 'yes', spotlight: 'yes', compare: 'yes' },
     lists: {},
   },
 

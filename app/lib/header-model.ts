@@ -22,9 +22,12 @@ import { homeDefaults, mergeHomeBlock, type HomeBlock } from './home-content'
 
 export type MenuLink = { label: string; href: string; newTab?: boolean }
 
+/** What the Services menu shows for a service while it is pointed at. */
+export type ServicePreview = { subtitle: string; image: string | null; alt: string }
+
 export type MenuGroup = {
   title: string
-  items: { label: string; href: string; description?: string; newTab?: boolean }[]
+  items: { label: string; href: string; description?: string; newTab?: boolean; preview?: ServicePreview }[]
 }
 
 export type PostCard = {
@@ -39,7 +42,7 @@ export type PostCard = {
 
 export type HeaderEntry =
   | { kind: 'link'; key: string; item: NavItem }
-  | { kind: 'services'; key: string; label: string }
+  | { kind: 'services'; key: string; label: string; href: string }
   | { kind: 'industries'; key: string; label: string }
   | { kind: 'insights'; key: string; label: string; href: string }
   | { kind: 'list'; key: string; label: string; items: NavItem[] }
@@ -59,6 +62,8 @@ export type HeaderModel = {
       stats: { value: string; label: string }[]
       button: MenuLink
     } | null
+    /** Pointing at a service shows it in the right column; null when switched off. */
+    preview: { button: string } | null
     footer: { text: string; link: MenuLink | null; whatsappLabel: string | null }
   }
   industries: { heading: string; viewAll: MenuLink | null; groups: MenuGroup[] }
@@ -67,8 +72,11 @@ export type HeaderModel = {
     heading: string
     text: string
     viewAll: MenuLink
-    topics: { label: string; count: number; href: string }[]
+    /** `latest` is the topic's newest post, for the preview column. */
+    topics: { label: string; count: number; href: string; latest?: PostCard }[]
     posts: PostCard[]
+    /** A large picture of the article (or topic) pointed at; null when switched off. */
+    preview: { button: string } | null
     footer: { text: string; link: MenuLink }
   }
 }
@@ -100,6 +108,8 @@ export const headerSettingDefaults = {
   'services.featured_stat2_label': legacy.lists.stats[1].description,
   'services.featured_button_label': legacy.fields.featured_label,
   'services.featured_button_link': legacy.fields.featured_link,
+  'services.preview_show': '1',
+  'services.preview_button_label': 'View service',
   'services.footer_text': defaultHeaderBar.dropdownNote,
   'services.footer_link_label': defaultHeaderBar.dropdownCta,
   'services.footer_link': defaultHeaderBar.ctaLink,
@@ -117,6 +127,8 @@ export const headerSettingDefaults = {
   'insights.view_all_link': '/blog',
   'insights.categories': 'auto',
   'insights.latest_count': '3',
+  'insights.preview_show': '1',
+  'insights.preview_button_label': 'Read article',
   'insights.footer_text': 'New articles every week',
   'insights.footer_link_label': 'Read the blog',
   'insights.footer_link': '/blog',
@@ -170,15 +182,24 @@ export function insightTopics(categories: string[], choice: string, href = '/blo
     .filter((topic): topic is (typeof withCounts)[number] => Boolean(topic))
 }
 
-function insightsFrom(s: HeaderSettings, categories: string[], posts: PostCard[]): HeaderModel['insights'] {
+/**
+ * `topicPosts` are published posts, newest first; each topic is given the
+ * first one in its category.
+ */
+function insightsFrom(s: HeaderSettings, categories: string[], posts: PostCard[], topicPosts: PostCard[] = []): HeaderModel['insights'] {
   const viewAllHref = safeLink(s['insights.view_all_link'], '/blog')
+  const newest = (label: string) => topicPosts.find((post) => categoryKey(post.category) === categoryKey(label))
   return {
     eyebrow: s['insights.eyebrow'],
     heading: s['insights.heading'],
     text: s['insights.text'],
     viewAll: { label: s['insights.view_all_label'], href: viewAllHref },
-    topics: insightTopics(categories, s['insights.categories'], viewAllHref),
+    topics: insightTopics(categories, s['insights.categories'], viewAllHref).map((topic) => {
+      const latest = newest(topic.label)
+      return latest ? { ...topic, latest } : topic
+    }),
     posts: posts.slice(0, latestCount(s)),
+    preview: on(s['insights.preview_show']) ? { button: s['insights.preview_button_label'] } : null,
     footer: {
       text: s['insights.footer_text'],
       link: { label: s['insights.footer_link_label'], href: safeLink(s['insights.footer_link'], '/blog') },
@@ -224,6 +245,8 @@ export function modelFromTables(input: {
   bar: HeaderBar
   categories: string[]
   posts: PostCard[]
+  /** Every published post, newest first, for the topics' previews. */
+  topicPosts?: PostCard[]
 }): HeaderModel | null {
   if (!input.nav.length) return null
   const s = headerSettings(input.settings)
@@ -238,7 +261,7 @@ export function modelFromTables(input: {
     const label = row.label.trim()
     const key = `${kind}-${index}`
     if (kind === 'services') {
-      if (services.length) nav.push({ kind, key: 'services', label })
+      if (services.length) nav.push({ kind, key: 'services', label, href: safeLink(row.href, '/services') })
     } else if (kind === 'industries') {
       if (industries.length) nav.push({ kind, key: 'industries', label })
     } else if (kind === 'insights') {
@@ -265,7 +288,7 @@ export function modelFromTables(input: {
         eyebrow: s['services.intro_eyebrow'],
         heading: s['services.intro_heading'],
         text: s['services.intro_text'],
-        link: { label: s['services.intro_link_label'], href: safeLink(s['services.intro_link'], '/#services') },
+        link: { label: s['services.intro_link_label'], href: safeLink(s['services.intro_link'], '/services') },
       },
       groups: services,
       featured: on(s['services.featured_show'])
@@ -280,6 +303,7 @@ export function modelFromTables(input: {
             },
           }
         : null,
+      preview: on(s['services.preview_show']) ? { button: s['services.preview_button_label'] } : null,
       footer: {
         text: s['services.footer_text'],
         link: s['services.footer_link_label']
@@ -296,7 +320,7 @@ export function modelFromTables(input: {
           : null,
       groups: industries,
     },
-    insights: insightsFrom(s, input.categories, input.posts),
+    insights: insightsFrom(s, input.categories, input.posts, input.topicPosts),
   }
 }
 
@@ -315,11 +339,13 @@ export function modelFromLegacy(input: {
   bar: HeaderBar
   categories: string[]
   posts: PostCard[]
+  topicPosts?: PostCard[]
 }): HeaderModel {
   const { menu, bar } = input
   const f = menu.fields
   const s = headerSettings(null)
   const nav: HeaderEntry[] = buildNav(input.navigation, menu, bar.ctaLink).map((entry) => {
+    if (entry.kind === 'services') return { ...entry, href: '/services' }
     if (entry.kind === 'list' && entry.key === 'industries')
       return { kind: 'industries', key: 'industries', label: entry.label }
     if (entry.kind === 'list') return { kind: 'list', key: entry.key, label: entry.label, items: entry.items }
@@ -338,7 +364,7 @@ export function modelFromLegacy(input: {
         eyebrow: f.eyebrow,
         heading: f.heading,
         text: f.description,
-        link: { label: f.link_label, href: safeLink(f.link, '/#services') },
+        link: { label: f.link_label, href: safeLink(f.link, '/services') },
       },
       groups: serviceGroups(menu).map((group) => ({
         title: group.title,
@@ -355,6 +381,7 @@ export function modelFromLegacy(input: {
         stats: (menu.lists.stats ?? []).slice(0, 2).map((stat) => ({ value: stat.title, label: stat.description })),
         button: { label: f.featured_label, href: safeLink(f.featured_link, '/it-amc-services-dubai') },
       },
+      preview: on(s['services.preview_show']) ? { button: s['services.preview_button_label'] } : null,
       footer: {
         text: bar.dropdownNote,
         link: { label: bar.dropdownCta, href: bar.ctaLink },
@@ -373,7 +400,7 @@ export function modelFromLegacy(input: {
         },
       ].filter((group) => group.items.length),
     },
-    insights: insightsFrom(s, input.categories, input.posts),
+    insights: insightsFrom(s, input.categories, input.posts, input.topicPosts),
   }
 }
 
@@ -415,6 +442,40 @@ export function withServiceNames(model: HeaderModel, names: Map<string, string>)
       groups: model.services.groups.map((group) => ({
         ...group,
         items: group.items.map((item) => ({ ...item, label: named(item) })),
+      })),
+    },
+  }
+}
+
+/**
+ * A service's preview from its admin record, each blank falling back to its
+ * page (services-data.ts). Only a picture served as a file is used: an inline
+ * (data:) one would be sent with every page, inside the header.
+ */
+export function servicePreview(
+  service: { title: string; tagline?: string; excerpt?: string; image_url?: string | null; image_alt?: string },
+  page?: { tagline: string },
+): ServicePreview {
+  const image = (service.image_url ?? '').trim()
+  return {
+    subtitle: service.tagline?.trim() || page?.tagline || service.excerpt?.trim() || '',
+    image: /^(\/(?!\/)|https:\/\/)/i.test(image) ? image : null,
+    alt: service.image_alt?.trim() || `${service.title} by Byteflow in Dubai`,
+  }
+}
+
+/** Gives each menu link to a service page that service's preview, by slug. */
+export function withServicePreviews(model: HeaderModel, previews: Map<string, ServicePreview>): HeaderModel {
+  return {
+    ...model,
+    services: {
+      ...model.services,
+      groups: model.services.groups.map((group) => ({
+        ...group,
+        items: group.items.map((item) => {
+          const preview = previews.get(pageSlug(item.href) ?? '')
+          return preview ? { ...item, preview } : item
+        }),
       })),
     },
   }

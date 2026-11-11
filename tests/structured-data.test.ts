@@ -14,6 +14,7 @@ import {
   plainText,
   publishesOrganization,
   serviceSchema,
+  serviceListSchema,
 } from '../app/lib/structured-data'
 
 test('every absolute URL is on the canonical www host', () => {
@@ -188,4 +189,20 @@ test('the founder is only published with a name, and only a personal LinkedIn co
   assert.equal(person.image, undefined)
   const linked = founderSchema({ name: 'Jane Doe', linkedinUrl: 'https://www.linkedin.com/in/jane-doe' }) as Record<string, unknown>
   assert.deepEqual(linked.sameAs, ['https://www.linkedin.com/in/jane-doe'])
+})
+
+test('the Services page lists each service by name and address, in order', () => {
+  const list = serviceListSchema([
+    { name: 'Cyber Security', path: '/cyber-security' },
+    { name: '  ', path: '/blank' },
+    { name: 'Cloud Services', path: '/cloud-services-dubai' },
+  ])
+  assert.deepEqual(list, {
+    '@type': 'ItemList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Cyber Security', url: 'https://www.byteflow.ae/cyber-security' },
+      { '@type': 'ListItem', position: 2, name: 'Cloud Services', url: 'https://www.byteflow.ae/cloud-services-dubai' },
+    ],
+  })
+  assert.equal(serviceListSchema([]), null)
 })

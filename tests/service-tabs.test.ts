@@ -1,6 +1,6 @@
 import { strict as assert } from 'node:assert'
 import { test } from 'node:test'
-import { bulletLines, orderedTabs, serviceTab } from '../app/lib/service-tabs'
+import { bulletLines, groupedTabs, orderedTabs, pageServices, serviceTab } from '../app/lib/service-tabs'
 
 const blank = {
   excerpt: '',
@@ -67,4 +67,27 @@ test('a menu listing none of the services shows them all, in their own order', (
 
 test('bullet lines drop list markers and blank lines', () => {
   assert.deepEqual(bulletLines('* a\r\n\r\n- b'), ['a', 'b'])
+})
+
+test('services sit under the menu groups, and none is lost', () => {
+  const tabs = [amc, cyber, landing].map(serviceTab)
+  const groups = groupedTabs(tabs, [
+    { title: 'Cloud & Security', items: [{ href: '/cyber-security' }, { href: '/missing' }] },
+    { title: 'Empty', items: [{ href: '/nothing-here' }] },
+    { title: 'Again', items: [{ href: '/cyber-security/' }, { href: '/it-amc-services-dubai?ref=menu' }] },
+  ])
+  assert.deepEqual(
+    groups.map((group) => [group.title, group.tabs.map((tab) => tab.slug)]),
+    [
+      ['Cloud & Security', ['cyber-security']],
+      ['Again', ['it-amc-services-dubai']],
+      // Not in the menu: still listed, in a last group with no title.
+      ['', ['landing-page-designing']],
+    ],
+  )
+})
+
+test('every built-in service page can stand in for the database', () => {
+  assert.ok(pageServices.length >= 9)
+  assert.ok(pageServices.every((service) => service.slug && service.title))
 })

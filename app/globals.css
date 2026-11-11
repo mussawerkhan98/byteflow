@@ -205,6 +205,19 @@ h1 {
   outline-color: #0e7490;
 }
 
+/* A mega menu preview's words, eased in as the row pointed at changes. */
+@media (prefers-reduced-motion: no-preference) {
+  .menu-preview-in {
+    animation: menu-preview-in 0.25s ease-out;
+  }
+}
+@keyframes menu-preview-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
 /* ---- Home Services tabs (app/components/ServiceTabs.tsx) ---- */
 
 /* Icon tiles and the cyan subtitle: darker cyan on white so they stay

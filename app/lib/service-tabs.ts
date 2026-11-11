@@ -91,3 +91,44 @@ export function orderedTabs(services: ServiceInput[], menuHrefs: string[]): Serv
     .filter((service): service is ServiceInput => Boolean(service))
   return (fromMenu.length ? fromMenu : services).map(serviceTab)
 }
+
+/**
+ * Each service page's own wording (services-data.ts) as a service record, so
+ * lists of services never go empty when the database has none published.
+ */
+export const pageServices: ServiceInput[] = servicePages.map((page) => ({
+  slug: page.slug,
+  title: page.title,
+  excerpt: '',
+  description: page.description,
+  image_url: null,
+  image_alt: '',
+  cta_label: '',
+  cta_link: '',
+  eyebrow: '',
+  tagline: '',
+  highlights: '',
+  image_caption: '',
+}))
+
+/**
+ * Services under the header menu's groups, in the menu's order. A service
+ * the menu doesn't list is not lost: it goes in a last group with no title.
+ * Groups left with no services are dropped.
+ */
+export function groupedTabs(tabs: ServiceTab[], groups: { title: string; items: { href: string }[] }[]) {
+  const path = (href: string) => href.split(/[?#]/)[0].replace(/^\/|\/$/g, '')
+  const bySlug = new Map(tabs.map((tab) => [tab.slug, tab]))
+  const placed = new Set<string>()
+  const result = groups.map((group) => ({
+    title: group.title,
+    tabs: group.items.flatMap((item) => {
+      const tab = bySlug.get(path(item.href))
+      if (!tab || placed.has(tab.slug)) return []
+      placed.add(tab.slug)
+      return [tab]
+    }),
+  }))
+  result.push({ title: '', tabs: tabs.filter((tab) => !placed.has(tab.slug)) })
+  return result.filter((group) => group.tabs.length)
+}
