@@ -5,12 +5,14 @@ import {
   fallbackHeader,
   headerSettings,
   insightTopics,
+  menuGroups,
   modelFromLegacy,
   modelFromTables,
   pageSlug,
   servicePreview,
   withServiceNames,
   withServicePreviews,
+  withServicesOffMenu,
   type GroupRow,
   type ItemRow,
   type NavRow,
@@ -213,4 +215,51 @@ test('the Services entry links to its page, /services unless the admin sets one'
   const custom = tables({ nav: nav.map((row) => (row.kind === 'services' ? { ...row, href: '/our-services' } : row)) })!
   assert.equal(services(custom)?.kind === 'services' && services(custom)?.href, '/our-services')
   assert.equal(services(fallbackHeader())?.kind === 'services' && (services(fallbackHeader()) as { href: string }).href, '/services')
+})
+
+const clinic = { title: 'Clinics', anchor: 'clinics', icon: 'health', summary: 'Clinic systems', points: ['Backups', 'Networks'] }
+
+test('an industry with no link of its own opens its card on the Industries page, with that card as its preview', () => {
+  const model = tables({ nav: nav.map((row) => ({ ...row, visible: true })), industryPages: [clinic] })!
+  assert.ok(model.nav.some((entry) => entry.kind === 'industries'))
+  const [item] = model.industries.groups[0].items
+  assert.equal(item.href, '/industries#clinics')
+  assert.deepEqual(item.industry, { icon: 'health', summary: 'Clinic systems', points: ['Backups', 'Networks'] })
+})
+
+test('an industry linked by hand keeps its link, and is previewed by the card it opens', () => {
+  const linked = items.map((item) => (item.group_id === 3 ? { ...item, label: 'Healthcare', href: '/industries#clinics' } : item))
+  const [item] = tables({ items: linked, industryPages: [clinic] })!.industries.groups[0].items
+  assert.equal(item.href, '/industries#clinics')
+  assert.equal(item.industry?.summary, 'Clinic systems')
+})
+
+test('with no Industries page card for it, an unlinked industry stays off the menu', () => {
+  assert.deepEqual(tables({ industryPages: [] })!.industries.groups, [])
+})
+
+test('the older header links its industries to their cards too', () => {
+  const model = modelFromLegacy({
+    navigation: [{ label: 'Industries', href: '#' }],
+    menu: mergeHomeBlock('header_menu', null),
+    bar: defaultHeaderBar,
+    categories: [],
+    posts: [],
+    industryPages: [{ ...clinic, title: 'Logistics', anchor: 'logistics', icon: 'logistics' }],
+  })
+  const items = model.industries.groups.flatMap((group) => group.items)
+  assert.deepEqual(
+    items.map((item) => item.href),
+    ['/industries#logistics'],
+  )
+  assert.equal(model.industries.viewAll?.href, '/industries')
+})
+
+test('a service switched off the menu bar leaves the menu but keeps its place for the Services page', () => {
+  const model = withServicesOffMenu(tables()!, new Set(['cyber-security']))
+  // Still in its group, marked, so the Services page groups it as before.
+  assert.equal(model.services.groups[0].items[0].offMenu, true)
+  // Out of what the menu shows; a group left empty goes too.
+  assert.deepEqual(menuGroups(model.services.groups), [])
+  assert.equal(withServicesOffMenu(tables()!, new Set()).services.groups[0].items[0].offMenu, undefined)
 })
