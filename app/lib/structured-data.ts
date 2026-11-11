@@ -68,6 +68,7 @@ export const organizationSchema: JsonLd = {
     'https://m.facebook.com/byteflow.ae/',
     'https://www.instagram.com/byteflow.ae/',
     'https://www.tiktok.com/@byteflow.ae',
+    'https://ae.linkedin.com/company/byteflow-techcascade',
   ],
   openingHoursSpecification: [
     {
@@ -185,6 +186,51 @@ export function breadcrumbSchema(
       name: plainText(item.name, 200),
       item: absoluteUrl(item.path),
     })),
+  }
+}
+
+/**
+ * The About Us page as a page about the organization. It points at the one
+ * organization node by @id rather than describing the company again.
+ */
+export function aboutPageSchema(input: { name: string; description?: string; path: string; image?: string }): JsonLd | null {
+  const name = plainText(input.name, 200)
+  if (!name) return null
+  const description = plainText(input.description, 600)
+  return {
+    '@type': 'AboutPage',
+    '@id': `${absoluteUrl(input.path)}#webpage`,
+    url: absoluteUrl(input.path),
+    name,
+    ...(description ? { description } : {}),
+    ...(input.image && !/^data:/i.test(input.image) ? { primaryImageOfPage: absoluteUrl(input.image) } : {}),
+    inLanguage: 'en',
+    about: { '@id': ORG_ID },
+    mainEntity: { '@id': ORG_ID },
+  }
+}
+
+/**
+ * The founder as a person who works for the organization. A
+ * separate node, so the organization node published by the admin's script
+ * is left alone. Only published once the founder has a name: Google ignores
+ * a Person without one.
+ */
+export function founderSchema(input: { name: string; jobTitle?: string; image?: string; linkedinUrl?: string }): JsonLd | null {
+  const name = plainText(input.name, 120)
+  if (!name) return null
+  const jobTitle = plainText(input.jobTitle, 120)
+  const linkedin = /^https?:\/\/([a-z]{2,3}\.)?linkedin\.com\/in\//i.test(String(input.linkedinUrl ?? '').trim())
+    ? String(input.linkedinUrl).trim()
+    : ''
+  return {
+    '@type': 'Person',
+    '@id': `${SITE_URL}/about-us#founder`,
+    name,
+    ...(jobTitle ? { jobTitle } : {}),
+    ...(input.image && !/^data:/i.test(input.image) ? { image: absoluteUrl(input.image) } : {}),
+    ...(linkedin ? { sameAs: [linkedin] } : {}),
+    worksFor: { '@id': ORG_ID },
   }
 }
 

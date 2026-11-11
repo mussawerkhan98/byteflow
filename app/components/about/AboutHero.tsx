@@ -7,7 +7,7 @@ import { Button, Photo, delay } from '../home/ui'
 
 /** The H1 in two tones: the heading, then the highlight (or the heading's second line). */
 function splitHeading(heading: string | undefined, highlight: string | undefined, figures: SiteFigures): [string, string | undefined] {
-  if (!heading) return [`The team behind ${figures.clients} businesses`, highlight || 'running smoothly.']
+  if (!heading) return ['About Byteflow: IT company in Dubai',highlight || `since ${figures.founded}.`]
   if (highlight) return [heading.trim(), highlight.trim()]
   const [lead, ...rest] = heading.split(/\r?\n/)
   return [lead.trim(), rest.join(' ').trim() || undefined]
@@ -70,10 +70,14 @@ export default function AboutHero({ hero, stats, figures }: { hero: PageHero | n
             <figure className="hp-frame relative aspect-[4/3] overflow-hidden rounded-[1.5rem] sm:aspect-[16/8] lg:aspect-[16/5] lg:rounded-[2rem]">
               <Photo slot={photo} sizes="(min-width: 1024px) 88vw, 100vw" priority />
               <div aria-hidden="true" className="ab-hero-shade absolute inset-0" />
-              <p className="hp-glass absolute left-4 right-4 top-4 flex items-center gap-2 rounded-xl px-3.5 py-2 sm:right-auto sm:rounded-full text-[13px] font-medium text-[var(--hp-ink)] sm:left-6 sm:top-6">
-                <PinIcon className="h-4 w-4 shrink-0 text-[var(--hp-accent)]" />
-                {hero?.hero_trust_line || `Dubai-based IT partner since ${figures.founded} · ${figures.rating}★ Google rating`}
-              </p>
+              {/* Only when set on the Heroes screen: the founding year and
+                  the rating are already in the figures and the reviews. */}
+              {hero?.hero_trust_line && (
+                <p className="hp-glass absolute left-4 right-4 top-4 flex items-center gap-2 rounded-xl px-3.5 py-2 sm:right-auto sm:rounded-full text-[13px] font-medium text-[var(--hp-ink)] sm:left-6 sm:top-6">
+                  <PinIcon className="h-4 w-4 shrink-0 text-[var(--hp-accent)]" />
+                  {hero.hero_trust_line}
+                </p>
+              )}
             </figure>
           </div>
 

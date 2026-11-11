@@ -9,27 +9,47 @@ import AboutReviews from '../components/about/AboutReviews'
 import AboutServices from '../components/about/AboutServices'
 import AboutStory from '../components/about/AboutStory'
 import AboutTeam from '../components/about/AboutTeam'
+import type { Metadata } from 'next'
 import HomeMotion from '../components/home/HomeMotion'
+import JsonLd from '../components/JsonLd'
 import { getPageHero, getPageMetadata, getSection, getSiteFigures, getSiteSettings, getTeam, getTestimonials } from '../lib/cms'
 import { getHomeBlock } from '../lib/home-blocks'
-import { fillFigures } from '../lib/site-figures'
+import { homePhotos } from '../lib/home-photos'
+import { fillFigures, type SiteFigures } from '../lib/site-figures'
+import { aboutPageSchema, breadcrumbSchema, founderSchema, graph } from '../lib/structured-data'
 
-// The built-in founder story; {founded}, {years} and {clients} are the
-// site-wide figures from the admin, so it never contradicts the home page.
+// The built-in founder story: why Byteflow started, not the figures, which
+// the banner and the timeline already give. {founded} is the site-wide
+// founding year from the admin.
 const DEFAULT_STORY = `Byteflow was born out of frustration. Too many Dubai businesses were being overcharged, underserved, and left waiting days for a simple fix. We started in {founded} with one goal: build the kind of IT company that actually shows up.
 
-{years} years later, we manage IT for {clients} businesses across Dubai, Sharjah and Abu Dhabi. We have grown from a two-person team to a full-service operation covering everything from server rooms to Google Ads campaigns — all under one roof, one monthly fee.
+We have grown from a two-person team to a full-service operation covering everything from server rooms to Google Ads campaigns.
 
 The philosophy has never changed: respond fast, be honest about pricing, and treat every client like they are your only one.`
 
-export async function generateMetadata() {
+const fallbackTitle = (figures: SiteFigures) => `About Byteflow | IT Company in Dubai Since ${figures.founded}`
+const fallbackDescription = (figures: SiteFigures) =>
+  `Dubai IT company since ${figures.founded}, trusted by ${figures.clients} businesses across the UAE for IT support, AMC, cloud, cyber security, websites and digital marketing.`
+
+export async function generateMetadata(): Promise<Metadata> {
   const [cms, figures] = await Promise.all([getPageMetadata('about-us'), getSiteFigures()])
+  const title = cms?.title || fallbackTitle(figures)
+  const description = cms?.description || fallbackDescription(figures)
   return {
-    ...(cms ?? {
-      title: `About Byteflow | IT Company in Dubai Since ${figures.founded}`,
-      description: `Meet the team behind ${figures.clients} UAE businesses. Byteflow delivers IT support, AMC and software development across Dubai.`,
-    }),
+    ...cms,
+    title,
+    description,
     alternates: { canonical: '/about-us' },
+    // Shared links show the page's share image or banner photo (cms.ts),
+    // otherwise the banner's stand-in photo.
+    openGraph: {
+      title,
+      description,
+      ...cms?.openGraph,
+      url: '/about-us',
+      type: 'website',
+      images: cms?.openGraph?.images ?? [homePhotos.about.src],
+    },
   }
 }
 
@@ -59,10 +79,35 @@ export default async function AboutPage() {
   ])
   const text = (value: unknown) => String(value ?? '').trim()
   const founderStory = text(founder?.story) || fillFigures(DEFAULT_STORY, figures)
+  const companyPhone = text(settings?.header_phone) || '+971 54 328 2042'
+  const digits = (value: string) => value.replace(/\D/g, '').replace(/^0+/, '')
+  // The founder's phone is shown only when it's a direct line: the company
+  // number is already in the closing panel, the header and the footer.
+  const founderPhone = text(founder?.phone_url)
+  const directPhone = founderPhone && digits(founderPhone) !== digits(companyPhone) ? founderPhone : ''
+  const founderName = text(founder?.name)
+  const founderRole = text(founder?.role) || 'Founder & CEO'
+  // No photo is shown until one is uploaded on About Us — Founder.
+  const founderImage = text(founder?.image_url)
+  const pageTitle = text(hero?.hero_heading).replace(/\s+/g, ' ') || 'About Byteflow'
+  const schema = graph(
+    aboutPageSchema({
+      name: pageTitle,
+      description: text(hero?.hero_description),
+      path: '/about-us',
+      image: text(hero?.hero_image) || text(hero?.hero_background_image) || homePhotos.about.src,
+    }),
+    founderSchema({ name: founderName, jobTitle: founderRole, image: founderImage, linkedinUrl: text(founder?.linkedin_url) }),
+    breadcrumbSchema([
+      { name: 'Home', path: '/' },
+      { name: 'About Us', path: '/about-us' },
+    ]),
+  )
 
   return (
     // .hp scopes the home page's design system (home.css).
     <div className="hp">
+      <JsonLd data={schema} />
       <HomeMotion />
       <AboutHero hero={hero} stats={stats} figures={figures} />
       <AboutFounder
@@ -70,18 +115,14 @@ export default async function AboutPage() {
           eyebrow: text(founder?.eyebrow) || 'Meet the founder',
           heading: text(founder?.heading) || 'Started with a laptop and a promise to fix IT in Dubai properly.',
           story: founderStory.split(/\n\s*\n/).map((paragraph) => paragraph.trim()).filter(Boolean),
-          name: text(founder?.name),
-          role: text(founder?.role) || 'Founder & CEO',
+          name: founderName,
+          role: founderRole,
           company: text(founder?.company) || 'Byteflow Information Technology',
-          // When a founder record exists, its photo is the source of truth,
-          // including when it's deliberately empty (the admin removed the
-          // photo and wants none shown). Only with no record at all does the
-          // bundled photo stand in.
-          imageUrl: founder ? text(founder.image_url) : '/images/owner/owner.png',
-          imageAlt: text(founder?.image_alt) || 'Byteflow Founder',
+          imageUrl: founderImage,
+          imageAlt: text(founder?.image_alt) || founderName || 'Byteflow Founder',
           linkedinUrl: text(founder?.linkedin_url) || 'https://ae.linkedin.com/company/byteflow-techcascade',
-          phoneLabel: text(founder?.phone_label) || '+971 54 328 2042',
-          phoneUrl: text(founder?.phone_url) || 'tel:+971543282042',
+          phoneLabel: text(founder?.phone_label) || founderPhone.replace(/^tel:/i, ''),
+          phoneUrl: directPhone,
         }}
       />
       <AboutStory content={story} />
@@ -93,7 +134,7 @@ export default async function AboutPage() {
       <AboutCta
         content={cta}
         contact={{
-          phone: text(settings?.header_phone) || '+971 54 328 2042',
+          phone: companyPhone,
           email: text(settings?.primary_email) || 'info@byteflow.ae',
           address: text(settings?.physical_address) || 'Dubai, United Arab Emirates',
         }}
