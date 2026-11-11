@@ -276,7 +276,7 @@ export const homeDefaults = {
       heading: 'Everything IT, under one roof.',
       description: 'Support, cloud, security and creative work from one accountable team.',
       link_label: 'View all services',
-      link: '/#services',
+      link: '/services',
       featured_eyebrow: 'Most popular',
       featured_title: 'IT AMC plans',
       featured_label: 'See plans',
@@ -371,7 +371,7 @@ export const homeDefaults = {
       heading: 'IT, cloud and digital services,',
       heading_soft: 'under one roof.',
       link_label: 'See all services',
-      link: '/#services',
+      link: '/services',
     },
     lists: {
       services: [

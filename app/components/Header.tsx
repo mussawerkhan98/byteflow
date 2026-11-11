@@ -5,6 +5,7 @@ import {
   useRef,
   useState,
   type FocusEvent,
+  type MouseEvent,
   type PointerEvent,
   type ReactNode,
 } from "react";
@@ -30,9 +31,12 @@ const newTabProps = (item: { new_tab?: boolean }) =>
 
 const telHref = (phone: string) => `tel:${phone.replace(/[^\d+]/g, "")}`;
 
-/** Top-level links and dropdown buttons: a cyan pill marks hover, an open menu and the current page. */
-const pillClass = (active: boolean) =>
-  `site-pill ${active ? "is-active " : ""}inline-flex items-center gap-1.5 whitespace-nowrap rounded-[10px] px-[13px] py-[9px] text-[14.5px] font-medium leading-5 transition-colors duration-200 ${
+/**
+ * Top-level links and dropdown buttons: a cyan pill marks hover, an open menu and the current page.
+ * `split` is a pill holding a link and a menu button, which carry the padding themselves.
+ */
+const pillClass = (active: boolean, split = false) =>
+  `site-pill ${active ? "is-active " : ""}inline-flex items-center ${split ? "" : "gap-1.5 px-[13px] py-[9px] "}whitespace-nowrap rounded-[10px] text-[14.5px] font-medium leading-5 transition-colors duration-200 ${
     active
       ? "bg-[rgba(44,205,222,0.12)] text-[#2CCDDE]"
       : "text-[#e2e8f0] hover:bg-[rgba(44,205,222,0.12)] hover:text-[#2CCDDE]"
@@ -705,6 +709,7 @@ function Dropdown({
   onToggle,
   onKeyboardFocus,
   onLeave,
+  link,
   children,
 }: {
   id: string;
@@ -719,8 +724,25 @@ function Dropdown({
   onToggle: (pointerType: string) => void;
   onKeyboardFocus: () => void;
   onLeave: () => void;
+  /** The menu's own page: the label opens it and the arrow beside it opens the menu. */
+  link?: { href: string; current: boolean };
   children: ReactNode;
 }) {
+  const buttonProps = {
+    id: `${id}-button`,
+    type: "button" as const,
+    "aria-expanded": open,
+    "aria-controls": `${id}-panel`,
+    // A keyboard "click" reports no pointer type.
+    onClick: (event: MouseEvent<HTMLButtonElement>) =>
+      onToggle((event.nativeEvent as globalThis.PointerEvent).pointerType ?? ""),
+    onFocus: (event: FocusEvent<HTMLButtonElement>) => {
+      if (event.currentTarget.matches(":focus-visible")) onKeyboardFocus();
+    },
+  };
+  const chevron = (
+    <ChevronIcon className={`h-3.5 w-3.5 transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
+  );
   return (
     <div
       className={wide ? "flex" : "relative flex"}
@@ -731,23 +753,27 @@ function Dropdown({
         if (event.relatedTarget && !event.currentTarget.contains(event.relatedTarget)) onLeave();
       }}
     >
-      <button
-        id={`${id}-button`}
-        type="button"
-        aria-expanded={open}
-        aria-controls={`${id}-panel`}
-        // A keyboard "click" reports no pointer type.
-        onClick={(event) => onToggle((event.nativeEvent as globalThis.PointerEvent).pointerType ?? "")}
-        onFocus={(event) => {
-          if (event.currentTarget.matches(":focus-visible")) onKeyboardFocus();
-        }}
-        className={pillClass(active || open)}
-      >
-        {label}
-        <ChevronIcon
-          className={`h-3.5 w-3.5 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
-        />
-      </button>
+      {link ? (
+        // One pill, two targets: hovering still opens the menu, and touch
+        // and keyboard users reach it through the arrow.
+        <span className={pillClass(active || open, true)}>
+          <Link
+            href={link.href}
+            aria-current={link.current ? "page" : undefined}
+            className="rounded-l-[10px] py-[9px] pl-[13px] pr-1"
+          >
+            {label}
+          </Link>
+          <button {...buttonProps} aria-label={`${label} menu`} className="rounded-r-[10px] py-[9px] pl-1 pr-[11px]">
+            {chevron}
+          </button>
+        </span>
+      ) : (
+        <button {...buttonProps} className={pillClass(active || open)}>
+          {label}
+          {chevron}
+        </button>
+      )}
       <div
         id={`${id}-panel`}
         inert={!open}
@@ -951,7 +977,7 @@ export default function Header({
   const inGroups = (groups: { items: { href: string }[] }[]) =>
     groups.some((group) => group.items.some((item) => isCurrent(pathname, item.href)));
   const activeFor = (entry: Exclude<(typeof entries)[number], { kind: "link" }>) => {
-    if (entry.kind === "services") return inGroups(services.groups);
+    if (entry.kind === "services") return isCurrent(pathname, entry.href) || inGroups(services.groups);
     if (entry.kind === "industries") return inGroups(industries.groups);
     if (entry.kind === "insights")
       return isCurrent(pathname, entry.href) || insights.posts.some((post) => isCurrent(pathname, post.href));
@@ -1034,6 +1060,11 @@ export default function Header({
                   onLeave={() => {
                     if (open) closeMenu();
                   }}
+                  link={
+                    entry.kind === "services" || entry.kind === "insights"
+                      ? { href: entry.href, current: isCurrent(pathname, entry.href) }
+                      : undefined
+                  }
                 >
                   {entry.kind === "services" ? (
                     <ServicesPanel

@@ -166,7 +166,9 @@ async function buildHeader(): Promise<HeaderModel> {
   )
 }
 
-const cachedHeader = unstable_cache(buildHeader, ['header-model'], {
+// The key names the model's shape: the cache outlives a deploy, so a change
+// to HeaderModel takes a new key rather than being served the old shape.
+const cachedHeader = unstable_cache(buildHeader, ['header-model-v2'], {
   tags: [HEADER_CACHE_TAG],
   revalidate: REFRESH_SECONDS,
 })

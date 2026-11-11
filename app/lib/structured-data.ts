@@ -190,6 +190,24 @@ export function breadcrumbSchema(
 }
 
 /**
+ * A page listing services (the Services page): each one by name and address,
+ * in the order shown. Each service page describes itself in full.
+ */
+export function serviceListSchema(items: { name: string; path: string }[]): JsonLd | null {
+  const shown = (items ?? []).filter((item) => item && plainText(item.name))
+  if (!shown.length) return null
+  return {
+    '@type': 'ItemList',
+    itemListElement: shown.map((item, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: plainText(item.name, 200),
+      url: absoluteUrl(item.path),
+    })),
+  }
+}
+
+/**
  * The About Us page as a page about the organization. It points at the one
  * organization node by @id rather than describing the company again.
  */

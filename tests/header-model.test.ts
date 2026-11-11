@@ -206,3 +206,11 @@ test('each topic carries its newest post for the preview', () => {
   assert.equal(byLabel.get('Cyber Security'), undefined)
   assert.equal(model.insights.preview?.button, 'Read article')
 })
+
+test('the Services entry links to its page, /services unless the admin sets one', () => {
+  const services = (model: ReturnType<typeof fallbackHeader>) => model.nav.find((entry) => entry.kind === 'services')
+  assert.deepEqual(services(tables()!), { kind: 'services', key: 'services', label: 'Services', href: '/services' })
+  const custom = tables({ nav: nav.map((row) => (row.kind === 'services' ? { ...row, href: '/our-services' } : row)) })!
+  assert.equal(services(custom)?.kind === 'services' && services(custom)?.href, '/our-services')
+  assert.equal(services(fallbackHeader())?.kind === 'services' && (services(fallbackHeader()) as { href: string }).href, '/services')
+})

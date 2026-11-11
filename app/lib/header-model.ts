@@ -42,7 +42,7 @@ export type PostCard = {
 
 export type HeaderEntry =
   | { kind: 'link'; key: string; item: NavItem }
-  | { kind: 'services'; key: string; label: string }
+  | { kind: 'services'; key: string; label: string; href: string }
   | { kind: 'industries'; key: string; label: string }
   | { kind: 'insights'; key: string; label: string; href: string }
   | { kind: 'list'; key: string; label: string; items: NavItem[] }
@@ -261,7 +261,7 @@ export function modelFromTables(input: {
     const label = row.label.trim()
     const key = `${kind}-${index}`
     if (kind === 'services') {
-      if (services.length) nav.push({ kind, key: 'services', label })
+      if (services.length) nav.push({ kind, key: 'services', label, href: safeLink(row.href, '/services') })
     } else if (kind === 'industries') {
       if (industries.length) nav.push({ kind, key: 'industries', label })
     } else if (kind === 'insights') {
@@ -288,7 +288,7 @@ export function modelFromTables(input: {
         eyebrow: s['services.intro_eyebrow'],
         heading: s['services.intro_heading'],
         text: s['services.intro_text'],
-        link: { label: s['services.intro_link_label'], href: safeLink(s['services.intro_link'], '/#services') },
+        link: { label: s['services.intro_link_label'], href: safeLink(s['services.intro_link'], '/services') },
       },
       groups: services,
       featured: on(s['services.featured_show'])
@@ -345,6 +345,7 @@ export function modelFromLegacy(input: {
   const f = menu.fields
   const s = headerSettings(null)
   const nav: HeaderEntry[] = buildNav(input.navigation, menu, bar.ctaLink).map((entry) => {
+    if (entry.kind === 'services') return { ...entry, href: '/services' }
     if (entry.kind === 'list' && entry.key === 'industries')
       return { kind: 'industries', key: 'industries', label: entry.label }
     if (entry.kind === 'list') return { kind: 'list', key: entry.key, label: entry.label, items: entry.items }
@@ -363,7 +364,7 @@ export function modelFromLegacy(input: {
         eyebrow: f.eyebrow,
         heading: f.heading,
         text: f.description,
-        link: { label: f.link_label, href: safeLink(f.link, '/#services') },
+        link: { label: f.link_label, href: safeLink(f.link, '/services') },
       },
       groups: serviceGroups(menu).map((group) => ({
         title: group.title,

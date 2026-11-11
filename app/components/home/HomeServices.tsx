@@ -2,28 +2,10 @@ import Link from 'next/link'
 import { getServices } from '../../lib/db'
 import { getHeaderModel } from '../../lib/header-data'
 import { getHomeBlock } from '../../lib/home-blocks'
-import { orderedTabs, type ServiceTab } from '../../lib/service-tabs'
-import { services as servicePages } from '../../lib/services-data'
+import { orderedTabs, pageServices, type ServiceTab } from '../../lib/service-tabs'
 import { ServiceIcon } from '../ServiceIcon'
 import ServiceFilter from './ServiceFilter'
 import { ArrowRight, Button, Check, Eyebrow, SectionTitle, TextLink, delay } from './ui'
-
-// With no published services in the database, each service page's own
-// wording (services-data.ts) fills the section, so it never goes empty.
-const pageServices = servicePages.map((page) => ({
-  slug: page.slug,
-  title: page.title,
-  excerpt: '',
-  description: page.description,
-  image_url: null,
-  image_alt: '',
-  cta_label: '',
-  cta_link: '',
-  eyebrow: '',
-  tagline: '',
-  highlights: '',
-  image_caption: '',
-}))
 
 /**
  * One service as a wide card: its story (icon, eyebrow, title, tagline,
@@ -82,9 +64,23 @@ function ServiceCard({ tab, heading: Heading = 'h4' }: { tab: ServiceTab; headin
  * up across a row whatever the wording above them. `group` is the header menu
  * group the tabs filter by.
  */
-function ServiceTile({ tab, number, group }: { tab: ServiceTab; number: number; group: string }) {
+export function ServiceTile({
+  tab,
+  number,
+  group = '',
+  swipe = true,
+  stagger = (number - 2) % 4,
+}: {
+  tab: ServiceTab
+  number: number
+  group?: string
+  /** On phones, one of a row of cards to swipe through (the home page). */
+  swipe?: boolean
+  /** Its place in the row, for the reveal's delay. */
+  stagger?: number
+}) {
   return (
-    <li data-reveal data-group={group} style={delay(((number - 2) % 4) * 90)} className="w-[82%] shrink-0 snap-start sm:w-auto">
+    <li data-reveal data-group={group} style={delay(stagger * 90)} className={swipe ? 'w-[82%] shrink-0 snap-start sm:w-auto' : ''}>
       <article className="hp-svc-card group relative flex h-full flex-col overflow-hidden rounded-[0.75rem]">
         <div className="p-6 pb-7 sm:p-7 sm:pb-8">
           <div className="flex items-start justify-between gap-3">
