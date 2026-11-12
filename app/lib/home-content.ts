@@ -560,6 +560,327 @@ export const homeDefaults = {
     },
   },
 
+  // ---- IT AMC page (app/it-amc-services-dubai) ----
+  // Saved on the "it-amc-services-dubai" page and edited on the admin's
+  // "IT AMC page" screen. The banner is that page's hero (Heroes screen);
+  // amc_layout sets which sections follow it, in what order. Starting
+  // wording comes from the page's own published content; the admin replaces
+  // it with the approved text.
+
+  // The sections under the banner, in order. Each item's title is a
+  // section's key (amcSectionKeys); "show" switches it on or off.
+  amc_layout: {
+    fields: {},
+    lists: {
+      sections: [
+        { title: 'highlights', show: 'yes' },
+        { title: 'intro', show: 'yes' },
+        { title: 'services', show: 'yes' },
+        { title: 'preventive', show: 'yes' },
+        { title: 'plans', show: 'yes' },
+        { title: 'costs', show: 'yes' },
+        { title: 'breakfix', show: 'yes' },
+        { title: 'industries', show: 'yes' },
+        { title: 'why', show: 'yes' },
+        { title: 'process', show: 'yes' },
+        { title: 'sla', show: 'yes' },
+        { title: 'coverage', show: 'yes' },
+        { title: 'scope', show: 'yes' },
+        { title: 'pageblocks', show: 'yes' },
+        { title: 'related', show: 'yes' },
+        { title: 'faq', show: 'yes' },
+        { title: 'reviews', show: 'yes' },
+        { title: 'contact', show: 'yes' },
+      ],
+    },
+  },
+  // The figures under the banner's buttons.
+  amc_figures: {
+    fields: {},
+    lists: {
+      stats: [
+        { title: '2 hrs', description: 'On-site response across Dubai' },
+        { title: '24/7', description: 'Remote monitoring' },
+        { title: '{years}+', description: 'Years looking after UAE businesses' },
+      ],
+    },
+  },
+  amc_highlights: {
+    fields: {},
+    lists: {
+      items: [
+        { title: 'One fixed monthly fee', description: 'Support, maintenance and monitoring on one invoice, with no per-incident charges.', icon: 'fee' },
+        { title: '2-hour on-site response', description: 'Across Dubai, with Sharjah and Abu Dhabi covered under the same AMC.', icon: 'clock' },
+        { title: '24/7 monitoring', description: 'Every laptop, desktop and server watched for problems around the clock.', icon: 'monitor' },
+        { title: 'A dedicated account engineer', description: 'One person who knows your setup, and one number to call.', icon: 'person' },
+      ],
+    },
+  },
+  amc_intro: {
+    fields: {
+      eyebrow: 'What is IT AMC?',
+      heading: 'IT support',
+      heading_soft: 'on a fixed monthly plan.',
+      text: 'An IT AMC (annual maintenance contract) covers the support, maintenance and monitoring of your office’s IT for one fixed monthly fee, instead of paying a technician each time something breaks.\n\nWith Byteflow, every device, server and network in your office is monitored, patched and supported, remotely and on site, by a team that already knows your setup.',
+      points: 'Unlimited remote support\nOn-site visits when a fix needs an engineer\nMonitoring, patching and a monthly health report',
+      image: '',
+      image_alt: '',
+    },
+    lists: {},
+  },
+  // The categories are the "tabs" list; each service names its category.
+  amc_services: {
+    fields: {
+      eyebrow: 'Complete IT AMC services',
+      heading: 'Everything we look after,',
+      heading_soft: 'grouped by area.',
+      intro: 'Pick an area to see what the AMC covers there.',
+    },
+    lists: {
+      tabs: [
+        { title: 'End-User IT Support', description: 'Support for your people and the devices they work on.', icon: 'laptop', image: '', image_alt: '' },
+        { title: 'Server & Network Infrastructure', description: 'The servers, network and connections your office runs on.', icon: 'server', image: '', image_alt: '' },
+        { title: 'Microsoft 365 & Cloud Support', description: 'Email, files and collaboration, managed for you.', icon: 'cloud', image: '', image_alt: '' },
+        { title: 'Cybersecurity & Business Continuity', description: 'Protection, backups and recovery.', icon: 'shield', image: '', image_alt: '' },
+        { title: 'Additional IT Services', description: 'Installations and projects alongside your AMC, quoted separately.', icon: 'tools', image: '', image_alt: '' },
+      ],
+      services: [
+        { title: 'Unlimited Remote Support', description: 'Raise a ticket or call us and get remote assistance within 30 minutes. No per-incident fees, no limits on the number of requests per month.', tab: 'End-User IT Support', image: '', image_alt: '' },
+        { title: 'On-site Engineer Visits', description: 'When remote support is not enough, a certified engineer arrives at your office within 2 hours across Dubai, Sharjah and Abu Dhabi.', tab: 'End-User IT Support', image: '', image_alt: '' },
+        { title: 'Endpoint Monitoring', description: 'Every laptop, desktop and workstation is monitored 24/7 for hardware issues, software conflicts, disk health and security threats.', tab: 'End-User IT Support', image: '', image_alt: '' },
+        { title: 'Software Updates and Patching', description: 'We handle all OS updates, firmware patches and critical security fixes during off-hours so your team is never disrupted.', tab: 'End-User IT Support', image: '', image_alt: '' },
+        { title: 'IT Asset Inventory', description: 'A live register of every device, licence and warranty expiry date in your office so you always know what you own and when it needs replacing.', tab: 'End-User IT Support', image: '', image_alt: '' },
+        { title: 'Server and Network Management', description: 'We configure, patch and monitor your Windows or Linux servers, routers, switches and firewalls to keep everything running at peak performance.', tab: 'Server & Network Infrastructure', image: '', image_alt: '' },
+        { title: 'Microsoft 365 User Administration', description: 'New starters set up, leavers removed, and mailboxes and access kept in order.', tab: 'Microsoft 365 & Cloud Support', image: '', image_alt: '' },
+        { title: 'Licence Management', description: 'Your Microsoft 365 licences assigned, renewed and kept to the number you need.', tab: 'Microsoft 365 & Cloud Support', image: '', image_alt: '' },
+        { title: 'SharePoint and Teams Configuration', description: 'Sites, channels and sharing set up for the way your team works.', tab: 'Microsoft 365 & Cloud Support', image: '', image_alt: '' },
+        { title: 'Microsoft 365 Migrations', description: 'Email and files moved to Microsoft 365 from your old system.', tab: 'Microsoft 365 & Cloud Support', image: '', image_alt: '' },
+        { title: 'Email Security', description: 'Spam and phishing filtered before it reaches your team.', tab: 'Cybersecurity & Business Continuity', image: '', image_alt: '' },
+        { title: 'Antivirus Management', description: 'Antivirus kept installed, updated and watched on every device.', tab: 'Cybersecurity & Business Continuity', image: '', image_alt: '' },
+        { title: 'Backup Configuration', description: 'Backups set up and checked as part of onboarding.', tab: 'Cybersecurity & Business Continuity', image: '', image_alt: '' },
+        { title: 'Website Management & SEO Monitoring', description: 'Your website kept online, secure and visible: domain renewal, hosting and SSL certificates, and monthly SEO health monitoring.', tab: 'Additional IT Services', image: '', image_alt: '' },
+        { title: 'CCTV and Access Control', description: 'Cameras and door access supplied, installed and supported.', tab: 'Additional IT Services', image: '', image_alt: '' },
+        { title: 'Structured Cabling', description: 'Network cabling for new and existing offices.', tab: 'Additional IT Services', image: '', image_alt: '' },
+        { title: 'VoIP and Desk Phones', description: 'Business phone systems set up and supported.', tab: 'Additional IT Services', image: '', image_alt: '' },
+        { title: 'IT Procurement', description: 'Laptops, servers and network equipment sourced and installed.', tab: 'Additional IT Services', image: '', image_alt: '' },
+        { title: 'Office Relocation', description: 'Your IT moved to a new office, scoped and quoted as a project.', tab: 'Additional IT Services', image: '', image_alt: '' },
+      ],
+    },
+  },
+  amc_preventive: {
+    fields: { eyebrow: 'Preventive maintenance', heading: 'Problems fixed', heading_soft: 'before they stop your work.' },
+    lists: {
+      items: [
+        { title: 'Monitoring around the clock', description: 'Every laptop, desktop and workstation is monitored 24/7 for hardware issues, software conflicts, disk health and security threats.', image: '', image_alt: '' },
+        { title: 'Patching outside working hours', description: 'OS updates, firmware patches and critical security fixes are applied during off-hours, so your team is never disrupted.', image: '', image_alt: '' },
+        { title: 'Monthly health reports', description: 'Every month you receive a report covering uptime, issues resolved, devices monitored and upcoming risks.', image: '', image_alt: '' },
+        { title: 'Asset and warranty tracking', description: 'A live register of every device, licence and warranty expiry date, so replacements are planned, not urgent.', image: '', image_alt: '' },
+      ],
+    },
+  },
+  // The plans, also summed up in the card beside the banner, and compared
+  // in a table: each row's plan1–plan4 is "yes", "no" or a short text.
+  amc_plans: {
+    fields: {
+      eyebrow: 'Plans and pricing',
+      heading: 'Published prices,',
+      heading_soft: 'per user, per month.',
+      card_label: 'Plans from',
+      unit: 'per user / month',
+      note: 'Prices exclude 5% VAT. A 10-person office on Essential is AED 300/month.',
+      terms: 'No setup fee. No minimum term beyond the contract year. How often you call does not change the price — unlimited means unlimited.',
+      button_label: 'Get a free quote',
+      button_link: '/contact-us',
+      compare_label: 'Compare plans',
+      table_heading: 'Compare the plans',
+    },
+    lists: {
+      plans: [
+        { title: 'Essential', price: 'AED 30', summary: 'Remote support and monitoring for every device.', points: 'Unlimited remote support\n24/7 endpoint monitoring\nSoftware updates and patching', badge: '' },
+        { title: 'Standard', price: 'AED 60', summary: 'Everything in Essential, plus:', points: 'On-site engineer visits\nServer and network management\nIT asset inventory', badge: 'Includes on-site visits' },
+        { title: 'Complete', price: 'AED 90', summary: 'Everything in Standard, plus:', points: 'Website management and SEO monitoring\nPriority SLA\nA dedicated account manager', badge: '' },
+      ],
+      compare: [
+        { title: 'Unlimited remote support', plan1: 'yes', plan2: 'yes', plan3: 'yes', plan4: '' },
+        { title: '24/7 endpoint monitoring', plan1: 'yes', plan2: 'yes', plan3: 'yes', plan4: '' },
+        { title: 'Software updates and patching', plan1: 'yes', plan2: 'yes', plan3: 'yes', plan4: '' },
+        { title: 'On-site engineer visits', plan1: 'no', plan2: 'yes', plan3: 'yes', plan4: '' },
+        { title: 'Server and network management', plan1: 'no', plan2: 'yes', plan3: 'yes', plan4: '' },
+        { title: 'IT asset inventory', plan1: 'no', plan2: 'yes', plan3: 'yes', plan4: '' },
+        { title: 'Website management and SEO monitoring', plan1: 'no', plan2: 'no', plan3: 'yes', plan4: '' },
+        { title: 'Priority SLA', plan1: 'no', plan2: 'no', plan3: 'yes', plan4: '' },
+        { title: 'A dedicated account manager', plan1: 'no', plan2: 'no', plan3: 'yes', plan4: '' },
+      ],
+    },
+  },
+  amc_costs: {
+    fields: {
+      eyebrow: 'Cost factors',
+      heading: 'What sets the price',
+      heading_soft: 'of an IT AMC in Dubai.',
+      intro: 'Every quote is fixed and itemised. This is what it depends on.',
+    },
+    lists: {
+      factors: [
+        { title: 'Number of users', description: 'Plans are priced per user, per month, so the number of users sets most of the price.' },
+        { title: 'Number of servers', description: 'Servers need more monitoring and maintenance than laptops and desktops.' },
+        { title: 'Coverage hours', description: 'The hours you need support for shape the plan.' },
+        { title: 'Number of sites', description: 'Each office location is covered, with an engineer assigned per site.' },
+        { title: 'Plan level', description: 'Essential, Standard or Complete, depending on what you need included.' },
+      ],
+    },
+  },
+  amc_breakfix: {
+    fields: {
+      eyebrow: 'AMC or break-fix?',
+      heading: 'Two ways',
+      heading_soft: 'to pay for IT support.',
+      us_label: 'IT AMC',
+      them_label: 'Break-fix',
+      footer: 'Break-fix is usually cheaper for very small teams and more expensive for everyone else, because nobody is being paid to prevent problems.',
+    },
+    lists: {
+      rows: [
+        { title: 'How you pay', us: 'One fixed monthly fee covering everything', them: 'A charge for each incident' },
+        { title: 'Prevention', us: 'Systems monitored and maintained before problems start', them: 'Nobody is paid to prevent problems' },
+        { title: 'Budgeting', us: 'The same invoice every month', them: 'Costs change with every call-out' },
+        { title: 'Best for', us: 'Most offices', them: 'Very small teams with few issues' },
+      ],
+    },
+  },
+  // Each industry's link is its card on the Industries page.
+  amc_industries: {
+    fields: { eyebrow: 'Industries we support', heading: 'IT support for', heading_soft: 'the way your sector works.', link_label: 'See all industries', link: '/industries' },
+    lists: {
+      industries: [
+        { title: 'Clinics & Healthcare', description: 'Clinic systems, patient records and front-desk technology that have to work for every appointment.', icon: 'health', link: '/industries#clinics-healthcare' },
+        { title: 'Schools & Education', description: 'Classrooms, staff rooms and offices on one network that has to hold up all day.', icon: 'education', link: '/industries#schools-education' },
+        { title: 'Real Estate', description: 'Agents on site visits, offices and showrooms, all working from the same listings and leads.', icon: 'real-estate', link: '/industries#real-estate' },
+        { title: 'Retail & Ecommerce', description: 'Tills, stock and the online store, all needing to stay up while customers are buying.', icon: 'retail', link: '/industries#retail-ecommerce' },
+        { title: 'Logistics', description: 'Warehouses, offices and drivers on different sites, with systems that run around the clock.', icon: 'logistics', link: '/industries#logistics' },
+        { title: 'Hospitality', description: 'Guest Wi-Fi, cameras and property systems across buildings that never close.', icon: 'hospitality', link: '/industries#hospitality' },
+        { title: 'Law Firms & Professional Services', description: 'Confidential files, constant email and people working from courts, client offices and home.', icon: 'legal', link: '/industries#law-firms-professional-services' },
+        { title: 'Corporate Offices & SMEs', description: 'Growing teams without a full IT department, who need everything to just work.', icon: 'corporate', link: '/industries#corporate-offices-smes' },
+      ],
+    },
+  },
+  amc_benefits: {
+    fields: { eyebrow: 'Why Byteflow', heading: 'Why businesses choose', heading_soft: 'Byteflow for their AMC.' },
+    lists: {
+      benefits: [
+        { title: 'Predictable monthly cost', description: 'One fixed invoice replaces dozens of unpredictable repair bills. Budget with confidence every month of the year.' },
+        { title: 'Faster issue resolution', description: 'A dedicated engineer already knows your setup, so problems are solved faster than starting from scratch with a new vendor every time.' },
+        { title: 'Proactive maintenance', description: 'We identify failing hardware and software conflicts before they become outages, reducing unplanned downtime.' },
+        { title: 'Single point of contact', description: 'One account manager, one phone number. No being passed between departments or waiting on hold with multiple vendors.' },
+      ],
+    },
+  },
+  amc_process: {
+    fields: { eyebrow: 'Our IT AMC process', heading: 'From the first visit', heading_soft: 'to the monthly report.' },
+    lists: {
+      steps: [
+        { title: 'Free IT Audit', description: 'We visit your office and document every device, server, licence and network component. No obligation, no cost.' },
+        { title: 'Custom AMC Proposal', description: 'You receive a fixed-price proposal within 24 hours, itemised by service level and number of users. No hidden charges.' },
+        { title: 'Onboarding and Baseline', description: 'Our engineers install monitoring agents, update all software, configure backups and document your entire IT environment.' },
+        { title: 'Ongoing Management', description: 'From day one, your systems are monitored 24/7. Tickets are resolved remotely or on-site within the agreed SLA.' },
+        { title: 'Monthly Reporting', description: 'Every month you receive a health report covering uptime, issues resolved, devices monitored and upcoming risks.' },
+      ],
+    },
+  },
+  // Each priority's response is the commitment shown beside it.
+  amc_sla: {
+    fields: {
+      eyebrow: 'SLA & response times',
+      heading: 'How fast we respond,',
+      heading_soft: 'by priority.',
+      intro: 'Every ticket is given a priority, and the priority sets how fast we act.',
+      escalation_heading: 'Escalation',
+      escalation: '',
+    },
+    lists: {
+      priorities: [
+        { title: 'Critical', description: 'A server outage or a fault stopping the whole office.', response: 'We mobilise immediately' },
+        { title: 'Remote support', description: 'Any ticket that can be fixed remotely.', response: 'Within 30 minutes' },
+        { title: 'On-site visit', description: 'When the fix needs an engineer at your office.', response: 'Within 2 hours across Dubai' },
+      ],
+    },
+  },
+  amc_areas: {
+    fields: {
+      eyebrow: 'Dubai & UAE coverage',
+      heading: 'The same response time,',
+      heading_soft: 'wherever your office is.',
+      text: 'The two-hour on-site response applies across Dubai, with no premium zone and no area we charge extra to reach. Sharjah and Abu Dhabi are covered under the same AMC.',
+      areas: 'Business Bay\nJLT\nWorld Trade Centre\nDIFC\nDowntown\nDeira\nAl Barsha\nTECOM\nSharjah\nAbu Dhabi',
+    },
+    lists: {},
+  },
+  // What the AMC covers ("included") beside what it does not ("items").
+  amc_excluded: {
+    fields: {
+      eyebrow: 'No surprises',
+      heading: 'What’s included and what isn’t',
+      intro: 'Every AMC has exclusions. Most providers do not publish them, which is how businesses end up with invoices they did not expect. Ours are below.',
+      included_heading: 'Included',
+      excluded_heading: 'Not included',
+      footer: 'If something falls outside your contract, we tell you before doing the work, not on the invoice afterwards.',
+    },
+    lists: {
+      included: [
+        { title: 'Unlimited remote support' },
+        { title: 'On-site engineer visits (Standard and Complete)' },
+        { title: 'Monitoring, patching and updates' },
+        { title: 'Microsoft 365 administration' },
+        { title: 'Antivirus management' },
+        { title: 'A monthly health report' },
+      ],
+      items: [
+        { title: 'Hardware and its replacement cost', description: 'We diagnose, source and install it, and the labour is covered by your contract. The equipment itself is quoted separately.' },
+        { title: 'Third-party software licences', description: 'Microsoft 365, Adobe and similar are billed to you directly.' },
+        { title: 'Major projects', description: 'Office relocations, full infrastructure rebuilds and large migrations are scoped and quoted separately.' },
+        { title: 'Full website redesigns', description: 'Maintenance, updates and uptime monitoring are covered on the Complete plan. A new build is a separate piece of work.' },
+        { title: 'Paid advertising spend', description: 'SEO monitoring is included on Complete. Google Ads and social media budget is not.' },
+        { title: 'Specialist third-party applications', description: 'Unless agreed at contract stage.' },
+      ],
+    },
+  },
+  // The reviews are the published Customer reviews; case studies are added here.
+  amc_reviews: {
+    fields: { eyebrow: 'Clients', heading: 'What our clients', heading_soft: 'say about us.', count: '6', cases_heading: 'Related projects' },
+    lists: { cases: [] },
+  },
+  // The page's own questions; FAQs added for this page on the FAQs screen follow them.
+  amc_faq: {
+    fields: { eyebrow: 'FAQ', heading: 'Questions we get', heading_soft: 'asked all the time.', intro: 'Everything you need to know about IT AMC support with Byteflow.' },
+    lists: {
+      faqs: [
+        { title: 'What exactly does an IT AMC cover?', description: 'Our AMC covers unlimited remote and on-site support for all devices, servers, network equipment and software in your office. It includes proactive monitoring, patching, antivirus management and a dedicated account engineer. You pay one fixed monthly fee with no additional call-out or per-incident charges.' },
+        { title: 'How quickly do you respond when something breaks?', description: 'Remote support is available within 30 minutes of a ticket being raised. For issues that require a physical presence, our engineers arrive on-site within 2 hours across Dubai, Sharjah and Abu Dhabi. For critical server outages, we treat it as a P1 and mobilise immediately.' },
+        { title: 'Do you support businesses with multiple offices?', description: 'Yes. We manage multi-site businesses with offices across Dubai, Sharjah, Abu Dhabi and other UAE emirates. We assign a dedicated engineer per site and provide centralised monitoring from our NOC, so issues in any location are spotted and resolved quickly.' },
+        { title: 'Can we add services to the AMC later?', description: 'Absolutely. Many clients start with basic IT support and later add cloud management, cyber security monitoring or Microsoft 365 administration. Your AMC can be expanded at any time without signing a new long-term contract.' },
+        { title: 'Do you cover Business Bay, JLT and World Trade Centre?', description: 'Yes, and at the same service level as everywhere else. The two-hour on-site response applies across Dubai, so Business Bay, JLT, World Trade Centre, DIFC, Downtown, Deira, Al Barsha and TECOM are all covered on the same SLA — there is no premium zone and no area we charge extra to reach. Engineers are dispatched from whichever team is closest on the day. Sharjah and Abu Dhabi are covered under the same AMC.' },
+        { title: 'What is the minimum contract length?', description: 'We offer monthly rolling plans as well as annual contracts. Annual plans come with better pricing and priority SLA guarantees. Most clients choose annual contracts because the savings are significant, but we never force you into a long-term commitment.' },
+      ],
+    },
+  },
+  amc_contact: {
+    fields: {
+      eyebrow: 'Get a quote',
+      heading: 'Ready to put your IT',
+      heading_soft: 'on one fixed fee?',
+      intro: 'Tell us about your office and we’ll send a fixed, itemised AMC proposal within 24 hours.',
+      call_label: 'Call us',
+      whatsapp_label: 'WhatsApp us',
+      promises: 'Free IT audit\nFixed, itemised proposal\nNo obligation',
+    },
+    lists: {},
+  },
+  // Each item's title is a service's slug.
+  amc_related: {
+    fields: { eyebrow: 'Related services', heading: 'Often added to an AMC' },
+    lists: { services: [{ title: 'cyber-security' }, { title: 'cloud-services-dubai' }, { title: 'data-backup-recovery' }] },
+  },
+
   // ---- Legal pages (app/privacy-policy, app/terms-and-conditions) ----
   // Each saved on its own page and edited on the admin's "Legal pages"
   // screen. The title is also the link in the footer's Legal column.
