@@ -62,8 +62,24 @@ export function AmcIntro({ block }: { block: HomeBlock }) {
   const f = block.fields
   const paragraphs = (f.text ?? '').split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean)
   const points = lines(f.points ?? '')
+  // With neither a picture nor points: the heading beside the text.
+  if (!f.image && !points.length)
+    return (
+      <section id="overview" aria-labelledby="amc-intro-title" className={`${sectionClass} grid gap-6 lg:grid-cols-12 lg:gap-14`}>
+        <div className="lg:col-span-5">
+          <Heading id="amc-intro-title" block={block} />
+        </div>
+        <div data-reveal className="space-y-4 lg:col-span-7 lg:pt-10">
+          {paragraphs.map((p) => (
+            <p key={p} className="text-[17px] leading-relaxed text-[var(--hp-body)]">
+              {p}
+            </p>
+          ))}
+        </div>
+      </section>
+    )
   return (
-    <section id="what-is-it-amc" aria-labelledby="amc-intro-title" className={`${sectionClass} grid gap-10 lg:grid-cols-12 lg:items-center lg:gap-14`}>
+    <section id="overview" aria-labelledby="amc-intro-title" className={`${sectionClass} grid gap-10 lg:grid-cols-12 lg:items-center lg:gap-14`}>
       <div className="lg:col-span-6">
         <Heading id="amc-intro-title" block={block} />
         <div data-reveal className="mt-5 space-y-4">
@@ -120,6 +136,42 @@ export function AmcServices({ block }: { block: HomeBlock }) {
       <div data-reveal className="mt-10">
         <AmcServiceTabs groups={groups} />
       </div>
+    </section>
+  )
+}
+
+/**
+ * What's included (the service pages): the heading staying in view beside
+ * a numbered card per item, each with its picture when it has one.
+ */
+export function AmcFeatures({ block }: { block: HomeBlock }) {
+  const features = block.lists.features ?? []
+  if (!features.length) return null
+  return (
+    <section id="features" aria-labelledby="svc-features-title" className={`${sectionClass} grid gap-10 lg:grid-cols-12 lg:gap-14`}>
+      <div data-reveal className="lg:sticky lg:top-28 lg:col-span-4 lg:self-start">
+        <Eyebrow>{block.fields.eyebrow}</Eyebrow>
+        <SectionTitle id="svc-features-title" heading={block.fields.heading} soft={block.fields.heading_soft} softBlock className="mt-4" />
+        {block.fields.intro && <p className="hp-lead mt-5">{block.fields.intro}</p>}
+      </div>
+      <ul className="grid gap-4 sm:grid-cols-2 lg:col-span-8">
+        {features.map((feature, i) => (
+          <li key={feature.title} data-reveal style={delay((i % 2) * 100)} className="hp-band flex flex-col overflow-hidden rounded-[1.25rem]">
+            {feature.image && (
+              <span className="relative block aspect-[16/9]">
+                <Uploaded src={feature.image} alt={feature.image_alt} sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 100vw" />
+              </span>
+            )}
+            <span className="block p-6">
+              <span aria-hidden="true" className="font-display text-[13px] font-semibold tabular-nums text-[var(--hp-accent)]">
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <h3 className="mt-3 font-display text-[1.125rem] font-semibold leading-snug tracking-[-0.01em] text-[var(--hp-ink)]">{feature.title}</h3>
+              {feature.description && <p className="mt-2 text-[15px] leading-relaxed text-[var(--hp-body)]">{feature.description}</p>}
+            </span>
+          </li>
+        ))}
+      </ul>
     </section>
   )
 }
@@ -205,7 +257,7 @@ export function AmcBreakFix({ block }: { block: HomeBlock }) {
   const rows = block.lists.rows
   if (!rows.length) return null
   return (
-    <section id="amc-vs-break-fix" aria-labelledby="amc-breakfix-title" className={sectionClass}>
+    <section id="compare" aria-labelledby="amc-breakfix-title" className={sectionClass}>
       <Heading id="amc-breakfix-title" block={block} center />
       <div data-reveal className="mt-10 grid gap-5 md:grid-cols-2">
         {[

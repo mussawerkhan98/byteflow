@@ -594,6 +594,14 @@ export const homeDefaults = {
       ],
     },
   },
+  // The page's search title and description, as it had them until changed here.
+  amc_seo: {
+    fields: {
+      title: 'IT AMC Support & Services in Dubai | Byteflow',
+      description: 'IT AMC support across Dubai, Business Bay, JLT and WTC included. One fixed monthly fee, 2-hour on-site response, 24/7 monitoring and no surprise bills.',
+    },
+    lists: {},
+  },
   // The figures under the banner's buttons.
   amc_figures: {
     fields: {},
@@ -939,7 +947,11 @@ const text = (value: unknown) => (typeof value === 'string' ? value.trim() : '')
 
 /** Saved content laid over the defaults: blank fields and empty lists fall back. */
 export function mergeHomeBlock(key: HomeBlockKey, saved: Record<string, unknown> | null): HomeBlock {
-  const defaults: HomeBlock = homeDefaults[key]
+  return mergeBlock(homeDefaults[key], saved)
+}
+
+/** A block as saved over the given defaults: blank fields and empty lists fall back to them. */
+export function mergeBlock(defaults: HomeBlock, saved: Record<string, unknown> | null): HomeBlock {
   const fields = Object.fromEntries(
     Object.entries(defaults.fields).map(([name, fallback]) => [name, text(saved?.[name]) || fallback]),
   )
