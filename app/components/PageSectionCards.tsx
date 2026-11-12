@@ -27,7 +27,7 @@ export const placementOf = (section: PageSection): Placement =>
  * The markup for the content blocks an editor adds to a page in the admin
  * panel. Deliberately free of hooks and of a "use client" directive so the
  * same component can be rendered two ways: the 9 static service pages render
- * it on the server (ServicePageTemplate), so the content is in the HTML the
+ * it on the server (the service pages (ServicePage)), so the content is in the HTML the
  * crawler sees, while every other page renders it from the client component
  * PageSections, which has to look the path up in the browser.
  *

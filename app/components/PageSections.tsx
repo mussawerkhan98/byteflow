@@ -11,7 +11,7 @@ import PageSectionCards, {
 } from "./PageSectionCards";
 
 // The 9 original service pages fetch their own blocks on the server and
-// render them inside ServicePageTemplate, so the content is in the HTML
+// render them inside the service pages (ServicePage), so the content is in the HTML
 // rather than appearing only after this component has run in the browser.
 // Skipping here is what stops those pages showing every block twice.
 const SERVICE_PAGE_PATHS = new Set(services.map((s) => `/${s.slug}`));

@@ -1,14 +1,16 @@
-import ServicePageTemplate from '../components/ServicePageTemplate'
+import type { Metadata } from 'next'
+import ServicePage from '../components/service-page/ServicePage'
+import { getServiceBlocks, seoMetadata } from '../lib/service-blocks'
 import { services } from '../lib/services-data'
 
-export const metadata = {
-  alternates: { canonical: "/system-integration" },
-    title: 'System Integration Dubai | Network & CCTV | Byteflow',
-  description:
-    'Complete system integration services for Dubai businesses. Structured cabling, server setup, CCTV, VoIP and multi-site network connectivity across UAE.',
+const page = services.find((service) => service.slug === 'system-integration')!
+
+// Its search title and description are on its SEO tab (Service pages), which
+// starts with the ones this page has always had.
+export async function generateMetadata(): Promise<Metadata> {
+  return seoMetadata(page.slug, (await getServiceBlocks(page)).seo)
 }
 
 export default function Page() {
-  const service = services.find((s) => s.slug === 'system-integration')!
-  return <ServicePageTemplate service={service} />
+  return <ServicePage page={page} />
 }

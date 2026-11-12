@@ -13,7 +13,7 @@ type FaqItem = {
 };
 
 // The 9 original services render their own FAQ section (via
-// ServicePageTemplate/ServiceFAQ) already merged with any CMS-added
+// the service pages (ServicePage)) already merged with any CMS-added
 // questions for that page. Rendering this global block there too used to
 // show a second, duplicate FAQ section underneath — so it's skipped here.
 const SERVICE_PAGE_PATHS = new Set(services.map((s) => `/${s.slug}`));

@@ -1,16 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getProjectBySlug, getProjects } from "@/app/lib/db";
+import { getProjectBySlug } from "@/app/lib/db";
 import sanitizeHtml from "sanitize-html";
 
 export const revalidate = 3600;
 
-/** Prerenders the published case studies; new ones are rendered once, then cached. */
-export async function generateStaticParams() {
-  const projects = await getProjects();
-  return projects.filter((project) => project.slug).map((project) => ({ slug: project.slug }));
-}
+// No generateStaticParams: the root layout renders every page at request
+// time (connection()), so nothing is prerendered anyway. With it, a build
+// that read no published projects marked this route static, and every
+// project page then failed at request time (DYNAMIC_SERVER_USAGE, a 500).
 
 export async function generateMetadata({
   params,

@@ -17,13 +17,13 @@ type Cta = {
 };
 
 // The 9 original service pages render this themselves (see
-// ServicePageTemplate), positioned before their own FAQ section instead of
+// the service pages (ServicePage)), positioned before their own FAQ section instead of
 // after it, so the FAQ stays the last thing before the footer. Skip the
 // copy the global layout renders there to avoid showing it twice.
 const SERVICE_PAGE_PATHS = new Set(services.map((s) => `/${s.slug}`));
 
 /**
- * `embedded` is set by ServicePageTemplate when it renders this itself for
+ * `embedded` is set by the service pages (ServicePage) when it renders this itself for
  * one of the 9 static service pages; it bypasses the skip below, which
  * otherwise exists to stop the global layout copy from rendering there too.
  */
