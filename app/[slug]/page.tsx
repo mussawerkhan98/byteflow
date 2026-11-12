@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import {
   getPostBySlug,
-  getPosts,
   getServiceBySlug,
   getServices,
 } from "@/app/lib/db";
@@ -19,19 +18,11 @@ import {
 
 export const revalidate = 3600;
 
-/**
- * This route serves both CMS services and blog posts, so both have to be
- * listed here or the service pages fall back to rendering on every request.
- * Slugs added in the admin panel after a build are still served: they miss
- * the prerender and are rendered once, then cached like the rest.
- */
-export async function generateStaticParams() {
-  const [posts, services] = await Promise.all([getPosts(), getServices()]);
-  const slugs = new Set<string>();
-  for (const post of posts) if (post.slug) slugs.add(post.slug);
-  for (const service of services) if (service.slug) slugs.add(service.slug);
-  return [...slugs].map((slug) => ({ slug }));
-}
+// This route serves both CMS services and blog posts. No generateStaticParams:
+// the root layout renders every page at request time (connection()), so
+// nothing is prerendered anyway, and with it a build that read no posts or
+// services would mark the route static and fail every page here at request
+// time (DYNAMIC_SERVER_USAGE), as happened to the project pages.
 
 export async function generateMetadata({
   params,
