@@ -61,6 +61,24 @@ const TAILOR: Record<string, { title: string; description: string; noun: string;
 }
 const fallbackTailor = { title: '', description: '', noun: 'this', finish: 'to the finished job.', onsite: false, icons: ['check', 'check', 'check', 'check'] }
 
+/**
+ * The pages whose package buttons fill in the enquiry form with the service
+ * and package to start with (each can switch it on its Packages & pricing tab).
+ */
+const QUOTE_PREFILL = new Set(['cloud-services-dubai', 'cyber-security', 'data-backup-recovery', 'system-integration', 'graphics-designing'])
+
+/** The words for each billing unit a package can pick, and for the two parts of a two-part price. */
+const unitLabels = {
+  unit_one_time: 'one-time',
+  unit_month: 'per month',
+  unit_user_month: 'per user / month',
+  unit_device_month: 'per device / month',
+  unit_site_month: 'per site / month',
+  unit_project: 'per project',
+  setup_label: 'Setup fee',
+  management_label: 'Management fee',
+}
+
 /** The first sentence of a text, for a short highlight. */
 export function firstSentence(text: string): string {
   const match = text.trim().match(/^.+?[.!?](?=\s|$)/)
@@ -130,6 +148,11 @@ export function serviceDefaults(page: ServiceData): Record<ServiceBlockKey, Home
         table_heading: 'Compare the packages',
         // The banner card keeps listing what's included unless packages are chosen for it.
         banner_card: 'included',
+        // The table shows with up to four packages unless switched on or off.
+        show_table: 'auto',
+        // Quote buttons fill in the enquiry form on the pages set up with many packages.
+        quote_prefill: QUOTE_PREFILL.has(page.slug) ? 'yes' : 'no',
+        ...unitLabels,
       },
       { plans: [], compare: [] },
     ),

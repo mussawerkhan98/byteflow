@@ -1,6 +1,6 @@
 import { planCell } from '../../lib/amc-page'
 import { lines, type HomeBlock } from '../../lib/home-content'
-import { planButton, planDeliverables, planGroups, planPrice, priceText, shownPlans, tableGroups, type PlanPrice } from '../../lib/plans'
+import { planButton, planDeliverables, planGroups, planPrice, priceText, showTable, shownPlans, tableGroups, type PlanPrice } from '../../lib/plans'
 import { Button, Check, Eyebrow, SectionTitle, delay } from '../home/ui'
 import { HiddenTag } from '../PreviewBar'
 
@@ -9,11 +9,26 @@ function Price({ price }: { price: PlanPrice }) {
   if (price.kind === 'custom')
     return <p className="mt-4 font-display text-[1.75rem] font-semibold leading-tight tracking-[-0.02em] text-[var(--hp-ink)]">{price.label}</p>
   return (
-    <p className="mt-4 flex flex-wrap items-baseline gap-x-2 gap-y-1">
-      {price.prefix && <span className="text-[14px] font-semibold text-[var(--hp-muted)]">{price.prefix}</span>}
-      <span className="font-display text-[2.5rem] font-semibold leading-none tracking-[-0.03em] text-[var(--hp-ink)]">{price.amount}</span>
-      {price.unit && <span className="text-[14px] text-[var(--hp-muted)]">{price.unit}</span>}
-    </p>
+    <>
+      <p className="mt-4 flex flex-wrap items-baseline gap-x-2 gap-y-1">
+        {price.prefix && <span className="text-[14px] font-semibold text-[var(--hp-muted)]">{price.prefix}</span>}
+        <span className="font-display text-[2.5rem] font-semibold leading-none tracking-[-0.03em] text-[var(--hp-ink)]">{price.amount}</span>
+        {price.unit && <span className="text-[14px] text-[var(--hp-muted)]">{price.unit}</span>}
+      </p>
+      {/* A two-part price: the setup and/or management fee, under the price. */}
+      {price.parts.length > 0 && (
+        <dl className="mt-3 grid gap-1.5 text-[14px]">
+          {price.parts.map((part) => (
+            <div key={part.label} className="flex flex-wrap items-baseline gap-x-2">
+              <dt className="text-[var(--hp-muted)]">{part.label}</dt>
+              <dd className="font-semibold text-[var(--hp-ink)]">
+                {part.amount} <span className="font-normal text-[var(--hp-muted)]">{part.unit}</span>
+              </dd>
+            </div>
+          ))}
+        </dl>
+      )}
+    </>
   )
 }
 
@@ -52,12 +67,17 @@ function PlanList({ title, items, mark = 'tick' }: { title: string; items: strin
  * a column per plan, and the terms and the VAT note. Hidden plans show only
  * in a preview, marked.
  */
-export default function AmcPlans({ content, preview = false }: { content: HomeBlock; preview?: boolean }) {
+export default function AmcPlans({ content, preview = false, service = '' }: { content: HomeBlock; preview?: boolean; service?: string }) {
   const copy = content.fields
   const plans = shownPlans(content.lists.plans, preview)
-  const rows = content.lists.compare ?? []
+  const rows = showTable(copy, plans.length) ? (content.lists.compare ?? []) : []
   if (!plans.length) return null
   const groups = tableGroups(rows)
+  // Up to four side by side as before; more wrap in rows of three.
+  const columns =
+    plans.length > 4
+      ? 'md:grid-cols-2 lg:grid-cols-3'
+      : `${plans.length >= 3 ? 'md:grid-cols-3' : plans.length === 2 ? 'md:grid-cols-2' : ''} ${plans.length === 4 ? 'xl:grid-cols-4' : ''}`
 
   return (
     <section id="plans" aria-labelledby="amc-plans-title" className="page-container scroll-mt-28 pb-16 lg:pb-24">
@@ -67,14 +87,14 @@ export default function AmcPlans({ content, preview = false }: { content: HomeBl
         {copy.intro && <p className="hp-lead mx-auto mt-5 max-w-xl">{copy.intro}</p>}
       </div>
 
-      <ul className={`mt-10 grid gap-5 lg:mt-14 lg:items-stretch ${plans.length >= 3 ? 'md:grid-cols-3' : plans.length === 2 ? 'md:grid-cols-2' : ''} ${plans.length === 4 ? 'xl:grid-cols-4' : ''}`}>
+      <ul className={`mt-10 grid gap-5 lg:mt-14 lg:items-stretch ${columns}`}>
         {plans.map(({ plan, hidden }, i) => {
           const raised = Boolean(plan.badge)
           const points = lines(plan.points ?? '')
           const deliverables = planDeliverables(plan, copy)
           const excluded = lines(plan.excluded ?? '')
           const extras = lines(plan.extras ?? '')
-          const button = planButton(plan, copy)
+          const button = planButton(plan, copy, service)
           return (
             <li
               key={plan.title}
@@ -122,6 +142,14 @@ export default function AmcPlans({ content, preview = false }: { content: HomeBl
               ))}
               {excluded.length > 0 && <PlanList title={copy.excluded_label} items={excluded} mark="dash" />}
               {extras.length > 0 && <PlanList title={copy.extras_label} items={extras} mark="plus" />}
+              {plan.third_party && (
+                <p className="mt-5 flex items-start gap-2.5 rounded-xl bg-[var(--hp-bg)] px-3.5 py-3 text-[13.5px] leading-snug text-[var(--hp-body)]">
+                  <span aria-hidden="true" className="mt-px grid h-4 w-4 shrink-0 place-items-center rounded-full border border-[var(--hp-muted)] text-[10px] font-bold text-[var(--hp-muted)]">
+                    i
+                  </span>
+                  {plan.third_party}
+                </p>
+              )}
               <div className="mt-auto pt-7">
                 <Button href={button.href} variant={raised ? 'primary' : 'ghost'} className="w-full">
                   {button.label}
@@ -137,7 +165,11 @@ export default function AmcPlans({ content, preview = false }: { content: HomeBl
         <div data-reveal className="mt-14 lg:mt-20">
           <h3 className="text-center font-display text-[1.375rem] font-semibold tracking-[-0.02em] text-[var(--hp-ink)]">{copy.table_heading}</h3>
           <div className="hp-scroller -mx-4 mt-6 overflow-x-auto px-4 sm:mx-0 sm:px-0">
-            <table className="hp-band w-full min-w-[36rem] overflow-hidden rounded-[1.25rem] text-left">
+            <table
+              className="hp-band w-full min-w-[36rem] overflow-hidden rounded-[1.25rem] text-left"
+              // Each plan's column keeps room for its name and price, however many there are.
+              style={plans.length > 4 ? { minWidth: `${12 + plans.length * 9}rem` } : undefined}
+            >
               <thead>
                 <tr className="border-b border-[var(--hp-line)]">
                   <th scope="col" className="px-5 py-4 text-[13px] font-semibold uppercase tracking-[0.12em] text-[var(--hp-muted)]">

@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useId } from 'react'
+import { useState, useId, useSyncExternalStore } from 'react'
+import { quotePrefill } from '../lib/quote-prefill'
 import { getRecaptchaToken } from '../lib/recaptcha'
 import { LEAD_EVENT, trackEvent } from '../lib/analytics'
 
@@ -108,7 +109,10 @@ const services = [
   'Other',
 ]
 
-type ContactSettings = { header_phone?: string; primary_email?: string; physical_address?: string; business_hours?: string; whatsapp_link?: string; facebook_url?: string; linkedin_url?: string; instagram_url?: string; tiktok_url?: string; map_embed_url?: string; map_enabled?: number | boolean }
+/** The query is read once per page: nothing to subscribe to. */
+const noSubscribe = () => () => {}
+
+type ContactSettings ={ header_phone?: string; primary_email?: string; physical_address?: string; business_hours?: string; whatsapp_link?: string; facebook_url?: string; linkedin_url?: string; instagram_url?: string; tiktok_url?: string; map_embed_url?: string; map_enabled?: number | boolean }
 type ContactHero = { hero_label?:string; hero_heading?:string; hero_description?:string; hero_background_image?:string }
 function safeMapUrl(value?: string) { try { if (!value) return ''; const url = new URL(value); return url.protocol === 'https:' && /(^|\.)google\.(com|ae)$/.test(url.hostname) && url.pathname.startsWith('/maps/embed') ? url.toString() : '' } catch { return '' } }
 
@@ -281,6 +285,22 @@ export default function Contact({ settings = {}, hero, asPage = false, cta }: { 
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   const [successMessage, setSuccessMessage] = useState('Our team will get back to you within 2 hours.')
   const [focused, setFocused] = useState<string | null>(null)
+
+  // Arriving from a package's quote button (?service=…&package=…): the service
+  // picked and the package named in the message, ready to add to. The server
+  // (and hydration) see no query, so this fills in once on the client.
+  const search = useSyncExternalStore(noSubscribe, () => window.location.search, () => '')
+  const [prefilledFrom, setPrefilledFrom] = useState('')
+  if (search !== prefilledFrom) {
+    setPrefilledFrom(search)
+    const prefill = quotePrefill(search, services)
+    if (prefill)
+      setForm((current) => ({
+        ...current,
+        service: current.service || prefill.service,
+        message: current.message || prefill.message,
+      }))
+  }
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }))
