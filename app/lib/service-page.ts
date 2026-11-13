@@ -6,7 +6,7 @@
  * real content for yet (packages, comparison, SLA, scope, cost factors)
  * start empty and switched off. No database access or React here.
  */
-import { homeDefaults, type HomeBlock } from './home-content'
+import { homeDefaults, planLabels, type HomeBlock } from './home-content'
 import type { ServiceData } from './services-data'
 
 /** The sections a service page can show under its banner, by key, in their starting order. */
@@ -115,17 +115,21 @@ export function serviceDefaults(page: ServiceData): Record<ServiceBlockKey, Home
     ),
     plans: empty(
       {
+        ...planLabels,
         eyebrow: 'Packages and pricing',
         heading: 'Packages',
         heading_soft: 'and what each includes.',
+        intro: '',
         card_label: 'Packages from',
         unit: '',
         note: '',
         terms: '',
-        button_label: 'Get a free quote',
+        button_label: page.slug === 'digital-marketing' ? 'Request an SEO Quote' : 'Get a free quote',
         button_link: '/contact-us',
         compare_label: 'Compare packages',
         table_heading: 'Compare the packages',
+        // The banner card keeps listing what's included unless packages are chosen for it.
+        banner_card: 'included',
       },
       { plans: [], compare: [] },
     ),
@@ -173,12 +177,15 @@ export function serviceDefaults(page: ServiceData): Record<ServiceBlockKey, Home
   }
 }
 
-/** The sections switched on, in the admin's order, each once; unknown keys are left out. */
-export function serviceSections(layout: Record<string, string>[]): ServiceSectionKey[] {
+/**
+ * The sections switched on, in the admin's order, each once; unknown keys
+ * are left out. A preview keeps the hidden ones too.
+ */
+export function serviceSections(layout: Record<string, string>[], preview = false): ServiceSectionKey[] {
   const known = new Set<string>(serviceSectionKeys)
   const seen = new Set<string>()
   return layout
-    .filter((item) => item.show !== 'no')
+    .filter((item) => preview || item.show !== 'no')
     .map((item) => (item.title ?? '').trim())
     .filter((key): key is ServiceSectionKey => {
       if (!known.has(key) || seen.has(key)) return false

@@ -2,6 +2,7 @@ import '../home.css'
 import '../about.css'
 import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
+import { draftMode } from 'next/headers'
 import AmcPlans from '../components/amc/AmcPlans'
 import {
   AmcBreakFix,
@@ -25,14 +26,16 @@ import Contact from '../components/Contact'
 import HomeMotion from '../components/home/HomeMotion'
 import JsonLd from '../components/JsonLd'
 import PageCta from '../components/PageCta'
+import PreviewBar, { HiddenSection } from '../components/PreviewBar'
 import { PlansCard } from '../components/service-page/HeroCards'
 import ServiceHero from '../components/service-page/ServiceHero'
-import { amcSections, priceNumber, type AmcSectionKey } from '../lib/amc-page'
+import { amcSections, hiddenSections, type AmcSectionKey } from '../lib/amc-page'
 import { getCustomSections, getFaqsForSlug, getPageHero, getSiteSettings, getTestimonials } from '../lib/cms'
 import { getServices } from '../lib/db'
 import { getHeaderModel } from '../lib/header-data'
 import { getHomeBlock } from '../lib/home-blocks'
 import { lines } from '../lib/home-content'
+import { pricedPlans } from '../lib/plans'
 import { seoMetadata } from '../lib/service-blocks'
 import { pageServices, serviceTab } from '../lib/service-tabs'
 import { services as servicePages } from '../lib/services-data'
@@ -96,8 +99,10 @@ export default async function Page() {
   const highlight = hero?.hero_highlight || (hero?.hero_heading ? '' : 'one fixed monthly fee.')
   const description = hero?.hero_description || page.description
   const phone = String(settings?.header_phone || '+971 54 328 2042')
-  const planList = plans.lists.plans
-  const order = amcSections(layout.lists.sections)
+  // A preview from the admin shows the hidden sections and plans too, marked.
+  const { isEnabled: preview } = await draftMode()
+  const order = amcSections(layout.lists.sections, preview)
+  const hidden = preview ? hiddenSections(layout.lists.sections) : new Set<string>()
 
   // The page's own questions, then those added for it on the FAQs screen.
   const allFaqs = [
@@ -110,7 +115,7 @@ export default async function Page() {
     intro: <AmcIntro block={intro} />,
     services: <AmcServices block={services} />,
     preventive: <AmcPreventive block={preventive} />,
-    plans: <AmcPlans content={plans} />,
+    plans: <AmcPlans content={plans} preview={preview} />,
     costs: <AmcCosts block={costs} />,
     breakfix: <AmcBreakFix block={breakfix} />,
     industries: <AmcIndustries block={industries} />,
@@ -158,16 +163,13 @@ export default async function Page() {
     related: <AmcRelated block={related} tabs={tabs} />,
   }
 
-  const offers = planList
-    .map((plan) => ({ plan, price: priceNumber(plan.price) }))
-    .filter((offer) => offer.price !== null)
-    .map(({ plan, price }) => ({
-      '@type': 'Offer',
-      name: `${plan.title} — ${title}`,
-      price,
-      priceCurrency: 'AED',
-      url: absoluteUrl(`${PATH}#plans`),
-    }))
+  const offers = pricedPlans(plans.lists.plans, plans.fields).map((plan) => ({
+    '@type': 'Offer',
+    name: `${plan.title} — ${title}`,
+    price: plan.price,
+    priceCurrency: 'AED',
+    url: absoluteUrl(`${PATH}#plans`),
+  }))
 
   return (
     <div className="hp">
@@ -197,12 +199,13 @@ export default async function Page() {
         phone={phone}
         stats={figures.lists.stats}
         image={hero?.hero_image ? { src: hero.hero_image, alt: hero.hero_image_alt || title } : null}
-        card={<PlansCard plans={plans} />}
+        card={<PlansCard plans={plans} preview={preview} />}
       />
 
       {order.map((key) => (
-        <div key={key}>{sections[key]}</div>
+        <div key={key}>{hidden.has(key) ? <HiddenSection>{sections[key]}</HiddenSection> : sections[key]}</div>
       ))}
+      {preview && <PreviewBar path={PATH} />}
     </div>
   )
 }

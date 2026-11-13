@@ -1,30 +1,80 @@
 import { planCell } from '../../lib/amc-page'
 import { lines, type HomeBlock } from '../../lib/home-content'
+import { planButton, planDeliverables, planGroups, planPrice, priceText, shownPlans, tableGroups, type PlanPrice } from '../../lib/plans'
 import { Button, Check, Eyebrow, SectionTitle, delay } from '../home/ui'
+import { HiddenTag } from '../PreviewBar'
+
+/** A plan's price: the amount (after "From" for a starting price) and the unit, or the custom-quote words alone. */
+function Price({ price }: { price: PlanPrice }) {
+  if (price.kind === 'custom')
+    return <p className="mt-4 font-display text-[1.75rem] font-semibold leading-tight tracking-[-0.02em] text-[var(--hp-ink)]">{price.label}</p>
+  return (
+    <p className="mt-4 flex flex-wrap items-baseline gap-x-2 gap-y-1">
+      {price.prefix && <span className="text-[14px] font-semibold text-[var(--hp-muted)]">{price.prefix}</span>}
+      <span className="font-display text-[2.5rem] font-semibold leading-none tracking-[-0.03em] text-[var(--hp-ink)]">{price.amount}</span>
+      {price.unit && <span className="text-[14px] text-[var(--hp-muted)]">{price.unit}</span>}
+    </p>
+  )
+}
+
+/** A short list under its own small heading in a plan card: what a group includes, what's left out, what costs extra. */
+function PlanList({ title, items, mark = 'tick' }: { title: string; items: string[]; mark?: 'tick' | 'dash' | 'plus' }) {
+  return (
+    <div className="mt-5 border-t border-[var(--hp-line)] pt-4">
+      {title && <h4 className="text-[12px] font-semibold uppercase tracking-[0.12em] text-[var(--hp-muted)]">{title}</h4>}
+      <ul className="mt-3 grid gap-2.5">
+        {items.map((item) => (
+          <li key={item} className="flex items-start gap-3 text-[14.5px] leading-snug text-[var(--hp-ink)]">
+            {mark === 'tick' ? (
+              <span className="hp-tick mt-px">
+                <Check />
+              </span>
+            ) : (
+              <span aria-hidden="true" className="grid h-5 w-5 shrink-0 place-items-center text-[15px] font-semibold leading-none text-[var(--hp-muted)]">
+                {mark === 'dash' ? '–' : '+'}
+              </span>
+            )}
+            {item}
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
 
 /**
- * The IT AMC plans side by side ("IT AMC page" → Plans): each plan's name,
- * price per user, what it adds and its button. A plan given a badge is the
- * raised one, its badge along its top. Then the comparison table, a row per
- * feature and a column per plan, and the terms and the VAT note.
+ * The plans side by side ("Packages & pricing" on the IT AMC page and each
+ * service page): one h2 for the section and its description, then each
+ * plan's name (an h3), price, deliverables, what it includes (by group when
+ * grouped), what it leaves out and costs extra, and its own button. A plan
+ * given a badge is the raised one, its badge along its top. Then the
+ * comparison table, a row per feature (under group headings when given) and
+ * a column per plan, and the terms and the VAT note. Hidden plans show only
+ * in a preview, marked.
  */
-export default function AmcPlans({ content }: { content: HomeBlock }) {
+export default function AmcPlans({ content, preview = false }: { content: HomeBlock; preview?: boolean }) {
   const copy = content.fields
-  const plans = content.lists.plans.slice(0, 4)
+  const plans = shownPlans(content.lists.plans, preview)
   const rows = content.lists.compare ?? []
   if (!plans.length) return null
+  const groups = tableGroups(rows)
 
   return (
     <section id="plans" aria-labelledby="amc-plans-title" className="page-container scroll-mt-28 pb-16 lg:pb-24">
       <div data-reveal className="mx-auto max-w-2xl text-center">
         <Eyebrow>{copy.eyebrow}</Eyebrow>
         <SectionTitle id="amc-plans-title" heading={copy.heading} soft={copy.heading_soft} softBlock className="mt-4" />
+        {copy.intro && <p className="hp-lead mx-auto mt-5 max-w-xl">{copy.intro}</p>}
       </div>
 
-      <ul className={`mt-10 grid gap-5 lg:mt-14 lg:items-stretch ${plans.length >= 3 ? 'md:grid-cols-3' : plans.length === 2 ? 'md:grid-cols-2' : ''}`}>
-        {plans.map((plan, i) => {
+      <ul className={`mt-10 grid gap-5 lg:mt-14 lg:items-stretch ${plans.length >= 3 ? 'md:grid-cols-3' : plans.length === 2 ? 'md:grid-cols-2' : ''} ${plans.length === 4 ? 'xl:grid-cols-4' : ''}`}>
+        {plans.map(({ plan, hidden }, i) => {
           const raised = Boolean(plan.badge)
           const points = lines(plan.points ?? '')
+          const deliverables = planDeliverables(plan, copy)
+          const excluded = lines(plan.excluded ?? '')
+          const extras = lines(plan.extras ?? '')
+          const button = planButton(plan, copy)
           return (
             <li
               key={plan.title}
@@ -33,7 +83,7 @@ export default function AmcPlans({ content }: { content: HomeBlock }) {
                 raised
                   ? 'border-[var(--hp-accent)] bg-[var(--hp-card)] shadow-[0_1px_2px_rgba(16,42,76,0.04),0_40px_80px_-48px_rgba(14,116,144,0.45)] md:-my-3'
                   : 'border-[var(--hp-line)] bg-[var(--hp-card)] shadow-[var(--hp-shadow)]'
-              }`}
+              } ${hidden ? 'border-dashed opacity-75' : ''}`}
               style={delay(i * 120)}
             >
               {raised && (
@@ -41,12 +91,20 @@ export default function AmcPlans({ content }: { content: HomeBlock }) {
                   {plan.badge}
                 </p>
               )}
+              {hidden && <HiddenTag className="absolute -top-3 right-7" />}
               <h3 className="font-display text-[1.25rem] font-semibold tracking-[-0.01em] text-[var(--hp-ink)]">{plan.title}</h3>
-              <p className="mt-4 flex items-baseline gap-2">
-                <span className="font-display text-[2.5rem] font-semibold leading-none tracking-[-0.03em] text-[var(--hp-ink)]">{plan.price}</span>
-                <span className="text-[14px] text-[var(--hp-muted)]">{copy.unit}</span>
-              </p>
+              <Price price={planPrice(plan, copy)} />
               {plan.summary && <p className="mt-4 text-[15px] font-semibold text-[var(--hp-accent)]">{plan.summary}</p>}
+              {deliverables.length > 0 && (
+                <dl className="mt-5 grid grid-cols-2 gap-2.5">
+                  {deliverables.map((item) => (
+                    <div key={item.label} className="flex flex-col rounded-xl border border-[var(--hp-line)] bg-[var(--hp-bg)] px-3.5 py-3">
+                      <dt className="text-[12.5px] leading-snug text-[var(--hp-muted)]">{item.label}</dt>
+                      <dd className="order-first font-display text-[1.25rem] font-semibold leading-tight text-[var(--hp-ink)]">{item.value}</dd>
+                    </div>
+                  ))}
+                </dl>
+              )}
               {points.length > 0 && (
                 <ul className="mt-4 grid gap-3 border-t border-[var(--hp-line)] pt-5">
                   {points.map((point) => (
@@ -59,9 +117,14 @@ export default function AmcPlans({ content }: { content: HomeBlock }) {
                   ))}
                 </ul>
               )}
+              {planGroups(plan, copy).map((group) => (
+                <PlanList key={group.title} title={group.title} items={group.items} />
+              ))}
+              {excluded.length > 0 && <PlanList title={copy.excluded_label} items={excluded} mark="dash" />}
+              {extras.length > 0 && <PlanList title={copy.extras_label} items={extras} mark="plus" />}
               <div className="mt-auto pt-7">
-                <Button href={copy.button_link || '/contact-us'} variant={raised ? 'primary' : 'ghost'} className="w-full">
-                  {copy.button_label}
+                <Button href={button.href} variant={raised ? 'primary' : 'ghost'} className="w-full">
+                  {button.label}
                 </Button>
               </div>
             </li>
@@ -80,41 +143,50 @@ export default function AmcPlans({ content }: { content: HomeBlock }) {
                   <th scope="col" className="px-5 py-4 text-[13px] font-semibold uppercase tracking-[0.12em] text-[var(--hp-muted)]">
                     <span className="sr-only">{copy.table_heading}</span>
                   </th>
-                  {plans.map((plan) => (
+                  {plans.map(({ plan }) => (
                     <th key={plan.title} scope="col" className={`px-5 py-4 text-center ${plan.badge ? 'bg-[rgba(14,116,144,0.06)]' : ''}`}>
                       <span className="block font-display text-[16px] font-semibold text-[var(--hp-ink)]">{plan.title}</span>
-                      <span className="block text-[13px] font-medium text-[var(--hp-accent)]">{plan.price}</span>
+                      <span className="block text-[13px] font-medium text-[var(--hp-accent)]">{priceText(planPrice(plan, copy))}</span>
                     </th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[var(--hp-line)]">
-                {rows.map((row) => (
-                  <tr key={row.title}>
-                    <th scope="row" className="px-5 py-3.5 text-[14.5px] font-medium text-[var(--hp-ink)]">
-                      {row.title}
-                    </th>
-                    {plans.map((plan, p) => {
-                      const cell = planCell(row[`plan${p + 1}`])
-                      return (
-                        <td key={plan.title} className={`px-5 py-3.5 text-center text-[14px] text-[var(--hp-body)] ${plan.badge ? 'bg-[rgba(14,116,144,0.06)]' : ''}`}>
-                          {cell.kind === 'yes' ? (
-                            <span className="hp-tick mx-auto" role="img" aria-label="Included">
-                              <Check />
-                            </span>
-                          ) : cell.kind === 'no' ? (
-                            <span className="text-[var(--hp-muted)]" role="img" aria-label="Not included">
-                              —
-                            </span>
-                          ) : (
-                            cell.text
-                          )}
-                        </td>
-                      )
-                    })}
-                  </tr>
-                ))}
-              </tbody>
+              {groups.map((group, g) => (
+                <tbody key={`${group.title}-${g}`} className="divide-y divide-[var(--hp-line)] border-b border-[var(--hp-line)] last:border-b-0">
+                  {group.title && (
+                    <tr className="bg-[var(--hp-soft)]">
+                      <th scope="colgroup" colSpan={plans.length + 1} className="px-5 py-2.5 text-[12px] font-semibold uppercase tracking-[0.12em] text-[var(--hp-accent)]">
+                        {group.title}
+                      </th>
+                    </tr>
+                  )}
+                  {group.rows.map((row) => (
+                    <tr key={row.title}>
+                      <th scope="row" className="px-5 py-3.5 text-[14.5px] font-medium text-[var(--hp-ink)]">
+                        {row.title}
+                      </th>
+                      {plans.map(({ plan, column }) => {
+                        const cell = planCell(row[`plan${column + 1}`])
+                        return (
+                          <td key={plan.title} className={`px-5 py-3.5 text-center text-[14px] text-[var(--hp-body)] ${plan.badge ? 'bg-[rgba(14,116,144,0.06)]' : ''}`}>
+                            {cell.kind === 'yes' ? (
+                              <span className="hp-tick mx-auto" role="img" aria-label="Included">
+                                <Check />
+                              </span>
+                            ) : cell.kind === 'no' ? (
+                              <span className="text-[var(--hp-muted)]" role="img" aria-label="Not included">
+                                —
+                              </span>
+                            ) : (
+                              cell.text
+                            )}
+                          </td>
+                        )
+                      })}
+                    </tr>
+                  ))}
+                </tbody>
+              ))}
             </table>
           </div>
         </div>
