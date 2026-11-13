@@ -86,7 +86,7 @@ export default async function ServicePage({ page }: { page: ServiceData }) {
     highlights: <AmcHighlights block={blocks.highlights} />,
     intro: <AmcIntro block={blocks.intro} />,
     features: <AmcFeatures block={blocks.features} />,
-    plans: <AmcPlans content={blocks.plans} preview={preview} />,
+    plans: <AmcPlans content={blocks.plans} preview={preview} service={page.slug} />,
     benefits: <AmcWhy block={blocks.benefits} />,
     compare: <AmcBreakFix block={blocks.compare} />,
     process: <AmcProcess block={blocks.process} />,

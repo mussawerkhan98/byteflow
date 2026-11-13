@@ -14,32 +14,92 @@ export const DELIVERABLES = ['d_keywords', 'd_pages', 'd_audits', 'd_content'] a
 /** The inclusion groups a plan can list, by field. */
 export const INCLUSION_GROUPS = ['g_technical', 'g_onpage', 'g_local', 'g_content', 'g_links'] as const
 
-/** One plan as the section shows it, with its place in the admin's list (the table's plan1…plan4). */
+/** The most plans a section shows: the service pages allow 12, the IT AMC page 4 (the admin keeps to those). */
+export const MAX_PLANS = 12
+
+/** One plan as the section shows it, with its place in the admin's list (the table's plan1…plan12). */
 export type ShownPlan = { plan: Item; column: number; hidden: boolean }
 
 /**
- * The plans to show, up to four, in the admin's order: those switched to
+ * The plans to show, up to twelve, in the admin's order: those switched to
  * "Show" (or saved before the switch existed), and in a preview the hidden
  * ones too, marked. Each keeps its column so the table rows still match.
  */
 export function shownPlans(plans: Item[], preview = false): ShownPlan[] {
   return plans
-    .slice(0, 4)
+    .slice(0, MAX_PLANS)
     .map((plan, column) => ({ plan, column, hidden: plan.show === 'no' }))
     .filter((shown) => preview || !shown.hidden)
 }
 
+/** The billing units a plan can pick, each worded by the section's unit_<key> field. */
+export const BILLING_UNITS = ['one_time', 'month', 'user_month', 'device_month', 'site_month', 'project'] as const
+
 /**
- * A plan's price as shown: a custom quote (chosen, or no price typed) shows
- * the section's "Request Pricing" words with no unit after it; "Starting
- * from" puts the section's "From" before the price.
+ * The words after a plan's price: its own billing unit (one of the section's
+ * worded units, or its own text), else the section's "Words after each price".
  */
-export type PlanPrice = { kind: 'custom'; label: string } | { kind: 'price'; prefix: string; amount: string; unit: string }
+export function planUnit(plan: Item, fields: Item): string {
+  const type = plan.unit_type ?? ''
+  if (type === 'custom') return (plan.unit_custom ?? '').trim() || (fields.unit ?? '')
+  if ((BILLING_UNITS as readonly string[]).includes(type)) return fields[`unit_${type}`] || fields.unit || ''
+  return fields.unit ?? ''
+}
+
+/** One part of a two-part price: the setup fee (one-time) or the management fee (monthly). */
+export type PricePart = { label: string; amount: string; unit: string }
+
+/**
+ * A plan's price as shown: a custom quote (chosen, or nothing priced) shows
+ * the section's "Request Pricing" words with no unit after it; "Starting
+ * from" puts the section's "From" before the price. A plan with a setup fee
+ * and/or a management fee lists them under its price; with no price of its
+ * own, the management fee (or else the setup fee) is the price, and the
+ * other fee is listed under it.
+ */
+export type PlanPrice = { kind: 'custom'; label: string } | { kind: 'price'; prefix: string; amount: string; unit: string; parts: PricePart[] }
 
 export function planPrice(plan: Item, fields: Item): PlanPrice {
+  const custom: PlanPrice = { kind: 'custom', label: fields.custom_label || 'Request Pricing' }
+  if (plan.price_type === 'custom') return custom
+  const prefix = plan.price_type === 'from' ? fields.from_label || 'From' : ''
+  const setup = (plan.setup_fee ?? '').trim()
+  const management = (plan.management_fee ?? '').trim()
+  const parts: PricePart[] = [
+    ...(setup ? [{ label: fields.setup_label || 'Setup fee', amount: setup, unit: fields.unit_one_time || 'one-time' }] : []),
+    ...(management ? [{ label: fields.management_label || 'Management fee', amount: management, unit: fields.unit_month || 'per month' }] : []),
+  ]
   const amount = (plan.price ?? '').trim()
-  if (!amount || plan.price_type === 'custom') return { kind: 'custom', label: fields.custom_label || 'Request Pricing' }
-  return { kind: 'price', prefix: plan.price_type === 'from' ? fields.from_label || 'From' : '', amount, unit: fields.unit ?? '' }
+  if (amount) return { kind: 'price', prefix, amount, unit: planUnit(plan, fields), parts }
+  const main = parts[parts.length - 1]
+  if (!main) return custom
+  return { kind: 'price', prefix, amount: main.amount, unit: main.unit, parts: parts.slice(0, -1) }
+}
+
+/**
+ * Whether the comparison table shows: "Show" or "Hide" as chosen, and
+ * otherwise (Automatic, or a page saved before the choice) only with up to
+ * four plans, where it still fits.
+ */
+export function showTable(fields: Item, plans: number): boolean {
+  if (fields.show_table === 'yes') return true
+  if (fields.show_table === 'no') return false
+  return plans <= 4
+}
+
+/**
+ * A quote button's link with the service and package for the enquiry form
+ * (?service=cloud-services-dubai&package=Business), when the page asks for
+ * it and the link is a page on this site; anything else is left as it is.
+ */
+export function quoteHref(href: string, service: string, plan: string): string {
+  if (!href.startsWith('/') || href.startsWith('//')) return href
+  const [path, hash = ''] = href.split('#')
+  const [base, query = ''] = path.split('?')
+  const params = new URLSearchParams(query)
+  params.set('service', service)
+  params.set('package', plan)
+  return `${base}?${params}${hash ? `#${hash}` : ''}`
 }
 
 /** The price in one line ("From AED 1,500", "Request Pricing"), for the table and the banner card. */
@@ -47,11 +107,16 @@ export function priceText(price: PlanPrice): string {
   return price.kind === 'custom' ? price.label : [price.prefix, price.amount].filter(Boolean).join(' ')
 }
 
-/** A plan's button: its own words and link, or the section's. */
-export function planButton(plan: Item, fields: Item): { label: string; href: string } {
+/**
+ * A plan's button: its own words and link, or the section's. On a page set
+ * to fill in the enquiry form (`service` given), the link carries the
+ * service and the plan's name.
+ */
+export function planButton(plan: Item, fields: Item, service = ''): { label: string; href: string } {
+  const href = plan.button_link || fields.button_link || '/contact-us'
   return {
     label: plan.button_label || fields.button_label,
-    href: plan.button_link || fields.button_link || '/contact-us',
+    href: service && fields.quote_prefill === 'yes' ? quoteHref(href, service, plan.title) : href,
   }
 }
 
@@ -98,5 +163,5 @@ export function pricedPlans(plans: Item[], fields: Item): { title: string; price
 export function cardPrice(plans: ShownPlan[], fields: Item): PlanPrice | null {
   if (!plans.length) return null
   const priced = plans.map((shown) => planPrice(shown.plan, fields)).find((price) => price.kind === 'price')
-  return priced && priced.kind === 'price' ? { ...priced, prefix: '' } : planPrice(plans[0].plan, fields)
+  return priced && priced.kind === 'price' ? { ...priced, prefix: '', parts: [] } : planPrice(plans[0].plan, fields)
 }

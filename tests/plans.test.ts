@@ -1,6 +1,9 @@
 import { strict as assert } from 'node:assert'
 import { test } from 'node:test'
-import { cardPrice, planButton, planDeliverables, planGroups, planPrice, priceText, pricedPlans, shownPlans, tableGroups } from '../app/lib/plans'
+import { cardPrice, planButton, planDeliverables, planGroups, planPrice, planUnit, priceText, pricedPlans, quoteHref, showTable, shownPlans, tableGroups } from '../app/lib/plans'
+import { quotePrefill } from '../app/lib/quote-prefill'
+import { serviceDefaults } from '../app/lib/service-page'
+import { services as servicePages } from '../app/lib/services-data'
 import { previewPath, previewSignature, validPreview } from '../app/lib/preview'
 import { homeDefaults, planLabels } from '../app/lib/home-content'
 
@@ -8,9 +11,9 @@ type Item = Record<string, string>
 const fields = { ...planLabels, unit: 'per month', button_label: 'Request an SEO Quote', button_link: '/contact-us' }
 
 test('a fixed price shows with its unit; "Starting from" adds the From words', () => {
-  assert.deepEqual(planPrice({ price: 'AED 1,500', price_type: 'fixed' }, fields), { kind: 'price', prefix: '', amount: 'AED 1,500', unit: 'per month' })
+  assert.deepEqual(planPrice({ price: 'AED 1,500', price_type: 'fixed' }, fields), { kind: 'price', prefix: '', amount: 'AED 1,500', unit: 'per month', parts: [] })
   // Saved before price types existed: a fixed price.
-  assert.deepEqual(planPrice({ price: 'AED 30' }, fields), { kind: 'price', prefix: '', amount: 'AED 30', unit: 'per month' })
+  assert.deepEqual(planPrice({ price: 'AED 30' }, fields), { kind: 'price', prefix: '', amount: 'AED 30', unit: 'per month', parts: [] })
   const from = planPrice({ price: 'AED 2,000', price_type: 'from' }, fields)
   assert.equal(priceText(from), 'From AED 2,000')
 })
@@ -63,7 +66,7 @@ test('structured data and the banner card skip hidden plans and custom quotes', 
     { title: 'Scale', price: 'AED 6,000', show: 'no' },
   ]
   assert.deepEqual(pricedPlans(plans, fields), [{ title: 'Growth', price: 3500 }])
-  assert.deepEqual(cardPrice(shownPlans(plans), fields), { kind: 'price', prefix: '', amount: 'AED 3,500', unit: 'per month' })
+  assert.deepEqual(cardPrice(shownPlans(plans), fields), { kind: 'price', prefix: '', amount: 'AED 3,500', unit: 'per month', parts: [] })
   assert.deepEqual(cardPrice(shownPlans([plans[0]]), fields), { kind: 'custom', label: 'Request Pricing' })
 })
 
@@ -87,4 +90,78 @@ test('a preview link works for its path until it expires, and only on this site'
   assert.equal(previewPath('//evil.example'), null)
   assert.equal(previewPath('https://evil.example'), null)
   assert.equal(previewPath('/it-amc-services-dubai'), '/it-amc-services-dubai')
+})
+
+const units = serviceDefaults(servicePages.find((page) => page.slug === 'cloud-services-dubai')!).plans.fields
+
+test('each plan can have its own billing unit; blank keeps the page one', () => {
+  const page = { ...units, unit: 'per month' }
+  assert.equal(planUnit({}, page), 'per month')
+  assert.equal(planUnit({ unit_type: 'user_month' }, page), 'per user / month')
+  assert.equal(planUnit({ unit_type: 'one_time' }, page), 'one-time')
+  assert.equal(planUnit({ unit_type: 'project' }, page), 'per project')
+  assert.equal(planUnit({ unit_type: 'custom', unit_custom: 'per mailbox / month' }, page), 'per mailbox / month')
+  assert.equal(planUnit({ unit_type: 'custom', unit_custom: ' ' }, page), 'per month')
+  const device = planPrice({ price: 'AED 25', unit_type: 'device_month' }, page)
+  assert.equal(device.kind === 'price' ? device.unit : '', 'per device / month')
+})
+
+test('a two-part price lists the setup and management fees; with no price, the management fee leads', () => {
+  assert.deepEqual(planPrice({ price: 'AED 900', setup_fee: 'AED 2,000', management_fee: 'AED 450' }, units), {
+    kind: 'price',
+    prefix: '',
+    amount: 'AED 900',
+    unit: '',
+    parts: [
+      { label: 'Setup fee', amount: 'AED 2,000', unit: 'one-time' },
+      { label: 'Management fee', amount: 'AED 450', unit: 'per month' },
+    ],
+  })
+  assert.deepEqual(planPrice({ price: '', price_type: 'from', setup_fee: 'AED 2,000', management_fee: 'AED 450' }, units), {
+    kind: 'price',
+    prefix: 'From',
+    amount: 'AED 450',
+    unit: 'per month',
+    parts: [{ label: 'Setup fee', amount: 'AED 2,000', unit: 'one-time' }],
+  })
+  assert.deepEqual(planPrice({ price: '', setup_fee: 'AED 5,000' }, units), { kind: 'price', prefix: '', amount: 'AED 5,000', unit: 'one-time', parts: [] })
+  assert.equal(planPrice({ price: '', setup_fee: 'AED 5,000', price_type: 'custom' }, units).kind, 'custom')
+})
+
+test('the table shows automatically with up to four plans, or as switched', () => {
+  assert.equal(showTable({}, 4), true)
+  assert.equal(showTable({ show_table: 'auto' }, 9), false)
+  assert.equal(showTable({ show_table: 'yes' }, 9), true)
+  assert.equal(showTable({ show_table: 'no' }, 3), false)
+})
+
+test('twelve plans show; a thirteenth is left out', () => {
+  const plans = Array.from({ length: 13 }, (_, i) => ({ title: `Plan ${i + 1}` }))
+  assert.equal(shownPlans(plans).length, 12)
+})
+
+test('quote buttons carry the service and package on the five pages set up for it', () => {
+  assert.equal(quoteHref('/contact-us', 'cloud-services-dubai', 'Business & Co'), '/contact-us?service=cloud-services-dubai&package=Business+%26+Co')
+  assert.equal(quoteHref('/contact-us?ref=x#form', 'cyber-security', 'Pro'), '/contact-us?ref=x&service=cyber-security&package=Pro#form')
+  assert.equal(quoteHref('https://wa.me/971', 'cyber-security', 'Pro'), 'https://wa.me/971')
+  assert.equal(planButton({ title: 'Pro' }, { ...units, quote_prefill: 'yes' }, 'cyber-security').href, '/contact-us?service=cyber-security&package=Pro')
+  assert.equal(planButton({ title: 'Pro' }, { ...units, quote_prefill: 'no' }, 'cyber-security').href, '/contact-us')
+  const prefill = (slug: string) => serviceDefaults(servicePages.find((page) => page.slug === slug)!).plans.fields.quote_prefill
+  for (const slug of ['cloud-services-dubai', 'cyber-security', 'data-backup-recovery', 'system-integration', 'graphics-designing']) assert.equal(prefill(slug), 'yes', slug)
+  for (const slug of ['digital-marketing', 'website-development', 'landing-page-designing']) assert.equal(prefill(slug), 'no', slug)
+})
+
+test('every service page starts with the table on Automatic and the banner card on What’s included', () => {
+  for (const page of servicePages) {
+    const fields = serviceDefaults(page).plans.fields
+    assert.equal(fields.show_table, 'auto')
+    assert.equal(fields.banner_card, 'included')
+  }
+})
+
+test('the enquiry form picks the service and names the package from the address', () => {
+  const options = ['Cyber Security', 'Cloud Services / Microsoft 365', 'Other']
+  assert.deepEqual(quotePrefill('?service=cloud-services-dubai&package=Business', options), { service: 'Cloud Services / Microsoft 365', message: 'Package: Business\n\n' })
+  assert.deepEqual(quotePrefill('?service=unknown&package=X', options), { service: '', message: 'Package: X\n\n' })
+  assert.equal(quotePrefill('?ref=ad', options), null)
 })
