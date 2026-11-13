@@ -141,6 +141,7 @@ export function Photo({
         fill
         sizes={sizes}
         {...(priority ? { preload: true, fetchPriority: 'high' as const } : { loading: 'lazy' as const })}
+        unoptimized={!slot.src.startsWith('/')}
         className={`object-cover ${zoom ? 'hp-zoom' : ''}`}
       />
     )

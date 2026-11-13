@@ -6,9 +6,9 @@ import { fillDeep } from './site-figures'
  * A home page block as saved in the admin panel, over the website's defaults.
  * The defaults quote the site-wide figures too ({founded} and so on), so they
  * are filled in after the merge. The About Us page's blocks (about_*) are
- * saved on that page, the Services, Industries and IT AMC pages' (services_*,
- * industries_*, amc_*) on theirs, and each legal page's block on its own
- * page.
+ * saved on that page, the Services, Industries, IT AMC and Projects pages'
+ * (services_*, industries_*, amc_*, projects_*) on theirs, and each legal
+ * page's block on its own page.
  */
 const pageOf = (key: HomeBlockKey) =>
   key === 'legal_privacy'
@@ -23,7 +23,9 @@ const pageOf = (key: HomeBlockKey) =>
             ? 'industries'
             : key.startsWith('amc_')
               ? 'it-amc-services-dubai'
-              : 'home'
+              : key.startsWith('projects_')
+                ? 'projects'
+                : 'home'
 
 export async function getHomeBlock(key: HomeBlockKey): Promise<HomeBlock> {
   const page = pageOf(key)
