@@ -618,6 +618,55 @@ export const homeDefaults = {
     lists: {},
   },
 
+  // ---- Blog page (app/blog) ----
+  // Saved on the "blog" page and edited on the admin's "Blog page" screen.
+  // The banner is that page's hero (Heroes screen); the articles are Blog
+  // posts. The banner's figures are counts of the published posts; only
+  // their labels are here. featured: a post's slug, or 'latest'.
+  blog_page: {
+    fields: {
+      stat_articles: 'Articles published',
+      stat_topics: 'Topics',
+      stat_latest: 'Latest article',
+      featured: 'latest',
+      picked_badge: "Editor's pick",
+      latest_badge: 'Latest',
+      eyebrow: 'All articles',
+      heading: 'Browse by topic,',
+      heading_soft: 'or search for what you need.',
+      all_label: 'All topics',
+      filter_label: 'Filter by topic',
+      search_label: 'Search articles',
+      search_placeholder: 'Search articles…',
+      article_word: 'article',
+      articles_word: 'articles',
+      clear_label: 'Clear filters',
+      empty_text: 'No articles match your search.',
+      more_label: 'Show more articles',
+      read_label: 'Read article',
+      author_fallback: 'Byteflow team',
+    },
+    lists: {},
+  },
+  // The closing panel, as on About Us; the phone, email and address are
+  // Contact details & logo.
+  blog_cta: {
+    fields: {
+      eyebrow: 'Have an IT problem you need solved?',
+      heading: 'Reading about it is one thing.',
+      heading_soft: 'Getting it fixed is another.',
+      intro: 'Tell us what is going on and our team will help you sort it out, with no sales pitch.',
+      link_label: 'Talk to our team',
+      link: '/contact-us',
+      phone_label: 'Phone',
+      email_label: 'Email',
+      address_label: 'Location',
+      support_label: 'Support',
+      support_text: '24/7 — always available',
+    },
+    lists: {},
+  },
+
   // ---- IT AMC page (app/it-amc-services-dubai) ----
   // Saved on the "it-amc-services-dubai" page and edited on the admin's
   // "IT AMC page" screen. The banner is that page's hero (Heroes screen);
