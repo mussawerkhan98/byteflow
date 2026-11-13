@@ -8,7 +8,7 @@ import { Button, Eyebrow, SectionTitle, delay } from '../components/home/ui'
 import HomeMotion from '../components/home/HomeMotion'
 import JsonLd from '../components/JsonLd'
 import { blogStats, blogTopics, featuredPost } from '../lib/blog-page'
-import { getPageHero, getSiteSettings } from '../lib/cms'
+import { getPageHero, getPageMetadata, getSiteSettings } from '../lib/cms'
 import { getPosts } from '../lib/db'
 import { getHeaderModel } from '../lib/header-data'
 import { getHomeBlock } from '../lib/home-blocks'
@@ -20,11 +20,16 @@ const PATH = '/blog'
 const title = 'Blog | Byteflow Information Technology'
 const description = 'Practical IT guides on cybersecurity, cloud, IT support and digital marketing for businesses in Dubai and the UAE.'
 
-export const metadata: Metadata = {
-  alternates: { canonical: PATH },
-  title,
-  description,
-  openGraph: { title, description, url: PATH, type: 'website' },
+// The title and description stay as they are; the share picture is the one
+// set for this page under Pages (SEO), if any.
+export async function generateMetadata(): Promise<Metadata> {
+  const images = (await getPageMetadata('blog'))?.openGraph?.images
+  return {
+    alternates: { canonical: PATH },
+    title,
+    description,
+    openGraph: { title, description, url: PATH, type: 'website', ...(images ? { images } : {}) },
+  }
 }
 
 const text = (value: unknown) => String(value ?? '').trim()

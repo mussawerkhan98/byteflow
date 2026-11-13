@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react'
-import { lines, type HomeBlock } from '../../lib/home-content'
-import { Check, Eyebrow, SectionTitle, delay } from './ui'
+import { lines, pictureOf, type HomeBlock } from '../../lib/home-content'
+import { Check, Eyebrow, Photo, SectionTitle, delay } from './ui'
 
 // Step icons, by position: chat, document, screen, check, shield. A sixth
 // step reuses the first.
@@ -26,7 +26,8 @@ function StepIcon({ index }: { index: number }) {
  * last step (ongoing support, the part that carries on) is the navy card. The
  * line fills in once the steps scroll into view (HomeMotion); without
  * JavaScript or with reduced motion it is simply full. The words come from
- * the admin ("Home page sections" → How it works).
+ * the admin ("Home page sections" → How it works), and so does a step's
+ * picture, across the top of its card when one is uploaded.
  */
 export default function HomeProcess({ content }: { content: HomeBlock }) {
   const copy = content.fields
@@ -36,6 +37,7 @@ export default function HomeProcess({ content }: { content: HomeBlock }) {
     when: step.when,
     desc: step.description,
     points: lines(step.points ?? ''),
+    image: pictureOf(step),
   }))
   const total = String(steps.length).padStart(2, '0')
 
@@ -69,6 +71,11 @@ export default function HomeProcess({ content }: { content: HomeBlock }) {
                   {step.num}
                 </span>
                 <article className={`hp-step-card group relative flex flex-1 flex-col rounded-[0.75rem] p-6 xl:mt-6 ${last ? 'is-last' : ''}`}>
+                  {step.image && (
+                    <div className="relative -mx-6 -mt-6 mb-5 aspect-video overflow-hidden rounded-t-[0.75rem]">
+                      <Photo slot={{ ...step.image, brief: '' }} sizes="(min-width: 1280px) 20vw, (min-width: 640px) 70vw, 100vw" />
+                    </div>
+                  )}
                   <div className="flex items-start justify-between gap-3">
                     {step.when ? <p className="hp-step-when">{step.when}</p> : <span />}
                     <span aria-hidden="true" className="hp-step-icon">

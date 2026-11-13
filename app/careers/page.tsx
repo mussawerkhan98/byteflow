@@ -1,12 +1,18 @@
 import type { Metadata } from 'next'
-import { getPageHero, getSiteFigures } from '../lib/cms'
+import { getPageHero, getPageMetadata, getSiteFigures } from '../lib/cms'
 
+// The title and description stay as they are; the share card now uses them
+// and the picture set for this page under Pages (SEO), not the home page's.
 export async function generateMetadata(): Promise<Metadata> {
-  const figures = await getSiteFigures()
+  const [figures, cms] = await Promise.all([getSiteFigures(), getPageMetadata('careers')])
+  const title = 'Careers | Byteflow Information Technology'
+  const description = `Join the team behind ${figures.clients} businesses across Dubai and the UAE. See how we work and how to reach us about opportunities at Byteflow.`
+  const images = cms?.openGraph?.images
   return {
     alternates: { canonical: "/careers" },
-    title: 'Careers | Byteflow Information Technology',
-    description: `Join the team behind ${figures.clients} businesses across Dubai and the UAE. See how we work and how to reach us about opportunities at Byteflow.`,
+    title,
+    description,
+    openGraph: { title, description, url: '/careers', type: 'website', ...(images ? { images } : {}) },
   }
 }
 
@@ -33,7 +39,7 @@ export default async function CareersPage() {
   const [hero, figures] = await Promise.all([getPageHero('careers'), getSiteFigures()])
   return (
     <main>
-      <section className="relative pt-20 pb-16 px-4 sm:px-6 lg:px-8 overflow-hidden" style={hero?.hero_background_image?{backgroundImage:`linear-gradient(rgba(4,13,18,.8),rgba(4,13,18,.95)),url(${hero.hero_background_image})`,backgroundSize:'cover',backgroundPosition:'center'}:undefined}>
+      <section className="relative pt-20 pb-16 px-4 sm:px-6 lg:px-8 overflow-hidden" style={hero?.hero_background_image?{backgroundImage:`linear-gradient(rgba(4,13,18,.8),rgba(4,13,18,.95)),url(${JSON.stringify(hero.hero_background_image)})`,backgroundSize:'cover',backgroundPosition:'center'}:undefined}>
         <div
           className="absolute top-0 right-0 w-[700px] h-[700px] pointer-events-none"
           style={{ background: 'radial-gradient(circle at 80% 20%, rgba(44,205,222,0.07) 0%, transparent 60%)', filter: 'blur(80px)' }}

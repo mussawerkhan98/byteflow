@@ -15,6 +15,9 @@ export const SERVABLE = new Set([
   "image/avif",
   "image/gif",
   "image/svg+xml",
+  // Favicons kept in their own format (the admin's favicon upload).
+  "image/x-icon",
+  "image/vnd.microsoft.icon",
 ]);
 
 /**

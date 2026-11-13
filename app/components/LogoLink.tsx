@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import type { MouseEvent, ReactNode } from "react";
+import { unoptimizedSrc } from "../lib/image-src";
 
 type LogoLinkProps = {
   src: string;
@@ -47,6 +48,7 @@ export default function LogoLink({
       <Image
         src={src}
         alt="Byteflow"
+        unoptimized={unoptimizedSrc(src)}
         width={width}
         height={height}
         className={imageClassName}

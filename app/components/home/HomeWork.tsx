@@ -1,7 +1,7 @@
 import { getHomeProjects } from '../../lib/db'
 import { getHomeBlock } from '../../lib/home-blocks'
 import { homePhotos, nthPhoto } from '../../lib/home-photos'
-import { projectCard } from '../../lib/project-cards'
+import { projectCard, type ProjectCard } from '../../lib/project-cards'
 import { ProjectLead, ProjectTile } from '../projects/ProjectCards'
 import { Button, Eyebrow, SectionTitle } from './ui'
 
@@ -12,6 +12,9 @@ import { Button, Eyebrow, SectionTitle } from './ui'
  * never presented as pictures of the client's own site. Hidden with no
  * published projects.
  */
+/** A card's picture: its "Homepage card — image" from the admin, else the built-in scene for its place. */
+const cardPhoto = (card: ProjectCard, place: number) => (card.image ? { ...card.image, brief: '' } : nthPhoto(homePhotos.work, place))
+
 export default async function HomeWork() {
   const [projects, block] = await Promise.all([getHomeProjects(), getHomeBlock('home_work')])
   if (!projects.length) return null
@@ -37,7 +40,7 @@ export default async function HomeWork() {
         </header>
 
         <div className="mt-14 lg:mt-20">
-          <ProjectLead project={lead} photo={nthPhoto(homePhotos.work, 0)} linkLabel="View case study" />
+          <ProjectLead project={lead} photo={cardPhoto(lead, 0)} linkLabel="View case study" />
         </div>
 
         {rest.length > 0 && (
@@ -52,7 +55,7 @@ export default async function HomeWork() {
           >
             {rest.map((project, i) => (
               <li key={project.slug} className={rest.length === 1 ? '' : 'w-[82%] shrink-0 snap-start md:w-auto'}>
-                <ProjectTile project={project} photo={nthPhoto(homePhotos.work, i + 1)} index={i} />
+                <ProjectTile project={project} photo={cardPhoto(project, i + 1)} index={i} />
               </li>
             ))}
           </ul>

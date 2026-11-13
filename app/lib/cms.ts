@@ -56,6 +56,7 @@ export async function getCustomSections(pageSlug: string): Promise<PageSection[]
           heading: String(content.heading ?? ''),
           text: String(content.text ?? ''),
           image_url: String(content.image_url ?? ''),
+          image_alt: String(content.image_alt ?? '').trim(),
           button_label: String(content.button_label ?? ''),
           button_link: String(content.button_link ?? ''),
           placement: content.placement === 'after_faq' ? 'after_faq' as const : 'before_faq' as const,

@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import { unoptimizedSrc } from '../../lib/image-src'
 import Link from 'next/link'
 import type { CmsReview } from '../../lib/cms'
 import { servicesByCategory } from '../../lib/amc-page'
@@ -24,7 +25,7 @@ const sectionClass = 'page-container scroll-mt-28 pb-16 lg:pb-24'
 
 /** A picture uploaded in the admin; sized by its parent. */
 function Uploaded({ src, alt, sizes }: { src: string; alt: string; sizes: string }) {
-  return <Image src={src} alt={alt} fill sizes={sizes} unoptimized={!src.startsWith('/')} className="object-cover" />
+  return <Image src={src} alt={alt} fill sizes={sizes} unoptimized={unoptimizedSrc(src)} className="object-cover" />
 }
 
 function Heading({ id, block, center = false }: { id: string; block: HomeBlock; center?: boolean }) {
@@ -619,7 +620,7 @@ export function AmcPageBlocks({ sections }: { sections: PageSection[] }) {
             <div data-reveal className={`hp-band grid overflow-hidden rounded-[1.5rem] ${section.image_url ? 'lg:grid-cols-12' : ''}`}>
               {section.image_url && (
                 <figure className="relative min-h-[16rem] lg:col-span-5">
-                  <Uploaded src={section.image_url} alt={section.heading} sizes="(min-width: 1024px) 40vw, 100vw" />
+                  <Uploaded src={section.image_url} alt={section.image_alt || section.heading} sizes="(min-width: 1024px) 40vw, 100vw" />
                 </figure>
               )}
               <div className={`p-6 sm:p-10 lg:p-12 ${section.image_url ? 'lg:col-span-7' : ''}`}>

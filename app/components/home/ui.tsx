@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import { unoptimizedSrc } from '../../lib/image-src'
 import Link from 'next/link'
 import type { CSSProperties, ReactNode } from 'react'
 import type { PhotoSlot } from '../../lib/home-photos'
@@ -141,7 +142,7 @@ export function Photo({
         fill
         sizes={sizes}
         {...(priority ? { preload: true, fetchPriority: 'high' as const } : { loading: 'lazy' as const })}
-        unoptimized={!slot.src.startsWith('/')}
+        unoptimized={unoptimizedSrc(slot.src)}
         className={`object-cover ${zoom ? 'hp-zoom' : ''}`}
       />
     )
