@@ -47,6 +47,9 @@ export type DbService = {
   /** One bullet per line. */
   highlights: string;
   image_caption: string;
+  /** The homepage's featured card only: its heading and its "Explore …" link. Blank falls back to the title. */
+  home_heading: string;
+  home_link_label: string;
 };
 
 export type DbProject = {
@@ -234,6 +237,8 @@ function toService(row: Record<string, unknown>): DbService {
     tagline: String(row.tagline ?? "").trim(),
     highlights: String(row.highlights ?? ""),
     image_caption: String(row.image_caption ?? "").trim(),
+    home_heading: String(row.home_heading ?? "").trim(),
+    home_link_label: String(row.home_link_label ?? "").trim(),
   };
 }
 

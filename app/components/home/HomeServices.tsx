@@ -11,7 +11,8 @@ import { ArrowRight, Button, Check, Eyebrow, SectionTitle, TextLink, delay } fro
  * One service as a wide card: its story (icon, eyebrow, title, tagline,
  * description and buttons) on the left, its highlights on a soft-blue field
  * with the hero's diagonal edge on the right. Every service uses the same
- * layout.
+ * layout. Its heading and second link are the service's "Home tab" heading
+ * and second button text, or its title.
  */
 function ServiceCard({ tab, heading: Heading = 'h4' }: { tab: ServiceTab; heading?: 'h3' | 'h4' }) {
   return (
@@ -23,12 +24,12 @@ function ServiceCard({ tab, heading: Heading = 'h4' }: { tab: ServiceTab; headin
           </span>
           <Eyebrow>{tab.eyebrow}</Eyebrow>
         </div>
-        <Heading className="hp-h3-lg mt-6">{tab.title}</Heading>
+        <Heading className="hp-h3-lg mt-6">{tab.home.heading}</Heading>
         {tab.subtitle && <p className="mt-2 text-[17px] font-semibold leading-snug text-[var(--hp-accent)]">{tab.subtitle}</p>}
         <p className="mt-3 max-w-xl text-[16px] leading-relaxed text-[var(--hp-body)]">{tab.text}</p>
         <div className="mt-8 flex flex-wrap items-center gap-x-7 gap-y-4">
           <Button href={tab.button.href}>{tab.button.label}</Button>
-          <TextLink href={tab.href}>Explore {tab.title}</TextLink>
+          <TextLink href={tab.href}>{tab.home.link}</TextLink>
         </div>
       </div>
 
