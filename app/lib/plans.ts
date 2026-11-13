@@ -88,6 +88,22 @@ export function showTable(fields: Item, plans: number): boolean {
 }
 
 /**
+ * Whether the packages show as a price list (a row each) rather than cards:
+ * as chosen, or automatically when there are more than four and none has
+ * anything a card is for (points, deliverables, inclusion groups, what's
+ * left out or extra), so a page of quote-only services isn't a wall of
+ * near-empty cards. Up to four stay as cards side by side.
+ */
+export function listLayout(fields: Item, plans: ShownPlan[]): boolean {
+  if (fields.layout === 'list') return true
+  if (fields.layout === 'cards') return false
+  if (fields.layout !== 'auto') return false
+  const detailed = (plan: Item) =>
+    [plan.points, plan.excluded, plan.extras, ...DELIVERABLES.map((key) => plan[key]), ...INCLUSION_GROUPS.map((key) => plan[key])].some((value) => (value ?? '').trim())
+  return plans.length > 4 && !plans.some(({ plan }) => detailed(plan))
+}
+
+/**
  * A quote button's link with the service and package for the enquiry form
  * (?service=cloud-services-dubai&package=Business), when the page asks for
  * it and the link is a page on this site; anything else is left as it is.
@@ -98,7 +114,7 @@ export function quoteHref(href: string, service: string, plan: string): string {
   const [base, query = ''] = path.split('?')
   const params = new URLSearchParams(query)
   params.set('service', service)
-  params.set('package', plan)
+  if (plan) params.set('package', plan)
   return `${base}?${params}${hash ? `#${hash}` : ''}`
 }
 

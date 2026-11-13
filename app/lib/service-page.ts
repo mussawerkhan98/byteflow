@@ -150,6 +150,8 @@ export function serviceDefaults(page: ServiceData): Record<ServiceBlockKey, Home
         banner_card: 'included',
         // The table shows with up to four packages unless switched on or off.
         show_table: 'auto',
+        // Many quote-only packages show as a price list, others as cards.
+        layout: 'auto',
         // Quote buttons fill in the enquiry form on the pages set up with many packages.
         quote_prefill: QUOTE_PREFILL.has(page.slug) ? 'yes' : 'no',
         ...unitLabels,

@@ -1,6 +1,6 @@
 import { strict as assert } from 'node:assert'
 import { test } from 'node:test'
-import { cardPrice, planButton, planDeliverables, planGroups, planPrice, planUnit, priceText, pricedPlans, quoteHref, showTable, shownPlans, tableGroups } from '../app/lib/plans'
+import { cardPrice, listLayout, planButton, planDeliverables, planGroups, planPrice, planUnit, priceText, pricedPlans, quoteHref, showTable, shownPlans, tableGroups } from '../app/lib/plans'
 import { quotePrefill } from '../app/lib/quote-prefill'
 import { serviceDefaults } from '../app/lib/service-page'
 import { services as servicePages } from '../app/lib/services-data'
@@ -164,4 +164,17 @@ test('the enquiry form picks the service and names the package from the address'
   assert.deepEqual(quotePrefill('?service=cloud-services-dubai&package=Business', options), { service: 'Cloud Services / Microsoft 365', message: 'Package: Business\n\n' })
   assert.deepEqual(quotePrefill('?service=unknown&package=X', options), { service: '', message: 'Package: X\n\n' })
   assert.equal(quotePrefill('?ref=ad', options), null)
+})
+
+test('more than four quote-only packages show as a price list; detailed ones and short lists stay cards', () => {
+  const quoteOnly = (n: number) => shownPlans(Array.from({ length: n }, (_, i) => ({ title: `P${i}`, price_type: 'custom', third_party: 'Billed separately', summary: 'A line' })))
+  assert.equal(listLayout({ layout: 'auto' }, quoteOnly(9)), true)
+  assert.equal(listLayout({ layout: 'auto' }, quoteOnly(4)), false, 'four or fewer stay cards')
+  const detailed = shownPlans([...quoteOnly(8).map((s) => s.plan), { title: 'Pro', points: 'Firewall\nEDR' }])
+  assert.equal(listLayout({ layout: 'auto' }, detailed), false)
+  assert.equal(listLayout({ layout: 'list' }, quoteOnly(2)), true)
+  assert.equal(listLayout({ layout: 'cards' }, quoteOnly(9)), false)
+  // The IT AMC page (no layout field) is always cards.
+  assert.equal(listLayout({}, quoteOnly(9)), false)
+  assert.equal(quoteHref('/contact-us', 'cloud-services-dubai', ''), '/contact-us?service=cloud-services-dubai')
 })
