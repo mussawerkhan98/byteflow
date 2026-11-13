@@ -10,6 +10,7 @@ import { IndustryIcon } from '../industries/IndustryIcon'
 import { hasContent, type PageSection } from '../PageSectionCards'
 import { ServiceIcon } from '../ServiceIcon'
 import { AmcIcon } from './AmcIcon'
+import AmcPreventiveStage from './AmcPreventiveStage'
 import AmcServiceTabs from './AmcServiceTabs'
 
 /*
@@ -176,45 +177,35 @@ export function AmcFeatures({ block }: { block: HomeBlock }) {
   )
 }
 
-/** 5. Preventive maintenance: alternating picture and text rows, or numbered cards without pictures. */
+/** 5. Preventive maintenance: a picture stage beside the steps, or numbered cards without pictures. */
 export function AmcPreventive({ block }: { block: HomeBlock }) {
   const items = block.lists.items
   if (!items.length) return null
   const pictured = items.some((item) => item.image)
   return (
     <section id="preventive-maintenance" aria-labelledby="amc-preventive-title" className={sectionClass}>
-      <Heading id="amc-preventive-title" block={block} />
       {pictured ? (
-        <ul className="mt-10 space-y-10 lg:space-y-14">
-          {items.map((item, i) => (
-            <li key={item.title} data-reveal className="grid gap-6 lg:grid-cols-12 lg:items-center lg:gap-12">
-              <figure className={`hp-frame relative aspect-[16/10] overflow-hidden rounded-[1.5rem] lg:col-span-6 ${i % 2 ? 'lg:order-2' : ''}`}>
-                {item.image ? <Uploaded src={item.image} alt={item.image_alt} sizes="(min-width: 1024px) 45vw, 100vw" /> : <div className="absolute inset-0 bg-[var(--hp-soft)]" />}
-              </figure>
-              <div className="lg:col-span-6">
-                <span aria-hidden="true" className="font-display text-[13px] font-semibold tabular-nums text-[var(--hp-accent)]">
+        <AmcPreventiveStage
+          heading={<Heading id="amc-preventive-title" block={block} />}
+          items={items.map((item) => ({ title: item.title, description: item.description ?? '', image: item.image ?? '', alt: item.image_alt ?? '' }))}
+        />
+      ) : (
+        <>
+          <Heading id="amc-preventive-title" block={block} />
+          <ul className="mt-10 grid gap-4 sm:grid-cols-2">
+            {items.map((item, i) => (
+              <li key={item.title} data-reveal style={delay((i % 2) * 100)} className="flex gap-5 rounded-[1.25rem] border border-[var(--hp-line)] bg-[var(--hp-soft)] p-6">
+                <span aria-hidden="true" className="font-display text-[2rem] font-semibold leading-none tabular-nums text-[rgba(14,116,144,0.35)]">
                   {String(i + 1).padStart(2, '0')}
                 </span>
-                <h3 className="mt-2 hp-h3">{item.title}</h3>
-                {item.description && <p className="mt-3 text-[16px] leading-relaxed text-[var(--hp-body)]">{item.description}</p>}
-              </div>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <ul className="mt-10 grid gap-4 sm:grid-cols-2">
-          {items.map((item, i) => (
-            <li key={item.title} data-reveal style={delay((i % 2) * 100)} className="flex gap-5 rounded-[1.25rem] border border-[var(--hp-line)] bg-[var(--hp-soft)] p-6">
-              <span aria-hidden="true" className="font-display text-[2rem] font-semibold leading-none tabular-nums text-[rgba(14,116,144,0.35)]">
-                {String(i + 1).padStart(2, '0')}
-              </span>
-              <span>
-                <h3 className="font-display text-[1.125rem] font-semibold text-[var(--hp-ink)]">{item.title}</h3>
-                {item.description && <p className="mt-1.5 text-[15px] leading-relaxed text-[var(--hp-body)]">{item.description}</p>}
-              </span>
-            </li>
-          ))}
-        </ul>
+                <span>
+                  <h3 className="font-display text-[1.125rem] font-semibold text-[var(--hp-ink)]">{item.title}</h3>
+                  {item.description && <p className="mt-1.5 text-[15px] leading-relaxed text-[var(--hp-body)]">{item.description}</p>}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </>
       )}
     </section>
   )
