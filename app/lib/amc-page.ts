@@ -34,11 +34,14 @@ export type AmcSectionKey = (typeof amcSectionKeys)[number]
 
 const known = new Set<string>(amcSectionKeys)
 
-/** The sections switched on, in the admin's order, each once; unknown keys are left out. */
-export function amcSections(layout: Item[]): AmcSectionKey[] {
+/**
+ * The sections switched on, in the admin's order, each once; unknown keys
+ * are left out. A preview keeps the hidden ones too.
+ */
+export function amcSections(layout: Item[], preview = false): AmcSectionKey[] {
   const seen = new Set<string>()
   return layout
-    .filter((item) => item.show !== 'no')
+    .filter((item) => preview || item.show !== 'no')
     .map((item) => (item.title ?? '').trim())
     .filter((key): key is AmcSectionKey => {
       if (!known.has(key) || seen.has(key)) return false
@@ -46,6 +49,9 @@ export function amcSections(layout: Item[]): AmcSectionKey[] {
       return true
     })
 }
+
+/** The sections switched to "Hide" on the Sections tab, by key. */
+export const hiddenSections = (layout: Item[]) => new Set(layout.filter((item) => item.show === 'no').map((item) => (item.title ?? '').trim()))
 
 /** One cell of the plans table: a tick, a dash, or the words typed. */
 export type PlanCell = { kind: 'yes' } | { kind: 'no' } | { kind: 'text'; text: string }

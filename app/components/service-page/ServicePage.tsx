@@ -1,12 +1,14 @@
 import '../../home.css'
 import '../../about.css'
 import type { ReactNode } from 'react'
+import { draftMode } from 'next/headers'
 import { getFaqsForSlug, getCustomSections, getPageHero, getSiteSettings, getTestimonials } from '../../lib/cms'
 import { getServices } from '../../lib/db'
 import { getHeaderModel } from '../../lib/header-data'
 import { getHomeBlock } from '../../lib/home-blocks'
 import { lines } from '../../lib/home-content'
-import { priceNumber } from '../../lib/amc-page'
+import { hiddenSections } from '../../lib/amc-page'
+import { pricedPlans, shownPlans } from '../../lib/plans'
 import { getServiceBlocks } from '../../lib/service-blocks'
 import { serviceSections, type ServiceSectionKey } from '../../lib/service-page'
 import { pageServices, serviceTab } from '../../lib/service-tabs'
@@ -34,6 +36,7 @@ import Contact from '../Contact'
 import HomeMotion from '../home/HomeMotion'
 import JsonLd from '../JsonLd'
 import PageCta from '../PageCta'
+import PreviewBar, { HiddenSection } from '../PreviewBar'
 import { IncludedCard, PlansCard } from './HeroCards'
 import ServiceHero from './ServiceHero'
 
@@ -64,8 +67,13 @@ export default async function ServicePage({ page }: { page: ServiceData }) {
   const highlight = hero?.hero_highlight || (hero?.hero_heading ? '' : page.tagline)
   const description = hero?.hero_description || page.description
   const phone = String(settings?.header_phone || '+971 54 328 2042')
-  const order = serviceSections(blocks.layout.lists.sections)
-  const hasPlans = order.includes('plans') && blocks.plans.lists.plans.length > 0
+  // A preview from the admin shows the hidden sections and packages too, marked.
+  const { isEnabled: preview } = await draftMode()
+  const order = serviceSections(blocks.layout.lists.sections, preview)
+  const hidden = preview ? hiddenSections(blocks.layout.lists.sections) : new Set<string>()
+  const hasPlans = order.includes('plans') && shownPlans(blocks.plans.lists.plans, preview).length > 0
+  // The banner card shows the packages only when chosen for it on the Packages & pricing tab.
+  const plansCard = hasPlans && blocks.plans.fields.banner_card === 'plans'
   const path = `/${page.slug}`
 
   // The page's own questions, then those added for it on the FAQs screen.
@@ -78,7 +86,7 @@ export default async function ServicePage({ page }: { page: ServiceData }) {
     highlights: <AmcHighlights block={blocks.highlights} />,
     intro: <AmcIntro block={blocks.intro} />,
     features: <AmcFeatures block={blocks.features} />,
-    plans: <AmcPlans content={blocks.plans} />,
+    plans: <AmcPlans content={blocks.plans} preview={preview} />,
     benefits: <AmcWhy block={blocks.benefits} />,
     compare: <AmcBreakFix block={blocks.compare} />,
     process: <AmcProcess block={blocks.process} />,
@@ -126,10 +134,13 @@ export default async function ServicePage({ page }: { page: ServiceData }) {
   }
 
   const offers = hasPlans
-    ? blocks.plans.lists.plans
-        .map((plan) => ({ plan, price: priceNumber(plan.price) }))
-        .filter((offer) => offer.price !== null)
-        .map(({ plan, price }) => ({ '@type': 'Offer', name: `${plan.title} — ${title}`, price, priceCurrency: 'AED', url: absoluteUrl(`${path}#plans`) }))
+    ? pricedPlans(blocks.plans.lists.plans, blocks.plans.fields).map((plan) => ({
+        '@type': 'Offer',
+        name: `${plan.title} — ${title}`,
+        price: plan.price,
+        priceCurrency: 'AED',
+        url: absoluteUrl(`${path}#plans`),
+      }))
     : []
 
   return (
@@ -164,12 +175,21 @@ export default async function ServicePage({ page }: { page: ServiceData }) {
         phone={phone}
         stats={blocks.figures.lists.stats}
         image={hero?.hero_image ? { src: hero.hero_image, alt: hero.hero_image_alt || title } : null}
-        card={hasPlans ? <PlansCard plans={blocks.plans} /> : order.includes('features') ? <IncludedCard features={blocks.features} label={blocks.features.fields.link_label} /> : null}
+        card={
+          plansCard ? (
+            <PlansCard plans={blocks.plans} preview={preview} />
+          ) : order.includes('features') ? (
+            <IncludedCard features={blocks.features} label={blocks.features.fields.link_label} />
+          ) : hasPlans ? (
+            <PlansCard plans={blocks.plans} preview={preview} />
+          ) : null
+        }
       />
 
       {order.map((key) => (
-        <div key={key}>{sections[key]}</div>
+        <div key={key}>{hidden.has(key) ? <HiddenSection>{sections[key]}</HiddenSection> : sections[key]}</div>
       ))}
+      {preview && <PreviewBar path={path} />}
     </div>
   )
 }

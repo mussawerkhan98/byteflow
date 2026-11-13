@@ -19,6 +19,47 @@ type Item = Record<string, string>
 
 export type HomeBlock = { fields: Record<string, string>; lists: Record<string, Item[]> }
 
+/**
+ * The packages section's names for its parts ("Packages & pricing" on the IT
+ * AMC page and the service pages): the words for a custom quote and a
+ * starting price, the structured deliverables, the inclusion groups, and
+ * what's left out or costs extra.
+ */
+export const planLabels = {
+  from_label: 'From',
+  custom_label: 'Request Pricing',
+  d_keywords_label: 'Keywords',
+  d_pages_label: 'Pages',
+  d_audits_label: 'Audits',
+  d_content_label: 'Content pieces',
+  g_technical_label: 'Technical',
+  g_onpage_label: 'On-page',
+  g_local_label: 'Local SEO',
+  g_content_label: 'Content',
+  g_links_label: 'Link building',
+  excluded_label: 'Not included',
+  extras_label: 'Additional charges',
+}
+
+/** A package's fields beyond its name, price, line, points and badge, as they start. */
+const planExtras = {
+  price_type: 'fixed',
+  show: 'yes',
+  button_label: '',
+  button_link: '',
+  d_keywords: '',
+  d_pages: '',
+  d_audits: '',
+  d_content: '',
+  g_technical: '',
+  g_onpage: '',
+  g_local: '',
+  g_content: '',
+  g_links: '',
+  excluded: '',
+  extras: '',
+}
+
 // Text here can quote the site-wide figures with placeholders like {founded}
 // (see site-figures.ts); getHomeBlock fills them in.
 export const homeDefaults = {
@@ -797,9 +838,11 @@ export const homeDefaults = {
   // in a table: each row's plan1–plan4 is "yes", "no" or a short text.
   amc_plans: {
     fields: {
+      ...planLabels,
       eyebrow: 'Plans and pricing',
       heading: 'Published prices,',
       heading_soft: 'per user, per month.',
+      intro: '',
       card_label: 'Plans from',
       unit: 'per user / month',
       note: 'Prices exclude 5% VAT. A 10-person office on Essential is AED 300/month.',
@@ -811,20 +854,20 @@ export const homeDefaults = {
     },
     lists: {
       plans: [
-        { title: 'Essential', price: 'AED 30', summary: 'Remote support and monitoring for every device.', points: 'Unlimited remote support\n24/7 endpoint monitoring\nSoftware updates and patching', badge: '' },
-        { title: 'Standard', price: 'AED 60', summary: 'Everything in Essential, plus:', points: 'On-site engineer visits\nServer and network management\nIT asset inventory', badge: 'Includes on-site visits' },
-        { title: 'Complete', price: 'AED 90', summary: 'Everything in Standard, plus:', points: 'Website management and SEO monitoring\nPriority SLA\nA dedicated account manager', badge: '' },
+        { title: 'Essential', price: 'AED 30', summary: 'Remote support and monitoring for every device.', points: 'Unlimited remote support\n24/7 endpoint monitoring\nSoftware updates and patching', badge: '', ...planExtras },
+        { title: 'Standard', price: 'AED 60', summary: 'Everything in Essential, plus:', points: 'On-site engineer visits\nServer and network management\nIT asset inventory', badge: 'Includes on-site visits', ...planExtras },
+        { title: 'Complete', price: 'AED 90', summary: 'Everything in Standard, plus:', points: 'Website management and SEO monitoring\nPriority SLA\nA dedicated account manager', badge: '', ...planExtras },
       ],
       compare: [
-        { title: 'Unlimited remote support', plan1: 'yes', plan2: 'yes', plan3: 'yes', plan4: '' },
-        { title: '24/7 endpoint monitoring', plan1: 'yes', plan2: 'yes', plan3: 'yes', plan4: '' },
-        { title: 'Software updates and patching', plan1: 'yes', plan2: 'yes', plan3: 'yes', plan4: '' },
-        { title: 'On-site engineer visits', plan1: 'no', plan2: 'yes', plan3: 'yes', plan4: '' },
-        { title: 'Server and network management', plan1: 'no', plan2: 'yes', plan3: 'yes', plan4: '' },
-        { title: 'IT asset inventory', plan1: 'no', plan2: 'yes', plan3: 'yes', plan4: '' },
-        { title: 'Website management and SEO monitoring', plan1: 'no', plan2: 'no', plan3: 'yes', plan4: '' },
-        { title: 'Priority SLA', plan1: 'no', plan2: 'no', plan3: 'yes', plan4: '' },
-        { title: 'A dedicated account manager', plan1: 'no', plan2: 'no', plan3: 'yes', plan4: '' },
+        { title: 'Unlimited remote support', group: '', plan1: 'yes', plan2: 'yes', plan3: 'yes', plan4: '' },
+        { title: '24/7 endpoint monitoring', group: '', plan1: 'yes', plan2: 'yes', plan3: 'yes', plan4: '' },
+        { title: 'Software updates and patching', group: '', plan1: 'yes', plan2: 'yes', plan3: 'yes', plan4: '' },
+        { title: 'On-site engineer visits', group: '', plan1: 'no', plan2: 'yes', plan3: 'yes', plan4: '' },
+        { title: 'Server and network management', group: '', plan1: 'no', plan2: 'yes', plan3: 'yes', plan4: '' },
+        { title: 'IT asset inventory', group: '', plan1: 'no', plan2: 'yes', plan3: 'yes', plan4: '' },
+        { title: 'Website management and SEO monitoring', group: '', plan1: 'no', plan2: 'no', plan3: 'yes', plan4: '' },
+        { title: 'Priority SLA', group: '', plan1: 'no', plan2: 'no', plan3: 'yes', plan4: '' },
+        { title: 'A dedicated account manager', group: '', plan1: 'no', plan2: 'no', plan3: 'yes', plan4: '' },
       ],
     },
   },
