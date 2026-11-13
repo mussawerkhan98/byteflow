@@ -302,6 +302,13 @@
   transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s var(--hp-ease);
 }
 
+/* A button in a narrow card (a package's quote button): long words wrap
+   inside it rather than push its arrow out of the card. */
+.hp-btn.hp-btn-wrap {
+  white-space: normal;
+  text-align: left;
+}
+
 .hp-btn:not(:has(.hp-btn-arrow)) {
   justify-content: center;
   padding-right: 1.5rem;
