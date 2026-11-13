@@ -708,6 +708,52 @@ export const homeDefaults = {
     lists: {},
   },
 
+  // ---- Contact page (app/contact-us) ----
+  // Saved on the "contact-us" page and edited on the admin's "Contact page"
+  // screen. The banner words are that page's hero (Heroes); the phone,
+  // email, WhatsApp, address, hours, socials and map are Contact details &
+  // logo.
+  contact_page: {
+    fields: {
+      call_label: 'Call us',
+      whatsapp_label: 'WhatsApp',
+      whatsapp_text: 'Chat with our team',
+      email_label: 'Email',
+      address_label: 'Office',
+      hours_label: 'Opening hours',
+      socials_label: 'Follow us',
+      form_heading: 'Send us a message',
+      form_intro: 'Tell us about your setup and what you need. Fields marked * are required.',
+      promises: 'Free consultation\nClear, fixed proposal\nNo obligation',
+    },
+    lists: {},
+  },
+  contact_steps: {
+    fields: {
+      eyebrow: 'What happens next',
+      heading: 'From your message',
+      heading_soft: 'to a clear plan.',
+    },
+    lists: {
+      steps: [
+        { title: 'We read your message', description: 'Our team reviews what you sent and the service you picked.' },
+        { title: 'We talk it through', description: 'We call or email to understand your setup, team size and what you need.' },
+        { title: 'You get a clear proposal', description: 'A fixed, itemised proposal, with no obligation to go ahead.' },
+      ],
+    },
+  },
+  contact_office: {
+    fields: {
+      eyebrow: 'Our office',
+      heading: 'Visit us',
+      heading_soft: 'in Dubai.',
+      text: '',
+      directions_label: 'Get directions',
+      directions_link: '',
+    },
+    lists: {},
+  },
+
   // ---- IT AMC page (app/it-amc-services-dubai) ----
   // Saved on the "it-amc-services-dubai" page and edited on the admin's
   // "IT AMC page" screen. The banner is that page's hero (Heroes screen);

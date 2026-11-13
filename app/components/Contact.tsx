@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useId, useSyncExternalStore } from 'react'
+import { DEFAULT_MAP_URL, safeMapUrl } from '../lib/office-map'
 import { quotePrefill } from '../lib/quote-prefill'
 import { getRecaptchaToken } from '../lib/recaptcha'
 import { LEAD_EVENT, trackEvent } from '../lib/analytics'
@@ -114,7 +115,6 @@ const noSubscribe = () => () => {}
 
 type ContactSettings ={ header_phone?: string; primary_email?: string; physical_address?: string; business_hours?: string; whatsapp_link?: string; facebook_url?: string; linkedin_url?: string; instagram_url?: string; tiktok_url?: string; map_embed_url?: string; map_enabled?: number | boolean }
 type ContactHero = { hero_label?:string; hero_heading?:string; hero_description?:string; hero_background_image?:string }
-function safeMapUrl(value?: string) { try { if (!value) return ''; const url = new URL(value); return url.protocol === 'https:' && /(^|\.)google\.(com|ae)$/.test(url.hostname) && url.pathname.startsWith('/maps/embed') ? url.toString() : '' } catch { return '' } }
 
 /** The home page's "get started" words (home_contact), shown above the form. */
 export type ContactCta = {
@@ -265,12 +265,160 @@ function HomeContact({
 }
 
 /**
- * `asPage` is set by /contact-us, where this section is the whole page: its
- * heading becomes the page's only h1. On the home page it stays an h2 under
- * the hero's h1, and `cta` gives it the "Ready to upgrade your IT setup?"
- * heading with call and WhatsApp buttons (it used to be a separate banner).
+ * The Contact page's words: the banner from its hero (Heroes), the rest from
+ * the admin's "Contact page" screen (contact_page).
  */
-export default function Contact({ settings = {}, hero, asPage = false, cta }: { settings?: ContactSettings; hero?: ContactHero | null; asPage?: boolean; cta?: ContactCta }) {
+export type ContactPageCopy = {
+  label: string
+  heading: string
+  highlight: string
+  description: string
+  call_label: string
+  whatsapp_label: string
+  whatsapp_text: string
+  email_label: string
+  socials_label: string
+  form_heading: string
+  form_intro: string
+  promises: string[]
+}
+
+const WhatsAppIcon = () => socials.find((s) => s.label === 'WhatsApp')!.icon
+
+/**
+ * The top of the Contact page, in the home page's design: the page's h1,
+ * its description and promises, then the ways to reach us (call, WhatsApp
+ * and email, a row each to tap) and the socials on the left; the office and
+ * its hours are the page's own section further down; the enquiry form in its raised card on the right,
+ * staying in view on wide screens.
+ */
+function PageContact({
+  copy,
+  contactInfo,
+  socials,
+  whatsapp,
+  formCard,
+}: {
+  copy: ContactPageCopy
+  contactInfo: ContactItem[]
+  socials: SocialItem[]
+  whatsapp: string
+  formCard: React.ReactNode
+}) {
+  const find = (label: string) => contactInfo.find((item) => item.label === label)
+  const phone = find('Phone')
+  const email = find('Email')
+  const actions = [
+    phone && copy.call_label ? { label: copy.call_label, value: phone.value, href: phone.href!, icon: phone.icon, external: false } : null,
+    copy.whatsapp_label ? { label: copy.whatsapp_label, value: copy.whatsapp_text, href: whatsapp, icon: <WhatsAppIcon />, external: true } : null,
+    email && copy.email_label ? { label: copy.email_label, value: email.value, href: email.href!, icon: email.icon, external: false } : null,
+  ].filter((item): item is NonNullable<typeof item> => Boolean(item))
+
+  return (
+    <section aria-labelledby="contact-title" className="relative isolate">
+      <div aria-hidden="true" className="ab-hero-bg pointer-events-none absolute inset-x-0 top-0 -z-10 h-[34rem]" />
+      <div className="page-container grid gap-10 pb-16 pt-10 sm:pt-14 lg:grid-cols-12 lg:gap-14 lg:pb-24 xl:gap-20">
+        <div className="lg:col-span-5">
+          <p className="hp-badge hp-enter-fade">
+            <span aria-hidden="true" className="hp-dot" />
+            {copy.label}
+          </p>
+          <h1 id="contact-title" className="hp-h1 hp-enter mt-6" style={{ '--d': '80ms' } as React.CSSProperties}>
+            {copy.heading}
+            {copy.highlight && ' '}
+            {copy.highlight && <span className="hp-h1-accent block">{copy.highlight}</span>}
+          </h1>
+          {copy.description && (
+            <p className="hp-lead hp-enter mt-6" style={{ '--d': '200ms' } as React.CSSProperties}>
+              {copy.description}
+            </p>
+          )}
+          {copy.promises.length > 0 && (
+            <ul className="mt-7 flex flex-wrap gap-x-6 gap-y-3">
+              {copy.promises.map((promise) => (
+                <li key={promise} className="flex items-center gap-2.5 text-[15px] font-medium text-[var(--hp-ink)]">
+                  <span className="hp-tick">
+                    <CheckIcon />
+                  </span>
+                  {promise}
+                </li>
+              ))}
+            </ul>
+          )}
+
+          {/* The quickest ways in: one row each, the whole row tappable. */}
+          {actions.length > 0 && (
+            <ul data-reveal className="hp-band mt-9 divide-y divide-[var(--hp-line)] overflow-hidden rounded-[1.25rem]">
+              {actions.map((item) => (
+                <li key={item.label}>
+                  <a
+                    href={item.href}
+                    {...(item.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                    className="group flex items-center gap-4 px-5 py-4 transition-colors duration-300 hover:bg-[var(--hp-bg)] sm:px-6"
+                  >
+                    <span aria-hidden="true" className="hp-icon-tile h-11 w-11 shrink-0 rounded-xl [&_svg]:h-[18px] [&_svg]:w-[18px]">
+                      {item.icon}
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block text-[11.5px] font-semibold uppercase tracking-[0.14em] text-[var(--hp-muted)]">{item.label}</span>
+                      <span className="mt-0.5 block truncate text-[15.5px] font-semibold text-[var(--hp-ink)] transition-colors group-hover:text-[var(--hp-accent)]">{item.value}</span>
+                    </span>
+                    <span aria-hidden="true" className="hp-svc-go group-hover:border-[var(--hp-navy)] group-hover:bg-[var(--hp-navy)] group-hover:text-[#2ccdde]">
+                      <svg className="h-4 w-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth={1.7}>
+                        <path d="M2.5 8h11m-4-4.5L14 8l-4.5 4.5" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )}
+
+          {socials.length > 0 && (
+            <div className="mt-8 flex flex-wrap items-center gap-x-4 gap-y-3">
+              {copy.socials_label && <p className="text-[11.5px] font-semibold uppercase tracking-[0.14em] text-[var(--hp-muted)]">{copy.socials_label}</p>}
+              <ul className="flex flex-wrap gap-2" aria-label={copy.socials_label || 'Follow us'}>
+                {socials.map((s) => (
+                  <li key={s.label}>
+                    <a href={s.href} target="_blank" rel="noopener noreferrer" aria-label={s.label} className="hp-social [&_svg]:h-4 [&_svg]:w-4">
+                      {s.icon}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+
+        <div className="hp-enter lg:col-span-7" style={{ '--d': '160ms' } as React.CSSProperties}>
+          <div className="lg:sticky lg:top-28">{formCard}</div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/**
+ * `asPage` is set by /contact-us, where this section is the whole page: its
+ * heading becomes the page's only h1. With `page` (its words from the admin)
+ * it takes the home page's design (PageContact). On the home page it stays
+ * an h2 under the hero's h1, and `cta` gives it the "Ready to upgrade your IT
+ * setup?" heading with call and WhatsApp buttons (it used to be a separate
+ * banner).
+ */
+export default function Contact({
+  settings = {},
+  hero,
+  asPage = false,
+  cta,
+  page,
+}: {
+  settings?: ContactSettings
+  hero?: ContactHero | null
+  asPage?: boolean
+  cta?: ContactCta
+  page?: ContactPageCopy
+}) {
   const Heading = asPage ? 'h1' : 'h2'
   const shownContactInfo = contactInfo.map((item) => item.label === 'Phone' ? { ...item, value: settings.header_phone || item.value, href: `tel:${(settings.header_phone || item.value).replace(/[^+\d]/g, '')}` } : item.label === 'Email' ? { ...item, value: settings.primary_email || item.value, href: `mailto:${settings.primary_email || item.value}` } : item.label === 'Location' ? { ...item, value: settings.physical_address || item.value } : item.label === 'Support Hours' ? { ...item, value: settings.business_hours || item.value } : item)
   const socialValues: Record<string, string | undefined> = { Facebook: settings.facebook_url, LinkedIn: settings.linkedin_url, Instagram: settings.instagram_url, TikTok: settings.tiktok_url, WhatsApp: settings.whatsapp_link }
@@ -345,8 +493,9 @@ export default function Contact({ settings = {}, hero, asPage = false, cta }: { 
     }
   }
 
-  // The home page's form is styled in home.css (hp-form); /contact-us keeps these.
-  const home = Boolean(cta && !asPage)
+  // The home page's form is styled in home.css (hp-form), and so is the
+  // Contact page's (`page`); without its words /contact-us keeps these.
+  const home = Boolean((cta && !asPage) || page)
   const inputStyle = (name: string): React.CSSProperties => home ? {} : ({
     background: focused === name ? 'rgba(44,205,222,0.05)' : 'var(--overlay-hover-soft)',
     border: focused === name ? '1px solid rgba(44,205,222,0.5)' : '1px solid var(--overlay-strong)',
@@ -395,7 +544,17 @@ export default function Contact({ settings = {}, hero, asPage = false, cta }: { 
             </button>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
+          <form onSubmit={handleSubmit} noValidate aria-labelledby={page?.form_heading ? `${fieldId}-form-title` : undefined} className="flex flex-col gap-5">
+            {page && (page.form_heading || page.form_intro) && (
+              <div className="mb-1">
+                {page.form_heading && (
+                  <h2 id={`${fieldId}-form-title`} className="font-display text-[1.5rem] font-semibold tracking-[-0.02em] text-[var(--hp-ink)]">
+                    {page.form_heading}
+                  </h2>
+                )}
+                {page.form_intro && <p className="mt-1.5 text-[14.5px] leading-relaxed text-[var(--hp-body)]">{page.form_intro}</p>}
+              </div>
+            )}
 
             {/* Name + Company */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -540,7 +699,7 @@ export default function Contact({ settings = {}, hero, asPage = false, cta }: { 
   const showMap = settings.map_enabled === undefined || Boolean(settings.map_enabled)
   const mapFrame = (
     <iframe
-      src={mapUrl || "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d230964.06209009685!2d55.13766789915716!3d25.24320683637232!2m3!1f0!2f0!3f0!3m2!1i1024!1i768!4f13.1!3m3!1m2!1s0x3e5f43a9923d5979%3A0x36f7a80cba19b9eb!2sByteflow%20information%20Technology%20%26%20CO%20LLC!5e0!3m2!1sen!2sae!4v1779350571004!5m2!1sen!2sae"}
+      src={mapUrl || DEFAULT_MAP_URL}
       title="Byteflow office location on Google Maps"
       width="100%"
       height="100%"
@@ -550,6 +709,8 @@ export default function Contact({ settings = {}, hero, asPage = false, cta }: { 
       referrerPolicy="no-referrer-when-downgrade"
     />
   )
+
+  if (page) return <PageContact copy={page} contactInfo={shownContactInfo} socials={configuredSocials} whatsapp={settings.whatsapp_link || 'https://wa.me/971543282042'} formCard={formCard} />
 
   if (cta && !asPage) return <HomeContact cta={cta} contactInfo={shownContactInfo} socials={configuredSocials} whatsapp={settings.whatsapp_link || 'https://wa.me/971543282042'} formCard={formCard} map={showMap ? mapFrame : null} />
 
