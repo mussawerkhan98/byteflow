@@ -560,6 +560,64 @@ export const homeDefaults = {
     },
   },
 
+  // ---- Projects page (app/projects) and each project's page ----
+  // Saved on the "projects" page and edited on the admin's "Projects page"
+  // screen. The banner is that page's hero (Heroes screen); the projects
+  // themselves are the Projects screen. The banner's figures are counts of
+  // the published projects; only their labels are here.
+  projects_page: {
+    fields: {
+      stat_projects: 'Case studies',
+      stat_services: 'Services',
+      stat_industries: 'Industries',
+      stat_clients: 'Clients served',
+      eyebrow: 'Case studies',
+      heading: 'What each business needed,',
+      heading_soft: 'and what we delivered.',
+      filter_label: 'Filter by service',
+      all_label: 'All work',
+      empty_text: 'No projects for this service yet.',
+      link_label: 'View case study',
+    },
+    lists: {},
+  },
+  projects_detail: {
+    fields: {
+      back_label: 'All projects',
+      primary_label: 'Start a similar project',
+      primary_link: '/contact-us',
+      story_heading: 'The project',
+      details_label: 'Project details',
+      service_label: 'Service',
+      industry_label: 'Industry',
+      year_label: 'Year',
+      delivered_label: 'What we delivered',
+      tags_label: 'Technology used',
+      more_eyebrow: 'More work',
+      more_heading: 'Related projects',
+      more_link_label: 'See all projects',
+    },
+    lists: {},
+  },
+  // The closing panel on the Projects page and every project's page, as on
+  // About Us; the phone, email and address are Contact details & logo.
+  projects_cta: {
+    fields: {
+      eyebrow: 'Have a project in mind?',
+      heading: 'Tell us what you want to achieve.',
+      heading_soft: 'We will come back with a plan.',
+      intro: 'Tell us what you are trying to achieve and we will come back to you with a plan, not a sales pitch.',
+      link_label: 'Start a conversation',
+      link: '/contact-us',
+      phone_label: 'Phone',
+      email_label: 'Email',
+      address_label: 'Location',
+      support_label: 'Support',
+      support_text: '24/7 — always available',
+    },
+    lists: {},
+  },
+
   // ---- IT AMC page (app/it-amc-services-dubai) ----
   // Saved on the "it-amc-services-dubai" page and edited on the admin's
   // "IT AMC page" screen. The banner is that page's hero (Heroes screen);
