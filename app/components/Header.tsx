@@ -37,7 +37,7 @@ const telHref = (phone: string) => `tel:${phone.replace(/[^\d+]/g, "")}`;
  * `split` is a pill holding a link and a menu button, which carry the padding themselves.
  */
 const pillClass = (active: boolean, split = false) =>
-  `site-pill ${active ? "is-active " : ""}inline-flex items-center ${split ? "" : "gap-1.5 px-[13px] py-[9px] "}whitespace-nowrap rounded-[10px] text-[14.5px] font-medium leading-5 transition-colors duration-200 ${
+  `site-pill ${active ? "is-active " : ""}inline-flex items-center ${split ? "" : "gap-1.5 px-[6px] py-[9px] xl:px-[9px] 2xl:px-[13px] "}whitespace-nowrap rounded-[10px] text-[13px] xl:text-[14px] 2xl:text-[14.5px] font-medium leading-5 transition-colors duration-200 ${
     active
       ? "bg-[rgba(44,205,222,0.12)] text-[#2CCDDE]"
       : "text-[#e2e8f0] hover:bg-[rgba(44,205,222,0.12)] hover:text-[#2CCDDE]"
@@ -896,11 +896,11 @@ function Dropdown({
           <Link
             href={link.href}
             aria-current={link.current ? "page" : undefined}
-            className="rounded-l-[10px] py-[9px] pl-[13px] pr-1"
+            className="rounded-l-[10px] py-[9px] pl-[6px] pr-1 xl:pl-[9px] 2xl:pl-[13px]"
           >
             {label}
           </Link>
-          <button {...buttonProps} aria-label={`${label} menu`} className="rounded-r-[10px] py-[9px] pl-1 pr-[11px]">
+          <button {...buttonProps} aria-label={`${label} menu`} className="rounded-r-[10px] py-[9px] pl-1 pr-[5px] xl:pr-[8px] 2xl:pr-[11px]">
             {chevron}
           </button>
         </span>
@@ -1150,14 +1150,14 @@ export default function Header({
             imageClassName="h-7 w-auto object-contain sm:h-8 lg:h-9"
             preload
           >
-            <span className="site-bar-brand font-brand text-[17px] font-extrabold uppercase leading-none tracking-[-0.01em] text-white sm:text-[19px] lg:text-xl">
+            <span className="site-bar-brand font-brand text-[17px] font-extrabold uppercase leading-none tracking-[-0.01em] text-white sm:text-[19px] lg:text-[18px] xl:text-xl">
               Byteflo<span className="brand-accent">w</span>
             </span>
           </LogoLink>
 
           <span aria-hidden="true" className="flex-1" />
 
-          <nav ref={navRef} aria-label="Main" className="hidden items-center gap-0.5 lg:flex">
+          <nav ref={navRef} aria-label="Main" className="hidden items-center lg:flex xl:gap-0.5">
             {entries.map((entry) => {
               if (entry.kind === "link") {
                 const current = isCurrent(pathname, entry.item.href);
@@ -1224,10 +1224,10 @@ export default function Header({
 
           {model.showPhone && (
             <>
-              <span aria-hidden="true" className="site-bar-divider mx-3 hidden h-6 w-px bg-white/15 xl:block" />
+              <span aria-hidden="true" className="site-bar-divider mx-3 hidden h-6 w-px bg-white/15 min-[1400px]:block" />
               <a
                 href={telHref(phone)}
-                className="site-bar-phone hidden items-center gap-2 whitespace-nowrap text-[13.5px] tabular-nums text-[#cbd5e1] transition-colors duration-200 hover:text-white xl:inline-flex"
+                className="site-bar-phone hidden items-center gap-2 whitespace-nowrap text-[13.5px] tabular-nums text-[#cbd5e1] transition-colors duration-200 hover:text-white min-[1400px]:inline-flex"
               >
                 <PhoneIcon className="h-4 w-4 text-[#2CCDDE]" />
                 {phone}
@@ -1237,11 +1237,11 @@ export default function Header({
 
           <Link
             href={cta.href}
-            className="site-bar-cta group inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full bg-[#2CCDDE] pl-3.5 pr-1 text-[13px] sm:ml-1 sm:gap-2 sm:pl-4 font-bold text-[#04121A] transition-colors duration-200 hover:bg-[#5BDCE9] lg:ml-3 lg:h-12 lg:gap-3 lg:pl-5 lg:pr-1.5 lg:text-[14.5px] xl:ml-5"
+            className="site-bar-cta group inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full bg-[#2CCDDE] pl-3.5 pr-1 text-[13px] sm:ml-1 sm:gap-2 sm:pl-4 font-bold text-[#04121A] transition-colors duration-200 hover:bg-[#5BDCE9] lg:ml-1.5 lg:h-12 lg:gap-3 lg:px-4 lg:text-[13.5px] xl:pl-5 xl:pr-1.5 xl:text-[14.5px] 2xl:ml-5"
           >
-            <span className="lg:hidden">{cta.shortLabel}</span>
-            <span className="hidden lg:inline">{cta.label}</span>
-            <span className="site-bar-cta-arrow grid h-7 w-7 place-items-center rounded-full bg-[#04121A] text-[#2CCDDE] sm:h-8 sm:w-8">
+            <span className="xl:hidden">{cta.shortLabel}</span>
+            <span className="hidden xl:inline">{cta.label}</span>
+            <span className="site-bar-cta-arrow grid h-7 w-7 place-items-center rounded-full bg-[#04121A] text-[#2CCDDE] sm:h-8 sm:w-8 lg:hidden xl:grid">
               <ArrowUpRightIcon className="h-3.5 w-3.5 transition-transform duration-200 group-hover:-translate-y-px group-hover:translate-x-px" />
             </span>
           </Link>
