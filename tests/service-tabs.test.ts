@@ -91,3 +91,15 @@ test('every built-in service page can stand in for the database', () => {
   assert.ok(pageServices.length >= 9)
   assert.ok(pageServices.every((service) => service.slug && service.title))
 })
+
+test("the featured card's heading and second link use the Home tab fields, else the title", () => {
+  const plain = serviceTab(amc)
+  assert.deepEqual(plain.home, { heading: 'IT AMC / IT Support', link: 'Explore IT AMC / IT Support' })
+  const set = serviceTab({ ...amc, home_heading: ' IT AMC Services in Dubai ', home_link_label: 'Explore IT AMC Services' })
+  assert.deepEqual(set.home, { heading: 'IT AMC Services in Dubai', link: 'Explore IT AMC Services' })
+  // Nothing else changes: the title, link and button stay the service's own.
+  assert.equal(set.title, 'IT AMC / IT Support')
+  assert.equal(set.href, '/it-amc-services-dubai')
+  assert.deepEqual(set.button, plain.button)
+  assert.deepEqual(serviceTab({ ...amc, home_heading: '  ', home_link_label: '' }).home, plain.home)
+})

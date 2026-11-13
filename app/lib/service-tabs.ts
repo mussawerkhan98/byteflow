@@ -24,6 +24,8 @@ export type ServiceTab = {
   imageAlt: string
   caption: string
   button: { label: string; href: string }
+  /** The homepage's featured card only: its heading, and the text of its link to the service's page. */
+  home: { heading: string; link: string }
 }
 
 export const MAX_BULLETS = 5
@@ -55,7 +57,8 @@ type ServiceInput = Pick<
   | 'tagline'
   | 'highlights'
   | 'image_caption'
->
+> &
+  Partial<Pick<DbService, 'home_heading' | 'home_link_label'>>
 
 export function serviceTab(service: ServiceInput): ServiceTab {
   const page = pagesBySlug.get(service.slug)
@@ -74,6 +77,10 @@ export function serviceTab(service: ServiceInput): ServiceTab {
     button: {
       label: service.cta_label || 'Discuss this service',
       href: safeHref(service.cta_link, '/contact-us'),
+    },
+    home: {
+      heading: service.home_heading?.trim() || service.title,
+      link: service.home_link_label?.trim() || `Explore ${service.title}`,
     },
   }
 }
