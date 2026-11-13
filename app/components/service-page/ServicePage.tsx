@@ -175,6 +175,7 @@ export default async function ServicePage({ page }: { page: ServiceData }) {
         phone={phone}
         stats={blocks.figures.lists.stats}
         image={hero?.hero_image ? { src: hero.hero_image, alt: hero.hero_image_alt || title } : null}
+        background={hero?.hero_background_image || ''}
         card={
           plansCard ? (
             <PlansCard plans={blocks.plans} preview={preview} />

@@ -21,6 +21,7 @@ import {
   faqPageSchema,
   graph,
 } from "../../lib/structured-data";
+import { unoptimizedSrc } from "../../lib/image-src";
 import ReadingProgress from "./ReadingProgress";
 import ShareButtons from "./ShareButtons";
 import { DesktopToc, MobileToc } from "./TableOfContents";
@@ -199,7 +200,7 @@ export default async function BlogPost({ post }: { post: Post }) {
             <div className="flex flex-wrap items-center gap-x-5 gap-y-3 text-sm text-[var(--text-muted)]">
               <span className="inline-flex items-center gap-2.5">
                 <span className="post-avatar" aria-hidden="true">
-                  <Image src={logo} alt="" width={36} height={36} className="h-6 w-6 object-contain" />
+                  <Image src={logo} unoptimized={unoptimizedSrc(logo)} alt="" width={36} height={36} className="h-6 w-6 object-contain" />
                 </span>
                 <span>
                   Written by{" "}
@@ -252,6 +253,7 @@ export default async function BlogPost({ post }: { post: Post }) {
             {post.image_url ? (
               <Image
                 src={post.image_url}
+                unoptimized={unoptimizedSrc(post.image_url)}
                 alt={coverAlt}
                 width={COVER_WIDTH}
                 height={COVER_HEIGHT}
@@ -293,7 +295,7 @@ export default async function BlogPost({ post }: { post: Post }) {
             <section aria-labelledby="publisher-heading" className="post-panel mt-10 p-6 sm:p-7">
               <div className="flex flex-col sm:flex-row gap-5">
                 <span className="post-avatar post-avatar-lg flex-shrink-0" aria-hidden="true">
-                  <Image src={logo} alt="" width={64} height={64} className="h-10 w-10 object-contain" />
+                  <Image src={logo} unoptimized={unoptimizedSrc(logo)} alt="" width={64} height={64} className="h-10 w-10 object-contain" />
                 </span>
                 <div>
                   <p className="post-eyebrow mb-1">About the publisher</p>
@@ -471,6 +473,7 @@ function RelatedCard({ post }: { post: Post }) {
         {post.image_url ? (
           <Image
             src={post.image_url}
+            unoptimized={unoptimizedSrc(post.image_url)}
             alt=""
             fill
             sizes="(min-width: 1024px) 360px, (min-width: 640px) 50vw, 100vw"

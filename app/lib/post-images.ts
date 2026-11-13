@@ -11,8 +11,12 @@
  * No dependencies, so the rules can be tested directly.
  */
 
-/** Widths offered in the srcset; each is one of Next's default image sizes. */
-export const POST_IMAGE_WIDTHS = [640, 828, 1080, 1200, 1920]
+/**
+ * Widths offered in the srcset. Each must be one of next.config.ts's
+ * images.deviceSizes, or the optimizer refuses it (400) and the picture
+ * breaks; 1600 covers the 760px column on a 2x screen.
+ */
+export const POST_IMAGE_WIDTHS = [640, 828, 1024, 1600]
 
 /** How wide a post picture is shown: the article column, at most ~760px. */
 export const POST_IMAGE_SIZES = '(min-width: 1024px) 760px, 100vw'

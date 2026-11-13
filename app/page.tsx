@@ -57,8 +57,12 @@ export default async function Home() {
     ...(pageHero?.hero_description
       ? { description: pageHero.hero_description }
       : {}),
-    // The admin's hero pictures (hero_background_image, hero_image) are not
-    // used: the redesign takes its photographs from lib/home-photos.ts.
+    // The picture on the right (Pages → Home → Top banner), else the
+    // built-in photograph (lib/home-photos.ts). The home banner has no
+    // background picture, so hero_background_image is not used here.
+    // Always from the banner, so an older saved hero section can't supply one.
+    image: pageHero?.hero_image || "",
+    imageAlt: pageHero?.hero_image_alt || "",
     ...(pageHero?.hero_primary_label
       ? { primaryButtonLabel: pageHero.hero_primary_label }
       : {}),

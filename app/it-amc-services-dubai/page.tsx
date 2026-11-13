@@ -199,6 +199,7 @@ export default async function Page() {
         phone={phone}
         stats={figures.lists.stats}
         image={hero?.hero_image ? { src: hero.hero_image, alt: hero.hero_image_alt || title } : null}
+        background={hero?.hero_background_image || ''}
         card={<PlansCard plans={plans} preview={preview} />}
       />
 

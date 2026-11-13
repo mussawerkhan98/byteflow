@@ -11,7 +11,7 @@ import { homePhotos, type PhotoSlot } from './home-photos'
 import { services } from './services-data'
 
 type ProjectLike = Pick<DbProject, 'slug' | 'title' | 'category' | 'industry'> &
-  Partial<Pick<DbProject, 'image_url' | 'card_image' | 'card_image_alt'>>
+  Partial<Pick<DbProject, 'image_url' | 'image_alt' | 'card_image' | 'card_image_alt'>>
 
 /** "All work", then each category in the order its first project appears, with how many there are. */
 export function projectFilters(projects: Pick<DbProject, 'category'>[]): { category: string; count: number }[] {
@@ -75,7 +75,7 @@ const scene = (category: string): PhotoSlot => {
 /** The project's own picture (its featured image, else its card image), or a representative scene. */
 export function projectPhoto(project: ProjectLike): PhotoSlot {
   const own = project.image_url?.trim()
-  if (own) return { src: own, alt: project.title, brief: '' }
+  if (own) return { src: own, alt: project.image_alt?.trim() || project.title, brief: '' }
   const card = project.card_image?.trim()
   if (card) return { src: card, alt: project.card_image_alt?.trim() || project.title, brief: '' }
   return scene(project.category)

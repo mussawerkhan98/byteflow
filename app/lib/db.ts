@@ -61,6 +61,8 @@ export type DbProject = {
   industry: string;
   year: string;
   image_url: string | null;
+  /** Describes the featured image; blank (or not migrated yet) uses the title. */
+  image_alt: string;
   bullet_points: string[];
   metrics: { value: string; label: string }[];
   tags: string[];
@@ -291,6 +293,7 @@ function toProject(row: Record<string, unknown>): DbProject {
     industry: (row.industry as string) || "",
     year: (row.year as string) || "",
     image_url: (row.image_url as string) ?? null,
+    image_alt: text(row.image_alt),
     bullet_points: safeJsonParse<string[]>(row.bullet_points, []),
     metrics: safeJsonParse<{ value: string; label: string }[]>(row.metrics, []),
     tags: safeJsonParse<string[]>(row.tags, []),

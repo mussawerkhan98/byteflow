@@ -50,7 +50,12 @@ export default async function HomeNeeds() {
             <li key={scenario.number} data-reveal style={delay(i * 130)} className={`w-[82%] shrink-0 snap-start md:w-auto ${i % 3 === 1 ? 'md:mt-12' : ''}`}>
               <article className="group relative">
                 <figure data-reveal="image" className={`hp-frame relative overflow-hidden rounded-[1.5rem] ${shapes[i % shapes.length]}`}>
-                  <Photo slot={nthPhoto(homePhotos.needs, i)} sizes="(min-width: 768px) 30vw, 100vw" zoom />
+                  {/* The scenario's own picture (admin), else the built-in photograph. */}
+                  <Photo
+                    slot={scenario.image ? { ...scenario.image, brief: '' } : nthPhoto(homePhotos.needs, i)}
+                    sizes="(min-width: 768px) 30vw, 100vw"
+                    zoom
+                  />
                   <span aria-hidden="true" className="hp-glass absolute left-4 top-4 rounded-full px-3 py-1 font-display text-[13px] font-semibold tabular-nums text-[var(--hp-ink)]">
                     {scenario.number}
                   </span>

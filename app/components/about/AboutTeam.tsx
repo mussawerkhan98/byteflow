@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import { unoptimizedSrc } from '../../lib/image-src'
 import type { CmsTeamMember } from '../../lib/cms'
 import type { HomeBlock } from '../../lib/home-content'
 import { Eyebrow, SectionTitle, delay } from '../home/ui'
@@ -43,7 +44,7 @@ export default function AboutTeam({ members, content }: { members: CmsTeamMember
                 <article className="hp-card group flex h-full flex-col overflow-hidden rounded-[1.75rem]">
                   <figure className="relative m-2 aspect-[4/3] overflow-hidden rounded-[1.35rem] bg-[var(--hp-soft)]">
                     {member.image_url ? (
-                      <Image src={member.image_url} alt={member.image_alt || member.name} fill sizes="(min-width: 1024px) 30vw, (min-width: 640px) 46vw, 92vw" className="hp-zoom object-cover" />
+                      <Image src={member.image_url} unoptimized={unoptimizedSrc(member.image_url)} alt={member.image_alt || member.name} fill sizes="(min-width: 1024px) 30vw, (min-width: 640px) 46vw, 92vw" className="hp-zoom object-cover" />
                     ) : (
                       <span aria-hidden="true" className="grid h-full place-items-center font-display text-[2.5rem] font-semibold text-[var(--hp-accent)]">
                         {initials(member.name)}

@@ -27,6 +27,9 @@ export type HeroContent = {
   stripText?: string
   stripLinkLabel?: string
   stripLink?: string
+  /** The picture on the right, uploaded in the admin; blank keeps the built-in photograph. */
+  image?: string
+  imageAlt?: string
 }
 
 /** The H1 in two tones: the heading, then the highlight (or the heading's second line). */
@@ -76,6 +79,10 @@ export default function HomeHero({
   figures?: SiteFigures
 }) {
   const [lead, rest] = splitHeading(content.heading, content.highlight)
+  // The admin's picture, described by its alt text (else by the heading).
+  const heroPhoto = content.image
+    ? { src: content.image, alt: content.imageAlt || [lead, rest].filter(Boolean).join(' '), brief: '' }
+    : homePhotos.hero
   const whatsapp = whatsappUrl || `https://wa.me/${phone.replace(/\D/g, '')}`
   const strip = (content.stripText || 'Support / Secure / Cloud / Build')
     .split('/')
@@ -128,7 +135,7 @@ export default function HomeHero({
             <div className="lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2">
               <div className="hp-enter-image relative h-full" style={delay(160)}>
                 <div className="hp-hero-cut relative aspect-[16/10] h-full overflow-hidden bg-[var(--hp-soft)] lg:aspect-auto">
-                  <Photo slot={homePhotos.hero} sizes="(min-width: 1024px) 48vw, 100vw" priority />
+                  <Photo slot={heroPhoto} sizes="(min-width: 1024px) 48vw, 100vw" priority />
                 </div>
 
                 {/* The Google rating, on a small card in the photo's widest corner. */}

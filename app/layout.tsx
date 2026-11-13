@@ -57,12 +57,17 @@ const fallbackMetadata = (figures: SiteFigures): Metadata => {
 };
 
 export async function generateMetadata(): Promise<Metadata> {
-  const [cms, figures] = await Promise.all([getPageMetadata("home"), getSiteFigures()]);
+  const [cms, figures, settings] = await Promise.all([getPageMetadata("home"), getSiteFigures(), getSiteSettings()]);
+  // The favicon uploaded under Contact details & logo, else the built-in one
+  // (public/favicon.ico: a file in app/ would override this setting).
+  const uploaded = String(settings?.favicon_url ?? "").trim();
+  const favicon = uploaded && !/^data:/i.test(uploaded) ? uploaded : "/favicon.ico";
   return {
     metadataBase: new URL("https://www.byteflow.ae"),
     // Matches the live home page, so an unreachable database never
     // publishes a different title.
     ...(cms ?? fallbackMetadata(figures)),
+    icons: { icon: favicon, shortcut: favicon },
     verification: { google: "tAM-FG-hPH1-sxVzCRVhEVnLM0OhIATbEoeYXTTShc4" },
   };
 }

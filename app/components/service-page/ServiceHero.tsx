@@ -1,4 +1,6 @@
 import type { ReactNode } from 'react'
+import Image from 'next/image'
+import { unoptimizedSrc } from '../../lib/image-src'
 import { Button, delay } from '../home/ui'
 import { PhoneIcon } from '../InlineIcons'
 
@@ -9,7 +11,9 @@ type Link = { label: string; href: string }
  * tones, the paragraph, the buttons and phone number, and the figures under
  * them on the left; on the right the hero picture (Heroes screen) when one
  * is set, with the card beside it (plans, or what's included) over its lower
- * edge, or the card alone.
+ * edge, or the card alone. The banner's background picture (Heroes screen),
+ * when set, lies behind it all under a light wash, so the words stay
+ * readable; without one the banner keeps its plain backdrop.
  */
 export default function ServiceHero({
   label,
@@ -21,6 +25,7 @@ export default function ServiceHero({
   phone,
   stats,
   image,
+  background = '',
   card,
 }: {
   label: string
@@ -32,10 +37,29 @@ export default function ServiceHero({
   phone: string
   stats: Record<string, string>[]
   image: { src: string; alt: string } | null
+  /** The banner's background picture: decorative, behind the words. */
+  background?: string
   card: ReactNode
 }) {
   return (
     <section aria-labelledby="service-title" className="relative isolate">
+      {background && (
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-20 overflow-hidden">
+          <Image
+            src={background}
+            alt=""
+            fill
+            sizes="100vw"
+            quality={50}
+            preload
+            fetchPriority="high"
+            unoptimized={unoptimizedSrc(background)}
+            className="object-cover"
+          />
+          {/* A light wash, strongest behind the words (top on phones, left on wide screens). */}
+          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(243,247,252,0.9)_0%,rgba(243,247,252,0.94)_60%,var(--hp-bg)_100%)] lg:bg-[linear-gradient(90deg,rgba(243,247,252,0.96)_0%,rgba(243,247,252,0.9)_50%,rgba(243,247,252,0.6)_100%)]" />
+        </div>
+      )}
       <div aria-hidden="true" className="ab-hero-bg pointer-events-none absolute inset-x-0 top-0 -z-10 h-[40rem]" />
       <div className="page-container grid gap-10 pb-16 pt-10 sm:pt-14 lg:grid-cols-12 lg:items-center lg:gap-14 lg:pb-20">
         <div className="lg:col-span-7">
@@ -89,8 +113,18 @@ export default function ServiceHero({
           <div className="lg:col-span-5">
             {image && (
               <figure className="hp-frame relative aspect-[4/3] overflow-hidden rounded-[1.75rem] hp-enter-image" style={delay(220)}>
-                {/* eslint-disable-next-line @next/next/no-img-element -- an uploaded picture of any origin, above the fold */}
-                <img src={image.src} alt={image.alt} fetchPriority="high" className="absolute inset-0 h-full w-full object-cover" />
+                {/* Above the fold: loaded first, at the size each screen needs. */}
+                <Image
+                  src={image.src}
+                  alt={image.alt}
+                  fill
+                  sizes="(min-width: 1024px) 40vw, 100vw"
+                  quality={70}
+                  preload
+                  fetchPriority="high"
+                  unoptimized={unoptimizedSrc(image.src)}
+                  className="object-cover"
+                />
               </figure>
             )}
             {card && (

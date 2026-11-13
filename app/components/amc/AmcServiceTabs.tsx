@@ -1,6 +1,7 @@
 'use client'
 
 import Image from 'next/image'
+import { unoptimizedSrc } from '../../lib/image-src'
 import { useEffect, useId, useRef, useState } from 'react'
 import { AmcIcon } from './AmcIcon'
 
@@ -77,7 +78,7 @@ export default function AmcServiceTabs({ groups }: { groups: ServiceGroup[] }) {
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
               {group.image && (
                 <span className="relative block h-24 w-full shrink-0 overflow-hidden rounded-2xl sm:h-20 sm:w-32">
-                  <Image src={group.image} alt={group.alt} fill sizes="(min-width: 640px) 128px, 100vw" unoptimized={!group.image.startsWith("/")} className="object-cover" />
+                  <Image src={group.image} alt={group.alt} fill sizes="(min-width: 640px) 128px, 100vw" unoptimized={unoptimizedSrc(group.image)} className="object-cover" />
                 </span>
               )}
               <div>
@@ -90,7 +91,7 @@ export default function AmcServiceTabs({ groups }: { groups: ServiceGroup[] }) {
                 <li key={service.title} className="hp-band flex flex-col overflow-hidden rounded-[1.25rem]">
                   {service.image && (
                     <span className="relative block aspect-[16/9] w-full">
-                      <Image src={service.image} alt={service.alt} fill sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 100vw" unoptimized={!service.image.startsWith("/")} className="object-cover" />
+                      <Image src={service.image} alt={service.alt} fill sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 100vw" unoptimized={unoptimizedSrc(service.image)} className="object-cover" />
                     </span>
                   )}
                   <span className="block p-5">

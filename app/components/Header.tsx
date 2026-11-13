@@ -10,6 +10,7 @@ import {
   type ReactNode,
 } from "react";
 import Image from "next/image";
+import { unoptimizedSrc } from "../lib/image-src";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import LogoLink from "./LogoLink";
@@ -169,7 +170,7 @@ function PictureStack({
             alt={picture.src === current ? picture.alt : ""}
             fill
             sizes={sizes}
-            unoptimized={!picture.src.startsWith("/")}
+            unoptimized={unoptimizedSrc(picture.src)}
             className={`object-cover transition-opacity duration-300 ${picture.src === current ? "opacity-100" : "opacity-0"}`}
           />
         ))}
@@ -772,7 +773,7 @@ function InsightsPanel({
                           height={60}
                           sizes="84px"
                           loading="lazy"
-                          unoptimized={!post.image.startsWith("/")}
+                          unoptimized={unoptimizedSrc(post.image)}
                           className="h-full w-full object-cover"
                         />
                       )}

@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import Link from 'next/link'
 import Image from 'next/image'
+import { unoptimizedSrc } from '../lib/image-src'
 import type { DbService } from '../lib/db'
 
 /**
@@ -115,7 +116,8 @@ export default function CmsServicePage({
             >
               <Image
                 src={service.image_url}
-                alt={service.title}
+                alt={service.image_alt || service.title}
+                unoptimized={unoptimizedSrc(service.image_url)}
                 fill
                 sizes="(min-width: 1280px) 1280px, 100vw"
                 className="object-cover"

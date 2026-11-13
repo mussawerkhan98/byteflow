@@ -1,6 +1,7 @@
 'use client'
 
 import Image from 'next/image'
+import { unoptimizedSrc } from '../../lib/image-src'
 import { useEffect, useId, useRef, useState, type ReactNode } from 'react'
 
 type Item = { title: string; description: string; image: string; alt: string }
@@ -43,7 +44,7 @@ export default function AmcPreventiveStage({ items, heading }: { items: Item[]; 
           const owner = items.find((item) => item.image === src)
           return (
             <span key={src} aria-hidden={p !== pictureOf[current]} className={`absolute inset-0 transition-[opacity,transform] duration-700 ease-out ${p === pictureOf[current] ? 'scale-100 opacity-100' : 'scale-[1.04] opacity-0'}`}>
-              <Image src={src} alt={owner?.alt ?? ''} fill sizes="(min-width: 1024px) 55vw, 100vw" unoptimized={!src.startsWith('/')} className="object-cover" />
+              <Image src={src} alt={owner?.alt ?? ''} fill sizes="(min-width: 1024px) 55vw, 100vw" unoptimized={unoptimizedSrc(src)} className="object-cover" />
             </span>
           )
         })}

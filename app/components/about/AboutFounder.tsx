@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import { unoptimizedSrc } from '../../lib/image-src'
 import { PhoneIcon } from '../InlineIcons'
 import { Button, Eyebrow } from '../home/ui'
 
@@ -47,7 +48,7 @@ export default function AboutFounder({ founder }: { founder: Founder }) {
           <header className="ab-letter-side flex flex-col gap-8 p-7 sm:p-10 lg:col-span-5 lg:col-start-1 lg:row-start-1 lg:p-12 lg:pb-8">
             {founder.imageUrl && (
               <figure className="relative aspect-[4/3] overflow-hidden rounded-[1.25rem] border border-white/80 shadow-[var(--hp-shadow)] lg:aspect-[4/5]">
-                <Image src={founder.imageUrl} alt={founder.imageAlt} fill sizes="(min-width: 1024px) 34vw, 100vw" className="object-cover object-top" />
+                <Image src={founder.imageUrl} unoptimized={unoptimizedSrc(founder.imageUrl)} alt={founder.imageAlt} fill sizes="(min-width: 1024px) 34vw, 100vw" className="object-cover object-top" />
               </figure>
             )}
             <div>

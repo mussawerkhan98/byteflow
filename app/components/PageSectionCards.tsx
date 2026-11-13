@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { unoptimizedSrc } from "../lib/image-src";
 import Link from "next/link";
 
 export type Placement = "before_faq" | "after_faq";
@@ -9,6 +10,8 @@ export type PageSection = {
   heading: string;
   text: string;
   image_url: string;
+  /** The picture's description, from the admin; blank uses the heading. */
+  image_alt?: string;
   button_label: string;
   button_link: string;
   placement?: Placement;
@@ -61,7 +64,8 @@ export default function PageSectionCards({
                   <div className="relative h-64 lg:h-auto lg:min-h-[320px]">
                     <Image
                       src={section.image_url}
-                      alt={section.heading || section.name || ""}
+                      alt={section.image_alt || section.heading || section.name || ""}
+                      unoptimized={unoptimizedSrc(section.image_url)}
                       fill
                       sizes="(min-width: 1024px) 50vw, 100vw"
                       className="object-cover"
