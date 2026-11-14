@@ -9,6 +9,7 @@ import FAQ, { type FaqContact, type FaqCopy } from '../FAQ'
 import { ArrowRight, Button, Check, Eyebrow, SectionTitle, delay } from '../home/ui'
 import { IndustryIcon } from '../industries/IndustryIcon'
 import { hasContent, type PageSection } from '../PageSectionCards'
+import { blockParts } from '../../lib/block-parts'
 import { ServiceIcon } from '../ServiceIcon'
 import { AmcIcon } from './AmcIcon'
 import AmcPreventiveStage from './AmcPreventiveStage'
@@ -99,16 +100,19 @@ export function AmcIntro({ block }: { block: HomeBlock }) {
           </figure>
         ) : (
           points.length > 0 && (
-            <ul className="hp-band grid gap-4 rounded-[1.5rem] p-6 sm:p-8">
-              {points.map((point) => (
-                <li key={point} className="flex items-start gap-3 text-[16px] font-medium text-[var(--hp-ink)]">
-                  <span className="hp-tick mt-0.5">
-                    <Check />
-                  </span>
-                  {point}
-                </li>
-              ))}
-            </ul>
+            <div className="hp-band relative overflow-hidden rounded-[1.5rem]">
+              <span aria-hidden="true" className="absolute inset-x-0 top-0 h-1 bg-[linear-gradient(90deg,#2CCDDE,#46A3E1)]" />
+              <ul className="divide-y divide-[var(--hp-line)] px-6 py-3 sm:px-8 sm:py-4">
+                {points.map((point) => (
+                  <li key={point} className="flex items-center gap-4 py-4 text-[16px] font-medium text-[var(--hp-ink)]">
+                    <span className="hp-tick !h-7 !w-7 shrink-0">
+                      <Check />
+                    </span>
+                    {point}
+                  </li>
+                ))}
+              </ul>
+            </div>
           )
         )}
       </div>
@@ -195,8 +199,8 @@ export function AmcPreventive({ block }: { block: HomeBlock }) {
           <Heading id="amc-preventive-title" block={block} />
           <ul className="mt-10 grid gap-4 sm:grid-cols-2">
             {items.map((item, i) => (
-              <li key={item.title} data-reveal style={delay((i % 2) * 100)} className="flex gap-5 rounded-[1.25rem] border border-[var(--hp-line)] bg-[var(--hp-soft)] p-6">
-                <span aria-hidden="true" className="font-display text-[2rem] font-semibold leading-none tabular-nums text-[rgba(14,116,144,0.35)]">
+              <li key={item.title} data-reveal style={delay((i % 2) * 100)} className="hp-band flex gap-5 rounded-[1.25rem] p-6">
+                <span aria-hidden="true" className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-[var(--hp-navy)] font-display text-[15px] font-semibold tabular-nums text-[#7fe3ec]">
                   {String(i + 1).padStart(2, '0')}
                 </span>
                 <span>
@@ -212,30 +216,32 @@ export function AmcPreventive({ block }: { block: HomeBlock }) {
   )
 }
 
-/** 7. Cost factors: the heading on the left, a numbered list beside it. */
+/**
+ * 7. Cost factors: the heading with its intro beside it, then the factors as a
+ * row of numbered cards on one tinted strip.
+ */
 export function AmcCosts({ block }: { block: HomeBlock }) {
   const factors = block.lists.factors
   if (!factors.length) return null
+  const columns = processColumns(factors.length)
   return (
-    <section id="cost-factors" aria-labelledby="amc-costs-title" className={`${sectionClass} grid gap-8 lg:grid-cols-12 lg:gap-14`}>
-      <div className="lg:col-span-5">
+    <section id="cost-factors" aria-labelledby="amc-costs-title" className={sectionClass}>
+      <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between lg:gap-16">
         <Heading id="amc-costs-title" block={block} />
         {block.fields.intro && (
-          <p data-reveal className="mt-4 text-[16px] leading-relaxed text-[var(--hp-body)]">
+          <p data-reveal className="hp-lead lg:max-w-sm lg:pb-1">
             {block.fields.intro}
           </p>
         )}
       </div>
-      <ol className="divide-y divide-[var(--hp-line)] border-y border-[var(--hp-line)] lg:col-span-7">
+      <ol data-reveal className={`mt-10 grid gap-2 rounded-[1.75rem] border border-[var(--hp-line)] bg-[var(--hp-soft)] p-2 sm:grid-cols-2 ${processGrid[columns]}`}>
         {factors.map((factor, i) => (
-          <li key={factor.title} data-reveal className="grid grid-cols-[3rem_1fr] gap-4 py-5">
-            <span aria-hidden="true" className="font-display text-[1.75rem] font-semibold leading-none tabular-nums text-[var(--hp-accent)]">
-              {i + 1}
+          <li key={factor.title} className="flex flex-col rounded-[1.25rem] bg-[var(--hp-card)] p-5 shadow-[0_1px_2px_rgba(12,29,51,0.04)] sm:p-6">
+            <span aria-hidden="true" className="font-display text-[2rem] font-semibold leading-none tabular-nums tracking-[-0.04em] text-[rgba(14,116,144,0.28)]">
+              {String(i + 1).padStart(2, '0')}
             </span>
-            <span>
-              <h3 className="font-display text-[1.125rem] font-semibold text-[var(--hp-ink)]">{factor.title}</h3>
-              {factor.description && <p className="mt-1 text-[15px] leading-relaxed text-[var(--hp-body)]">{factor.description}</p>}
-            </span>
+            <h3 className="mt-6 font-display text-[1.0625rem] font-semibold leading-snug text-[var(--hp-ink)]">{factor.title}</h3>
+            {factor.description && <p className="mt-2 text-[14.5px] leading-relaxed text-[var(--hp-body)]">{factor.description}</p>}
           </li>
         ))}
       </ol>
@@ -488,20 +494,27 @@ export function AmcCoverage({ block }: { block: HomeBlock }) {
   if (!areas.length) return null
   return (
     <section id="coverage" aria-labelledby="amc-areas-title" className={sectionClass}>
-      <div data-reveal className="hp-band grid gap-6 rounded-[1.5rem] p-6 sm:p-10 lg:grid-cols-12 lg:items-center lg:gap-12">
+      <div data-reveal className="hp-band grid gap-6 rounded-[1.5rem] p-4 sm:p-10 lg:grid-cols-12 lg:items-center lg:gap-12">
         <div className="lg:col-span-5">
           <Eyebrow>{f.eyebrow}</Eyebrow>
           <SectionTitle id="amc-areas-title" heading={f.heading} soft={f.heading_soft} softBlock className="mt-4" />
           {f.text && <p className="mt-4 text-[15.5px] leading-relaxed text-[var(--hp-body)]">{f.text}</p>}
         </div>
-        <ul className="flex flex-wrap gap-2.5 lg:col-span-7">
-          {areas.map((area) => (
-            <li key={area} className="hp-topic !pr-4">
-              <span aria-hidden="true" className="hp-dot" />
-              {area}
-            </li>
-          ))}
-        </ul>
+        {/* The areas as location tiles on a soft dotted panel, like pins on a map. */}
+        <div className="relative overflow-hidden rounded-[1.25rem] border border-[var(--hp-line)] bg-[var(--hp-soft)] p-2 sm:p-4 lg:col-span-7">
+          <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[radial-gradient(rgba(14,116,144,0.16)_1px,transparent_1px)] [background-size:18px_18px]" />
+          <ul className="relative grid grid-cols-2 gap-2 sm:grid-cols-3">
+            {areas.map((area) => (
+              <li key={area} className="flex items-center gap-2 rounded-xl border border-[var(--hp-line)] bg-[var(--hp-card)] px-2.5 py-2.5 text-[14px] leading-snug sm:gap-2.5 sm:px-3.5 sm:py-3 sm:text-[14.5px] font-medium text-[var(--hp-ink)] shadow-[0_1px_2px_rgba(12,29,51,0.04)]">
+                <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4 shrink-0 text-[var(--hp-accent)]" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z" />
+                  <circle cx="12" cy="9.5" r="2.5" />
+                </svg>
+                <span className="min-w-0">{area}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </section>
   )
@@ -675,44 +688,80 @@ export function AmcPageBlocks({ sections }: { sections: PageSection[] }) {
   const shown = sections.filter(hasContent)
   if (!shown.length) return null
   return (
-    <div className="space-y-6 pb-16 lg:pb-24">
+    <div className="space-y-16 pb-16 lg:space-y-24 lg:pb-24">
       {shown.map((section) => {
-        const paragraphs = section.text
-          .split(/\n\s*\n/)
-          .map((p) => p.trim())
-          .filter(Boolean)
+        const { lead, items, closing } = blockParts(section.text)
+        const button = section.button_label && section.button_link ? (
+          <Button href={section.button_link} className="mt-7">
+            {section.button_label}
+          </Button>
+        ) : null
         return (
           <section key={section.id} aria-label={section.heading || section.name || undefined} className="page-container">
-            <div data-reveal className={`hp-band grid overflow-hidden rounded-[1.5rem] ${section.image_url ? 'lg:grid-cols-12' : ''}`}>
-              {section.image_url && (
-                <figure className="relative min-h-[16rem] lg:col-span-5">
-                  <Uploaded src={section.image_url} alt={section.image_alt || section.heading} sizes="(min-width: 1024px) 40vw, 100vw" />
-                </figure>
-              )}
-              <div className={`p-6 sm:p-10 lg:p-12 ${section.image_url ? 'lg:col-span-7' : ''}`}>
+            <div className="grid gap-8 lg:grid-cols-12 lg:gap-14">
+              <div data-reveal className={items.length ? 'lg:sticky lg:top-28 lg:col-span-5 lg:self-start' : 'lg:col-span-6'}>
                 {section.heading && <h2 className="hp-h2">{section.heading}</h2>}
-                {paragraphs.length > 0 && (
-                  <div className="mt-5 max-w-3xl space-y-3">
-                    {paragraphs.map((p) => (
-                      <p key={p} className="text-[16px] leading-relaxed text-[var(--hp-body)]">
-                        {p}
-                      </p>
-                    ))}
-                  </div>
-                )}
-                {section.button_label && section.button_link && (
-                  <Button href={section.button_link} className="mt-7">
-                    {section.button_label}
-                  </Button>
-                )}
+                {lead.map((p) => (
+                  <p key={p} className="hp-lead mt-5">
+                    {p}
+                  </p>
+                ))}
+                {button}
               </div>
+
+              {items.length > 0 ? (
+                <ul className="grid gap-3 sm:grid-cols-2 sm:gap-4 lg:col-span-7">
+                  {items.map((item, i) => (
+                    <li
+                      key={item.label}
+                      data-reveal
+                      style={delay((i % 2) * 90)}
+                      className={`hp-band flex flex-col rounded-[1.25rem] p-5 sm:p-6 ${items.length % 2 === 1 && i === items.length - 1 ? 'sm:col-span-2' : ''}`}
+                    >
+                      <h3 className="flex items-center gap-2.5 font-display text-[1.0625rem] font-semibold leading-snug text-[var(--hp-ink)]">
+                        <span aria-hidden="true" className="h-2 w-2 shrink-0 rounded-full bg-[var(--hp-accent)]" />
+                        {item.label}
+                      </h3>
+                      <p className="mt-2 text-[14.5px] leading-relaxed text-[var(--hp-body)] first-letter:uppercase">{item.text}</p>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                section.image_url && (
+                  <figure data-reveal className="hp-frame relative aspect-[4/3] overflow-hidden rounded-[1.75rem] lg:col-span-6">
+                    <Uploaded src={section.image_url} alt={section.image_alt || section.heading} sizes="(min-width: 1024px) 45vw, 100vw" />
+                  </figure>
+                )
+              )}
             </div>
+
+            {items.length > 0 && section.image_url && (
+              <figure data-reveal className="hp-frame relative mt-8 aspect-[21/9] overflow-hidden rounded-[1.75rem]">
+                <Uploaded src={section.image_url} alt={section.image_alt || section.heading} sizes="100vw" />
+              </figure>
+            )}
+
+            {closing.length > 0 && (
+              <div data-reveal className="mt-6 flex items-start gap-3 rounded-2xl border border-[rgba(14,116,144,0.22)] bg-[var(--hp-accent-bg)] px-5 py-4 sm:px-6">
+                <span className="hp-tick mt-0.5 !bg-[var(--hp-card)]">
+                  <Check />
+                </span>
+                <div className="space-y-2">
+                  {closing.map((p) => (
+                    <p key={p} className="text-[15.5px] font-medium leading-relaxed text-[var(--hp-ink)]">
+                      {p}
+                    </p>
+                  ))}
+                </div>
+              </div>
+            )}
           </section>
         )
       })}
     </div>
   )
 }
+
 
 /** Related services: linked cards with each service's icon. */
 export function AmcRelated({ block, tabs }: { block: HomeBlock; tabs: ServiceTab[] }) {
