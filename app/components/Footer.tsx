@@ -15,7 +15,6 @@ import {
 } from '@fortawesome/free-brands-svg-icons'
 import { faChevronRight, faClock, faEnvelope, faLocationDot, faPhone } from '@fortawesome/free-solid-svg-icons'
 import { Icon } from './Icon'
-import FooterWordmark from './FooterWordmark'
 
 const fallbackUsefulLinks = [
   { label: 'Home', href: '/' },
@@ -102,8 +101,8 @@ export default function Footer({ navigation = fallbackUsefulLinks, services = []
         {/* Wide screens: contact details, then four link columns. */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-x-10 gap-y-12">
 
-          {/* A heading like the other columns, not the logo: the header and
-              the large BYTEFLOW below already carry the brand. */}
+          {/* A heading like the other columns, not the logo: the header
+              already carries the brand. */}
           <div className="sm:col-span-2 lg:col-span-3">
             <ColumnHeading>{settings.footer_about_heading || 'About Byteflow'}</ColumnHeading>
             <div className="space-y-6">
@@ -258,8 +257,6 @@ export default function Footer({ navigation = fallbackUsefulLinks, services = []
           </div>
         </div>
       </div>
-
-      <FooterWordmark caption={settings.footer_caption || 'IT Support · Cyber Security · Cloud · Dubai, UAE'} />
 
       <div style={{ borderTop: '1px solid var(--border-subtle)' }}>
         <div className="page-container py-5 flex flex-col sm:flex-row items-center justify-between gap-2">

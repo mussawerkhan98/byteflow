@@ -37,9 +37,10 @@ const sora = Sora({
   display: "swap",
 });
 
-// Only the footer wordmark uses this, so just the weight it is set in is
-// pulled down rather than the whole axis. Not preloaded: it is at the very
-// bottom of the page and would otherwise compete with the hero for bandwidth.
+// Only the header's BYTEFLOW uses this, so just the weight it is set in is
+// pulled down rather than the whole axis. Not preloaded, so it never competes
+// with the hero for bandwidth; the name shows in the fallback face until it
+// arrives.
 const outfit = Outfit({
   subsets: ["latin"],
   weight: "800",
