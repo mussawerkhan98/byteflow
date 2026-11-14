@@ -51,7 +51,7 @@ export function AmcHighlights({ block }: { block: HomeBlock }) {
             <span aria-hidden="true" className="hp-svc-icon">
               <AmcIcon icon={item.icon} className="h-5 w-5" />
             </span>
-            <p className="mt-4 font-display text-[1.0625rem] font-semibold text-[var(--hp-ink)]">{item.title}</p>
+            <p className="mt-4 font-display text-[1.125rem] font-semibold text-[var(--hp-ink)]">{item.title}</p>
             {item.description && <p className="mt-1.5 text-[14.5px] leading-relaxed text-[var(--hp-body)]">{item.description}</p>}
           </li>
         ))}
@@ -240,7 +240,7 @@ export function AmcCosts({ block }: { block: HomeBlock }) {
             <span aria-hidden="true" className="font-display text-[2rem] font-semibold leading-none tabular-nums tracking-[-0.04em] text-[rgba(14,116,144,0.28)]">
               {String(i + 1).padStart(2, '0')}
             </span>
-            <h3 className="mt-6 font-display text-[1.0625rem] font-semibold leading-snug text-[var(--hp-ink)]">{factor.title}</h3>
+            <h3 className="mt-6 font-display text-[1.125rem] font-semibold leading-snug text-[var(--hp-ink)]">{factor.title}</h3>
             {factor.description && <p className="mt-2 text-[14.5px] leading-relaxed text-[var(--hp-body)]">{factor.description}</p>}
           </li>
         ))}
@@ -312,7 +312,7 @@ export function AmcIndustries({ block }: { block: HomeBlock }) {
               <span aria-hidden="true" className="hp-svc-icon">
                 <IndustryIcon icon={industry.icon} className="h-5 w-5" />
               </span>
-              <h3 className="mt-4 font-display text-[1.0625rem] font-semibold leading-snug text-[var(--hp-ink)]">{industry.title}</h3>
+              <h3 className="mt-4 font-display text-[1.125rem] font-semibold leading-snug text-[var(--hp-ink)]">{industry.title}</h3>
               {industry.description && <p className="mt-1.5 text-[14px] leading-relaxed text-[var(--hp-body)]">{industry.description}</p>}
             </>
           )
@@ -424,7 +424,7 @@ export function AmcProcess({ block }: { block: HomeBlock }) {
                 {String(i + 1).padStart(2, '0')}
               </span>
               <div className="sm:mt-6">
-                <h3 className="pt-2.5 font-display text-[1.0625rem] font-semibold leading-snug tracking-[-0.01em] text-[var(--hp-ink)] sm:pt-0">{step.title}</h3>
+                <h3 className="pt-2.5 font-display text-[1.125rem] font-semibold leading-snug tracking-[-0.01em] text-[var(--hp-ink)] sm:pt-0">{step.title}</h3>
                 {step.description && <p className="mt-2 text-[14.5px] leading-relaxed text-[var(--hp-body)]">{step.description}</p>}
               </div>
               {handsOn && (
@@ -464,7 +464,7 @@ export function AmcSla({ block }: { block: HomeBlock }) {
                   <span className="flex items-start gap-4">
                     <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[rgba(14,116,144,0.1)] font-display text-[13px] font-semibold text-[var(--hp-accent)]">P{i + 1}</span>
                     <span>
-                      <h3 className="font-display text-[1.0625rem] font-semibold text-[var(--hp-ink)]">{priority.title}</h3>
+                      <h3 className="font-display text-[1.125rem] font-semibold text-[var(--hp-ink)]">{priority.title}</h3>
                       {priority.description && <p className="mt-0.5 text-[14.5px] text-[var(--hp-body)]">{priority.description}</p>}
                     </span>
                   </span>
@@ -638,7 +638,7 @@ export function AmcReviews({ block, reviews }: { block: HomeBlock; reviews: CmsR
                     </span>
                   )}
                   <span className="block p-5">
-                    <span className="block font-display text-[1.0625rem] font-semibold text-[var(--hp-ink)]">{item.title}</span>
+                    <span className="block font-display text-[1.125rem] font-semibold text-[var(--hp-ink)]">{item.title}</span>
                     {item.description && <span className="mt-1.5 block text-[14.5px] leading-relaxed text-[var(--hp-body)]">{item.description}</span>}
                   </span>
                 </>
@@ -718,7 +718,7 @@ export function AmcPageBlocks({ sections }: { sections: PageSection[] }) {
                       style={delay((i % 2) * 90)}
                       className={`hp-band flex flex-col rounded-[1.25rem] p-5 sm:p-6 ${items.length % 2 === 1 && i === items.length - 1 ? 'sm:col-span-2' : ''}`}
                     >
-                      <h3 className="flex items-center gap-2.5 font-display text-[1.0625rem] font-semibold leading-snug text-[var(--hp-ink)]">
+                      <h3 className="flex items-center gap-2.5 font-display text-[1.125rem] font-semibold leading-snug text-[var(--hp-ink)]">
                         <span aria-hidden="true" className="h-2 w-2 shrink-0 rounded-full bg-[var(--hp-accent)]" />
                         {item.label}
                       </h3>

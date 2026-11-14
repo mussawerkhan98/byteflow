@@ -114,7 +114,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
             <div className="mt-6 hp-enter" style={delay(60)}>
               <ProjectMeta project={card} year={project.year.trim()} numbered={false} />
             </div>
-            <h1 className="hp-h1 mt-5 !text-[clamp(2.25rem,1.6rem+2.6vw,3.75rem)] hp-enter" style={delay(120)}>
+            <h1 className="hp-h1 mt-5 hp-enter" style={delay(120)}>
               {project.title}
             </h1>
           </div>

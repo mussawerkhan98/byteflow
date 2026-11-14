@@ -187,7 +187,7 @@ export default async function BlogPost({ post }: { post: Post }) {
             )}
             <h1
               id="article-title"
-              className="text-[var(--text-primary)] text-3xl sm:text-4xl lg:text-[2.85rem] font-bold leading-[1.15] mb-5"
+              className="text-[var(--text-primary)] text-[clamp(2rem,1.3rem+2vw,2.75rem)] font-semibold leading-[1.15] tracking-[-0.03em] mb-5"
             >
               {post.title}
             </h1>
@@ -299,7 +299,7 @@ export default async function BlogPost({ post }: { post: Post }) {
                 </span>
                 <div>
                   <p className="post-eyebrow mb-1">About the publisher</p>
-                  <h2 id="publisher-heading" className="text-[var(--text-primary)] text-lg font-bold mb-2">
+                  <h2 id="publisher-heading" className="text-[var(--text-primary)] text-lg font-semibold mb-2">
                     {ORG_NAME}
                   </h2>
                   <p className="text-[var(--text-body)] text-sm leading-relaxed mb-4">
@@ -340,7 +340,7 @@ export default async function BlogPost({ post }: { post: Post }) {
           <div className="post-cta relative overflow-hidden rounded-2xl px-6 py-10 sm:px-10 sm:py-12 flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
             <div className="absolute top-0 left-0 right-0 h-px" style={{ background: "linear-gradient(90deg, transparent, rgba(44,205,222,0.6), transparent)" }} />
             <div>
-              <h2 id="post-cta-heading" className="text-[var(--text-primary)] text-xl sm:text-2xl font-bold mb-2">
+              <h2 id="post-cta-heading" className="text-[var(--text-primary)] text-xl sm:text-2xl font-semibold mb-2">
                 Have an IT problem you need solved?
               </h2>
               <p className="text-[var(--text-muted)] text-sm sm:text-base max-w-md">
@@ -367,7 +367,7 @@ export default async function BlogPost({ post }: { post: Post }) {
             <div className="flex items-end justify-between gap-4 mb-6">
               <div>
                 <p className="post-eyebrow mb-2">Keep reading</p>
-                <h2 id="related-heading" className="text-[var(--text-primary)] text-2xl font-bold">
+                <h2 id="related-heading" className="text-[var(--text-primary)] text-2xl font-semibold">
                   Related articles
                 </h2>
               </div>
@@ -393,7 +393,7 @@ export default async function BlogPost({ post }: { post: Post }) {
             <p className="post-eyebrow mb-2 text-center">FAQs</p>
             <h2
               id={article.faq.id}
-              className="post-anchor text-[var(--text-primary)] text-2xl sm:text-3xl font-bold text-center mb-4"
+              className="post-anchor text-[var(--text-primary)] text-2xl sm:text-[1.75rem] font-semibold tracking-[-0.02em] text-center mb-4"
             >
               {article.faq.heading}
             </h2>
@@ -438,7 +438,7 @@ function ContactCard({
   return (
     <section aria-labelledby="contact-card-heading" className="post-panel post-contact-card p-5">
       <p className="post-eyebrow mb-2">Need help with this?</p>
-      <h2 id="contact-card-heading" className="text-[var(--text-primary)] text-base font-bold leading-snug mb-1.5">
+      <h2 id="contact-card-heading" className="text-[var(--text-primary)] text-base font-semibold leading-snug mb-1.5">
         Talk to a Byteflow IT expert
       </h2>
       <p className="text-[var(--text-muted)] text-[13px] leading-relaxed mb-4">
@@ -490,7 +490,7 @@ function RelatedCard({ post }: { post: Post }) {
           {post.category && <span className="post-chip post-chip-sm">{post.category}</span>}
           {post.read_time && <span>{post.read_time}</span>}
         </div>
-        <h3 className="text-[var(--text-primary)] text-base font-bold leading-snug mb-2 transition-colors duration-200 group-hover:text-[#2CCDDE]">
+        <h3 className="text-[var(--text-primary)] text-base font-semibold leading-snug mb-2 transition-colors duration-200 group-hover:text-[#2CCDDE]">
           {post.title}
         </h3>
         {post.date && <p className="mt-auto text-xs text-[var(--text-muted)]">{post.date}</p>}
