@@ -185,7 +185,7 @@ export default function FAQ({ items, copy, contact }: { items: Faq[]; copy: FaqC
             <p className="accent-ink flex items-center gap-3 text-[12px] font-semibold uppercase tracking-[0.18em]">
               {copy.eyebrow}
             </p>
-            <h2 id={`${id}-title`} className="mt-5 text-balance text-[2.25rem] font-semibold leading-[1.05] tracking-[-0.04em] text-[var(--text-primary)] sm:text-5xl lg:text-[3.5rem]">
+            <h2 id={`${id}-title`} className="mt-5 text-balance text-[clamp(1.875rem,1.25rem+1.55vw,2.5rem)] font-semibold leading-[1.12] tracking-[-0.03em] text-[var(--text-primary)]">
               {copy.heading} <span className="bg-[linear-gradient(100deg,#2CCDDE,#46A3E1)] bg-clip-text text-transparent">{copy.heading_soft}</span>
             </h2>
           </div>

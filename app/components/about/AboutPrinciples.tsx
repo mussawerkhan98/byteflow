@@ -34,7 +34,7 @@ export default function AboutPrinciples({ content }: { content: HomeBlock }) {
                 <span aria-hidden="true" className="ab-pillar-num">
                   {String(i + 1).padStart(2, '0')}
                 </span>
-                <h3 className="mt-8 font-display text-[1.3125rem] font-semibold leading-snug tracking-[-0.02em] text-[var(--hp-ink)]">{item.title}</h3>
+                <h3 className="mt-8 font-display text-[1.1875rem] font-semibold leading-snug tracking-[-0.015em] text-[var(--hp-ink)]">{item.title}</h3>
                 {item.description && <p className="mt-3 text-[15.5px] leading-relaxed text-[var(--hp-body)]">{item.description}</p>}
               </li>
             ))}

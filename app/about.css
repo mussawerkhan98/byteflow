@@ -18,8 +18,8 @@
 }
 
 .ab-h1 {
-  font-size: clamp(2.5rem, 1.1rem + 4.4vw, 4.75rem);
-  line-height: 1.02;
+  /* The same size as every page title (.hp-h1); only the leading is tighter. */
+  line-height: 1.04;
 }
 
 /* The photograph's soft lower edge, so the figures card sits on it cleanly. */
