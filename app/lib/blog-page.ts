@@ -9,8 +9,8 @@ import { blogCategories, categoryKey, sameCategory } from './blog-categories'
 
 type PostLike = { slug: string; category: string; title: string; excerpt: string; date: string }
 
-/** How many articles show before "Show more". */
-export const PAGE_SIZE = 9
+/** How many articles show before "Show more": full rows of 2, 3 or 4. */
+export const PAGE_SIZE = 12
 
 /** The article picked in the admin, or the newest when it picked "latest" (or a post since unpublished). Posts arrive newest first. */
 export function featuredPost<P extends PostLike>(posts: P[], choice: string | undefined): { post: P | null; picked: boolean } {

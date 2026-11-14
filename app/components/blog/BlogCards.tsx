@@ -17,7 +17,8 @@ const stretched = "after:absolute after:inset-0 after:content-['']"
 const when = (post: BlogCardPost) => [post.date, post.read_time].map((part) => part?.trim()).filter(Boolean).join(' · ')
 
 function Cover({ post, sizes, priority = false }: { post: BlogCardPost; sizes: string; priority?: boolean }) {
-  if (post.image_url) return <Photo slot={{ src: post.image_url, alt: post.image_alt || post.title, brief: '' }} sizes={sizes} priority={priority} zoom />
+  // The whole cover, never cropped: article covers come in every shape.
+  if (post.image_url) return <Photo slot={{ src: post.image_url, alt: post.image_alt || post.title, brief: '' }} sizes={sizes} priority={priority} fit="contain" zoom />
   return (
     <span aria-hidden="true" className="absolute inset-0 grid place-items-center bg-[var(--hp-soft)]">
       <span className="hp-svc-icon hp-svc-icon-lg [&_svg]:h-7 [&_svg]:w-7">{getCategoryStyle(post.category).icon}</span>
@@ -60,9 +61,9 @@ export function BlogFeatured({ post, badge, readLabel, author }: { post: BlogCar
 /** A card in the grid: the cover with its topic on it, then the headline. */
 export function BlogCard({ post, index, readLabel }: { post: BlogCardPost; index: number; readLabel: string }) {
   return (
-    <article data-reveal style={delay((index % 3) * 100)} className="hp-card group relative flex h-full flex-col overflow-hidden rounded-[1.5rem]">
+    <article data-reveal style={delay((index % 4) * 100)} className="hp-card group relative flex h-full flex-col overflow-hidden rounded-[1.5rem]">
       <figure className="relative m-2 aspect-[16/10] overflow-hidden rounded-[1.1rem]">
-        <Cover post={post} sizes="(min-width: 1024px) 30vw, (min-width: 768px) 46vw, 100vw" />
+        <Cover post={post} sizes="(min-width: 1280px) 300px, (min-width: 1024px) 30vw, (min-width: 768px) 46vw, 100vw" />
         <span className="hp-glass absolute left-3 top-3 max-w-[calc(100%-1.5rem)] truncate rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--hp-ink)]">{post.category}</span>
       </figure>
       <div className="flex flex-1 flex-col px-5 pb-5 pt-3">

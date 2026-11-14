@@ -126,6 +126,7 @@ export function Photo({
   priority = false,
   zoom = false,
   mini = false,
+  fit = 'cover',
 }: {
   slot: PhotoSlot
   sizes: string
@@ -133,7 +134,21 @@ export function Photo({
   zoom?: boolean
   /** A thumbnail: just the icon, no wording. */
   mini?: boolean
+  /**
+   * contain: the whole picture, never cropped, on a blurred copy of itself
+   * that fills the rest of the frame. For covers of any shape (articles).
+   */
+  fit?: 'cover' | 'contain'
 }) {
+  const loading = priority ? { preload: true, fetchPriority: 'high' as const } : { loading: 'lazy' as const }
+  if (slot.src && fit === 'contain')
+    return (
+      <>
+        {/* Same src and sizes as the picture, so the browser downloads it once. */}
+        <Image src={slot.src} alt="" aria-hidden="true" fill sizes={sizes} loading="lazy" unoptimized={unoptimizedSrc(slot.src)} className="object-cover opacity-70 blur-2xl [transform:scale(1.25)]" />
+        <Image src={slot.src} alt={slot.alt} fill sizes={sizes} {...loading} unoptimized={unoptimizedSrc(slot.src)} className={`object-contain ${zoom ? 'hp-zoom' : ''}`} />
+      </>
+    )
   if (slot.src)
     return (
       <Image
@@ -141,7 +156,7 @@ export function Photo({
         alt={slot.alt}
         fill
         sizes={sizes}
-        {...(priority ? { preload: true, fetchPriority: 'high' as const } : { loading: 'lazy' as const })}
+        {...loading}
         unoptimized={unoptimizedSrc(slot.src)}
         className={`object-cover ${zoom ? 'hp-zoom' : ''}`}
       />

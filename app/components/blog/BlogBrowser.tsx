@@ -145,7 +145,7 @@ export default function BlogBrowser({
       </p>
 
       {found.length > 0 ? (
-        <ul key={key} className="menu-preview-in mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <ul key={key} className="menu-preview-in mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {found.map((post, i) => (
             <li key={post.slug} className={i < limit ? '' : 'hidden'}>
               <BlogCard post={post} index={i} readLabel={labels.read} />
