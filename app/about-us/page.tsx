@@ -17,6 +17,7 @@ import { getHomeBlock } from '../lib/home-blocks'
 import { homePhotos } from '../lib/home-photos'
 import { fillFigures, type SiteFigures } from '../lib/site-figures'
 import { aboutPageSchema, breadcrumbSchema, founderSchema, graph } from '../lib/structured-data'
+import { DEFAULT_OFFICE_ADDRESS, officePlaceUrl } from '../lib/office-map'
 
 // The built-in founder story: why Byteflow started, not the figures, which
 // the banner and the timeline already give. {founded} is the site-wide
@@ -136,7 +137,8 @@ export default async function AboutPage() {
         contact={{
           phone: companyPhone,
           email: text(settings?.primary_email) || 'info@byteflow.ae',
-          address: text(settings?.physical_address) || 'Emaar Park 4, Greens, TECOM, Dubai, United Arab Emirates',
+          address: text(settings?.physical_address) || DEFAULT_OFFICE_ADDRESS,
+          addressHref: officePlaceUrl(text(settings?.map_embed_url), text(settings?.physical_address) || DEFAULT_OFFICE_ADDRESS),
         }}
       />
     </div>

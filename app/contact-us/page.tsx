@@ -8,7 +8,7 @@ import JsonLd from '../components/JsonLd'
 import { getPageHero, getPageMetadata, getSiteSettings } from '../lib/cms'
 import { getHomeBlock } from '../lib/home-blocks'
 import { lines } from '../lib/home-content'
-import { DEFAULT_MAP_URL, directionsUrl, safeMapUrl } from '../lib/office-map'
+import { directionsUrl, officeMapUrl } from '../lib/office-map'
 import { breadcrumbSchema, graph } from '../lib/structured-data'
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -41,7 +41,7 @@ export default async function ContactPage() {
   const address = text(settings?.physical_address)
   const hours = text(settings?.business_hours)
   const showMap = settings?.map_enabled === undefined || settings?.map_enabled === '' || Boolean(Number(settings?.map_enabled))
-  const map = safeMapUrl(text(settings?.map_embed_url)) || DEFAULT_MAP_URL
+  const map = officeMapUrl(text(settings?.map_embed_url))
   const o = office.fields
 
   return (
@@ -121,7 +121,7 @@ export default async function ContactPage() {
                 </dl>
               )}
               {o.directions_label && (
-                <Button href={directionsUrl(o.directions_link ?? '', address)} variant="ghost" className="mt-8 self-start">
+                <Button href={directionsUrl(o.directions_link ?? '', address, map)} variant="ghost" className="mt-8 self-start">
                   {o.directions_label}
                 </Button>
               )}
