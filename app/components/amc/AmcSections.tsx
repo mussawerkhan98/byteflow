@@ -327,45 +327,111 @@ export function AmcIndustries({ block }: { block: HomeBlock }) {
   )
 }
 
-/** 10. Why Byteflow: columns, each under a rule in the brand colour. */
+/**
+ * 10. Why Byteflow: the page's one deep navy panel, for contrast — the
+ * heading inside it, then the reasons as numbered cells divided by hairlines.
+ */
 export function AmcWhy({ block }: { block: HomeBlock }) {
+  const f = block.fields
   const benefits = block.lists.benefits
   if (!benefits.length) return null
+  // Full rows where possible: 3, 5, 6 and 9 reasons in threes, the rest in fours.
+  const columns = benefits.length <= 2 ? 'lg:grid-cols-2' : benefits.length % 3 === 0 || benefits.length === 5 ? 'lg:grid-cols-3' : 'lg:grid-cols-4'
   return (
     <section id="why-byteflow" aria-labelledby="amc-why-title" className={sectionClass}>
-      <Heading id="amc-why-title" block={block} />
-      <ul className={`mt-10 grid gap-8 sm:grid-cols-2 ${benefits.length >= 4 ? 'lg:grid-cols-4' : 'lg:grid-cols-3'}`}>
-        {benefits.map((benefit, i) => (
-          <li key={benefit.title} data-reveal style={delay(i * 100)} className="border-t-2 border-[var(--hp-accent)] pt-5">
-            <h3 className="font-display text-[1.125rem] font-semibold leading-snug text-[var(--hp-ink)]">{benefit.title}</h3>
-            {benefit.description && <p className="mt-2 text-[15px] leading-relaxed text-[var(--hp-body)]">{benefit.description}</p>}
-          </li>
-        ))}
-      </ul>
+      <div data-reveal className="hp-navy relative isolate overflow-hidden rounded-[2rem]">
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
+          <div className="absolute -right-40 -top-48 h-[34rem] w-[34rem] rounded-full bg-[radial-gradient(closest-side,rgba(44,205,222,0.18),transparent)]" />
+          <div className="absolute -bottom-56 -left-40 h-[30rem] w-[30rem] rounded-full bg-[radial-gradient(closest-side,rgba(70,163,225,0.12),transparent)]" />
+        </div>
+        <div className="max-w-3xl px-6 pb-10 pt-10 sm:px-10 lg:px-14 lg:pb-12 lg:pt-14">
+          {f.eyebrow && <Eyebrow className="!text-[#7fe3ec]">{f.eyebrow}</Eyebrow>}
+          <h2 id="amc-why-title" className="hp-h2 mt-4 !text-white">
+            {f.heading}
+            {f.heading_soft && (
+              <>
+                {' '}
+                <span className="block text-[#8da0b3]">{f.heading_soft}</span>
+              </>
+            )}
+          </h2>
+        </div>
+        {/* Every cell draws its own top and left hairline; the list is pulled
+            1px left so the first column's line falls outside the panel. */}
+        <ul className={`-ml-px grid sm:grid-cols-2 ${columns}`}>
+          {benefits.map((benefit, i) => (
+            <li key={benefit.title} data-reveal style={delay(i * 100)} className="border-l border-t border-white/10 px-6 py-8 sm:px-10 lg:px-8 lg:py-10 xl:px-10">
+              <span aria-hidden="true" className="font-display text-[13px] font-semibold tabular-nums tracking-[0.08em] text-[#7fe3ec]">
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <h3 className="mt-5 font-display text-[1.1875rem] font-semibold leading-snug tracking-[-0.015em] text-white">{benefit.title}</h3>
+              {benefit.description && <p className="mt-2.5 text-[15px] leading-relaxed text-[#a9b6c4]">{benefit.description}</p>}
+            </li>
+          ))}
+        </ul>
+      </div>
     </section>
   )
 }
 
-/** 11. Process: numbered steps joined by a line. */
+/** Columns for the process cards on wide screens: one row up to five steps, then rows of three or four. */
+function processColumns(count: number) {
+  if (count <= 3) return 3
+  if (count <= 5) return count
+  return count % 3 === 0 ? 3 : 4
+}
+
+const processGrid: Record<number, string> = { 3: 'lg:grid-cols-3', 4: 'lg:grid-cols-4', 5: 'lg:grid-cols-5' }
+
+/**
+ * 11. Process: a card per step in one row, each numbered, an arrow handing on
+ * to the next card, the last step — the outcome — lit. Stacked on phones.
+ */
 export function AmcProcess({ block }: { block: HomeBlock }) {
   const steps = block.lists.steps
   if (!steps.length) return null
+  const columns = processColumns(steps.length)
   return (
     <section id="process" aria-labelledby="amc-process-title" className={sectionClass}>
       <Heading id="amc-process-title" block={block} />
-      <ol className={`relative mt-10 grid gap-6 md:gap-5 ${steps.length >= 5 ? 'md:grid-cols-5' : steps.length === 4 ? 'md:grid-cols-4' : 'md:grid-cols-3'}`}>
-        <span aria-hidden="true" className="absolute left-5 top-5 hidden h-px w-[calc(100%-2.5rem)] bg-[var(--hp-line-strong)] md:block" />
-        {steps.map((step, i) => (
-          <li key={step.title} data-reveal style={delay(i * 110)} className="relative flex gap-4 md:flex-col md:gap-0">
-            <span className="relative z-[1] grid h-10 w-10 shrink-0 place-items-center rounded-full border border-[var(--hp-line-strong)] bg-[var(--hp-card)] font-display text-[14px] font-semibold tabular-nums text-[var(--hp-accent)]">
-              {i + 1}
-            </span>
-            <span className="md:mt-5">
-              <h3 className="font-display text-[1.0625rem] font-semibold leading-snug text-[var(--hp-ink)]">{step.title}</h3>
-              {step.description && <p className="mt-2 text-[14.5px] leading-relaxed text-[var(--hp-body)]">{step.description}</p>}
-            </span>
-          </li>
-        ))}
+      <ol className={`mt-10 grid gap-3 sm:grid-cols-2 sm:gap-4 ${processGrid[columns]}`}>
+        {steps.map((step, i) => {
+          const last = i === steps.length - 1
+          const handsOn = !last && (i + 1) % columns !== 0
+          return (
+            <li
+              key={step.title}
+              data-reveal
+              style={delay(i * 100)}
+              className={`relative flex gap-4 rounded-[1.25rem] border p-5 sm:flex-col sm:gap-0 sm:p-6 transition-[border-color,box-shadow] duration-300 ${
+                last
+                  ? 'border-[var(--hp-accent)] bg-[var(--hp-card)] shadow-[0_32px_64px_-48px_rgba(14,116,144,0.55)]'
+                  : 'border-[var(--hp-line)] bg-[var(--hp-card)] hover:border-[var(--hp-line-strong)] hover:shadow-[0_28px_56px_-44px_rgba(12,29,51,0.35)]'
+              }`}
+            >
+              <span
+                aria-hidden="true"
+                className={`grid h-11 w-11 shrink-0 place-items-center rounded-xl font-display text-[15px] font-semibold tabular-nums ${
+                  last ? 'bg-[var(--hp-accent)] text-white' : 'bg-[var(--hp-accent-bg)] text-[var(--hp-accent)]'
+                }`}
+              >
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <div className="sm:mt-6">
+                <h3 className="pt-2.5 font-display text-[1.0625rem] font-semibold leading-snug tracking-[-0.01em] text-[var(--hp-ink)] sm:pt-0">{step.title}</h3>
+                {step.description && <p className="mt-2 text-[14.5px] leading-relaxed text-[var(--hp-body)]">{step.description}</p>}
+              </div>
+              {handsOn && (
+                <span
+                  aria-hidden="true"
+                  className="absolute -right-6 top-[1.875rem] z-[1] hidden h-8 w-8 place-items-center rounded-full border border-[var(--hp-line-strong)] bg-[var(--hp-card)] text-[var(--hp-accent)] lg:grid"
+                >
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </span>
+              )}
+            </li>
+          )
+        })}
       </ol>
     </section>
   )
