@@ -68,7 +68,9 @@ type FooterSettings = { header_phone?: string; primary_email?: string; physical_
 // `services` are the published services in the admin's order, so a new one
 // is listed here straight away; `legalLinks` are the legal pages, by title.
 type FooterLink = { label: string; href: string; new_tab?: boolean }
-export default function Footer({ navigation = fallbackUsefulLinks, services = [], legalLinks = fallbackLegalLinks, settings = {}, year }: { navigation?: FooterLink[]; services?: FooterLink[]; legalLinks?: FooterLink[]; settings?: FooterSettings; year: number }) {
+// `latestServices` are the six most recently added, newest first: the chips
+// above the copyright strip.
+export default function Footer({ navigation = fallbackUsefulLinks, services = [], latestServices = [], legalLinks = fallbackLegalLinks, settings = {}, year }: { navigation?: FooterLink[]; services?: FooterLink[]; latestServices?: FooterLink[]; legalLinks?: FooterLink[]; settings?: FooterSettings; year: number }) {
   const usefulLinks = navigation
   const phone = settings.header_phone || '+971 54 328 2042'
   const email = settings.primary_email || 'info@byteflow.ae'
@@ -257,6 +259,24 @@ export default function Footer({ navigation = fallbackUsefulLinks, services = []
           </div>
         </div>
       </div>
+
+      {latestServices.length > 0 && (
+        <nav aria-label="Latest services" className="page-container pb-8">
+          <ul className="flex flex-wrap gap-2">
+            {latestServices.map((service) => (
+              <li key={service.href}>
+                <Link
+                  href={service.href}
+                  className="inline-flex items-center gap-2 rounded-full border border-[var(--border-subtle)] px-3.5 py-1.5 text-[13px] text-[var(--text-footer-link)] transition-colors duration-200 hover:border-[#2CCDDE] hover:text-[var(--text-primary)]"
+                >
+                  <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full" style={{ background: 'linear-gradient(135deg, #2CCDDE, #46A3E1)' }} />
+                  {service.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )}
 
       <div style={{ borderTop: '1px solid var(--border-subtle)' }}>
         <div className="page-container py-5 flex flex-col sm:flex-row items-center justify-between gap-2">
