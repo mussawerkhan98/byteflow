@@ -68,7 +68,7 @@ export function BlogCard({ post, index, readLabel }: { post: BlogCardPost; index
       </figure>
       <div className="flex flex-1 flex-col px-5 pb-5 pt-3">
         <p className="text-[13px] text-[var(--hp-muted)]">{when(post)}</p>
-        <h3 className="mt-2 line-clamp-3 font-display text-[1rem] font-medium leading-[1.45] tracking-[-0.005em] text-[var(--hp-ink)] transition-colors duration-200 group-hover:text-[var(--hp-accent)]">
+        <h3 className="mt-2 line-clamp-3 font-display text-[1.0625rem] font-semibold leading-[1.4] tracking-[-0.01em] text-[var(--hp-ink)] transition-colors duration-200 group-hover:text-[var(--hp-accent)]">
           <Link href={`/${post.slug}`} className={stretched}>
             {post.title}
           </Link>

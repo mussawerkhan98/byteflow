@@ -62,7 +62,7 @@ export default async function HomeTech() {
                       </svg>
                     </span>
                     <div className="min-w-0">
-                      <h3 className="hp-tech-title font-display text-[1.25rem] font-semibold tracking-[-0.02em]">{tab.title}</h3>
+                      <h3 className="hp-tech-title font-display text-[1.1875rem] font-semibold tracking-[-0.015em]">{tab.title}</h3>
                       {tab.description && <p className="hp-tech-desc mt-1.5 text-[14.5px] leading-relaxed">{tab.description}</p>}
                     </div>
                   </div>

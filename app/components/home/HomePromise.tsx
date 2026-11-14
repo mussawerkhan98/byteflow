@@ -43,7 +43,7 @@ export default async function HomePromise() {
                   <span className="font-display text-[3.25rem] font-semibold leading-none tracking-[-0.05em] tabular-nums text-white lg:text-[3.75rem]">{row.value}</span>
                   <span className="text-[14.5px] font-semibold text-[#7fe3ec]">{row.unit}</span>
                 </p>
-                <h3 className="mt-6 font-display text-[1.25rem] font-semibold tracking-[-0.015em] text-white">{row.title}</h3>
+                <h3 className="mt-6 font-display text-[1.1875rem] font-semibold tracking-[-0.015em] text-white">{row.title}</h3>
                 <p className="mt-2 text-[15px] leading-relaxed text-[#a9b6c4]">{row.description}</p>
               </li>
             ))}

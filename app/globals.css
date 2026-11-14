@@ -161,16 +161,22 @@ body,
   }
 }
 
-h1, h2, h3, h4 {
-  font-family: var(--font-heading), 'Sora', system-ui, sans-serif;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-}
+/* Defaults only, in a Tailwind layer: a heading's own font-semibold,
+   tracking-* or other utility always wins. (Outside the layer these beat
+   every utility, so every heading on the site was bold whatever it asked
+   for.) The components layer, because Turbopack drops a second
+   @layer base block's wrapper and leaves its rules unlayered. */
+@layer components {
+  h1, h2, h3, h4 {
+    font-family: var(--font-heading), 'Sora', system-ui, sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
 
-/* Sora runs wide at display sizes, so pull the tracking in further for h1.
-   Headings that set their own tracking-* utility still win over this. */
-h1 {
-  letter-spacing: -0.035em;
+  /* Sora runs wide at display sizes, so pull the tracking in further for h1. */
+  h1 {
+    letter-spacing: -0.035em;
+  }
 }
 
 /* ---- Header and home hero ---- */

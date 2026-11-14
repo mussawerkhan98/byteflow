@@ -82,7 +82,7 @@ export default function HomeProcess({ content }: { content: HomeBlock }) {
                       <StepIcon index={i} />
                     </span>
                   </div>
-                  <h3 className="hp-step-title mt-4 font-display text-[1.25rem] font-semibold leading-snug tracking-[-0.02em]">
+                  <h3 className="hp-step-title mt-4 font-display text-[1.1875rem] font-semibold leading-snug tracking-[-0.015em]">
                     <span className="sr-only">Step {step.num}: </span>
                     {step.title}
                   </h3>

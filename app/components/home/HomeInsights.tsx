@@ -33,7 +33,7 @@ function Card({ post, index, readLabel, badge }: { post: Post; index: number; re
             </Link>
             <span>{when(post)}</span>
           </p>
-          <h3 className="mt-3 line-clamp-3 font-display text-[1rem] font-medium leading-[1.45] tracking-[-0.005em] text-[var(--hp-ink)] transition-colors duration-200 group-hover:text-[var(--hp-accent)]">
+          <h3 className="mt-3 line-clamp-3 font-display text-[1.0625rem] font-semibold leading-[1.4] tracking-[-0.01em] text-[var(--hp-ink)] transition-colors duration-200 group-hover:text-[var(--hp-accent)]">
             <Link href={`/${post.slug}`} className="after:absolute after:inset-0 after:content-['']">
               {post.title}
             </Link>
