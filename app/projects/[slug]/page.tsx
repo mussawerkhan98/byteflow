@@ -15,6 +15,7 @@ import { getHomeBlock } from '@/app/lib/home-blocks'
 import { projectCard } from '@/app/lib/project-cards'
 import { projectPhoto, relatedProjects, serviceForCategory } from '@/app/lib/project-page'
 import { absoluteUrl, breadcrumbSchema, graph, plainText } from '@/app/lib/structured-data'
+import { DEFAULT_OFFICE_ADDRESS, officePlaceUrl } from '@/app/lib/office-map'
 
 export const revalidate = 3600
 
@@ -237,7 +238,8 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
         contact={{
           phone: text(settings?.header_phone) || '+971 54 328 2042',
           email: text(settings?.primary_email) || 'info@byteflow.ae',
-          address: text(settings?.physical_address) || 'Emaar Park 4, Greens, TECOM, Dubai, United Arab Emirates',
+          address: text(settings?.physical_address) || DEFAULT_OFFICE_ADDRESS,
+          addressHref: officePlaceUrl(text(settings?.map_embed_url), text(settings?.physical_address) || DEFAULT_OFFICE_ADDRESS),
         }}
       />
     </article>

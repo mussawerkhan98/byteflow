@@ -106,6 +106,25 @@ export const getPublishedServices = cache(async (): Promise<{ slug: string; titl
   return builtInServices.map(({ slug, title }) => ({ slug, title }))
 })
 
+/**
+ * The most recently added published services, newest first (the footer's
+ * chips). Empty when the database cannot be read, so the row is left out
+ * rather than showing stand-ins.
+ */
+export const getLatestServices = cache(async (limit = 6): Promise<{ slug: string; title: string }[]> => {
+  try {
+    const result = await readContent({
+      sql: "SELECT slug, title FROM services WHERE status = 'published' ORDER BY created_at DESC, id DESC LIMIT ?",
+      args: [limit],
+    })
+    return result.rows
+      .map((row) => ({ slug: String(row.slug ?? '').trim(), title: String(row.title ?? '').trim() }))
+      .filter((service) => service.slug && service.title)
+  } catch {
+    return []
+  }
+})
+
 export const getServiceNames = cache(async (): Promise<Map<string, string>> => {
   const names = new Map(builtInServices.map((service) => [service.slug, service.title]))
   try {

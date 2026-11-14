@@ -15,7 +15,7 @@ import {
 } from '@fortawesome/free-brands-svg-icons'
 import { faChevronRight, faClock, faEnvelope, faLocationDot, faPhone } from '@fortawesome/free-solid-svg-icons'
 import { Icon } from './Icon'
-import FooterWordmark from './FooterWordmark'
+import { DEFAULT_OFFICE_ADDRESS, officePlaceUrl } from '../lib/office-map'
 
 const fallbackUsefulLinks = [
   { label: 'Home', href: '/' },
@@ -63,18 +63,20 @@ function ColumnHeading({ children }: { children: ReactNode }) {
   )
 }
 
-type FooterSettings = { header_phone?: string; primary_email?: string; physical_address?: string; business_hours?: string; footer_text?: string; copyright_text?: string; footer_about_heading?: string; footer_links_heading?: string; footer_services_heading?: string; footer_legal_heading?: string; footer_social_heading?: string; footer_social_text?: string; footer_caption?: string; facebook_url?: string; instagram_url?: string; linkedin_url?: string; x_url?: string; youtube_url?: string; tiktok_url?: string; github_url?: string }
+type FooterSettings = { header_phone?: string; primary_email?: string; physical_address?: string; map_embed_url?: string; business_hours?: string; footer_text?: string; copyright_text?: string; footer_about_heading?: string; footer_links_heading?: string; footer_services_heading?: string; footer_legal_heading?: string; footer_social_heading?: string; footer_social_text?: string; footer_caption?: string; facebook_url?: string; instagram_url?: string; linkedin_url?: string; x_url?: string; youtube_url?: string; tiktok_url?: string; github_url?: string }
 // `year` comes from the server: a client component reading the clock would
 // disagree with the server's HTML when the two straddle New Year.
 // `services` are the published services in the admin's order, so a new one
 // is listed here straight away; `legalLinks` are the legal pages, by title.
 type FooterLink = { label: string; href: string; new_tab?: boolean }
-export default function Footer({ navigation = fallbackUsefulLinks, services = [], legalLinks = fallbackLegalLinks, settings = {}, year }: { navigation?: FooterLink[]; services?: FooterLink[]; legalLinks?: FooterLink[]; settings?: FooterSettings; year: number }) {
+// `latestServices` are the six most recently added, newest first: the chips
+// above the copyright strip.
+export default function Footer({ navigation = fallbackUsefulLinks, services = [], latestServices = [], legalLinks = fallbackLegalLinks, settings = {}, year }: { navigation?: FooterLink[]; services?: FooterLink[]; latestServices?: FooterLink[]; legalLinks?: FooterLink[]; settings?: FooterSettings; year: number }) {
   const usefulLinks = navigation
   const phone = settings.header_phone || '+971 54 328 2042'
   const email = settings.primary_email || 'info@byteflow.ae'
   // The registered office, as in the organization markup: Google compares the two.
-  const address = settings.physical_address || 'Emaar Park 4, Greens, TECOM, Dubai, United Arab Emirates'
+  const address = settings.physical_address || DEFAULT_OFFICE_ADDRESS
   const hours = settings.business_hours || 'Monday to Saturday, 9:00am to 6:00pm'
   // The site-wide clients and founding year (Contact details & logo).
   const figures = figuresFrom(settings as Record<string, unknown>)
@@ -102,8 +104,8 @@ export default function Footer({ navigation = fallbackUsefulLinks, services = []
         {/* Wide screens: contact details, then four link columns. */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-x-10 gap-y-12">
 
-          {/* A heading like the other columns, not the logo: the header and
-              the large BYTEFLOW below already carry the brand. */}
+          {/* A heading like the other columns, not the logo: the header
+              already carries the brand. */}
           <div className="sm:col-span-2 lg:col-span-3">
             <ColumnHeading>{settings.footer_about_heading || 'About Byteflow'}</ColumnHeading>
             <div className="space-y-6">
@@ -140,14 +142,22 @@ export default function Footer({ navigation = fallbackUsefulLinks, services = []
                   {email}
                 </a>
               </li>
-              <li className="flex items-start gap-3 text-[var(--text-footer-link)]">
-                <span
-                  className="w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0"
-                  style={{ background: 'var(--border-subtle)', border: '1px solid #2CCDDE20' }}
+              <li>
+                {/* Opens the place the site's map is pinned to. */}
+                <a
+                  href={officePlaceUrl(settings.map_embed_url, address)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-start gap-3 text-[var(--text-footer-link)] hover:text-[#2CCDDE] transition-colors duration-200"
                 >
-                  <Icon icon={faLocationDot} className="w-3.5 h-3.5" style={{ color: '#2CCDDE' }} />
-                </span>
-                <address className="not-italic leading-relaxed pt-1">{address}</address>
+                  <span
+                    className="w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0"
+                    style={{ background: 'var(--border-subtle)', border: '1px solid #2CCDDE20' }}
+                  >
+                    <Icon icon={faLocationDot} className="w-3.5 h-3.5" style={{ color: '#2CCDDE' }} />
+                  </span>
+                  <address className="not-italic leading-relaxed pt-1">{address}</address>
+                </a>
               </li>
               <li className="flex items-start gap-3 text-[var(--text-footer-link)]">
                 <span
@@ -259,7 +269,23 @@ export default function Footer({ navigation = fallbackUsefulLinks, services = []
         </div>
       </div>
 
-      <FooterWordmark caption={settings.footer_caption || 'IT Support · Cyber Security · Cloud · Dubai, UAE'} />
+      {latestServices.length > 0 && (
+        <nav aria-label="Latest services" className="page-container pb-8">
+          <ul className="flex flex-wrap gap-2">
+            {latestServices.map((service) => (
+              <li key={service.href}>
+                <Link
+                  href={service.href}
+                  className="inline-flex items-center gap-2 rounded-full border border-[var(--border-subtle)] px-3.5 py-1.5 text-[13px] text-[var(--text-footer-link)] transition-colors duration-200 hover:border-[#2CCDDE] hover:text-[var(--text-primary)]"
+                >
+                  <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full" style={{ background: 'linear-gradient(135deg, #2CCDDE, #46A3E1)' }} />
+                  {service.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )}
 
       <div style={{ borderTop: '1px solid var(--border-subtle)' }}>
         <div className="page-container py-5 flex flex-col sm:flex-row items-center justify-between gap-2">

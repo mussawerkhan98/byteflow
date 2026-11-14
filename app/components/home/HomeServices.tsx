@@ -92,7 +92,7 @@ export function ServiceTile({
               {String(number).padStart(2, '0')}
             </span>
           </div>
-          <h3 className="mt-6 font-display text-[1.3125rem] font-semibold leading-snug tracking-[-0.02em] text-[var(--hp-ink)]">{tab.title}</h3>
+          <h3 className="mt-6 font-display text-[1.1875rem] font-semibold leading-snug tracking-[-0.015em] text-[var(--hp-ink)]">{tab.title}</h3>
           {tab.subtitle && <p className="mt-1.5 text-[14.5px] font-semibold leading-snug text-[var(--hp-accent)]">{tab.subtitle}</p>}
           {tab.text && <p className="mt-3 text-[14.5px] leading-relaxed text-[var(--hp-body)]">{tab.text}</p>}
         </div>

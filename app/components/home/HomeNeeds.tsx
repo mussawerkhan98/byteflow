@@ -62,7 +62,7 @@ export default async function HomeNeeds() {
                 </figure>
                 <p className="hp-eyebrow mt-7">{scenario.label}</p>
                 <h3 className="hp-h3 mt-3">{scenario.title}</h3>
-                {scenario.description && <p className="mt-3 text-[15.5px] leading-relaxed text-[var(--hp-body)]">{scenario.description}</p>}
+                {scenario.description && <p className="mt-3 text-[15px] leading-relaxed text-[var(--hp-body)]">{scenario.description}</p>}
                 {scenario.link && (
                   <Link
                     href={scenario.link.href}

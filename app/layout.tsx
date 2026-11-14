@@ -15,7 +15,7 @@ import InquiryDrawer from "./components/InquiryDrawer";
 import PageCta from "./components/PageCta";
 import PageSections from "./components/PageSections";
 import PageFaq from "./components/PageFaq";
-import { getMenu, getPageMetadata, getPublishedServices, getSiteFigures, getSiteSettings, getWebsiteScripts } from "./lib/cms";
+import { getLatestServices, getMenu, getPageMetadata, getPublishedServices, getSiteFigures, getSiteSettings, getWebsiteScripts } from "./lib/cms";
 import { getHomeBlock } from "./lib/home-blocks";
 import { splitHeadCode } from "./lib/head-code";
 import { getHeaderModel } from "./lib/header-data";
@@ -37,9 +37,10 @@ const sora = Sora({
   display: "swap",
 });
 
-// Only the footer wordmark uses this, so just the weight it is set in is
-// pulled down rather than the whole axis. Not preloaded: it is at the very
-// bottom of the page and would otherwise compete with the hero for bandwidth.
+// Only the header's BYTEFLOW uses this, so just the weight it is set in is
+// pulled down rather than the whole axis. Not preloaded, so it never competes
+// with the hero for bandwidth; the name shows in the fallback face until it
+// arrives.
 const outfit = Outfit({
   subsets: ["latin"],
   weight: "800",
@@ -81,12 +82,13 @@ export default async function RootLayout({
   // have to appear on the site straight away, which a cached page
   // cannot do. This opts every page out of static rendering.
   await connection();
-  const [settings, headerModel, footerMenu, scripts, services, privacy, terms] = await Promise.all([
+  const [settings, headerModel, footerMenu, scripts, services, latestServices, privacy, terms] = await Promise.all([
     getSiteSettings(),
     getHeaderModel(),
     getMenu("footer"),
     getWebsiteScripts(),
     getPublishedServices(),
+    getLatestServices(6),
     getHomeBlock("legal_privacy"),
     getHomeBlock("legal_terms"),
   ]);
@@ -159,6 +161,7 @@ export default async function RootLayout({
             navigation={footerNavigation}
             settings={(settings ?? {}) as never}
             services={services.map((service) => ({ label: service.title, href: `/${service.slug}` }))}
+            latestServices={latestServices.map((service) => ({ label: service.title, href: `/${service.slug}` }))}
             legalLinks={[
               { label: terms.fields.title, href: "/terms-and-conditions" },
               { label: privacy.fields.title, href: "/privacy-policy" },

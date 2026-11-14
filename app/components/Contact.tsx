@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useId, useSyncExternalStore } from 'react'
-import { DEFAULT_MAP_URL, safeMapUrl } from '../lib/office-map'
+import { DEFAULT_OFFICE_ADDRESS, officeMapUrl, officePlaceUrl } from '../lib/office-map'
 import { quotePrefill } from '../lib/quote-prefill'
 import { getRecaptchaToken } from '../lib/recaptcha'
 import { LEAD_EVENT, trackEvent } from '../lib/analytics'
@@ -77,8 +77,9 @@ const contactInfo = [
   },
   {
     label: 'Location',
-    value: 'Dubai, United Arab Emirates',
-    href: 'https://maps.google.com/?q=Dubai,UAE',
+    value: DEFAULT_OFFICE_ADDRESS,
+    // Replaced below with the place the map is pinned to.
+    href: officePlaceUrl('', DEFAULT_OFFICE_ADDRESS),
     icon: (
       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -420,10 +421,10 @@ export default function Contact({
   page?: ContactPageCopy
 }) {
   const Heading = asPage ? 'h1' : 'h2'
-  const shownContactInfo = contactInfo.map((item) => item.label === 'Phone' ? { ...item, value: settings.header_phone || item.value, href: `tel:${(settings.header_phone || item.value).replace(/[^+\d]/g, '')}` } : item.label === 'Email' ? { ...item, value: settings.primary_email || item.value, href: `mailto:${settings.primary_email || item.value}` } : item.label === 'Location' ? { ...item, value: settings.physical_address || item.value } : item.label === 'Support Hours' ? { ...item, value: settings.business_hours || item.value } : item)
+  const shownContactInfo = contactInfo.map((item) => item.label === 'Phone' ? { ...item, value: settings.header_phone || item.value, href: `tel:${(settings.header_phone || item.value).replace(/[^+\d]/g, '')}` } : item.label === 'Email' ? { ...item, value: settings.primary_email || item.value, href: `mailto:${settings.primary_email || item.value}` } : item.label === 'Location' ? { ...item, value: settings.physical_address || item.value, href: officePlaceUrl(settings.map_embed_url, settings.physical_address || item.value) } : item.label === 'Support Hours' ? { ...item, value: settings.business_hours || item.value } : item)
   const socialValues: Record<string, string | undefined> = { Facebook: settings.facebook_url, LinkedIn: settings.linkedin_url, Instagram: settings.instagram_url, TikTok: settings.tiktok_url, WhatsApp: settings.whatsapp_link }
   const configuredSocials = socials.map((item) => ({ ...item, href: socialValues[item.label] || item.href })).filter((item) => item.href)
-  const mapUrl = safeMapUrl(settings.map_embed_url)
+  const mapUrl = officeMapUrl(settings.map_embed_url)
   // Ties each label to its field, for screen readers and a bigger tap target.
   const fieldId = useId()
   const [form, setForm] = useState({ name: '', company: '', email: '', phone: '', service: '', message: '' })
@@ -699,7 +700,7 @@ export default function Contact({
   const showMap = settings.map_enabled === undefined || Boolean(settings.map_enabled)
   const mapFrame = (
     <iframe
-      src={mapUrl || DEFAULT_MAP_URL}
+      src={mapUrl}
       title="Byteflow office location on Google Maps"
       width="100%"
       height="100%"

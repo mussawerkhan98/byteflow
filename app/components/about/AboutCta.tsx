@@ -19,7 +19,8 @@ function ClockIcon({ className }: { className?: string }) {
   )
 }
 
-export type AboutContact = { phone: string; email: string; address: string }
+/** `addressHref` opens the place the site's map is pinned to (lib/office-map.ts). */
+export type AboutContact = { phone: string; email: string; address: string; addressHref?: string }
 
 /**
  * The closing panel, on a light brand-tinted wash: the free consultation on
@@ -29,10 +30,10 @@ export type AboutContact = { phone: string; email: string; address: string }
  */
 export default function AboutCta({ content, contact }: { content: HomeBlock; contact: AboutContact }) {
   const copy = content.fields
-  const rows: { label: string; value: string; href?: string; icon: ReactNode }[] = [
+  const rows: { label: string; value: string; href?: string; external?: boolean; icon: ReactNode }[] = [
     { label: copy.phone_label, value: contact.phone, href: contact.phone && `tel:${contact.phone.replace(/[^\d+]/g, '')}`, icon: <PhoneIcon className="h-[18px] w-[18px]" /> },
     { label: copy.email_label, value: contact.email, href: contact.email && `mailto:${contact.email}`, icon: <MailIcon className="h-[18px] w-[18px]" /> },
-    { label: copy.address_label, value: contact.address, icon: <PinIcon className="h-[18px] w-[18px]" /> },
+    { label: copy.address_label, value: contact.address, href: contact.addressHref, external: true, icon: <PinIcon className="h-[18px] w-[18px]" /> },
     { label: copy.support_label, value: copy.support_text, icon: <ClockIcon className="h-[18px] w-[18px]" /> },
   ].filter((row) => row.value)
 
@@ -69,7 +70,7 @@ export default function AboutCta({ content, contact }: { content: HomeBlock; con
               return (
                 <li key={row.label}>
                   {row.href ? (
-                    <a href={row.href} className={cls}>
+                    <a href={row.href} className={cls} {...(row.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
                       {inner}
                     </a>
                   ) : (

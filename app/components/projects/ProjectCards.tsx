@@ -52,7 +52,7 @@ export function ProjectLead({ project, photo, linkLabel, priority = false }: { p
             {project.title}
           </Link>
         </h3>
-        {project.requirement && <p className="mt-4 text-[16.5px] leading-relaxed text-[var(--hp-body)]">{project.requirement}</p>}
+        {project.requirement && <p className="hp-lead mt-4">{project.requirement}</p>}
         {project.scope.length > 0 && (
           <ul className="mt-6 grid gap-2.5" aria-label="Byteflow scope">
             {project.scope.map((item) => (
@@ -100,7 +100,7 @@ export function ProjectTile({ project, photo, index }: { project: ProjectCard; p
         </figure>
         <div className="flex flex-1 flex-col px-6 pb-6 pt-4">
           <ProjectMeta project={project} />
-          <h3 className="mt-3 line-clamp-2 font-display text-[1.25rem] font-semibold leading-snug tracking-[-0.02em] text-[var(--hp-ink)]">
+          <h3 className="mt-3 line-clamp-2 font-display text-[1.1875rem] font-semibold leading-snug tracking-[-0.015em] text-[var(--hp-ink)]">
             <Link href={project.href} className={stretched}>
               {project.title}
             </Link>
