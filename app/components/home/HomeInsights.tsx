@@ -80,7 +80,7 @@ export default async function HomeInsights({ posts }: { posts: Post[] }) {
           </div>
         </header>
 
-        <ul className={`mt-14 grid gap-5 sm:grid-cols-2 lg:mt-16 ${rowColumns[cards.length]}`}>
+        <ul className={`mt-14 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:mt-16 ${rowColumns[cards.length]}`}>
           {cards.map((post, index) => (
             <Card key={post.slug} post={post} index={index} readLabel={copy.read_label} badge={index === 0 ? (picked ? copy.picked_badge : copy.latest_badge) : undefined} />
           ))}

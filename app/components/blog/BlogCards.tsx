@@ -29,7 +29,7 @@ function Cover({ post, sizes, priority = false }: { post: BlogCardPost; sizes: s
 /** The featured article: a wide cover beside its headline and summary. */
 export function BlogFeatured({ post, badge, readLabel, author }: { post: BlogCardPost; badge: string; readLabel: string; author: string }) {
   return (
-    <article className="hp-card group relative grid overflow-hidden rounded-[1.75rem] lg:grid-cols-12">
+    <article className="hp-card group relative grid grid-cols-1 overflow-hidden rounded-[1.75rem] lg:grid-cols-12">
       <figure className="relative m-2 aspect-[16/10] overflow-hidden rounded-[1.35rem] lg:col-span-7 lg:aspect-auto lg:min-h-[22rem]">
         <Cover post={post} sizes="(min-width: 1024px) 56vw, 100vw" priority />
         {badge && <span className="hp-glass absolute left-4 top-4 rounded-full px-3 py-1 text-[11.5px] font-bold uppercase tracking-[0.14em] text-[var(--hp-ink)]">{badge}</span>}
