@@ -536,9 +536,14 @@
   box-shadow: var(--hp-shadow-lg);
 }
 
+/* A row swiped sideways on phones (cards, topic and filter buttons). The
+   swipe stays in the row: at either end it doesn't carry on into the page,
+   which would bounce it or set off the browser's back gesture. Each row sets
+   its own snapping with Tailwind's snap-* classes. */
 .hp-scroller {
   scrollbar-width: thin;
   scrollbar-color: var(--hp-line-strong) transparent;
+  overscroll-behavior-x: contain;
 }
 
 /* ---- Hero ---- */

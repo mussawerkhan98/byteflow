@@ -174,7 +174,7 @@ export default async function HomeServices() {
         {rest.length > 0 && (
           <ServiceFilter allLabel={copy.all_label || 'All services'} groups={groups} total={rest.length}>
             {/* Phones swipe through the cards; from tablets up they sit in a grid. */}
-            <ul className={`-mx-4 flex items-start snap-x snap-mandatory sm:items-stretch scroll-px-4 gap-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 sm:pb-0 xl:grid-cols-4 ${groups.length > 1 ? 'mt-5' : 'mt-4'}`}>
+            <ul className={`-mx-4 flex items-start snap-x snap-mandatory sm:items-stretch scroll-px-4 gap-4 overflow-x-auto overscroll-x-contain px-4 pb-2 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 sm:pb-0 xl:grid-cols-4 ${groups.length > 1 ? 'mt-5' : 'mt-4'}`}>
               {rest.map((tab, index) => (
                 <ServiceTile key={tab.slug} tab={tab} number={index + 2} group={groupOf.get(tab.href) ?? ''} />
               ))}

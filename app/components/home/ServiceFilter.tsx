@@ -36,7 +36,7 @@ export default function ServiceFilter({ allLabel, groups, total, children }: { a
   return (
     <div ref={list}>
       {groups.length > 1 && (
-        <div data-reveal className="-mx-4 mt-10 overflow-x-auto px-4 sm:mx-0 sm:px-0 lg:mt-12">
+        <div data-reveal className="-mx-4 mt-10 overflow-x-auto overscroll-x-contain px-4 sm:mx-0 sm:px-0 lg:mt-12">
           <div className="flex w-max gap-2" role="group" aria-label={allLabel}>
             {tabs.map((tab) => (
               <button key={tab.id || 'all'} type="button" aria-pressed={active === tab.id} onClick={() => choose(tab.id)} className="hp-svc-tab">
