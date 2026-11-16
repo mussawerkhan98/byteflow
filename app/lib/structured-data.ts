@@ -64,6 +64,7 @@ export const organizationSchema: JsonLd = {
     { '@type': 'City', name: 'Sharjah' },
     { '@type': 'City', name: 'Abu Dhabi' },
   ],
+  // Keep in step with the admin 'Address' script.
   sameAs: [
     'https://m.facebook.com/byteflow.ae/',
     'https://www.instagram.com/byteflow.ae/',
@@ -310,7 +311,7 @@ export function blogPostingSchema(input: {
     ...(Number.isFinite(words) && words > 0 ? { wordCount: Math.round(words) } : {}),
     inLanguage: 'en',
     author: input.author
-      ? { '@type': 'Person', name: plainText(input.author, 120) }
+      ? { '@type': 'Person', name: plainText(input.author, 120), worksFor: { '@id': ORG_ID }, url: absoluteUrl('/about-us') }
       : organization,
     publisher: organization,
   }

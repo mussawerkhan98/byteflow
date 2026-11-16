@@ -27,3 +27,4 @@ Byteflow operates as a single accountable team across IT infrastructure, securit
 ## Optional
  
 - [Sitemap](https://www.byteflow.ae/sitemap.xml): Full list of indexed pages, including all blog posts and project case studies.
+- [Full reference](https://www.byteflow.ae/llms-full.txt): Complete plain-text details on services, pricing and FAQs.
