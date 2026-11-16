@@ -27,7 +27,7 @@ export function ProjectMeta({ project, year, numbered = true }: { project: Proje
 /** The lead case study: a large photograph with its results along the foot, the story beside it. */
 export function ProjectLead({ project, photo, linkLabel, priority = false }: { project: ProjectCard; photo: PhotoSlot; linkLabel: string; priority?: boolean }) {
   return (
-    <article className="group relative grid gap-8 lg:grid-cols-12 lg:gap-12">
+    <article className="group relative grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-12">
       <div data-reveal="image" className="lg:col-span-7">
         <figure className="hp-frame relative aspect-[4/3] overflow-hidden rounded-[1.75rem] lg:aspect-[16/10]">
           <Photo slot={photo} sizes="(min-width: 1024px) 56vw, 100vw" priority={priority} zoom />

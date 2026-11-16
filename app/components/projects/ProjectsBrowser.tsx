@@ -67,7 +67,7 @@ export default function ProjectsBrowser({
           <>
             <ProjectLead project={lead.card} photo={lead.photo} linkLabel={labels.link} />
             {rest.length > 0 && (
-              <ul className="mt-14 grid gap-6 md:grid-cols-2 lg:mt-16 lg:grid-cols-3">
+              <ul className="mt-14 grid grid-cols-1 gap-6 md:grid-cols-2 lg:mt-16 lg:grid-cols-3">
                 {rest.map((project, i) => (
                   <li key={project.card.slug}>
                     <ProjectTile project={project.card} photo={project.photo} index={i} />
