@@ -14,7 +14,8 @@ export default function GoogleAnalytics({ gaId }: { gaId: string }) {
         {`window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
-gtag('config', '${gaId}');`}
+// Only the live site is tracked: localhost and Vercel preview links are skipped.
+if (/^(www\\.)?byteflow\\.ae$/.test(location.hostname)) gtag('config', '${gaId}');`}
       </Script>
       <Script id="ga" src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`} strategy="lazyOnload" />
     </>
