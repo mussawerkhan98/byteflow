@@ -214,7 +214,7 @@ export default function FAQ({ items, copy, contact }: { items: Faq[]; copy: FaqC
         {/* Topics on the left, how many questions are showing on the right. */}
         <div className="mt-10 flex flex-col gap-3 border-b border-[var(--border-default)] pb-4 sm:flex-row sm:items-center sm:justify-between">
           {categories.length > 1 ? (
-            <div role="group" aria-label="Filter questions by topic" className="-mx-4 flex gap-2 overflow-x-auto px-4 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 [&::-webkit-scrollbar]:hidden">
+            <div role="group" aria-label="Filter questions by topic" className="-mx-4 flex gap-2 overflow-x-auto overscroll-x-contain px-4 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 [&::-webkit-scrollbar]:hidden">
               {tab(copy.all_label, null, items.length)}
               {categories.map((category) => tab(category, category, items.filter((faq) => faq.category.trim() === category).length))}
             </div>

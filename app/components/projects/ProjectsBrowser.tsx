@@ -37,7 +37,7 @@ export default function ProjectsBrowser({
       <div className="flex flex-col gap-8">
         {heading}
         {filters.length > 1 && (
-          <div role="group" aria-label={labels.filter} className="hp-scroller -mx-4 flex gap-2 overflow-x-auto px-4 pb-2 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:pb-0">
+          <div role="group" aria-label={labels.filter} className="hp-scroller -mx-4 flex snap-x scroll-px-4 gap-2 overflow-x-auto px-4 pb-2 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:pb-0">
             {chips.map((chip) => {
               const on = chip.category === active
               return (
@@ -46,7 +46,7 @@ export default function ProjectsBrowser({
                   type="button"
                   aria-pressed={on}
                   onClick={() => setActive(chip.category)}
-                  className={`inline-flex shrink-0 items-center gap-1.5 rounded-full border px-3.5 py-2 text-[14px] font-semibold transition-colors ${
+                  className={`inline-flex shrink-0 snap-start items-center gap-1.5 rounded-full border px-3.5 py-2 text-[14px] font-semibold transition-colors ${
                     on
                       ? 'border-[var(--hp-accent)] bg-[var(--hp-card)] text-[var(--hp-ink)] shadow-[var(--hp-shadow)]'
                       : 'border-[var(--hp-line)] bg-transparent text-[var(--hp-body)] hover:border-[var(--hp-line-strong)] hover:bg-[var(--hp-card)] hover:text-[var(--hp-ink)]'
