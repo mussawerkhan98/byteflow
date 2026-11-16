@@ -92,6 +92,24 @@ const nextConfig: NextConfig = {
       "business-it-support-dubai": "/it-amc-services-dubai",
       "three-reasons-your-business-needs-managed-it-services-near-me":
         "/it-amc-services-dubai",
+
+      // Near-duplicate software pages, consolidated onto one page.
+      "best-software-company-in-al-barsha": "/software-development-company-in-dubai",
+      "software-development-near-me-in-dubai": "/software-development-company-in-dubai",
+      "software-development-company-in-al-barsha": "/software-development-company-in-dubai",
+      "software-company-in-al-barsha": "/software-development-company-in-dubai",
+      "custom-software-development-company-in-al-barsha": "/software-development-company-in-dubai",
+      "software-development-services-in-al-barsha": "/software-development-company-in-dubai",
+      "software-development-in-al-barsha": "/software-development-company-in-dubai",
+      "top-software-company-in-dubai": "/software-development-company-in-dubai",
+      "best-software-company": "/software-development-company-in-dubai",
+      "byteflow-software-company-in-dubai": "/software-development-company-in-dubai",
+      "best-software-company-in-dubai": "/software-development-company-in-dubai",
+      "software-development-services-in-dubai": "/software-development-company-in-dubai",
+      "custom-software-development-company-in-dubai": "/software-development-company-in-dubai",
+      "custom-software-development-in-dubai": "/software-development-company-in-dubai",
+      "affordable-software-development-in-dubai": "/software-development-company-in-dubai",
+      "byteflow-software-company-dubai": "/software-development-company-in-dubai",
     };
 
     const retiredRedirects = Object.entries(retired).flatMap(

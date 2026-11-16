@@ -1,0 +1,151 @@
+# Byteflow Information Technology — Full Reference
+
+> Byteflow is an IT solutions provider based in Dubai, UAE, serving 500+ businesses since 2017. It provides IT AMC and managed IT support, cyber security, cloud services (Microsoft 365 and Azure), system integration, data backup and recovery, website and app development, design, and digital marketing for companies in Dubai, Sharjah and Abu Dhabi.
+
+This file is the long-form companion to https://www.byteflow.ae/llms.txt. It contains the factual details, prices and answers from the website in plain text. Last updated: November 2026.
+
+## Company facts
+
+- Legal name: Byteflow Information Technology
+- Founded: 2017
+- Clients: 500+ UAE businesses
+- Office: Emaar Park 4, Greens, TECOM, Dubai, UAE
+- Phone and WhatsApp: +971 54 328 2042
+- Email: info@byteflow.ae
+- Website: https://www.byteflow.ae
+- Service area: Dubai (including Business Bay, JLT, World Trade Centre, DIFC, Downtown, Deira, Al Barsha, Al Quoz and TECOM), Sharjah and Abu Dhabi
+- Support hours: Monday to Saturday, 9:00 AM to 6:00 PM, with 24/7 monitoring of eligible systems
+- Model: one accountable team for IT infrastructure, security, cloud, web, design and marketing
+
+---
+
+## IT AMC (Annual Maintenance Contract)
+URL: https://www.byteflow.ae/it-amc-services-dubai
+
+IT AMC stands for Information Technology Annual Maintenance Contract: an agreement for ongoing support, maintenance and management of a business's computers, servers, networks, Microsoft 365 and connected office equipment.
+
+### Published pricing (per user, per month, excluding 5% VAT)
+- Essential (Remote IT Support): AED 40. For smaller teams that mainly need remote help.
+- Standard (Remote and On-Site IT Support): AED 70. Everything in Essential plus on-site visits, server and network management.
+- Complete (Fully Managed IT Support): AED 110. Everything in Standard plus priority support and eligible website/SEO technical monitoring.
+- Example: a 10-person office on Essential pays AED 400 per month before VAT.
+- Final fee depends on users, devices, servers, locations and support hours.
+
+### Service levels
+- Remote support response: within 30 minutes of a ticket.
+- On-site response: within 2 hours across Dubai, with no premium zones.
+- Unlimited remote assistance for covered incidents; call volume does not change the price.
+- 24/7 monitoring of eligible systems. The staffed helpdesk runs Monday to Saturday, 9 AM to 6 PM.
+- Monthly and annual contract options; terms are confirmed in the proposal before signing.
+
+### Included vs quoted separately
+- Included: remote and on-site support (per plan), patching, antivirus management, MFA and access reviews, Microsoft 365 administration, printer and scanner troubleshooting.
+- Quoted separately: hardware and parts, advanced EDR and threat monitoring, penetration testing, backup licences and storage, website redesigns and content production.
+
+### Common questions
+- AMC vs break-fix: break-fix means paying per job when something fails; an AMC provides ongoing monitoring, maintenance and support under one agreement.
+- Comprehensive vs non-comprehensive AMC: non-comprehensive covers labour with parts charged separately; comprehensive may include specified replacements.
+- Switching providers: Byteflow can plan a structured transition and audit the existing setup. Check the notice period in the current contract first.
+
+---
+
+## Cyber Security
+URL: https://www.byteflow.ae/cyber-security
+
+Layered protection: next-generation firewalls, endpoint detection and response (EDR), email security, network monitoring and staff phishing training.
+
+- Most common threats to Dubai businesses: phishing and business email compromise.
+- Ransomware response: EDR isolates an infected device within seconds; data is restored from clean backups, typically within 2 to 4 hours.
+- Serious incidents: on-site within 2 hours. Byteflow follows contain, preserve evidence, eradicate, restore, and report.
+- Compliance: aligns controls with UAE Federal Decree-Law No. 45 of 2021 on Personal Data Protection, NESA guidelines and sector requirements.
+- No in-house security team needed; Byteflow acts as the outsourced security team.
+
+---
+
+## Data Backup and Recovery
+URL: https://www.byteflow.ae/data-backup-recovery
+
+- Hourly automated backups with immutable (ransomware-proof) storage.
+- Backups stored in UAE data centres by default, encrypted with AES-256 at rest and in transit.
+- Microsoft 365 backup covers mailboxes, Teams, SharePoint and OneDrive. Microsoft itself does not protect against deletion or ransomware.
+- Restore after ransomware: most clients operational within 2 to 4 hours. Individual files: minutes.
+- Bare-metal server recovery: most clients back up within 4 hours of hardware failure.
+- Test restores run quarterly, with reports provided.
+
+---
+
+## Cloud Services (Microsoft 365 and Azure)
+URL: https://www.byteflow.ae/cloud-services-dubai
+
+- Microsoft 365 and Google Workspace setup, migration and management; Azure servers; SharePoint and Teams; hybrid cloud.
+- Migration time: 2 to 3 days for up to 25 users; 1 to 2 weeks (phased) for 50 to 200 users.
+- Zero email loss approach: old and new systems run in parallel until cutover. 200+ migrations completed.
+- Recommended plan for most small businesses: Microsoft 365 Business Standard.
+- Regulated industries: configurations that meet UAE data residency and sector compliance (e.g. ADHICS for healthcare).
+- Ongoing Microsoft 365 administration is included in IT AMC contracts.
+
+---
+
+## System Integration
+URL: https://www.byteflow.ae/system-integration
+
+- Network design, structured cabling, servers, Wi-Fi, CCTV, access control, VoIP and multi-site connectivity.
+- A 20 to 50 user office network takes 1 to 3 days, done off-hours where possible.
+- Brands: Cisco, Ubiquiti, HPE Aruba, Fortinet, Hikvision and others; existing hardware can be kept if fit for purpose.
+- Multi-emirate offices connected with site-to-site VPN and SD-WAN.
+
+---
+
+## Websites, Apps and Bots
+URL: https://www.byteflow.ae/website-development
+
+- Corporate websites, e-commerce, custom web applications, mobile apps, AI chatbots and WhatsApp bots, built in-house.
+- Timeline: a corporate site up to 10 pages takes 2 to 4 weeks; e-commerce and custom apps 6 to 12 weeks.
+- Bilingual English and Arabic sites with proper RTL layout.
+- UAE payment gateways: Network International, PayTabs, Checkout.com, Stripe and others.
+- All hosting and domain accounts are kept in the client's name.
+
+## Landing Page Design
+URL: https://www.byteflow.ae/landing-page-designing
+
+- Conversion-focused, mobile-first pages for Google Ads and social campaigns, live within 1 to 2 weeks.
+- Copywriting and conversion tracking (forms, WhatsApp clicks, calls) included.
+
+## UI/UX and Graphic Design
+URL: https://www.byteflow.ae/graphics-designing
+
+- Logos, brand identity, UI/UX, company profiles, presentations, print and signage, in English and Arabic.
+- Three logo concepts with unlimited revisions; files delivered in AI, EPS, PDF, PNG and SVG.
+- Editable social media templates (Canva, Adobe Express, PowerPoint).
+
+## Digital Marketing
+URL: https://www.byteflow.ae/digital-marketing
+
+- SEO, Google Ads, social media advertising, content marketing and email automation, in English and Arabic.
+- SEO timeline: competitive keywords 3 to 6 months; less competitive local terms often 6 to 8 weeks.
+- Google Ads budgets: AED 3,000 to 5,000 per month ad spend for most B2B services; AED 10,000+ for legal, real estate and finance.
+- Monthly reporting with a live dashboard (Google Analytics, Search Console, ad platforms).
+
+---
+
+## Guides on IT costs in Dubai
+
+- IT support cost for small offices: basic remote support from around AED 500 per month; plans with on-site visits around AED 1,500+. https://www.byteflow.ae/it-support-cost-dubai
+- An in-house IT employee costs roughly AED 5,000 per month in salary alone, plus visa, insurance and gratuity. https://www.byteflow.ae/outsourced-vs-in-house-it-support-dubai
+- IT AMC vs managed IT services: an AMC maintains and repairs equipment for a fixed fee; managed IT proactively monitors, secures and manages the whole environment. https://www.byteflow.ae/it-amc-vs-managed-it-services-dubai
+- What IT AMC is and what it covers: https://www.byteflow.ae/what-is-it-amc-dubai
+- New office IT setup: plan 6 to 8 weeks before move-in; involve the IT partner before fit-out starts. https://www.byteflow.ae/new-office-it-setup-dubai
+- UAE VAT on IT services is 5%.
+
+## Case studies
+- IT infrastructure overhaul for three Dubai offices: https://www.byteflow.ae/projects/it-infrastructure-overhaul-three-dubai-offices
+- Ransomware recovery for a logistics company: https://www.byteflow.ae/projects/ransomware-recovery-logistics-company
+- Real estate Azure migration: https://www.byteflow.ae/projects/real-estate-azure-migration
+- Enterprise cybersecurity programme: https://www.byteflow.ae/projects/enterprise-cybersecurity-programme
+- Hotel CCTV and network fit-out: https://www.byteflow.ae/projects/hotel-cctv-network-fit-out
+- Law firm website and SEO rebuild: https://www.byteflow.ae/projects/law-firm-website-seo-rebuild
+- B2B Google Ads lead generation: https://www.byteflow.ae/projects/b2b-google-ads-lead-generation
+- All projects: https://www.byteflow.ae/projects
+
+## Contact
+Request a quote at https://www.byteflow.ae/contact-us, call or WhatsApp +971 54 328 2042, or email info@byteflow.ae.

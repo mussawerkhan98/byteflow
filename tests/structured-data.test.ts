@@ -206,3 +206,17 @@ test('the Services page lists each service by name and address, in order', () =>
   })
   assert.equal(serviceListSchema([]), null)
 })
+
+test('a named author is a person who works for the business, linked to the About page', () => {
+  const post = blogPostingSchema({
+    title: 'What is IT AMC in Dubai',
+    path: '/what-is-it-amc-dubai',
+    author: 'Mussawer Khan',
+  }) as Record<string, unknown>
+  assert.deepEqual(post.author, {
+    '@type': 'Person',
+    name: 'Mussawer Khan',
+    worksFor: { '@id': ORG_ID },
+    url: 'https://www.byteflow.ae/about-us',
+  })
+})
