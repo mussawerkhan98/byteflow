@@ -24,11 +24,11 @@ export const services: ServiceData[] = [
     title: 'IT AMC / IT Support',
     tagline: 'Predictable IT costs. Zero surprises.',
     eyebrow: 'Keep your business running',
-    caption: '24/7 monitoring · 2-hr on-site response',
+    caption: '24/7 monitoring · 1-hr on-site response in Dubai',
     description:
-      'IT AMC support that covers every device, server and network in your office under one fixed monthly fee. No per-incident charges and no surprise repair bills, with a two-hour on-site response anywhere in Dubai \u2014 Business Bay, JLT and World Trade Centre included \u2014 as well as Sharjah and Abu Dhabi.',
+      'IT AMC support that covers every device, server and network in your office under one fixed monthly fee. No per-incident charges and no surprise repair bills, with a one-hour on-site response anywhere in Dubai \u2014 Business Bay, JLT and World Trade Centre included \u2014 two hours in Sharjah and three hours in Abu Dhabi.',
     heroStats: [
-      { value: '2 hrs', label: 'On-site response guarantee' },
+      { value: '1 hr', label: 'On-site response in Dubai' },
       { value: '500+', label: 'Businesses on AMC contracts' },
       { value: '24/7', label: 'Remote monitoring' },
       { value: '8+ yrs', label: 'Serving UAE businesses' },
@@ -40,7 +40,7 @@ export const services: ServiceData[] = [
       },
       {
         title: 'On-site Engineer Visits',
-        desc: 'When remote support is not enough, a certified engineer arrives at your office within 2 hours across Dubai, Sharjah and Abu Dhabi.',
+        desc: 'When remote support is not enough, a certified engineer arrives at your office within 1 hour in Dubai, 2 hours in Sharjah and 3 hours in Abu Dhabi.',
       },
       {
         title: 'Server and Network Management',
@@ -115,7 +115,7 @@ export const services: ServiceData[] = [
       },
       {
         q: 'How quickly do you respond when something breaks?',
-        a: 'Remote support is available within 30 minutes of a ticket being raised. For issues that require a physical presence, our engineers arrive on-site within 2 hours across Dubai, Sharjah and Abu Dhabi. For critical server outages, we treat it as a P1 and mobilise immediately.',
+        a: 'Remote support starts within 30 minutes of a ticket being raised. On the Standard and Complete plans, engineers arrive on-site within 1 hour anywhere in Dubai, within 2 hours in Sharjah and within 3 hours in Abu Dhabi. Critical server outages are treated as P1 and we mobilise immediately.',
       },
       {
         q: 'Do you support businesses with multiple offices?',
@@ -127,7 +127,7 @@ export const services: ServiceData[] = [
       },
       {
         q: 'Do you cover Business Bay, JLT and World Trade Centre?',
-        a: 'Yes, and at the same service level as everywhere else. The two-hour on-site response applies across Dubai, so Business Bay, JLT, World Trade Centre, DIFC, Downtown, Deira, Al Barsha and TECOM are all covered on the same SLA \u2014 there is no premium zone and no area we charge extra to reach. Engineers are dispatched from whichever team is closest on the day. Sharjah and Abu Dhabi are covered under the same AMC.',
+        a: 'Yes, at the same service level as everywhere else in Dubai. The 1-hour on-site response covers Business Bay, JLT, World Trade Centre, DIFC, Downtown, Deira, Al Barsha and TECOM, with no premium zone and no extra charge. Sharjah and Abu Dhabi are covered under the same AMC, with on-site response within 2 hours in Sharjah and 3 hours in Abu Dhabi.',
       },
       {
         q: 'What is the minimum contract length?',
@@ -237,7 +237,7 @@ export const services: ServiceData[] = [
       },
       {
         q: 'How do you handle a confirmed security incident?',
-        a: 'We follow an established incident response plan: contain the threat, preserve evidence, eradicate the cause, restore normal operations and provide a full post-incident report. For serious breaches, our team is on-site within 2 hours.',
+        a: 'We follow an established incident response plan: contain the threat, preserve evidence, eradicate the cause, restore normal operations and provide a full post-incident report. For serious breaches, our team is on-site within 1 hour in Dubai, 2 hours in Sharjah and 3 hours in Abu Dhabi.',
       },
       {
         q: 'Can you help us comply with UAE data protection regulations?',

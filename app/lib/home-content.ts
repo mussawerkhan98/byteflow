@@ -122,7 +122,7 @@ export const homeDefaults = {
       highlights: [
         { title: 'Full IT under one roof', description: 'Infrastructure, cloud, security, design and marketing, all managed by one expert team with full accountability.', link: '/#services', icon: 'layers', show: 'yes', image: '', image_alt: '' },
         { title: 'Zero hidden costs', description: 'Fixed monthly or annual packages so you always know what you pay. No surprises, no extra invoices.', link: '/it-amc-services-dubai', icon: 'receipt', show: 'yes', image: '', image_alt: '' },
-        { title: 'Rapid on-site response', description: 'Certified engineers on-site or remote within 2 hours across Dubai, Sharjah and Abu Dhabi.', link: '/it-amc-services-dubai', icon: 'clock', show: 'yes', image: '', image_alt: '' },
+        { title: 'Rapid on-site response', description: 'Certified engineers on-site within 1 hour in Dubai, 2 hours in Sharjah and 3 hours in Abu Dhabi.', link: '/it-amc-services-dubai', icon: 'clock', show: 'yes', image: '', image_alt: '' },
         { title: 'Microsoft & cloud ready', description: 'Official Microsoft 365 setup, cloud migrations and ongoing management for UAE businesses of every size.', link: '/cloud-services-dubai', icon: 'cloud', show: 'yes', image: '', image_alt: '' },
       ],
     },
@@ -141,7 +141,7 @@ export const homeDefaults = {
     },
     lists: {
       rows: [
-        { title: 'Fast response', value: '2', unit: 'hrs', description: 'On-site or remote support within 2 hours. We never leave you waiting when your business is down.' },
+        { title: 'Fast response', value: '1', unit: 'hr', description: 'On-site within 1 hour anywhere in Dubai. We never leave you waiting when your business is down.' },
         { title: 'Expert team', value: '100%', unit: 'certified engineers', description: 'Certified IT professionals with deep expertise across infrastructure, cloud, security and design.' },
         { title: 'Fixed pricing', value: '0', unit: 'surprise bills', description: 'Transparent monthly or annual packages with no surprise bills. Budget with complete confidence.' },
         { title: 'One team, all IT', value: '1', unit: 'vendor to call', description: 'From IT support to web development and digital marketing — one vendor, zero hassle, full accountability.' },
@@ -256,7 +256,7 @@ export const homeDefaults = {
       call_label: 'Call us now',
       whatsapp_label: 'WhatsApp us',
       // One per line, shown with a check mark.
-      promises: 'No contracts required\nFree consultation\nResponse within 2 hours',
+      promises: 'Monthly or annual plans\nFree consultation\nResponse within 2 hours',
     },
     lists: {},
   },
@@ -291,7 +291,7 @@ export const homeDefaults = {
         { title: 'Custom proposal', when: 'Within 24 hours', description: 'Within 24 hours you receive a clear, itemised proposal — scope, timeline and fixed pricing. No hidden costs, no vague estimates.', points: 'Itemised scope\nClear timeline\nFixed pricing', image: '', image_alt: '' },
         { title: 'Onboarding & setup', when: 'On-site or remote', description: 'Our certified engineers arrive on-site or connect remotely. We configure your network, servers, cloud or software with zero disruption to your workday.', points: 'Network & servers\nCloud & software\nNo disruption to your day', image: '', image_alt: '' },
         { title: 'Testing & handover', when: 'Before sign-off', description: 'Everything is tested end-to-end before we hand over. We walk your team through what was done, answer every question and make sure you are 100% comfortable.', points: 'End-to-end testing\nTeam walkthrough\nEvery question answered', image: '', image_alt: '' },
-        { title: 'Ongoing support', when: '24/7, for as long as you need', description: 'We monitor your systems 24/7 and fix issues before they affect your business. One call or message and our engineers are on it — on-site within 2 hours.', points: '24/7 monitoring\nIssues fixed early\nOn-site within 2 hours', image: '', image_alt: '' },
+        { title: 'Ongoing support', when: '24/7, for as long as you need', description: 'We monitor your systems 24/7 and fix issues before they affect your business. One call or message and our engineers are on it — on-site within 1 hour in Dubai.', points: '24/7 monitoring\nIssues fixed early\nOn-site within 1 hour in Dubai', image: '', image_alt: '' },
       ],
     },
   },
@@ -339,7 +339,7 @@ export const homeDefaults = {
         { group: 'Digital & Creative', title: 'Digital Marketing', description: 'Measurable monthly leads', link: '/digital-marketing' },
       ],
       stats: [
-        { title: '2 hrs', description: 'On-site response' },
+        { title: '1 hr', description: 'On-site response in Dubai' },
         { title: '24/7', description: 'Monitoring' },
       ],
       // No industry has a page yet, so the Industries menu stays hidden.
@@ -385,7 +385,7 @@ export const homeDefaults = {
         { year: '{founded}', title: 'Byteflow is founded in Dubai', description: 'Started as a lean IT support team serving small businesses in Deira and Bur Dubai. First 10 clients onboarded within the first month.' },
         { year: '2019', title: 'Expanded to cloud and Microsoft 365', description: 'Became an official Microsoft partner. Started handling full cloud migrations and Microsoft 365 deployments for UAE businesses of all sizes.' },
         { year: '2020', title: 'Launched digital marketing and web services', description: 'Added website development, SEO, and Google Ads to the service portfolio — giving clients a single vendor for both IT and digital growth.' },
-        { year: '2022', title: 'Crossed 300+ business clients', description: 'Expanded coverage to Sharjah and Abu Dhabi with dedicated on-site engineers. Introduced the 2-hour response SLA across all AMC plans.' },
+        { year: '2022', title: 'Crossed 300+ business clients', description: 'Expanded coverage to Sharjah and Abu Dhabi with dedicated on-site engineers. Introduced a guaranteed on-site response SLA.' },
         { year: 'Today', title: '{clients} businesses and still growing', description: 'A full team of certified engineers, designers, marketers and cloud specialists, looking after businesses across the UAE.' },
       ],
     },
@@ -400,7 +400,7 @@ export const homeDefaults = {
     },
     lists: {
       principles: [
-        { title: 'We respond in 2 hours — guaranteed', description: 'Every AMC plan includes a 2-hour on-site or remote response SLA. Not next business day. Not "as soon as possible." Two hours.' },
+        { title: 'We respond fast — guaranteed', description: 'Remote support starts within 30 minutes on every plan. On Standard and Complete, an engineer is on-site within 1 hour in Dubai, 2 hours in Sharjah and 3 hours in Abu Dhabi. Not next business day. Not "as soon as possible."' },
         { title: 'Fixed price, zero hidden fees', description: 'You get one monthly invoice. No call-out fees, no emergency surcharges, no per-ticket billing. We cover everything in your plan.' },
         { title: 'One team handles everything', description: 'IT support, cloud, security, website, marketing — the same team, the same account manager, one phone number. No handoffs.' },
       ],
@@ -562,7 +562,7 @@ export const homeDefaults = {
       rows: [
         { title: 'Who you call', us: 'One phone number and one account manager', them: 'A different company for each problem' },
         { title: 'What you pay', us: 'One fixed monthly invoice, no call-out fees', them: 'Separate bills, with extras for urgent visits' },
-        { title: 'How fast help arrives', us: '2-hour response on every AMC plan', them: 'Whatever each contract allows' },
+        { title: 'How fast help arrives', us: 'Remote in 30 minutes; on-site in 1 hour in Dubai', them: 'Whatever each contract allows' },
         { title: 'When something breaks', us: 'We own the fix, whatever the cause', them: 'Each vendor points to another' },
         { title: 'How it’s planned', us: 'IT, cloud, security and web planned together', them: 'Set up separately, rarely in step' },
       ],
@@ -792,7 +792,7 @@ export const homeDefaults = {
   amc_seo: {
     fields: {
       title: 'IT AMC Support & Services in Dubai | Byteflow',
-      description: 'IT AMC support across Dubai, Business Bay, JLT and WTC included. One fixed monthly fee, 2-hour on-site response, 24/7 monitoring and no surprise bills.',
+      description: 'IT AMC support across Dubai, Business Bay, JLT and WTC included. One fixed monthly fee, 1-hour on-site response in Dubai, 24/7 monitoring and no surprise bills.',
     },
     lists: {},
   },
@@ -801,7 +801,7 @@ export const homeDefaults = {
     fields: {},
     lists: {
       stats: [
-        { title: '2 hrs', description: 'On-site response across Dubai' },
+        { title: '1 hr', description: 'On-site response across Dubai' },
         { title: '24/7', description: 'Remote monitoring' },
         { title: '{years}+', description: 'Years looking after UAE businesses' },
       ],
@@ -812,7 +812,7 @@ export const homeDefaults = {
     lists: {
       items: [
         { title: 'One fixed monthly fee', description: 'Support, maintenance and monitoring on one invoice, with no per-incident charges.', icon: 'fee' },
-        { title: '2-hour on-site response', description: 'Across Dubai, with Sharjah and Abu Dhabi covered under the same AMC.', icon: 'clock' },
+        { title: '1-hour on-site response in Dubai', description: 'Engineers on-site within 1 hour anywhere in Dubai, 2 hours in Sharjah and 3 hours in Abu Dhabi.', icon: 'clock' },
         { title: '24/7 monitoring', description: 'Every laptop, desktop and server watched for problems around the clock.', icon: 'monitor' },
         { title: 'A dedicated account engineer', description: 'One person who knows your setup, and one number to call.', icon: 'person' },
       ],
@@ -848,7 +848,7 @@ export const homeDefaults = {
       ],
       services: [
         { title: 'Unlimited Remote Support', description: 'Raise a ticket or call us and get remote assistance within 30 minutes. No per-incident fees, no limits on the number of requests per month.', tab: 'End-User IT Support', image: '', image_alt: '' },
-        { title: 'On-site Engineer Visits', description: 'When remote support is not enough, a certified engineer arrives at your office within 2 hours across Dubai, Sharjah and Abu Dhabi.', tab: 'End-User IT Support', image: '', image_alt: '' },
+        { title: 'On-site Engineer Visits', description: 'When remote support is not enough, a certified engineer arrives at your office within 1 hour in Dubai, 2 hours in Sharjah and 3 hours in Abu Dhabi.', tab: 'End-User IT Support', image: '', image_alt: '' },
         { title: 'Endpoint Monitoring', description: 'Every laptop, desktop and workstation is monitored 24/7 for hardware issues, software conflicts, disk health and security threats.', tab: 'End-User IT Support', image: '', image_alt: '' },
         { title: 'Software Updates and Patching', description: 'We handle all OS updates, firmware patches and critical security fixes during off-hours so your team is never disrupted.', tab: 'End-User IT Support', image: '', image_alt: '' },
         { title: 'IT Asset Inventory', description: 'A live register of every device, licence and warranty expiry date in your office so you always know what you own and when it needs replacing.', tab: 'End-User IT Support', image: '', image_alt: '' },
@@ -1005,7 +1005,7 @@ export const homeDefaults = {
       priorities: [
         { title: 'Critical', description: 'A server outage or a fault stopping the whole office.', response: 'We mobilise immediately' },
         { title: 'Remote support', description: 'Any ticket that can be fixed remotely.', response: 'Within 30 minutes' },
-        { title: 'On-site visit', description: 'When the fix needs an engineer at your office.', response: 'Within 2 hours across Dubai' },
+        { title: 'On-site visit', description: 'When the fix needs an engineer at your office.', response: 'Within 1 hour across Dubai' },
       ],
     },
   },
@@ -1014,7 +1014,7 @@ export const homeDefaults = {
       eyebrow: 'Dubai & UAE coverage',
       heading: 'The same response time,',
       heading_soft: 'wherever your office is.',
-      text: 'The two-hour on-site response applies across Dubai, with no premium zone and no area we charge extra to reach. Sharjah and Abu Dhabi are covered under the same AMC.',
+      text: 'The 1-hour on-site response applies across Dubai, with no premium zone and no area we charge extra to reach. Sharjah and Abu Dhabi are covered under the same AMC, with on-site response within 2 hours in Sharjah and 3 hours in Abu Dhabi.',
       areas: 'Business Bay\nJLT\nWorld Trade Centre\nDIFC\nDowntown\nDeira\nAl Barsha\nTECOM\nSharjah\nAbu Dhabi',
     },
     lists: {},
@@ -1059,10 +1059,10 @@ export const homeDefaults = {
     lists: {
       faqs: [
         { title: 'What exactly does an IT AMC cover?', description: 'Our AMC covers unlimited remote and on-site support for all devices, servers, network equipment and software in your office. It includes proactive monitoring, patching, antivirus management and a dedicated account engineer. You pay one fixed monthly fee with no additional call-out or per-incident charges.' },
-        { title: 'How quickly do you respond when something breaks?', description: 'Remote support is available within 30 minutes of a ticket being raised. For issues that require a physical presence, our engineers arrive on-site within 2 hours across Dubai, Sharjah and Abu Dhabi. For critical server outages, we treat it as a P1 and mobilise immediately.' },
+        { title: 'How quickly do you respond when something breaks?', description: 'Remote support starts within 30 minutes of a ticket being raised. On the Standard and Complete plans, engineers arrive on-site within 1 hour anywhere in Dubai, within 2 hours in Sharjah and within 3 hours in Abu Dhabi. Critical server outages are treated as P1 and we mobilise immediately.' },
         { title: 'Do you support businesses with multiple offices?', description: 'Yes. We manage multi-site businesses with offices across Dubai, Sharjah, Abu Dhabi and other UAE emirates. We assign a dedicated engineer per site and provide centralised monitoring from our NOC, so issues in any location are spotted and resolved quickly.' },
         { title: 'Can we add services to the AMC later?', description: 'Absolutely. Many clients start with basic IT support and later add cloud management, cyber security monitoring or Microsoft 365 administration. Your AMC can be expanded at any time without signing a new long-term contract.' },
-        { title: 'Do you cover Business Bay, JLT and World Trade Centre?', description: 'Yes, and at the same service level as everywhere else. The two-hour on-site response applies across Dubai, so Business Bay, JLT, World Trade Centre, DIFC, Downtown, Deira, Al Barsha and TECOM are all covered on the same SLA — there is no premium zone and no area we charge extra to reach. Engineers are dispatched from whichever team is closest on the day. Sharjah and Abu Dhabi are covered under the same AMC.' },
+        { title: 'Do you cover Business Bay, JLT and World Trade Centre?', description: 'Yes, at the same service level as everywhere else in Dubai. The 1-hour on-site response covers Business Bay, JLT, World Trade Centre, DIFC, Downtown, Deira, Al Barsha and TECOM, with no premium zone and no extra charge. Sharjah and Abu Dhabi are covered under the same AMC, with on-site response within 2 hours in Sharjah and 3 hours in Abu Dhabi.' },
         { title: 'What is the minimum contract length?', description: 'We offer monthly rolling plans as well as annual contracts. Annual plans come with better pricing and priority SLA guarantees. Most clients choose annual contracts because the savings are significant, but we never force you into a long-term commitment.' },
       ],
     },

@@ -33,7 +33,7 @@ IT AMC stands for Information Technology Annual Maintenance Contract: an agreeme
 
 ### Service levels
 - Remote support response: within 30 minutes of a ticket.
-- On-site response: within 2 hours across Dubai, with no premium zones.
+- On-site response (Standard and Complete plans): within 1 hour anywhere in Dubai, 2 hours in Sharjah and 3 hours in Abu Dhabi, with no premium zones.
 - Unlimited remote assistance for covered incidents; call volume does not change the price.
 - 24/7 monitoring of eligible systems. The staffed helpdesk runs Monday to Saturday, 9 AM to 6 PM.
 - Monthly and annual contract options; terms are confirmed in the proposal before signing.
@@ -56,7 +56,7 @@ Layered protection: next-generation firewalls, endpoint detection and response (
 
 - Most common threats to Dubai businesses: phishing and business email compromise.
 - Ransomware response: EDR isolates an infected device within seconds; data is restored from clean backups, typically within 2 to 4 hours.
-- Serious incidents: on-site within 2 hours. Byteflow follows contain, preserve evidence, eradicate, restore, and report.
+- Serious incidents: on-site within 1 hour in Dubai, 2 hours in Sharjah and 3 hours in Abu Dhabi. Byteflow follows contain, preserve evidence, eradicate, restore, and report.
 - Compliance: aligns controls with UAE Federal Decree-Law No. 45 of 2021 on Personal Data Protection, NESA guidelines and sector requirements.
 - No in-house security team needed; Byteflow acts as the outsourced security team.
 
