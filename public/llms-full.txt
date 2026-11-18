@@ -46,6 +46,7 @@ IT AMC stands for Information Technology Annual Maintenance Contract: an agreeme
 - AMC vs break-fix: break-fix means paying per job when something fails; an AMC provides ongoing monitoring, maintenance and support under one agreement.
 - Comprehensive vs non-comprehensive AMC: non-comprehensive covers labour with parts charged separately; comprehensive may include specified replacements.
 - Switching providers: Byteflow can plan a structured transition and audit the existing setup. Check the notice period in the current contract first.
+- More detail on remote, on-site and outsourced IT support: https://www.byteflow.ae/it-support-company-dubai
 
 ---
 
@@ -83,6 +84,7 @@ URL: https://www.byteflow.ae/cloud-services-dubai
 - Recommended plan for most small businesses: Microsoft 365 Business Standard.
 - Regulated industries: configurations that meet UAE data residency and sector compliance (e.g. ADHICS for healthcare).
 - Ongoing Microsoft 365 administration is included in IT AMC contracts.
+- Dedicated Microsoft 365 page (setup, DNS records for email, migration steps, security, FAQs): https://www.byteflow.ae/microsoft-365-dubai
 
 ---
 
