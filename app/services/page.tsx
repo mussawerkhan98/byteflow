@@ -34,7 +34,10 @@ const fallbackDescription = (figures: SiteFigures) =>
 
 export async function generateMetadata(): Promise<Metadata> {
   const [cms, figures] = await Promise.all([getPageMetadata('services'), getSiteFigures()])
-  const title = cms?.title || fallbackTitle
+  // An empty Meta title in the admin falls back to the bare page name
+  // ("Services"), which says nothing in Google; use the SEO title instead.
+  const cmsTitle = typeof cms?.title === 'string' ? cms.title.trim() : ''
+  const title = cmsTitle && cmsTitle.toLowerCase() !== 'services' ? cmsTitle : fallbackTitle
   const description = cms?.description || fallbackDescription(figures)
   return {
     ...cms,
