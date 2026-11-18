@@ -7,6 +7,8 @@ Byteflow operates as a single accountable team across IT infrastructure, securit
 ## Services
  
 - [IT AMC (Annual Maintenance Contract)](https://www.byteflow.ae/it-amc-services-dubai): Fully managed IT support with unlimited remote assistance, 2-hour on-site response, and 24/7 endpoint monitoring across Dubai, Sharjah, and Abu Dhabi.
+- [IT Support in Dubai](https://www.byteflow.ae/it-support-company-dubai): Remote, on-site and managed IT support for businesses, with unlimited remote help, 2-hour on-site visits and published plans from AED 40 per user per month.
+- [Microsoft 365 Services in Dubai](https://www.byteflow.ae/microsoft-365-dubai): Microsoft 365 setup, migration, administration, licences, Teams, SharePoint, security and backup for UAE businesses.
 - [Cyber Security](https://www.byteflow.ae/cyber-security): Layered protection covering next-gen firewalls, endpoint detection and response (EDR), email security, network monitoring, and staff phishing training.
 - [System Integration](https://www.byteflow.ae/system-integration): Network design, structured cabling, server setup, CCTV/access control, VoIP, and multi-site connectivity for offices across the UAE.
 - [Data Backup and Recovery](https://www.byteflow.ae/data-backup-recovery): Hourly automated backups, ransomware-proof immutable storage, Microsoft 365 backup, and bare-metal server recovery within hours.
