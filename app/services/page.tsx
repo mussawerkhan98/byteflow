@@ -44,7 +44,9 @@ export async function generateMetadata(): Promise<Metadata> {
     title,
     description,
     alternates: { canonical: PATH },
-    openGraph: { title, description, ...cms?.openGraph, url: PATH, type: 'website' },
+    // The admin's share title is the same bare page name when left empty, so
+    // the SEO title wins over it the same way it does for <title>.
+    openGraph: { title, description, ...cms?.openGraph, ...(title === fallbackTitle ? { title } : {}), url: PATH, type: 'website' },
   }
 }
 

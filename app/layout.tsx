@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Script from "next/script";
-import { Sora, Plus_Jakarta_Sans, Outfit } from "next/font/google";
+import { Sora, Plus_Jakarta_Sans } from "next/font/google";
+import localFont from "next/font/local";
 import GoogleAnalytics from "./components/GoogleAnalytics";
 import { connection } from "next/server";
 // Font Awesome's CSS sizes the icons app/components/Icon.tsx draws (it ships
@@ -37,16 +38,18 @@ const sora = Sora({
   display: "swap",
 });
 
-// Only the header's BYTEFLOW uses this, so just the weight it is set in is
-// pulled down rather than the whole axis. Not preloaded, so it never competes
-// with the hero for bandwidth; the name shows in the fallback face until it
-// arrives.
-const outfit = Outfit({
-  subsets: ["latin"],
+// Only the header's BYTEFLOW uses Outfit, so this is Outfit 800 cut down to
+// just the letters of "Byteflow" (upper and lower case): about 2 KB instead
+// of the full latin file. That small, it can be preloaded without competing
+// with the hero, so the wordmark (the homepage's largest paint) no longer
+// waits for a late font swap. Renders pixel-identical to the Google file.
+// Licence: app/fonts/OFL-Outfit.txt (SIL OFL 1.1, subsetting permitted).
+const outfit = localFont({
+  src: "./fonts/outfit-wordmark-800.woff2",
   weight: "800",
   variable: "--font-wordmark",
   display: "swap",
-  preload: false,
+  preload: true,
 });
 
 
